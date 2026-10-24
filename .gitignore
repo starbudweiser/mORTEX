@@ -123,3 +123,4 @@ test-results/
 PASSATION_*.md
 /logs/
 /mORTEX.app/
+/mac/native/

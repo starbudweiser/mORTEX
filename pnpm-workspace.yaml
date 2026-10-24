@@ -321,7 +321,7 @@ overrides:
   react-dnd: 14.0.5
 
 allowBuilds:
-  "@nexusmods/fomod-installer-native": false # mORTEX : pas de build darwin avant l'étape 3
+  "@nexusmods/fomod-installer-native": false # mORTEX : compilé par mac/fomod_native.sh (NativeAOT + binding.darwin.gyp)
   "@parcel/watcher": true
   core-js: true
   core-js-pure: false

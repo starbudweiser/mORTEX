@@ -12,6 +12,9 @@ export NODE_ENV=production
 cd src/main
 pnpm nx run @vortex/main:publish
 cd dist
+# 7zz et FOMOD natif (étape 3) : absents des paquets amont pour darwin
+"$APP_DIR/mac/install_7zz.sh" "$PWD/node_modules/7z-bin"
+"$APP_DIR/mac/fomod_native.sh" "$PWD/node_modules/@nexusmods/fomod-installer-native"
 # electron-builder appelé directement : « pnpm exec » relancerait pnpm install dans dist.
 "$APP_DIR/src/main/node_modules/.bin/electron-builder" \
   --config ./electron-builder.config.json --mac dir --arm64 --publish never \

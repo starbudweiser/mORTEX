@@ -200,7 +200,8 @@ async function checkNetInstall(api: IExtensionApi, dotnetVersion: number): Promi
   } else if (process.platform === "linux") {
     probeExecutable = path.join(getVortexPath("assets_unpacked"), "dotnetprobe");
   } else if (process.platform === "darwin") {
-    // mORTEX: .NET only matters for the FOMOD installer, ported at step 3.
+    // mORTEX: le FOMOD XML passe par l'addon NativeAOT (sans runtime .NET). Le runtime ne
+    // servirait qu'aux scripts C# (fomod-installer-ipc), non portés.
     return undefined!;
   } else {
     const error = new Error(
