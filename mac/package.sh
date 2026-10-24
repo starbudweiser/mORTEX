@@ -20,6 +20,14 @@ cd dist
   -c.mac.identity=null -c.directories.output="$APP_DIR/dist"
 OUT="$APP_DIR/dist/mac-arm64/mORTEX.app"
 rm -rf "$APP_DIR/mORTEX.app" && cp -R "$OUT" "$APP_DIR/mORTEX.app"
+# Schéma nxm:// (« Mod Manager Download » de Nexus) : déclaré dans l'Info.plist
+PL="$APP_DIR/mORTEX.app/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Delete :CFBundleURLTypes" "$PL" 2>/dev/null || true
+/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes array" \
+  -c "Add :CFBundleURLTypes:0 dict" \
+  -c "Add :CFBundleURLTypes:0:CFBundleURLName string fr.stephan.mortex.nxm" \
+  -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes array" \
+  -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string nxm" "$PL"
 /Volumes/SKYRIM/TOOLS/MAC/_tools/sign_app.sh "$APP_DIR/mORTEX.app"
 # Lancé seul : installe dans ~/Applications/Skyrim Tools (build_all.sh, qui pose NO_OPEN, s'en charge lui-même).
 if [ -z "${NO_OPEN:-}" ]; then

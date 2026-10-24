@@ -35,6 +35,7 @@ import { getVortexPath, setVortexPath } from "./getVortexPath";
 import { shutdownHashWorker } from "./hash/host";
 import { betterIpcMain } from "./ipc";
 import { log, setupLogging, changeLogPath } from "./logging";
+import { listenOpenUrl } from "./macos/protocol";
 import MainWindow from "./MainWindow";
 import { ReloadBudget } from "./reloadBudget";
 import SplashScreen from "./SplashScreen";
@@ -238,6 +239,13 @@ class Application {
             log("error", "failed to create main window", unknownToError(err)),
           );
       }
+    });
+
+    // macOS : les liens nxm:// arrivent par open-url, pas par la ligne de commande
+    listenOpenUrl((url) => {
+      this.applyArguments({ download: url }).catch((err: unknown) =>
+        log("error", "error applying arguments", unknownToError(err)),
+      );
     });
 
     app.on("second-instance", (_event, secondaryArgv) => {
