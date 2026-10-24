@@ -6,7 +6,7 @@
  * par le renderer, util/macos/bottles.ts). Renvoie undefined hors darwin ou
  * tant que le fichier n'existe pas (premier lancement : relancer une fois).
  */
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import * as path from "node:path";
 
 export function bottleUserPath(
@@ -20,7 +20,9 @@ export function bottleUserPath(
     };
     const sub = id === "documents" ? "Documents" : path.join("AppData", "Local");
     const dir = typeof userDir === "string" ? path.join(userDir, sub) : undefined;
-    return dir !== undefined && existsSync(dir) ? dir : undefined;
+    if (dir === undefined || !existsSync(userDir as string)) return undefined;
+    mkdirSync(dir, { recursive: true });
+    return dir;
   } catch {
     return undefined;
   }

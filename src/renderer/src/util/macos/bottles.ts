@@ -11,7 +11,8 @@
  *  - WineBottlesStore (id "wine")                   IGameStore branché dans GameModeManager
  *  - runInBottle(exe, args, env?)                   {executable, args, env} pour lancer un .exe dans sa bouteille
  *
- * État : <userData>/bottles.json  { roots?: string[], activeBottle?: string, userDir?: string }
+ * État : <userData>/bottles.json  { roots?: string[], activeBottle?: string, exclusive?: boolean, userDir?: string }
+ * `exclusive` + `activeBottle` : ne voir que cette bouteille (essais de dev)
  * `userDir` (drive_c/users/<u>) est écrit ici et lu par le processus principal
  * (main/src/macos/bottlePaths.ts) pour rediriger documents et localAppData.
  */
@@ -41,7 +42,24 @@ export interface IBottle {
 }
 
 const STORE_ID = "wine";
-const CX_BIN = "/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin";
+const CX_APPS = ["/Applications/CrossOver.app", "/Applications/CrossOver Preview.app"];
+
+/** CrossOver Preview si la bouteille est marquée Preview=1, sinon CrossOver. */
+function cxBin(bottle: IBottle): string {
+  let preview = false;
+  try {
+    preview = /^"Preview"\s*=\s*"1"/m.test(
+      fs.readFileSync(path.join(bottle.path, "cxbottle.conf"), "utf8"),
+    );
+  } catch {
+    /* pas de cxbottle.conf */
+  }
+  const app = preview ? CX_APPS[1] : CX_APPS[0];
+  return path.join(
+    fs.existsSync(app) ? app : (CX_APPS.find(fs.existsSync) ?? CX_APPS[0]),
+    "Contents/SharedSupport/CrossOver/bin",
+  );
+}
 const WHISKY_ID = "com.isaacmarovitz.Whisky";
 
 function isDir(p: string): boolean {
@@ -67,6 +85,7 @@ function isBottleDir(p: string): boolean {
 interface IState {
   roots?: string[];
   activeBottle?: string;
+  exclusive?: boolean;
   userDir?: string;
 }
 
@@ -179,6 +198,9 @@ export function listBottles(): IBottle[] {
     ...(process.env.WINEPREFIX ? [process.env.WINEPREFIX] : []),
     path.join(os.homedir(), ".wine"),
   ].forEach(scanRoot);
+  if (state.activeBottle && state.exclusive) {
+    return result.filter((b) => b.path === state.activeBottle);
+  }
   if (state.activeBottle) {
     result.sort((a, b) => +(b.path === state.activeBottle) - +(a.path === state.activeBottle));
   }
@@ -370,9 +392,9 @@ export function runInBottle(
   switch (bottle.kind) {
     case "crossover":
       return {
-        executable: path.join(CX_BIN, "cxstart"),
+        executable: path.join(cxBin(bottle), "cxstart"),
         args: ["--bottle", bottle.name, ...(cwd ? ["--workdir", cwd] : []), exe, ...args],
-        env: {},
+        env: { CX_BOTTLE_PATH: path.dirname(bottle.path) },
       };
     case "whisky":
       return {
@@ -415,7 +437,11 @@ class WineBottlesStore implements IGameStore {
     let firstUserDir: string | undefined;
     for (const bottle of bottles) {
       const found = [...scanSteamGames(bottle), ...scanLooseGames(bottle)];
-      if (firstUserDir === undefined && isDir(path.join(bottle.userDir, "Documents/My Games"))) {
+      if (
+        firstUserDir === undefined &&
+        (bottle.path === readState().activeBottle ||
+          isDir(path.join(bottle.userDir, "Documents/My Games")))
+      ) {
         firstUserDir = bottle.userDir;
       }
       entries.push(...found);
