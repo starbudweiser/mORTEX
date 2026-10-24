@@ -5,6 +5,7 @@ import type { VortexPaths } from "@vortex/shared/ipc";
 import { app, type App } from "electron";
 
 import { VortexPathProvider } from "./filesystem/paths.vortex";
+import { bottleUserPath } from "./macos/bottlePaths";
 
 // If running as a forked child process, read Electron app info from environment variables
 const electronAppInfoEnv: { [key: string]: string | undefined } =
@@ -154,11 +155,11 @@ export function getVortexPath(id: keyof VortexPaths): string {
     case "appData":
       return cachedAppPath("appData");
     case "localAppData":
-      return localAppData();
+      return bottleUserPath(cachedAppPath("userData"), "localAppData") ?? localAppData();
     case "home":
       return cachedAppPath("home");
     case "documents":
-      return cachedAppPath("documents");
+      return bottleUserPath(cachedAppPath("userData"), "documents") ?? cachedAppPath("documents");
     case "exe":
       return cachedAppPath("exe");
     case "desktop":

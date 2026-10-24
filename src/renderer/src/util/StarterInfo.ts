@@ -25,6 +25,7 @@ import {
 import { emitGameLaunched, recordLaunchExit } from "./gameLaunchAnalytics";
 import getVortexPath from "./getVortexPath";
 import { isWindowsExecutable } from "./linux/proton";
+import { runInBottle } from "./macos/bottles";
 import type { Steam, ISteamEntry } from "./Steam";
 import { getSafe } from "./storeHelper";
 import * as storeLookup from "./storeLookup";
@@ -319,12 +320,17 @@ class StarterInfo implements IStarterInfo {
       );
     }
 
+    // macOS: les .exe tournent dans leur bouteille Wine (CrossOver/Whisky)
+    const cwd = info.workingDirectory || path.dirname(info.exePath);
+    const bottled =
+      process.platform === "darwin" ? runInBottle(info.exePath, info.commandLine, cwd) : undefined;
+
     return api
-      .runExecutable(info.exePath, info.commandLine, {
-        cwd: info.workingDirectory || path.dirname(info.exePath),
-        env: info.environment,
+      .runExecutable(bottled?.executable ?? info.exePath, bottled?.args ?? info.commandLine, {
+        cwd,
+        env: { ...info.environment, ...bottled?.env },
         suggestDeploy: true,
-        shell: info.shell,
+        shell: bottled ? false : info.shell,
         detach: info.detach || info.onStart === "close",
         onSpawned: spawned,
         onExit: (code) => recordLaunchExit(info.exePath, code),

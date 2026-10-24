@@ -16,6 +16,7 @@ import type { IGameStoreSnapshot } from "@/types/IGameStore";
 import type { IState } from "@/types/IState";
 import type { ITool } from "@/types/ITool";
 import { GoGLauncher } from "@/util/GOGLauncher";
+import { createWineBottlesStore } from "@/util/macos/bottles";
 import { OriginLauncher } from "@/util/OriginStore";
 import { getSafe } from "@/util/storeHelper";
 import { UPlayLauncher } from "@/util/UplayStore";
@@ -84,6 +85,7 @@ export class GameModeManager {
       OriginLauncher.create(),
       UPlayLauncher.create(),
       XboxLauncher.create(api),
+      createWineBottlesStore(),
     ].filter(Boolean);
     this.mActiveSearch = null;
     this.mQuickDiscoveryAbort = null;

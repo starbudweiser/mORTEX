@@ -12,6 +12,7 @@ import type { IGameStoreEntry } from "@/types/IGameStoreEntry";
 
 import { ProcessCanceled } from "./CustomErrors";
 import * as fs from "./fs";
+import { bottleRegistryLookup } from "./macos/bottles";
 import { defaultPriority, type IQueryArgEntry, normalizeStoreQuery } from "./storeQuery";
 
 type SearchType = "name" | "id";
@@ -94,6 +95,10 @@ export async function registryLookup(lookup: string): Promise<IGameStoreEntry> {
     ].includes(chunked[0])
   ) {
     throw new Error("invalid query, hive should be something like HKEY_LOCAL_MACHINE");
+  }
+
+  if (process.platform === "darwin") {
+    return bottleRegistryLookup(lookup);
   }
 
   try {
