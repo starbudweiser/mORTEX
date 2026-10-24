@@ -52,6 +52,14 @@ function isDir(p: string): boolean {
   }
 }
 
+function isNonEmptyDir(p: string): boolean {
+  try {
+    return fs.readdirSync(p).length > 0;
+  } catch {
+    return false;
+  }
+}
+
 function isBottleDir(p: string): boolean {
   return isDir(path.join(p, "drive_c")) && fs.existsSync(path.join(p, "system.reg"));
 }
@@ -256,6 +264,7 @@ export async function bottleRegistryLookup(lookup: string): Promise<IGameStoreEn
     const raw = readRegString(bottle, short[hive] ?? hive, key, value);
     if (raw) {
       const gamePath = winPathToHost(bottle, raw).replace(/\/+$/, "");
+      if (!isNonEmptyDir(gamePath)) continue;
       return {
         appid: lookup,
         gamePath,
@@ -304,7 +313,7 @@ export function scanSteamGames(bottle: IBottle): IGameStoreEntry[] {
         const st = (parseVdf(fs.readFileSync(path.join(apps, f), "utf8")) as any)?.AppState;
         if (!st?.appid || !st?.name || !st?.installdir) continue;
         const gamePath = path.join(apps, "common", st.installdir);
-        if (!isDir(gamePath)) continue;
+        if (!isNonEmptyDir(gamePath)) continue;
         entries.push({
           appid: String(st.appid),
           name: String(st.name),
@@ -315,6 +324,30 @@ export function scanSteamGames(bottle: IBottle): IGameStoreEntry[] {
       } catch (err) {
         log("debug", "bad appmanifest in bottle", { f, err });
       }
+    }
+  }
+  return entries;
+}
+
+/** Jeux hors Steam : sous-dossiers directs de C:\\Games, Program Files, GOG Games... */
+export function scanLooseGames(bottle: IBottle): IGameStoreEntry[] {
+  const entries: IGameStoreEntry[] = [];
+  const roots = ["Games", "GOG Games", "Program Files", "Program Files (x86)", "Epic Games"];
+  const seen = new Set<string>();
+  for (const root of roots) {
+    const dir = path.join(bottle.path, "drive_c", root);
+    let names: string[];
+    try {
+      names = fs.readdirSync(dir);
+    } catch {
+      continue;
+    }
+    for (const name of names) {
+      const gamePath = path.join(dir, name);
+      const key = gamePath.toLowerCase();
+      if (seen.has(key) || !isNonEmptyDir(gamePath) || name.startsWith(".")) continue;
+      seen.add(key);
+      entries.push({ appid: name, name, gamePath, gameStoreId: STORE_ID });
     }
   }
   return entries;
@@ -381,8 +414,10 @@ class WineBottlesStore implements IGameStore {
     const entries: IGameStoreEntry[] = [];
     let firstUserDir: string | undefined;
     for (const bottle of bottles) {
-      const found = scanSteamGames(bottle);
-      if (found.length > 0 && firstUserDir === undefined) firstUserDir = bottle.userDir;
+      const found = [...scanSteamGames(bottle), ...scanLooseGames(bottle)];
+      if (firstUserDir === undefined && isDir(path.join(bottle.userDir, "Documents/My Games"))) {
+        firstUserDir = bottle.userDir;
+      }
       entries.push(...found);
     }
     this.#snapshot = { entries, isInstalled: bottles.length > 0 };
@@ -399,7 +434,7 @@ class WineBottlesStore implements IGameStore {
   }
 
   public async findByName(namePattern: string): Promise<IGameStoreEntry> {
-    const re = new RegExp("^" + namePattern + "$");
+    const re = new RegExp("^" + namePattern + "$", "i");
     const entry = this.#snapshot.entries.find((e) => re.test(e.name));
     if (entry === undefined) throw new GameEntryNotFound(namePattern, STORE_ID);
     return entry;

@@ -135,7 +135,7 @@ function main(context) {
     queryArgs: {
       // prefer steam because it was released first and users may have pre-1.6.12 installs with store not saved in state
       steam: [{ name: "The Elder Scrolls V: Skyrim Special Edition", prefer: 0 }],
-      wine: [{ id: STEAM_ID }],
+      wine: [{ id: STEAM_ID }, { name: "Skyrim Special Edition" }],
       xbox: [{ id: MS_ID }],
       gog: [{ id: GOG_ID }],
       epic: [{ id: EPIC_ID }],
