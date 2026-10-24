@@ -1,6 +1,6 @@
 #!/bin/bash
 # mORTEX : construit mORTEX.app (arm64, non signé par electron-builder), le signe avec
-# le certificat local stable (_tools/sign_app.sh) et le dépose dans ../mORTEX.app.
+# le certificat local stable (_tools/sign_app.sh) et le dépose dans mORTEX.app (racine) puis dans ~/Applications/Skyrim Tools.
 # Usage : mac/package.sh   (SKIP_BUILD=1 pour sauter build/lint/typecheck)
 # Prérequis : mac/rebuild.sh déjà lancé une fois.
 set -euo pipefail
@@ -17,7 +17,13 @@ cd dist
   --config ./electron-builder.config.json --mac dir --arm64 --publish never \
   -c.productName=mORTEX -c.appId=fr.stephan.mortex \
   -c.mac.icon="$APP_DIR/mac/assets/mORTEX.icns" -c.mac.category=public.app-category.utilities \
-  -c.mac.identity=null -c.directories.output="$APP_DIR/../dist"
-OUT="$APP_DIR/../dist/mac-arm64/mORTEX.app"
-rm -rf "$APP_DIR/../mORTEX.app" && cp -R "$OUT" "$APP_DIR/../mORTEX.app"
-/Volumes/SKYRIM/TOOLS/MAC/_tools/sign_app.sh "$APP_DIR/../mORTEX.app"
+  -c.mac.identity=null -c.directories.output="$APP_DIR/dist"
+OUT="$APP_DIR/dist/mac-arm64/mORTEX.app"
+rm -rf "$APP_DIR/mORTEX.app" && cp -R "$OUT" "$APP_DIR/mORTEX.app"
+/Volumes/SKYRIM/TOOLS/MAC/_tools/sign_app.sh "$APP_DIR/mORTEX.app"
+# Lancé seul : installe dans ~/Applications/Skyrim Tools (build_all.sh, qui pose NO_OPEN, s'en charge lui-même).
+if [ -z "${NO_OPEN:-}" ]; then
+  DEST="${SKYRIM_APPS_DIR:-$HOME/Applications/Skyrim Tools}"
+  mkdir -p "$DEST" && rm -rf "$DEST/mORTEX.app" && mv "$APP_DIR/mORTEX.app" "$DEST/mORTEX.app"
+  echo "OK : $DEST/mORTEX.app"
+fi

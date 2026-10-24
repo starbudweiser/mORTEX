@@ -116,3 +116,10 @@ test-results/
 
 .nx/cache
 .nx/workspace-data
+
+# mORTEX : notes personnelles, journaux et appli compilée
+/AUDIT_PORTAGE_MAC.md
+/ETAT.md
+PASSATION_*.md
+/logs/
+/mORTEX.app/
