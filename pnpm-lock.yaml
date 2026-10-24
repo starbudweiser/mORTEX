@@ -981,6 +981,9 @@ overrides:
   '@types/node': 24.12.2
   react-dnd: 14.0.5
 
+patchedDependencies:
+  drivelist@10.0.2: b38234ad58dbd5a8b246908fb5c06791fe6c634f8335d770d14135d63ecd5a4b
+
 importers:
 
   .:
@@ -4132,7 +4135,7 @@ importers:
         version: 2.4.1
       drivelist:
         specifier: 'catalog:'
-        version: https://codeload.github.com/TanninOne/drivelist/tar.gz/720d1890db11482ec05fc0f6aa176cfa6e6844dd
+        version: https://codeload.github.com/TanninOne/drivelist/tar.gz/720d1890db11482ec05fc0f6aa176cfa6e6844dd(patch_hash=b38234ad58dbd5a8b246908fb5c06791fe6c634f8335d770d14135d63ecd5a4b)
       electron-context-menu:
         specifier: 'catalog:'
         version: 3.6.1
@@ -4821,7 +4824,7 @@ importers:
         version: 2.4.1
       drivelist:
         specifier: 'catalog:'
-        version: https://codeload.github.com/TanninOne/drivelist/tar.gz/720d1890db11482ec05fc0f6aa176cfa6e6844dd
+        version: https://codeload.github.com/TanninOne/drivelist/tar.gz/720d1890db11482ec05fc0f6aa176cfa6e6844dd(patch_hash=b38234ad58dbd5a8b246908fb5c06791fe6c634f8335d770d14135d63ecd5a4b)
       electron:
         specifier: 'catalog:'
         version: 44.2.0(supports-color@10.2.2)
@@ -17219,7 +17222,7 @@ snapshots:
       get-size: 2.0.3
       unidragger: 2.4.0
 
-  drivelist@https://codeload.github.com/TanninOne/drivelist/tar.gz/720d1890db11482ec05fc0f6aa176cfa6e6844dd:
+  drivelist@https://codeload.github.com/TanninOne/drivelist/tar.gz/720d1890db11482ec05fc0f6aa176cfa6e6844dd(patch_hash=b38234ad58dbd5a8b246908fb5c06791fe6c634f8335d770d14135d63ecd5a4b):
     dependencies:
       bindings: 1.5.0
       debug: 3.2.7

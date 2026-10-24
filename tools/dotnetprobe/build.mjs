@@ -10,6 +10,8 @@ try {
     runtimeIdentifier = "win-x64";
   } else if (process.platform === "linux") {
     runtimeIdentifier = "linux-x64";
+  } else if (process.platform === "darwin") {
+    runtimeIdentifier = "osx-arm64"; // mORTEX
   } else {
     console.error(`Platform ${process.platform} is unsupported`);
     process.exit(1);

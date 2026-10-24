@@ -1,5 +1,6 @@
 import { VortexError } from "../errors/base";
 import { parseNativePath } from "./native";
+import type { IDarwinPathProvider } from "./paths.darwin";
 import type { ILinuxPathProvider } from "./paths.linux";
 import type { IWindowsPathProvider } from "./paths.windows";
 
@@ -181,7 +182,7 @@ export type OSPathBase = (typeof OSPath)[keyof typeof OSPath];
 /**
  * Path providers for platform native paths.
  * @public */
-export type IOSPathProvider = ILinuxPathProvider | IWindowsPathProvider;
+export type IOSPathProvider = ILinuxPathProvider | IWindowsPathProvider | IDarwinPathProvider;
 
 /**
  * Represents a normalized fully qualified path.

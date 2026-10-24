@@ -35,6 +35,8 @@ class MixpanelAnalytics {
    * Sets and Initializes the Mixpanel tracking with super properties
    */
   public start(userInfo: IValidateKeyDataV2, isProduction: boolean) {
+    // mORTEX: unofficial build, never report to Nexus Mods.
+    if (process.platform === "darwin") return;
     // Guard against multiple initialization
     if (this.isInitialized) {
       analyticsServiceLog("mixpanel", "warn", "start() called but already initialized", {

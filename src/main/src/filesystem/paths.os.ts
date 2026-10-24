@@ -1,6 +1,7 @@
 import { VortexError } from "@vortex/shared";
 import type { IOSPathProvider } from "@vortex/shared/filesystem";
 
+import { DarwinPathProvider } from "./paths.darwin";
 import { LinuxPathProvider } from "./paths.linux";
 import { WindowsPathProvider } from "./paths.windows";
 
@@ -22,6 +23,7 @@ export class OSPathProvider {
 function create(): IOSPathProvider {
   if (process.platform === "win32") return new WindowsPathProvider();
   else if (process.platform === "linux") return new LinuxPathProvider();
+  else if (process.platform === "darwin") return new DarwinPathProvider();
   else
     throw new VortexError(`Unsupported platform: '${process.platform}'`, {
       kind: "os:unsupported",

@@ -1,0 +1,12 @@
+diff --git a/binding.gyp b/binding.gyp
+index 286e6c756ab54e1baffde205ff8e472f8b6311c2..63e0f38b24d09f3faf4419f7a777eecab19b8bee 100644
+--- a/binding.gyp
++++ b/binding.gyp
+@@ -30,6 +30,7 @@
+       "conditions": [
+         [ 'OS=="mac"', {
+           "xcode_settings": {
++            "GCC_ENABLE_CPP_EXCEPTIONS": "YES",
+             "OTHER_CPLUSPLUSFLAGS": [
+               "-stdlib=libc++"
+             ],

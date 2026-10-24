@@ -16,7 +16,8 @@ export const getProcessor = (): SpanProcessor | undefined => {
 };
 
 export const setTelemetryEnabled = (enabled: boolean): void => {
-  telemetryExportEnabled = enabled;
+  // mORTEX: unofficial build, never report to Nexus Mods.
+  telemetryExportEnabled = enabled && process.platform !== "darwin";
 };
 
 export const isTelemetryEnabled = (): boolean => {
@@ -31,7 +32,7 @@ export const isTelemetryEnabled = (): boolean => {
 let unconsentedReportingEnabled = false;
 
 export const setUnconsentedReportingEnabled = (enabled: boolean): void => {
-  unconsentedReportingEnabled = enabled;
+  unconsentedReportingEnabled = enabled && process.platform !== "darwin";
 };
 
 export const isUnconsentedReportingEnabled = (): boolean => {

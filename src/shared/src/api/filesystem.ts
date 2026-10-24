@@ -40,6 +40,8 @@ export type { LinuxPathBase, ILinuxPathProvider, XDGBase } from "../fs/paths.lin
 
 export { WindowsPath } from "../fs/paths.windows";
 export type { WindowsPathBase, IWindowsPathProvider } from "../fs/paths.windows";
+export { DarwinPath } from "../fs/paths.darwin";
+export type { DarwinPathBase, IDarwinPathProvider } from "../fs/paths.darwin";
 
 export type { VortexPathBase, IVortexPathProvider } from "../fs/paths.vortex";
 

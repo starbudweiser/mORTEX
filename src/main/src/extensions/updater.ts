@@ -17,6 +17,8 @@ import { setupAutoUpdater } from "./autoupdater";
  * rather than working it out, since only NODE_ENV is inlined into its bundle.
  */
 export function isUpdaterActive(installType: string): boolean {
+  // mORTEX: the Vortex release feed only ships Windows/Linux builds.
+  if (process.platform === "darwin") return false;
   // A build run from source has no uninstaller beside it, so identifyInstallType always calls it
   // "managed". The install type therefore says nothing in development and the opt-in decides on
   // its own; outside development it is the only thing that decides.

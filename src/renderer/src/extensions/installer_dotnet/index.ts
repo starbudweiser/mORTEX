@@ -199,6 +199,9 @@ async function checkNetInstall(api: IExtensionApi, dotnetVersion: number): Promi
     probeExecutable = path.join(getVortexPath("assets_unpacked"), "dotnetprobe.exe");
   } else if (process.platform === "linux") {
     probeExecutable = path.join(getVortexPath("assets_unpacked"), "dotnetprobe");
+  } else if (process.platform === "darwin") {
+    // mORTEX: .NET only matters for the FOMOD installer, ported at step 3.
+    return undefined!;
   } else {
     const error = new Error(
       `.NET installation check is not supported on this platform ${process.platform}`,
