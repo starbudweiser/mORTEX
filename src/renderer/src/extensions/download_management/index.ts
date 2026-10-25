@@ -802,10 +802,14 @@ function checkForUnfinalized(
   downloads: { [id: string]: IDownload },
   gameMode: string,
 ) {
+  // mORTEX : une archive trouvée dans le dossier (sans adresse d'origine) n'a jamais été
+  // téléchargée ; son empreinte manquante n'est pas un téléchargement inachevé.
   const unfinalized = Object.keys(downloads).filter(
     (id) =>
       (downloads[id].state === "finalizing" ||
-        (downloads[id].state === "finished" && downloads[id].fileMD5 === undefined)) &&
+        (downloads[id].state === "finished" &&
+          downloads[id].fileMD5 === undefined &&
+          (downloads[id].urls?.length ?? 0) > 0)) &&
       downloads[id].localPath !== undefined,
   );
 

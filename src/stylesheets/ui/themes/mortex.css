@@ -275,8 +275,9 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     align-items: center;
     gap: 18px;
     height: 24px;
-    margin: -6px 12px 6px 0;
-    padding-inline: 4px;
+    margin: -6px 0 6px;
+    /* loin des coins arrondis de la fenêtre, comme la maquette */
+    padding-inline: 14px;
     color: var(--color-neutral-subdued);
     font-size: 11px;
     white-space: nowrap;
@@ -708,13 +709,33 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     }
 
     .select-compact .Select-control .Select-placeholder,
-    .select-compact .Select-control .Select-value {
+    .select-compact.Select--single .Select-control .Select-value {
         line-height: 22px !important;
         padding-left: 8px !important;
     }
 
-    /* Filtre de date : le comparateur (=, <, >) collé au champ, du même gris que les boutons */
-    .datetime-filter {
+    /* Valeurs multiples : pastilles sur une ligne ; le champ grandit s'il en faut plusieurs */
+    .select-compact.Select--multi .Select-control {
+        height: auto !important;
+        min-height: 24px;
+    }
+
+    .select-compact.Select--multi .Select-value {
+        margin: 3px 0 0 3px;
+        font-size: 11px;
+        line-height: 16px;
+        white-space: nowrap;
+
+        .Select-value-icon,
+        .Select-value-label {
+            padding-block: 0 !important;
+            line-height: 16px !important;
+        }
+    }
+
+    /* Filtres de date et de nombre : le comparateur (=, <, >) collé au champ, du même gris que les boutons */
+    .datetime-filter,
+    .input-group:has(> .group-addon-btn) {
         display: flex !important;
         align-items: center;
         gap: 4px;
@@ -738,7 +759,9 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
         }
 
         > div {
+            display: flex;
             flex: 1 1 auto;
+            align-items: center;
             line-height: normal;
         }
     }
@@ -762,4 +785,24 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 .download-path-row {
     align-items: center;
     gap: 8px;
+}
+
+/* ---- Ancienne interface sous macOS : une bande de titre de 28 px accueille les feux tricolores
+   au-dessus de la bannière du jeu, au lieu de la recouvrir ; la version y monte à droite. ---- */
+body[data-platform="darwin"] #main-toolbar {
+    padding-top: 28px;
+}
+
+body[data-platform="darwin"] #main-toolbar .toolbar-version {
+    top: 7px;
+    right: 14px;
+    margin-right: 0;
+}
+
+/* Menus groupés de la barre d'outils (« Ouvrir... ») : icône et texte sur une ligne, pas empilés */
+.toolbar-dropdown.dropdown-toggle > div,
+.toolbar-dropdown .toolbar-dropdown-splitbtn > div {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
 }

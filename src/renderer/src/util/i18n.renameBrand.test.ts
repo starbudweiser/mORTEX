@@ -12,6 +12,12 @@ describe("renameBrand", () => {
     ).toEqual({ browse: { soon: { description: "Bientôt directement dans mORTEX." } } });
   });
 
+  it("renames the app written as a common noun", () => {
+    expect(renameBrand({ a: "Le vortex peut sembler figé." })).toEqual({
+      a: "mORTEX peut sembler figé.",
+    });
+  });
+
   it("leaves paths and longer words alone", () => {
     expect(
       renameBrand({ a: "Dossier ~/Library/Application Support/Vortex/", b: "VortexStaging" }),

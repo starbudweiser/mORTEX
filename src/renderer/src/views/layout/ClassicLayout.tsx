@@ -32,7 +32,8 @@ export const ClassicLayout: FC<React.PropsWithChildren<unknown>> = () => {
 
         <ToastContainer />
 
-        {customTitlebar ? <WindowControls /> : null}
+        {/* mORTEX : sous macOS, les feux tricolores natifs suffisent, comme dans la nouvelle interface */}
+        {customTitlebar && process.platform !== "darwin" ? <WindowControls /> : null}
       </LayoutContainer>
 
       <UIBlocker />

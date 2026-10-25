@@ -140,6 +140,8 @@ let mortexListeners = false;
 
 // « Vortex », le nom de l'appli, mais pas dans un chemin ou un mot plus long (…/Vortex/, VortexStaging)
 const BRAND = /(?<![/\w])Vortex(?![\w/])/g;
+// … et « le vortex » d'un pack qui l'écrit en nom commun
+const BRAND_NOUN = /(?<![/\w])[Ll]e vortex(?![\w/])/g;
 
 /**
  * mORTEX : les textes (y compris les clés imbriquées comme « browse.modsComingSoon.description »)
@@ -150,7 +152,7 @@ export function renameBrand(strings: Record<string, unknown>): Record<string, un
   for (const [key, value] of Object.entries(strings)) {
     let next: unknown;
     if (typeof value === "string") {
-      const renamed = value.replace(BRAND, "mORTEX");
+      const renamed = value.replace(BRAND_NOUN, "mORTEX").replace(BRAND, "mORTEX");
       next = renamed !== value ? renamed : undefined;
     } else if (value !== null && typeof value === "object") {
       next = renameBrand(value as Record<string, unknown>);
