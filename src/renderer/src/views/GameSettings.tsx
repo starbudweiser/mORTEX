@@ -167,7 +167,7 @@ export const GameSettings: FC<React.PropsWithChildren<{ active?: boolean; pageId
           rightIcon="arrow_forward"
           onClick={openVortexSettings}
         >
-          {t("Vortex settings")}
+          {t("mORTEX settings")}
         </Button>
       </PageHeader>
 

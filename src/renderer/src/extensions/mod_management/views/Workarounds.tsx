@@ -35,7 +35,7 @@ class Settings extends ComponentEx<IProps, {}> {
           </Toggle>
           <HelpBlock>
             {t(
-              "By default Vortex will only remove empty directories during deployment " +
+              "By default mORTEX will only remove empty directories during deployment " +
                 "if the game or related tools would otherwise not work correctly.\n" +
                 "Usually empty directories cause no harm and cleaning them up takes " +
                 "some extra time during deployment so " +

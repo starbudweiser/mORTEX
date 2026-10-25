@@ -89,7 +89,7 @@ export default function DuplicatesDialog(props: IBaseProps) {
   });
 
   const paragraph = t(
-    "Vortex may have pre-selected some of the mods for you " +
+    "mORTEX may have pre-selected some of the mods for you " +
       "(if they were not referenced by any of your profiles) It's always a good " +
       "idea to double check the mod itself in the staging folder before removing " +
       "anything. The selected mods will be removed.",

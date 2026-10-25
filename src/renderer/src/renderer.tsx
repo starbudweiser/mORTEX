@@ -388,7 +388,7 @@ function errorHandler(evt: any) {
   if (dynPaths.length > 0) {
     if (stack.includes(`at ${dynPaths[0].path}`)) {
       const extPath = (dynPaths[0].path + path.sep).replace(/[\\]/g, "\\\\");
-      const re = new RegExp(`at ${extPath}(Vortex Extension Update - )?([^/\\\\]*)`);
+      const re = new RegExp(`at ${extPath}(mORTEX Extension Update - )?([^/\\\\]*)`);
       const reMatch = stack.match(re);
       const extName = reMatch?.[2] ?? "unknown";
 
@@ -668,7 +668,7 @@ async function init(): Promise<ExtensionManager | null> {
       extensions.getApi().sendNotification({
         id: "high-memory-usage",
         type: "warning",
-        title: "Vortex is using a lot of memory and may crash",
+        title: "mORTEX is using a lot of memory and may crash",
         message: bytesToString(stat.totalHeapSize * 1024),
       });
       log("warn", "High memory usage", {
@@ -727,7 +727,7 @@ async function init(): Promise<ExtensionManager | null> {
       store.dispatch(
         addNotification({
           type: "info",
-          message: tFunc("Vortex isn't set up to handle this protocol: {{url}}", {
+          message: tFunc("mORTEX isn't set up to handle this protocol: {{url}}", {
             replace: { url },
           }),
         }),

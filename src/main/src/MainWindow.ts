@@ -211,7 +211,7 @@ class MainWindow {
           if (!this.mReloadBudget.allow()) {
             terminateAsync(
               new Error(
-                `The Vortex window crashed ${this.mReloadBudget.count} times in a row ` +
+                `The mORTEX window crashed ${this.mReloadBudget.count} times in a row ` +
                   `(${details.reason}, exit code ${details.exitCode}) and can't be restarted.`,
               ),
             ).catch(() => {
@@ -364,7 +364,7 @@ class MainWindow {
         const pBounds = screen.getPrimaryDisplay().bounds;
         log(
           "warn",
-          "The Vortex window was found to be mostly offscreen. " + "Moving to a sensible location.",
+          "The mORTEX window was found to be mostly offscreen. " + "Moving to a sensible location.",
           { bounds },
         );
         this.mWindow.setPosition(pBounds.x, pBounds.y);

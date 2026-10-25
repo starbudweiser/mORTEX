@@ -56,8 +56,8 @@ export class VortexIPCConnection extends BaseIPCConnection {
               {
                 bbcode: t(
                   `The installation of mod "{{ modName }}" is taking longer than expected.[br][/br][br][/br]` +
-                    `This may happen because the mod has a custom dialog that Vortex is not aware of.[br][/br]` +
-                    `In this case, you may need to interact with the mod's installer manually outside of Vortex to proceed.[br][/br][br][/br]` +
+                    `This may happen because the mod has a custom dialog that mORTEX is not aware of.[br][/br]` +
+                    `In this case, you may need to interact with the mod's installer manually outside of mORTEX to proceed.[br][/br][br][/br]` +
                     `Would you like to continue with the installation, or cancel it?`,
                   { replace: { modName: modName } },
                 ),

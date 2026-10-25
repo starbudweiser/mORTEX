@@ -49,7 +49,7 @@ async function showSMAPILog(api: types.IExtensionApi, basePath: string, logFile:
         action: () => {
           const timestamp = new Date().toISOString().replace(/^.+T([^\.]+).+/, "$1");
           clipboard.writeText(
-            `[${timestamp} INFO Vortex] Log exported by Vortex ${util.getApplication().version}.\n` +
+            `[${timestamp} INFO mORTEX] Log exported by mORTEX ${util.getApplication().version}.\n` +
               logData,
           );
           return util.opn("https://smapi.io/log").catch(() => undefined);

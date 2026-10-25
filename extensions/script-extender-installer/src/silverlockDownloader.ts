@@ -115,9 +115,9 @@ function notifyNewVersion(
             "Script Extender Update",
             {
               text:
-                "Vortex has detected a newer version of {{name}} ({{latest}}) available to download from {{website}}. You currently have version {{current}} installed." +
-                "\nThe buttons below will open the script extender download page where you can download it directly into Vortex or through your browser. Please ensure you select the correct build for your game version. " +
-                "\n\nIf you ignore this message, Vortex will not remind you again until you restart it.",
+                "mORTEX has detected a newer version of {{name}} ({{latest}}) available to download from {{website}}. You currently have version {{current}} installed." +
+                "\nThe buttons below will open the script extender download page where you can download it directly into mORTEX or through your browser. Please ensure you select the correct build for your game version. " +
+                "\n\nIf you ignore this message, mORTEX will not remind you again until you restart it.",
               parameters: {
                 name: gameSupportData.name,
                 latest,
@@ -151,9 +151,9 @@ export function notifyNotInstalled(gameSupportData: IGameSupport, api: types.IEx
             `{{name}} not found`,
             {
               text:
-                "Vortex could not detect {{name}}. This means it is either not installed or installed incorrectly." +
-                "\n\nFor the best modding experience, we recommend installing the script extender by visiting {{website}}, Vortex can open the download page using the options below." +
-                "\n\nIf you ignore this notice, Vortex will not remind you again until it is restarted.",
+                "mORTEX could not detect {{name}}. This means it is either not installed or installed incorrectly." +
+                "\n\nFor the best modding experience, we recommend installing the script extender by visiting {{website}}, mORTEX can open the download page using the options below." +
+                "\n\nIf you ignore this notice, mORTEX will not remind you again until it is restarted.",
               parameters: {
                 name: gameSupportData.name,
                 website: gameSupportData.website,
@@ -185,7 +185,7 @@ function dialogActions(
       },
     },
     {
-      label: "Open in Vortex",
+      label: "Open in mORTEX",
       action: () => {
         const instructions = t(
           "To install {{name}}, download the latest 7z archive for {{gameName}}.",

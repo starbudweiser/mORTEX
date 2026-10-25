@@ -203,7 +203,7 @@ class ExtensionsDashlet extends ComponentEx<IProps, IExtensionsDashletState> {
       this.context.api.emitAndAwait("install-extension", ext).then(() => {
         this.context.api.sendNotification({
           type: "success",
-          message: "Extension installed, please restart Vortex to enable it",
+          message: "Extension installed, please restart mORTEX to enable it",
           displayMS: 2000,
         });
       });

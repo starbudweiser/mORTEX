@@ -89,7 +89,7 @@ class SettingsUpdate extends ComponentEx<IProps, ISettingsUpdateState> {
       if (process.env.NODE_ENV !== "development") {
         return this.renderCallout(
           t(
-            "Vortex was installed through a third-party service which will take care of updating it.",
+            "mORTEX was installed through a third-party service which will take care of updating it.",
           ),
         );
       }
@@ -101,7 +101,7 @@ class SettingsUpdate extends ComponentEx<IProps, ISettingsUpdateState> {
     if (!updaterActive && process.env.NODE_ENV === "development") {
       return this.renderCallout(
         t(
-          "Updates are off in development mode. Set VORTEX_DEV_UPDATER=1 before starting Vortex to turn them on.",
+          "Updates are off in development mode. Set VORTEX_DEV_UPDATER=1 before starting mORTEX to turn them on.",
         ),
       );
     }
@@ -114,7 +114,7 @@ class SettingsUpdate extends ComponentEx<IProps, ISettingsUpdateState> {
             {process.env.NODE_ENV === "development"
               ? this.renderCallout(
                   t(
-                    "Vortex is running in development mode. Updates will be checked and downloaded but can't be installed.",
+                    "mORTEX is running in development mode. Updates will be checked and downloaded but can't be installed.",
                   ),
                 )
               : null}
@@ -159,8 +159,8 @@ class SettingsUpdate extends ComponentEx<IProps, ISettingsUpdateState> {
             {updateChannel === "none"
               ? this.renderCallout(
                   t(
-                    "Very old versions of Vortex will be locked out of network features eventually " +
-                      "so please do keep Vortex up-to-date.",
+                    "Very old versions of mORTEX will be locked out of network features eventually " +
+                      "so please do keep mORTEX up-to-date.",
                   ),
                   "warning",
                 )

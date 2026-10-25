@@ -228,7 +228,7 @@ class ProfileView extends ComponentEx<IProps, IViewState> {
     const desktopLocation = getVortexPath("desktop");
     const shortcutPath = path.join(
       desktopLocation,
-      `Start Vortex Profile_${profileId}(${profile.gameId}).lnk`,
+      `Start mORTEX Profile_${profileId}(${profile.gameId}).lnk`,
     );
 
     // In development, electron.exe needs the app directory as first argument
@@ -245,7 +245,7 @@ class ProfileView extends ComponentEx<IProps, IViewState> {
 
     const displayMS = 5000;
     const message = created
-      ? t("Vortex profile shortcut saved to desktop")
+      ? t("mORTEX profile shortcut saved to desktop")
       : t("Failed to save profile shortcut to desktop");
 
     const type = created ? "info" : "error";
@@ -369,14 +369,14 @@ class ProfileView extends ComponentEx<IProps, IViewState> {
     let confirmText =
       profileId === currentProfile
         ? 'You are trying to remove your currently active profile, "{{profileName}}". ' +
-          "This will result in Vortex exiting to the dashboard screen, with no active profile set. " +
+          "This will result in mORTEX exiting to the dashboard screen, with no active profile set. " +
           "Remove this profile? Note: the removed profile cannot be restored!"
         : 'Remove the profile "{{profileName}}"? This can\'t be undone!';
     confirmText =
       totalProfilesForGame === 1
         ? confirmText +
           " As this is your only profile for this game, removing it will unmanage the " +
-          "game within Vortex!"
+          "game within mORTEX!"
         : confirmText;
     onShowDialog(
       "question",

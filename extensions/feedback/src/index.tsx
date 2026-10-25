@@ -211,7 +211,7 @@ function nativeCrashCheck(api: types.IExtensionApi): Promise<void> {
                 title: "More",
                 action: (dismiss) => {
                   const bbcode =
-                    "The last session of Vortex logged an exception." +
+                    "The last session of mORTEX logged an exception." +
                     "<br/><br/>Please visit " +
                     `[url="${WHITESCREEN_THREAD}"]this thread[/url] ` +
                     "for typical reasons causing this.<br/>" +
@@ -246,7 +246,7 @@ function nativeCrashCheck(api: types.IExtensionApi): Promise<void> {
             api.sendNotification({
               type: "error",
               title: "Exception",
-              message: "Last Vortex session crashed",
+              message: "Last mORTEX session crashed",
               noDismiss: true,
               actions,
             });

@@ -25,7 +25,7 @@ export const AlertDemo = () => (
     <div>
       <Alert action={<Button brand="neutral">Find out more</Button>}>We suggest you do this</Alert>
 
-      <Alert action={<Button brand="neutral">Restart Vortex</Button>} severity="warning">
+      <Alert action={<Button brand="neutral">Restart mORTEX</Button>} severity="warning">
         You need to restart Vortex to apply changes
       </Alert>
 
@@ -93,7 +93,7 @@ export const AlertDemo = () => (
 
     <div>
       <Alert
-        action={<Button brand="neutral">Restart Vortex</Button>}
+        action={<Button brand="neutral">Restart mORTEX</Button>}
         severity="warning"
         onDismiss={() => undefined}
       >

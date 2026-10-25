@@ -105,9 +105,9 @@ export async function listPackage(api: types.IExtensionApi, pakPath: string): Pr
         "LSLib requires .NET 8 Desktop Runtime to be installed." +
           "[br][/br][br][/br]" +
           "[list=1][*]Download and Install [url=https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.3-windows-x64-installer].NET 8.0 Desktop Runtime from Microsoft[/url]" +
-          "[*]Close Vortex" +
+          "[*]Close mORTEX" +
           "[*]Restart Computer" +
-          "[*]Open Vortex[/list]",
+          "[*]Open mORTEX[/list]",
         { id: "bg3-dotnet-error", allowReport: false, isBBCode: true },
       );
     }

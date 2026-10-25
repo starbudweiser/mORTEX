@@ -462,14 +462,14 @@ class DownloadView extends ComponentEx<IDownloadViewProps, IComponentState> {
     } else if (err.code === "ERR_SSL_WRONG_VERSION_NUMBER") {
       this.props.onShowError(
         title,
-        "Vortex is pre-configured to meet the minimum required security protocol version " +
+        "mORTEX is pre-configured to meet the minimum required security protocol version " +
           "when connecting to the Nexus Mods servers. This error signifies that somewhere along the " +
           "network infrastructure your computer uses to connect to the servers, there " +
           "was a security protocol version mismatch, which can only happen if the infrastructure is using " +
           "outdated protocols - if you are connecting through a proxy server or via VPN, make " +
           "sure they support the latest security protocols (TLS 1.2 at a minimum). " +
           "If the issue persists - please contact our web development team directly as we " +
-          "(Vortex support) cannot assist you in this matter.",
+          "(mORTEX support) cannot assist you in this matter.",
         undefined,
         false,
       );
@@ -486,7 +486,7 @@ class DownloadView extends ComponentEx<IDownloadViewProps, IComponentState> {
           "the Nexus Mods servers (usually a temporary issue). If this is " +
           "happening consistently throughout an extensive period of time, " +
           "please report this to the Nexus Mods web team or support@nexusmods.com " +
-          "(NOT Vortex support).",
+          "(NOT mORTEX support).",
         { allowReport: false },
       );
     } else if (err.code === "CERT_HAS_EXPIRED") {
@@ -548,7 +548,7 @@ class DownloadView extends ComponentEx<IDownloadViewProps, IComponentState> {
       this.props.onShowError(
         title,
         "Failed to resume download. This may be caused by a misconfiguration on the server " +
-          "or Vortex doesn't support resume on this server configuration. " +
+          "or mORTEX doesn't support resume on this server configuration. " +
           "Apologies for the inconvenience.",
         undefined,
         false,
@@ -697,7 +697,7 @@ class DownloadView extends ComponentEx<IDownloadViewProps, IComponentState> {
             id: "logfile",
             type: "file",
             data: path.join(getVortexPath("userData"), "vortex.log"),
-            description: "Vortex Log",
+            description: "mORTEX Log",
           },
         ];
         const err = new Error(`Cannot find download path for ${internalGameId}`);

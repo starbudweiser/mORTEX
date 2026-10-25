@@ -66,13 +66,13 @@ export const FILENAME: types.ITableAttribute = {
 export const LOCAL: types.ITableAttribute<IModEntry> = {
   id: "local",
   name: "Duplicate",
-  description: "Whether the mod/archive is already managed by Vortex",
+  description: "Whether the mod/archive is already managed by mORTEX",
   icon: "level-up",
   customRenderer: (mod: IModEntry, detail: boolean, t: I18next.TFunction) => {
     return mod.isAlreadyManaged ? (
       <tooltip.Icon
         id={`import-duplicate-${mod.nexusId}`}
-        tooltip={t("This archive is already managed by Vortex")}
+        tooltip={t("This archive is already managed by mORTEX")}
         name="feedback-warning"
       />
     ) : null;

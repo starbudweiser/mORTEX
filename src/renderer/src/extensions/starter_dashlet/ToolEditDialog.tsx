@@ -325,17 +325,17 @@ export default function ToolEditDialog(props: IProps) {
                 {t("On Start")}
                 <More id="on-start" name={t("On Start behavior")}>
                   {t(
-                    "Use these options if you don't want to leave the Vortex window " +
+                    "Use these options if you don't want to leave the mORTEX window " +
                       "open while the game is running. In some games this may be necessary " +
                       "to avoid performance problems.\n\n" +
-                      'The "Close Vortex" option will close Vortex entirely, meaning it ' +
+                      'The "Close mORTEX" option will close mORTEX entirely, meaning it ' +
                       "will not use any system resources. This is not usually necessary.\n" +
-                      "The hide options will hide Vortex to the system tray so the window " +
+                      "The hide options will hide mORTEX to the system tray so the window " +
                       "isn't rendered at all.\n" +
-                      'With the "restore when closed" option the Vortex window will ' +
+                      'With the "restore when closed" option the mORTEX window will ' +
                       "automatically reappear. Please be aware that this option will not " +
                       'work correctly if you start the game via a "proxy", e.g. the script ' +
-                      "extenders for Elder Scrolls/Fallout games because Vortex will " +
+                      "extenders for Elder Scrolls/Fallout games because mORTEX will " +
                       "reappear as soon as the proxy closes.",
                   )}
                 </More>
@@ -349,11 +349,11 @@ export default function ToolEditDialog(props: IProps) {
                 onChange={setStartEvent}
               >
                 <ToggleButton value="nothing">{t("Nothing")}</ToggleButton>
-                <ToggleButton value="hide">{t("Hide Vortex")}</ToggleButton>
+                <ToggleButton value="hide">{t("Hide mORTEX")}</ToggleButton>
                 <ToggleButton value="hide_recover">
-                  {t("Hide Vortex, restore when closed")}
+                  {t("Hide mORTEX, restore when closed")}
                 </ToggleButton>
-                <ToggleButton value="close">{t("Close Vortex")}</ToggleButton>
+                <ToggleButton value="close">{t("Close mORTEX")}</ToggleButton>
               </ToggleButtonGroup>
             </Col>
           </FormGroup>
@@ -382,7 +382,7 @@ export default function ToolEditDialog(props: IProps) {
                 <More id="run-detached" name={t("Run detached")}>
                   {t(
                     "Run the tool as a detached process (default). When you disable this " +
-                      "the game/tool will run as a child process and thus if Vortex " +
+                      "the game/tool will run as a child process and thus if mORTEX " +
                       "quits, the tool will also be terminated.",
                   )}
                 </More>

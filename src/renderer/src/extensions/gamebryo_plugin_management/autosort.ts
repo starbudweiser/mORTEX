@@ -182,7 +182,7 @@ class LootInterface {
         {
           message: t(
             "This might be a temporary network error. " +
-              'If it persists, please delete "{{masterlistPath}}" to force Vortex to ' +
+              'If it persists, please delete "{{masterlistPath}}" to force mORTEX to ' +
               "download a new copy.",
             { replace: { masterlistPath: path.dirname(paths.masterlist) } },
           ),

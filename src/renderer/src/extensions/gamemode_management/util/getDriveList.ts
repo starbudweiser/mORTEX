@@ -14,7 +14,7 @@ function getDriveList(api: IExtensionApi): Promise<string[]> {
       "Failed to query list of system drives",
       {
         message:
-          "Vortex was not able to query the operating system for the list of system drives. " +
+          "mORTEX was not able to query the operating system for the list of system drives. " +
           "If this error persists, please configure the list manually.",
         error: err,
       },

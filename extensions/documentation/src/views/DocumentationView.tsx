@@ -161,9 +161,9 @@ class DocumentationView extends ComponentEx<IProps, IComponentState> {
       "External Link",
       {
         text:
-          "For your safety the knowledge base browser is limited to Vortex's GitHub wiki domain. " +
+          "For your safety the knowledge base browser is limited to mORTEX's GitHub wiki domain. " +
           "A link you've clicked lies outside this domain and can only be viewed in your regular " +
-          "browser - please ensure you trust the URL below before allowing Vortex to open that page " +
+          "browser - please ensure you trust the URL below before allowing mORTEX to open that page " +
           "in your default browser.",
         message: link,
       },

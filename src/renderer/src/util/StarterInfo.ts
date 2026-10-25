@@ -149,7 +149,7 @@ class StarterInfo implements IStarterInfo {
           const errorObj = allowReport
             ? err
             : {
-                message: "Report this to the community extension author, not Vortex support!",
+                message: "Report this to the community extension author, not mORTEX support!",
               };
           onShowError("Failed to determine if launcher is required", errorObj, allowReport);
           if (!allowReport) {

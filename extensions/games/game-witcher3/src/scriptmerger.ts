@@ -77,7 +77,7 @@ async function downloadConsent(api: types.IExtensionApi) {
         bbcode: api.translate(
           "Many Witcher 3 mods add or edit game scripts. When several mods " +
             "editing the same script are installed, these mods need to be merged using a tool " +
-            "called Witcher 3 Script Merger. Vortex can attempt to download and configure the merger " +
+            "called Witcher 3 Script Merger. mORTEX can attempt to download and configure the merger " +
             "for you automatically - before doing so - please ensure your account has full read/write permissions " +
             "to your game's directory. The script merger can be installed at a later point if you wish. [br][/br][br][/br]" +
             "[url=https://wiki.nexusmods.com/index.php/Tool_Setup:_Witcher_3_Script_Merger]find out more about the script merger.[/url][br][/br][br][/br]" +

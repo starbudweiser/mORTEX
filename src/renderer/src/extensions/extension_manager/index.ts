@@ -300,7 +300,7 @@ function checkMissingDependencies(
             if (results.some((success) => success)) {
               api.sendNotification({
                 type: "success",
-                message: "Missing dependencies were installed - please restart Vortex",
+                message: "Missing dependencies were installed - please restart mORTEX",
                 actions: [
                   {
                     title: "Restart now",
@@ -503,7 +503,7 @@ function init(context: IExtensionContext) {
         context.api.sendNotification({
           id: "extension-already-installed",
           type: "info",
-          message: "Vortex extension is already installed",
+          message: "mORTEX extension is already installed",
         });
 
         return false;
@@ -514,7 +514,7 @@ function init(context: IExtensionContext) {
         context.api.sendNotification({
           id: "not-an-extension",
           type: "warning",
-          title: "Archive not recognized as a Vortex extension.",
+          title: "Archive not recognized as a mORTEX extension.",
           message: "If this is a new extension it may not have been approved yet.",
         });
 

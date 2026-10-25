@@ -65,8 +65,8 @@ export const selectUDF = async (context: types.IExtensionContext) => {
       text:
         "The modding pattern for 7DTD is changing. The Mods path inside the game directory " +
         "is being deprecated and mods located in the old path will no longer work in the near " +
-        "future. Please select your User Data Folder (UDF) - Vortex will deploy to this new location. " +
-        "Please NEVER set your UDF path to Vortex's staging folder.",
+        "future. Please select your User Data Folder (UDF) - mORTEX will deploy to this new location. " +
+        "Please NEVER set your UDF path to mORTEX's staging folder.",
     },
     [{ label: "Cancel" }, { label: "Select UDF" }],
   );
@@ -95,7 +95,7 @@ export const selectUDF = async (context: types.IExtensionContext) => {
         "info",
         "Invalid User Data Folder",
         {
-          text: "The UDF cannot be set inside Vortex directories. Please select a different folder.",
+          text: "The UDF cannot be set inside mORTEX directories. Please select a different folder.",
         },
         [{ label: "Try Again" }],
       )

@@ -131,7 +131,7 @@ async function startDownload(
         "Select script extender version",
         {
           text: api.translate(
-            "Vortex could not automatically determine the correct version of {{name}} for your game. \n\n" +
+            "mORTEX could not automatically determine the correct version of {{name}} for your game. \n\n" +
               "You have {{title}} version {{version}} installed from {{store}}.\n\n" +
               "Please select the file you wish to download below.",
             {

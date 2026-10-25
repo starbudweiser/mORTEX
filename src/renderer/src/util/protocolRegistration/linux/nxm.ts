@@ -233,7 +233,7 @@ function ensureDevDesktopEntry(
   const desktopFileContent =
     "[Desktop Entry]\n" +
     "Type=Application\n" +
-    "Name=Vortex (dev build)\n" +
+    "Name=mORTEX (dev build)\n" +
     "GenericName=Mod Manager\n" +
     "Comment=Mod manager for PC games from Nexus Mods\n" +
     "NoDisplay=true\n" +

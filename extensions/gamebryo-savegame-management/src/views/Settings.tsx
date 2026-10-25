@@ -40,7 +40,7 @@ class Settings extends ComponentEx<IProps, {}> {
             {t("Monitor Savegame directory for changes")}
           </Toggle>
           <HelpBlock>
-            {t("If your games take very long to save when Vortex is running, try disabling this.")}
+            {t("If your games take very long to save when mORTEX is running, try disabling this.")}
           </HelpBlock>
         </FormGroup>
       </form>

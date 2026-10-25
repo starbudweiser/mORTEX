@@ -1361,7 +1361,7 @@ function processInstallError(
     const downloadExists = api.getState().persistent.downloads.files[downloadId] !== undefined;
     if (!downloadExists) {
       error["message"] =
-        "Vortex attempted to install a mod archive which is no longer available " +
+        "mORTEX attempted to install a mod archive which is no longer available " +
         "in its internal state - this usually happens if the archive was scheduled " +
         "to be installed but was removed before the installation was able to start.";
       error["archiveName"] = archiveName;
@@ -1939,8 +1939,8 @@ export function getUserInfo(
         nexus['disable']();
         api.sendNotification({
           type: 'warning',
-          title: 'Vortex outdated',
-          message: 'Your version of Vortex is quite outdated. Network features disabled.',
+          title: 'mORTEX outdated',
+          message: 'Your version of mORTEX is quite outdated. Network features disabled.',
           actions: [
             {
               title: 'Check for update', action: () => {

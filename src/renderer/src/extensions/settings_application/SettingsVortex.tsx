@@ -44,7 +44,7 @@ class SettingsVortex extends ComponentEx<IProps, IComponentState> {
       multiUser === oldMultiUser ? null : (
         <div className="flex items-center gap-x-4 rounded-lg border border-info-weak bg-info-950 p-3">
           <Typography brand="neutral-translucent" className="grow">
-            {t("You need to restart Vortex to activate this change")}
+            {t("You need to restart mORTEX to activate this change")}
           </Typography>
 
           <Button brand="neutral" onClick={this.restart}>

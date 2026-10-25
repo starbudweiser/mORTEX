@@ -509,8 +509,8 @@ class ImportDialog extends ComponentEx<IProps, IComponentState> {
         //  sign that something is blocking Vortex file operations.
         const errorMessage =
           err.code === "EPERM"
-            ? "Vortex does not have sufficient permissions to run file operations. " +
-              "Please ensure your user has full read/write permissions and/or that Vortex " +
+            ? "mORTEX does not have sufficient permissions to run file operations. " +
+              "Please ensure your user has full read/write permissions and/or that mORTEX " +
               "is not being blocked by your Anti-Virus and then try again."
             : err;
         this.context.api.showErrorNotification("Failed to start import process", errorMessage, {
@@ -656,13 +656,13 @@ class ImportDialog extends ComponentEx<IProps, IComponentState> {
       {
         id: "local",
         name: "Duplicate",
-        description: "Whether the mod is already managed by Vortex",
+        description: "Whether the mod is already managed by mORTEX",
         icon: "level-up",
         customRenderer: (mod: IModEntry, detail: boolean, t: I18next.TFunction) => {
           return mod.isAlreadyManaged ? (
             <tooltip.Icon
               id={`import-duplicate-${mod.nexusId}`}
-              tooltip={t("This mod is already managed by Vortex")}
+              tooltip={t("This mod is already managed by mORTEX")}
               name="feedback-warning"
             />
           ) : null;

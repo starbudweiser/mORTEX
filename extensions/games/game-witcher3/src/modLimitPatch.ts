@@ -87,9 +87,9 @@ export class ModLimitPatcher {
   public getLimitText(t: any) {
     return t(
       "Witcher 3 is restricted to 192 file handles which is quickly reached when " +
-        "adding mods (about ~25 mods) - Vortex has detected that the current mods environment may be " +
+        "adding mods (about ~25 mods) - mORTEX has detected that the current mods environment may be " +
         "breaching this limit; this issue will usually exhibit itself by the game failing to start up.{{bl}}" +
-        "Vortex can attempt to patch your game executable to increase the available file handles to 500 " +
+        "mORTEX can attempt to patch your game executable to increase the available file handles to 500 " +
         "which should cater for most if not all modding environments.{{bl}}Please note - the patch is applied as " +
         "a mod which will be generated and automatically enabled; to disable the patch, simply remove or disable " +
         'the "Witcher 3 Mod Limit Patcher" mod and the original game executable will be restored.',

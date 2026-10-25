@@ -9,7 +9,7 @@ function getText(id: string, t: TFunction) {
           "caps the speed per download request it can be faster to " +
           "do multiple requests at once (either to different files or to " +
           "multiple chunks of the same file).\n\n" +
-          "Vortex supports loading files in chunks so even if " +
+          "mORTEX supports loading files in chunks so even if " +
           "you increase the number of threads that doesn't mean more than one file " +
           "gets loaded, we try to get individual files as fast as possible so " +
           "you can start installing.\n\n" +

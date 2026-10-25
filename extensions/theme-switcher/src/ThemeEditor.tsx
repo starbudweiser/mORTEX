@@ -292,7 +292,7 @@ class ThemeEditor extends ComponentEx<IProps, IComponentState> {
               <More id="more-system-fonts" name={t("System Fonts")}>
                 {t(
                   "Makes all system fonts installed on the system available in the Font dropdowns. " +
-                    "This function seems to cause Vortex to crash for a very small number " +
+                    "This function seems to cause mORTEX to crash for a very small number " +
                     "of users and we have not been able to identify what sets the " +
                     "affected systems apart yet.",
                 )}

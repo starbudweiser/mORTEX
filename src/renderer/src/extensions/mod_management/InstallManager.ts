@@ -1900,7 +1900,7 @@ class InstallManager {
                       const err = unknownToError(innerErr);
                       installContext.reportError(
                         'Failed to clean up installation directory "{{destinationPath}}", ' +
-                          "please close Vortex and remove it manually.",
+                          "please close mORTEX and remove it manually.",
                         err,
                         getErrorCode(err) !== "ENOTEMPTY",
                         { destinationPath },
@@ -2015,7 +2015,7 @@ class InstallManager {
                     installContext.reportError(
                       "Installation failed",
                       "Module failed to load:\n{{message}}{{location}}\n\n" +
-                        "This usually indicates that the Vortex installation has been " +
+                        "This usually indicates that the mORTEX installation has been " +
                         "corrupted or an external application (like an Anti-Virus) has interfered with " +
                         "the loading of the module. " +
                         "Please check whether your AV reported something and try reinstalling Vortex.",
@@ -2058,7 +2058,7 @@ class InstallManager {
                             "party application you have installed on your system named " +
                             '"Browser Assistant". This application inserts itself globally ' +
                             "and breaks any other application that uses the same libraries as it does.\n\n" +
-                            'To use Vortex, please uninstall "Browser Assistant".';
+                            'To use mORTEX, please uninstall "Browser Assistant".';
                           const errorMessage = typeof err === "string" ? err : errObj.message;
                           let allowReport: boolean;
                           if (errObj.message.includes("No compatible .NET installation")) {
@@ -5833,8 +5833,8 @@ class InstallManager {
               {
                 text:
                   'The mod "{{modName}}" has a dependency on "{{refName}}" which ' +
-                  "Vortex is not able to fulfill automatically.\n\n" +
-                  "Very likely Vortex would also not recognize the rule as " +
+                  "mORTEX is not able to fulfill automatically.\n\n" +
+                  "Very likely mORTEX would also not recognize the rule as " +
                   "fulfilled even if you did install it manually. Therefore the rule " +
                   "has been disabled.\n\n" +
                   "Please consult the mod instructions on if and how to solve this dependency.",

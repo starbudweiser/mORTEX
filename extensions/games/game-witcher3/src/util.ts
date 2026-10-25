@@ -152,7 +152,7 @@ export function notifyMissingScriptMerger(api, force: boolean = false) {
             {
               bbcode:
                 api.translate(
-                  "Vortex is unable to resolve the Script Merger's location. The tool needs to be downloaded and configured manually. " +
+                  "mORTEX is unable to resolve the Script Merger's location. The tool needs to be downloaded and configured manually. " +
                     "[url=https://wiki.nexusmods.com/index.php/Tool_Setup:_Witcher_3_Script_Merger]Find out more about how to configure it as a tool for use in Vortex.[/url][br][/br][br][/br]" +
                     "Note: While script merging works well with the vast majority of mods, there is no guarantee for a satisfying outcome in every single case.",
                   { ns: I18N_NAMESPACE },

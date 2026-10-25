@@ -523,7 +523,7 @@ export class GameModeManager {
               {
                 text:
                   "The mod directory for this game is not writable to your user account.\n" +
-                  "If you have admin rights on this system, Vortex can change the permissions " +
+                  "If you have admin rights on this system, mORTEX can change the permissions " +
                   "to allow it write access.",
               },
               [

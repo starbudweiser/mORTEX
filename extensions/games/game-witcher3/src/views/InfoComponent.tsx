@@ -65,7 +65,7 @@ export default function InfoComponent(props: InfoComponentProps) {
           </li>
           <li>
             {t(
-              "When managing menu mods, mod settings changed inside the game will be detected by Vortex as external changes - that is expected, " +
+              "When managing menu mods, mod settings changed inside the game will be detected by mORTEX as external changes - that is expected, " +
                 "choose to use the newer file and your settings will be made persistent.",
               { ns: I18N_NAMESPACE },
             )}

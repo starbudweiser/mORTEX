@@ -87,14 +87,14 @@ export const SwitchFieldDemo = () => {
       >
         <SwitchField
           checked={enabled}
-          hints="Checks for updates when Vortex starts"
+          hints="Checks for updates when mORTEX starts"
           label="One hint"
           onChange={setEnabled}
         />
 
         <SwitchField
           defaultChecked
-          hints={["Checks for updates when Vortex starts", "Never installs without asking"]}
+          hints={["Checks for updates when mORTEX starts", "Never installs without asking"]}
           label="Several hints"
         />
 

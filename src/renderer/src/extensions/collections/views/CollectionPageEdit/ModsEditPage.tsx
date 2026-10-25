@@ -245,8 +245,8 @@ class ModsEditPage extends ComponentEx<IProps, IModsPageState> {
             "Version Match",
             {
               text:
-                "Please choose how Vortex should choose the version of the mod to be installed. " +
-                '"Exact" means that Vortex should install the same version as you have ' +
+                "Please choose how mORTEX should choose the version of the mod to be installed. " +
+                '"Exact" means that mORTEX should install the same version as you have ' +
                 'installed right now. "Latest" means it should get the newest version at ' +
                 "the time of installation.",
               choices: [
@@ -717,7 +717,7 @@ class ModsEditPage extends ComponentEx<IProps, IModsPageState> {
         help:
           'If set to "Fresh Install" the mod will simply be installed fresh on the user\'s system, ' +
           "installer (if applicable) and everything.\n" +
-          'If set to "Replicate" Vortex will try to replicate your exact setup for this mod. ' +
+          'If set to "Replicate" mORTEX will try to replicate your exact setup for this mod. ' +
           "This does not bundle the mod itself but the list of files to install and patches if " +
           "necessary. This may increase the size of the collection and the time it takes to " +
           "export it considerably.",
@@ -843,7 +843,7 @@ class ModsEditPage extends ComponentEx<IProps, IModsPageState> {
                   "Save Local Edits",
                   {
                     bbcode:
-                      "With this option enabled, when you upload the Collection Vortex will " +
+                      "With this option enabled, when you upload the Collection mORTEX will " +
                       "compare your files on disk against the archive provided by the mod author " +
                       "and include patches so that any modifications get replicated when a user " +
                       "installs your collection.\n" +
@@ -1011,7 +1011,7 @@ class ModsEditPage extends ComponentEx<IProps, IModsPageState> {
 
           <p>
             {t(
-              'Install: "Fresh Install" will install the mod as Vortex would usually do, ' +
+              'Install: "Fresh Install" will install the mod as mORTEX would usually do, ' +
                 'installer dialog and everything. "Replicate" will extract only the files you have ' +
                 "extracted yourself, in exactly the same location. This basically ensures the user " +
                 "gets the same options as you without having to pick them but it only works when you " +
@@ -1106,7 +1106,7 @@ class ModsEditPage extends ComponentEx<IProps, IModsPageState> {
         summary: t("Missing file identifiers"),
         message: t(
           'When using "Nexus Mods" as a source, both the mod ID and file ID have to be ' +
-            "known. If you didn't download the mod through Vortex they may not be set. " +
+            "known. If you didn't download the mod through mORTEX they may not be set. " +
             'To solve this you have to change the source of the mod to "Nexus Mods" ' +
             'and use the sidebar options below "Nexus Mods IDs" to fill in the ' +
             "missing data (the automated options should be quite reliable).",
@@ -1240,7 +1240,7 @@ class ModsEditPage extends ComponentEx<IProps, IModsPageState> {
         message: t(
           "The installer choices for this mod haven't been saved. " +
             "This currently only works with xml-based fomods installed with " +
-            "Vortex 1.5.0 or later. " +
+            "mORTEX 1.5.0 or later. " +
             "You may have to reinstall the mod for this to work.",
         ),
       });
@@ -1340,12 +1340,12 @@ class ModsEditPage extends ComponentEx<IProps, IModsPageState> {
           "Installation Phase",
           {
             text:
-              "When installing your collection Vortex will process installation phases " +
+              "When installing your collection mORTEX will process installation phases " +
               "one by one and ensure all mods from a given phase are both " +
               "installed and deployed before continuing to the next phase. " +
               "That way, mods that require other mods being present can be set to " +
               "install after their requirements by being put in different phases.\n" +
-              "Please note that Vortex will need to deploy after each phase which will " +
+              "Please note that mORTEX will need to deploy after each phase which will " +
               "slow down the installation process. " +
               "It is advised to only utilise this feature when necessary.",
             checkboxes: [

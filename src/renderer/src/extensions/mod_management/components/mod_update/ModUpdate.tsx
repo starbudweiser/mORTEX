@@ -92,12 +92,12 @@ export const ModUpdate = ({ mod, details = modUpdateDetails(mod) }: IModUpdatePr
       attributes.source === undefined
         ? [
             t("Mod source unknown"),
-            t("Vortex doesn't know where this mod came from, so it can't check for updates."),
+            t("mORTEX doesn't know where this mod came from, so it can't check for updates."),
           ]
         : [
             t("Mod not identified"),
             t(
-              "Vortex can't identify this mod, so some features, including checking for " +
+              "mORTEX can't identify this mod, so some features, including checking for " +
                 "updates and adding it to Collections, won't work.",
             ),
           ];
@@ -140,7 +140,7 @@ export const ModUpdate = ({ mod, details = modUpdateDetails(mod) }: IModUpdatePr
         <Tooltip
           customContent={
             <TitledTooltip
-              body={t("Vortex can't determine the correct update automatically.")}
+              body={t("mORTEX can't determine the correct update automatically.")}
               title={t("Choose update file")}
             />
           }
@@ -148,7 +148,7 @@ export const ModUpdate = ({ mod, details = modUpdateDetails(mod) }: IModUpdatePr
         >
           <Button
             appearance="moderate"
-            aria-description={t("Vortex can't determine the correct update automatically.")}
+            aria-description={t("mORTEX can't determine the correct update automatically.")}
             aria-label={t("Choose update file")}
             brand="info"
             leftIcon="unknown_document"

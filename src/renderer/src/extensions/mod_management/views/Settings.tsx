@@ -357,7 +357,7 @@ class Settings extends ComponentEx<IProps, IComponentState> {
                     "Missing staging folder",
                     {
                       bbcode:
-                        "Vortex is unable to find your current mods staging folder. " +
+                        "mORTEX is unable to find your current mods staging folder. " +
                         "This can happen when: <br />" +
                         "1. You or an external application removed this folder.<br />" +
                         "2. Your HDD/removable drive became faulty or unseated.<br />" +
@@ -365,8 +365,8 @@ class Settings extends ComponentEx<IProps, IComponentState> {
                         "disconnected for some reason.<br /><br />" +
                         "Please diagnose your system and ensure that the source folder is detectable " +
                         "by your operating system.<br /><br />" +
-                        'Alternatively, if you want to force Vortex to "re-initialize" your staging ' +
-                        "folder at the destination you have chosen, Vortex can do this for you but " +
+                        'Alternatively, if you want to force mORTEX to "re-initialize" your staging ' +
+                        "folder at the destination you have chosen, mORTEX can do this for you but " +
                         "note that the folder will be empty as nothing will be transferred inside it!",
                     },
                     [{ label: "Cancel" }, { label: "Reinitialize" }],
@@ -455,7 +455,7 @@ class Settings extends ComponentEx<IProps, IComponentState> {
         {
           text:
             "You have selected an invalid location for your staging folder " +
-            "It would become impossible for Vortex to move your staging folder " +
+            "It would become impossible for mORTEX to move your staging folder " +
             "anywhere else without attempting to move the entire contents of the " +
             "selected directory alongside it.",
         },
@@ -631,14 +631,14 @@ class Settings extends ComponentEx<IProps, IComponentState> {
             //  issue (depending on the user's setup).
             onShowError(
               "File operations interrupted",
-              "Input/Output file operations have been interrupted. This is not a bug in Vortex, " +
+              "Input/Output file operations have been interrupted. This is not a bug in mORTEX, " +
                 "but rather a problem with your environment!<br /><br />" +
                 "Possible reasons behind this issue:<br />" +
                 "1. Your HDD/Removable drive has become unseated during transfer.<br />" +
                 "2. File operations were running on a network drive and said drive has become " +
                 "disconnected for some reason (Network hiccup?)<br />" +
                 "3. An overzealous third party tool (possibly Anti-Virus or virus) " +
-                "which is blocking Vortex from completing its operations.<br />" +
+                "which is blocking mORTEX from completing its operations.<br />" +
                 "4. A faulty HDD/Removable drive.<br /><br />" +
                 "Please test your environment and try again once you've confirmed it's fixed.",
               false,
@@ -649,8 +649,8 @@ class Settings extends ComponentEx<IProps, IComponentState> {
             onShowError(
               "Failed to move directories",
               t(
-                "Vortex has encountered a corrupted and unreadable file/directory " +
-                  "and is unable to complete the transfer. Vortex was attempting " +
+                "mORTEX has encountered a corrupted and unreadable file/directory " +
+                  "and is unable to complete the transfer. mORTEX was attempting " +
                   'to move the following file/directory: "{{culprit}}" when your operating system ' +
                   "raised the error. Please test your environment and try again once you've confirmed it's fixed.",
                 { replace: { culprit: err.path } },
@@ -686,7 +686,7 @@ class Settings extends ComponentEx<IProps, IComponentState> {
               } else if (err.code === "EPERM") {
                 onShowError(
                   "Destination folder is not writable",
-                  "Vortex is unable to clean up " +
+                  "mORTEX is unable to clean up " +
                     "the destination folder due to a permissions issue.",
                   false,
                 );
@@ -741,11 +741,11 @@ class Settings extends ComponentEx<IProps, IComponentState> {
                 "Confirm",
                 {
                   text:
-                    "This is an existing staging folder for a different Vortex " +
-                    'instance. If you\'re using Vortex in "shared" and "regular" mode, do not use ' +
+                    "This is an existing staging folder for a different mORTEX " +
+                    'instance. If you\'re using mORTEX in "shared" and "regular" mode, do not use ' +
                     "the same staging folder for both!\n" +
                     "If you continue, your current mods will be merged into that staging folder and " +
-                    "this Vortex instance will take over the staging folder.\n" +
+                    "this mORTEX instance will take over the staging folder.\n" +
                     'There is no "undo" for this! ' +
                     "Please continue only if you're absolutely certain.",
                 },
@@ -831,7 +831,7 @@ class Settings extends ComponentEx<IProps, IComponentState> {
               text:
                 "Previous deployment couldn't be cleaned up because the deployment method is no " +
                 "longer available (maybe you removed the corresponding extension?). " +
-                "If you continue now you may get orphaned files that Vortex can no longer clean up " +
+                "If you continue now you may get orphaned files that mORTEX can no longer clean up " +
                 "for you.\n",
             },
             [{ label: "Cancel" }, { label: "Continue" }],
@@ -911,7 +911,7 @@ class Settings extends ComponentEx<IProps, IComponentState> {
       if (normalizedInput === normalizedDownloadsPath || isChildPath(input, downPath)) {
         return {
           state: "error",
-          reason: "Staging folder can't be a subdirectory of the Vortex downloads folder.",
+          reason: "Staging folder can't be a subdirectory of the mORTEX downloads folder.",
         };
       }
     }
@@ -926,7 +926,7 @@ class Settings extends ComponentEx<IProps, IComponentState> {
     if (appPath !== undefined && isChildPath(input, appPath)) {
       return {
         state: "error",
-        reason: "Staging folder can't be a subdirectory of the Vortex application folder.",
+        reason: "Staging folder can't be a subdirectory of the mORTEX application folder.",
       };
     }
 

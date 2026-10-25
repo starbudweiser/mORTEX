@@ -234,7 +234,7 @@ class FeedbackPage extends ComponentEx<IProps, IComponentState> {
             <Alert bsStyle="warning">
               {t(
                 "Please understand that this is only for feedback for the " +
-                  '"Vortex" application, all feedback regarding the website ' +
+                  '"mORTEX" application, all feedback regarding the website ' +
                   '"Nexus Mods" will be ignored.',
               )}
             </Alert>
@@ -272,7 +272,7 @@ class FeedbackPage extends ComponentEx<IProps, IComponentState> {
         <h2>{t("Provide Feedback")}</h2>
         <EmptyPlaceholder
           icon="auto-update"
-          text={t("Vortex outdated")}
+          text={t("mORTEX outdated")}
           fill={true}
           subtext={t(
             "Sorry, due to large amount of feedback we receive we can't accept feedback " +
@@ -468,7 +468,7 @@ class FeedbackPage extends ComponentEx<IProps, IComponentState> {
         <Alert bsStyle="warning">
           <div>
             {t(
-              "Vortex does not impose any speed limitations on downloads, " +
+              "mORTEX does not impose any speed limitations on downloads, " +
                 "that's handled by the server.",
             )}
           </div>
@@ -485,7 +485,7 @@ class FeedbackPage extends ComponentEx<IProps, IComponentState> {
       return (
         <Alert bsStyle="warning">
           {t(
-            "Please make sure you've read the login instructions in Vortex, on the authorisation " +
+            "Please make sure you've read the login instructions in mORTEX, on the authorisation " +
               "page and consulted the knowledge base before reporting login issues.",
           )}
         </Alert>
@@ -698,8 +698,8 @@ class FeedbackPage extends ComponentEx<IProps, IComponentState> {
         onSelect={this.attach}
         dropup
       >
-        <MenuItem eventKey="log">{t("Vortex Log")}</MenuItem>
-        <MenuItem eventKey="netlog">{t("Vortex Network Log")}</MenuItem>
+        <MenuItem eventKey="log">{t("mORTEX Log")}</MenuItem>
+        <MenuItem eventKey="netlog">{t("mORTEX Network Log")}</MenuItem>
         <MenuItem eventKey="settings">{t("Application Settings")}</MenuItem>
         <MenuItem eventKey="state">{t("Application State")}</MenuItem>
         <MenuItem eventKey="actions">{t("Recent State Changes")}</MenuItem>
@@ -775,7 +775,7 @@ class FeedbackPage extends ComponentEx<IProps, IComponentState> {
           t("Confirm"),
           {
             message: t(
-              "This will attach your Vortex setting to the report, not including " +
+              "This will attach your mORTEX setting to the report, not including " +
                 "confidential data like usernames and passwords. " +
                 "We have no control over what third-party extensions store in settings though.",
             ),
@@ -786,7 +786,7 @@ class FeedbackPage extends ComponentEx<IProps, IComponentState> {
             {
               label: "Continue",
               action: () => {
-                this.attachState("settings", "Vortex Settings");
+                this.attachState("settings", "mORTEX Settings");
               },
             },
           ],
@@ -799,7 +799,7 @@ class FeedbackPage extends ComponentEx<IProps, IComponentState> {
           t("Confirm"),
           {
             message: t(
-              "This will attach your Vortex state to the report. This includes information about " +
+              "This will attach your mORTEX state to the report. This includes information about " +
                 "things like your downloaded and installed mods, games, profiles and categories. " +
                 "These could be very useful for understanding your feedback but you have " +
                 "to decide if you are willing to share this information. " +
@@ -812,7 +812,7 @@ class FeedbackPage extends ComponentEx<IProps, IComponentState> {
             {
               label: "Continue",
               action: () => {
-                this.attachState("persistent", "Vortex State");
+                this.attachState("persistent", "mORTEX State");
               },
             },
           ],
@@ -824,7 +824,7 @@ class FeedbackPage extends ComponentEx<IProps, IComponentState> {
 
   private systemInfo() {
     return [
-      "Vortex Version: " + util["getApplication"]().version,
+      "mORTEX Version: " + util["getApplication"]().version,
       "Memory: " + util.bytesToString((process as any).getSystemMemoryInfo().total * 1024),
       "System: " +
         `${util.getApplication()["platform"]} ${process.arch} (${util.getApplication()["platformVersion"]})`,

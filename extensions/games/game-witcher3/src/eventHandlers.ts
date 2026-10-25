@@ -69,7 +69,7 @@ function notifyRemasterOnce(api: types.IExtensionApi) {
                 "• Script mods built for earlier versions may fail to compile. Map, map pin, " +
                 "Gwent and loot interface mods are the most affected.[br][/br][br][/br]" +
                 "• The game can now switch off locally installed mods by itself. If nothing " +
-                "loads, check the mod settings in game or run Vortex's health checks.[br][/br][br][/br]" +
+                "loads, check the mod settings in game or run mORTEX's health checks.[br][/br][br][/br]" +
                 "• Mod folder names longer than 63 characters are ignored by the game.[br][/br][br][/br]" +
                 "• DirectX 11 has been removed, so DirectX 11 only tools will not run.",
             },

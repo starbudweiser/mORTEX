@@ -340,7 +340,7 @@ class Settings extends ComponentEx<IProps, IComponentState> {
     if (isChildPath(input, getVortexPath("application"))) {
       return {
         state: "error",
-        reason: "Download folder can't be a subdirectory of the Vortex application folder.",
+        reason: "Download folder can't be a subdirectory of the mORTEX application folder.",
       };
     }
 
@@ -461,7 +461,7 @@ class Settings extends ComponentEx<IProps, IComponentState> {
         {
           text:
             "You have selected an invalid path for your downloads folder. " +
-            "It would become impossible for Vortex to move your downloads folder " +
+            "It would become impossible for mORTEX to move your downloads folder " +
             "anywhere else without attempting to move the entire contents of the " +
             "selected directory alongside it.",
         },
@@ -591,14 +591,14 @@ class Settings extends ComponentEx<IProps, IComponentState> {
                 //  issue (depending on the user's setup).
                 onShowError(
                   "File operations interrupted",
-                  "Input/Output file operations have been interrupted. This is not a bug in Vortex, " +
+                  "Input/Output file operations have been interrupted. This is not a bug in mORTEX, " +
                     "but rather a problem with your environment!<br /><br />" +
                     "Possible reasons behind this issue:<br />" +
                     "1. Your HDD/Removable drive has become unseated during transfer.<br />" +
                     "2. File operations were running on a network drive and said drive has become " +
                     "disconnected for some reason (Network hiccup?)<br />" +
                     "3. An overzealous third party tool (possibly Anti-Virus or virus) " +
-                    "which is blocking Vortex from completing its operations.<br />" +
+                    "which is blocking mORTEX from completing its operations.<br />" +
                     "4. A faulty HDD/Removable drive.<br /><br />" +
                     "Please test your environment and try again once you've confirmed it's fixed.",
                   false,
@@ -609,8 +609,8 @@ class Settings extends ComponentEx<IProps, IComponentState> {
                 onShowError(
                   "Failed to move directories",
                   t(
-                    "Vortex has encountered a corrupted and unreadable file/directory " +
-                      "and is unable to complete the transfer. Vortex was attempting " +
+                    "mORTEX has encountered a corrupted and unreadable file/directory " +
+                      "and is unable to complete the transfer. mORTEX was attempting " +
                       'to move the following file/directory: "{{culprit}}" when your operating system ' +
                       "raised the error. Please test your environment and try again once you've confirmed it's fixed.",
                     { replace: { culprit: err.path } },
@@ -651,7 +651,7 @@ class Settings extends ComponentEx<IProps, IComponentState> {
                   } else if (err.code === "EPERM") {
                     onShowError(
                       "Destination folder is not writable",
-                      "Vortex is unable to clean up " +
+                      "mORTEX is unable to clean up " +
                         "the destination folder due to a permissions issue.",
                       false,
                     );
@@ -675,7 +675,7 @@ class Settings extends ComponentEx<IProps, IComponentState> {
       {
         text:
           "This directory is not writable to the current windows user account. " +
-          "Vortex can try to create the directory as administrator but it will " +
+          "mORTEX can try to create the directory as administrator but it will " +
           "then have to give access to it to all logged in users.",
       },
       [{ label: "Cancel" }, { label: "Create as Administrator" }],
@@ -725,11 +725,11 @@ class Settings extends ComponentEx<IProps, IComponentState> {
                 "Confirm",
                 {
                   text:
-                    "This is an existing download folder for a different Vortex " +
-                    'instance. If you\'re using Vortex in "shared" and "regular" mode, do not use ' +
+                    "This is an existing download folder for a different mORTEX " +
+                    'instance. If you\'re using mORTEX in "shared" and "regular" mode, do not use ' +
                     "the same download folder for both!\n" +
                     "If you continue, your current downloads will be merged into that folder and " +
-                    "this Vortex instance will take over the download folder.\n" +
+                    "this mORTEX instance will take over the download folder.\n" +
                     'There is no "undo" for this! ' +
                     "Please continue only if you're absolutely certain.",
                 },
@@ -797,7 +797,7 @@ class Settings extends ComponentEx<IProps, IComponentState> {
                 "Missing downloads folder",
                 {
                   bbcode:
-                    "Vortex is unable to find your current downloads folder; " +
+                    "mORTEX is unable to find your current downloads folder; " +
                     "this can happen when: <br />" +
                     "1. You or an external application removed this folder.<br />" +
                     "2. Your HDD/removable drive became faulty or unseated.<br />" +
@@ -805,8 +805,8 @@ class Settings extends ComponentEx<IProps, IComponentState> {
                     "disconnected for some reason.<br /><br />" +
                     "Please diagnose your system and ensure that the downloads folder is detectable " +
                     "by your operating system.<br /><br />" +
-                    'Alternatively, if you want to force Vortex to "re-initialize" your downloads ' +
-                    "folder at the destination you have chosen, Vortex can do this for you but " +
+                    'Alternatively, if you want to force mORTEX to "re-initialize" your downloads ' +
+                    "folder at the destination you have chosen, mORTEX can do this for you but " +
                     "note that the folder will be empty as nothing will be transferred inside it!",
                 },
                 [{ label: "Cancel" }, { label: "Reinitialize" }],

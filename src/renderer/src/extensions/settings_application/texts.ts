@@ -5,7 +5,7 @@ function getText(id: string, t: TFunction) {
     case "multi-user":
       return t(
         'By default, every user account on your system has its own "instance" ' +
-          "of Vortex with their own settings, mods, profiles and so on." +
+          "of mORTEX with their own settings, mods, profiles and so on." +
           "\n\n" +
           "If you want to share these things between all users of your PC, you can toggle to " +
           '"Shared" mode. In this mode all data will be stored in a global location ' +

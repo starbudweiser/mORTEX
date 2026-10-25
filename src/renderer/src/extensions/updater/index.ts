@@ -104,7 +104,7 @@ function init(context: IExtensionContext): boolean {
         {
           htmlText: releaseNotes
             ? `<div class="changelog-dialog-release">${releaseNotes}</div>`
-            : "<p>A new version of Vortex is available.</p>",
+            : "<p>A new version of mORTEX is available.</p>",
         },
         [
           { label: "Close" },
@@ -152,7 +152,7 @@ function init(context: IExtensionContext): boolean {
       context.api.sendNotification({
         id: NOTIF_OFFER,
         type: "warning",
-        message: `Vortex ${version} is a downgrade and older than your current version`,
+        message: `mORTEX ${version} is a downgrade and older than your current version`,
         actions: [
           {
             title: "More",
@@ -223,7 +223,7 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
         context.api.sendNotification({
           id: NOTIF_UPDATED,
           type: "success",
-          message: `Vortex was updated to ${getApplication().version}`,
+          message: `mORTEX was updated to ${getApplication().version}`,
           actions: [
             {
               title: "View changes",
@@ -259,7 +259,7 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
             context.api.sendNotification({
               id: NOTIF_TOAST,
               type: "success",
-              message: `Vortex ${getApplication().version} is up to date`,
+              message: `mORTEX ${getApplication().version} is up to date`,
               displayMS: 5000,
             });
           }
@@ -291,7 +291,7 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
           context.api.sendNotification({
             id: NOTIF_UPDATE,
             type: "info",
-            message: `Vortex ${state.version} is available to download`,
+            message: `mORTEX ${state.version} is available to download`,
             actions: [
               {
                 title: "What's New",
@@ -346,8 +346,8 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
             type: "activity",
             message:
               state.percent != null
-                ? `${verb} Vortex ${state.version} (${state.percent}%)`
-                : `${verb} Vortex ${state.version}`,
+                ? `${verb} mORTEX ${state.version} (${state.percent}%)`
+                : `${verb} mORTEX ${state.version}`,
             progress: state.percent,
             // no buttons while the download runs; closing the notification is
             // the one control, and it cancels the download
@@ -374,7 +374,7 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
             context.api.sendNotification({
               id: NOTIF_UPDATE,
               type: "info",
-              message: `Vortex ${state.version} is ready to install`,
+              message: `mORTEX ${state.version} is ready to install`,
               actions: [
                 {
                   title: "What's New",
@@ -400,7 +400,7 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
             context.api.sendNotification({
               id: NOTIF_UPDATE,
               type: "info",
-              message: "Vortex will update on restart",
+              message: "mORTEX will update on restart",
               actions: [
                 {
                   title: "Restart Now",
@@ -424,14 +424,14 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
             context.api.sendNotification({
               id: NOTIF_ERROR,
               type: "error",
-              message: "Vortex update failed",
+              message: "mORTEX update failed",
               actions: [
                 {
                   title: "More",
                   action: () => {
                     void context.api.showDialog(
                       "error",
-                      "Vortex update failed",
+                      "mORTEX update failed",
                       { text: detail },
                       [{ label: "Close" }],
                       "update-error-dialog",
@@ -452,7 +452,7 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
             context.api.sendNotification({
               id: NOTIF_UPDATE,
               type: "info",
-              message: `Vortex ${retry.version} is available to download`,
+              message: `mORTEX ${retry.version} is available to download`,
               actions: [
                 {
                   title: "What's New",

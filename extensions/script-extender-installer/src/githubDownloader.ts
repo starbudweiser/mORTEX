@@ -88,9 +88,9 @@ async function notifyUpdate(
               "{{name}} Update",
               {
                 text:
-                  "Vortex has detected a newer version of {{name}} ({{latest}}) available to download from {{website}}. You currently have version {{current}} installed." +
+                  "mORTEX has detected a newer version of {{name}} ({{latest}}) available to download from {{website}}. You currently have version {{current}} installed." +
                   "\nVortex can download and attempt to install the new update for you." +
-                  "\n\nIf you ignore this message, Vortex will not remind you again until you restart it.",
+                  "\n\nIf you ignore this message, mORTEX will not remind you again until you restart it.",
                 parameters: {
                   name: gameSupport.name,
                   latest,

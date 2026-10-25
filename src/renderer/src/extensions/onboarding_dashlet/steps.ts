@@ -16,8 +16,8 @@ export const STEPS: IStep[] = [
     id: "add-mods",
   },
   {
-    title: "Using Profiles in Vortex",
-    desc: "Learn how to use Vortex profiles.",
+    title: "Using Profiles in mORTEX",
+    desc: "Learn how to use mORTEX profiles.",
     length: "1:23",
     img: "https://img.youtube.com/vi/tNfA0iZ7kgw/hqdefault.jpg",
     video: "https://www.youtube-nocookie.com/embed/tNfA0iZ7kgw",

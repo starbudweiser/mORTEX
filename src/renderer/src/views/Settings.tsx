@@ -153,7 +153,7 @@ export const Settings: React.FC<React.PropsWithChildren<{ active?: boolean; page
     <Page active={active} pageId={pageId} scrollable={false}>
       <PageHeader
         pictogramName="settings"
-        subtitle={t("Configure Vortex and manage your preferences.")}
+        subtitle={t("Configure mORTEX and manage your preferences.")}
         title={t("Settings")}
       />
 

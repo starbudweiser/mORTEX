@@ -114,7 +114,7 @@ class DiagnosticsFilesDialog extends ComponentEx<IProps, IComponentState> {
         body = (
           <Modal.Body id="diagnostics-files">
             <Jumbotron className="diagnostics-files-error">
-              {t("An error occurred loading Vortex logs.")}
+              {t("An error occurred loading mORTEX logs.")}
             </Jumbotron>
           </Modal.Body>
         );
@@ -280,7 +280,7 @@ class DiagnosticsFilesDialog extends ComponentEx<IProps, IComponentState> {
         );
       })
       .catch((err) => {
-        onShowError("Failed to read Vortex logs", err);
+        onShowError("Failed to read mORTEX logs", err);
       });
   }
 

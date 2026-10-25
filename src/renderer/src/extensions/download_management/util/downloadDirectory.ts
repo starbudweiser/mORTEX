@@ -39,8 +39,8 @@ export function writeDownloadsTag(api: IExtensionApi, tagPath: string): PromiseB
         "Reinitialize Tag",
         {
           text:
-            "Vortex expected the below filepath to lead to a file but found " +
-            "a directory instead - Vortex can try to re-initialize this file for you, " +
+            "mORTEX expected the below filepath to lead to a file but found " +
+            "a directory instead - mORTEX can try to re-initialize this file for you, " +
             "but we suggest you manually ensure it doesn't contain any files you may " +
             "need before proceeding.",
           message: path.join(tagPath, DOWNLOADS_DIR_TAG),
@@ -81,16 +81,16 @@ function queryDownloadFolderInvalid(
       {
         bbcode:
           'Your downloads folder "{{path}}" is not marked correctly. This may be ok ' +
-          "if you've updated from a very old version of Vortex and you can ignore this.<br/>" +
+          "if you've updated from a very old version of mORTEX and you can ignore this.<br/>" +
           "[b]However[/b], if you use a removable medium (network or USB drive) and that path " +
-          "does not actually point to your real Vortex download folder, you [b]have[/b] " +
-          "to make sure the actual folder is available and tell Vortex where it is.",
+          "does not actually point to your real mORTEX download folder, you [b]have[/b] " +
+          "to make sure the actual folder is available and tell mORTEX where it is.",
         message: err.message,
         parameters: {
           path: currentDownloadPath,
         },
       },
-      [{ label: "Quit Vortex" }, { label: "Ignore" }, { label: "Browse..." }],
+      [{ label: "Quit mORTEX" }, { label: "Ignore" }, { label: "Browse..." }],
     );
   }
   return api.showDialog(
@@ -110,7 +110,7 @@ function queryDownloadFolderInvalid(
         path: currentDownloadPath,
       },
     },
-    [{ label: "Quit Vortex" }, { label: "Reinitialize" }, { label: "Browse..." }],
+    [{ label: "Quit mORTEX" }, { label: "Reinitialize" }, { label: "Browse..." }],
   );
 }
 
@@ -127,8 +127,8 @@ function validateDownloadsTag(api: IExtensionApi, tagPath: string): PromiseBB<vo
             "Confirm",
             {
               text:
-                "This is a downloads folder but it appears to belong to a different Vortex " +
-                'instance. If you\'re using Vortex in shared and "regular" mode, do not use ' +
+                "This is a downloads folder but it appears to belong to a different mORTEX " +
+                'instance. If you\'re using mORTEX in shared and "regular" mode, do not use ' +
                 "the same downloads folder for both!",
             },
             [{ label: "Cancel" }, { label: "Continue" }],
@@ -192,7 +192,7 @@ export function ensureDownloadsDirectory(api: IExtensionApi): PromiseBB<void> {
       }
 
       return queryDownloadFolderInvalid(api, err, dirExists, currentDownloadPath).then((result) => {
-        if (result.action === "Quit Vortex") {
+        if (result.action === "Quit mORTEX") {
           getApplication().quit(0);
           return PromiseBB.reject(new UserCanceled());
         } else if (result.action === "Reinitialize") {

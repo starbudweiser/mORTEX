@@ -22,7 +22,7 @@ async function ensureWritable(api: IExtensionApi, modPath: string): Promise<void
         {
           text:
             "The mod folder for this game is not writable to your user account.\n" +
-            "If you have admin rights on this system, Vortex can change the permissions " +
+            "If you have admin rights on this system, mORTEX can change the permissions " +
             "to allow it write access.",
         },
         [{ label: "Cancel" }, { label: "Allow access" }],

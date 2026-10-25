@@ -73,7 +73,7 @@ export async function deserialize(context: types.IExtensionContext): Promise<Loa
           {
             bbcode: props.api.translate(
               "The load order file is in a corrupt state. You can try to fix it yourself " +
-                "or Vortex can regenerate the file for you, but that may result in loss of data " +
+                "or mORTEX can regenerate the file for you, but that may result in loss of data " +
                 "(Will only affect load order items you added manually, if any).",
             ),
           },

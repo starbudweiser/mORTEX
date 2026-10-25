@@ -245,7 +245,7 @@ class ReduxPersistorIPC {
       ) {
         terminate(
           new Error(
-            "There is not enough space on the disk. Vortex needs to quit now to " +
+            "There is not enough space on the disk. mORTEX needs to quit now to " +
               "ensure you're not losing further work. Please free up some space, " +
               "then restart Vortex.",
           ),

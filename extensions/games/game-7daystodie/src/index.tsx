@@ -255,7 +255,7 @@ function InfoPanel(props) {
       <hr />
       <div>
         {t(
-          "7 Days to Die loads mods in alphabetic order so Vortex prefixes " +
+          "7 Days to Die loads mods in alphabetic order so mORTEX prefixes " +
             'the directory names with "AAA, AAB, AAC, ..." to ensure they load in the order you set here.',
         )}
       </div>

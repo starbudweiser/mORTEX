@@ -56,7 +56,7 @@ class VersionIconButton extends ComponentEx<IProps, {}> {
     if (!valid) {
       if (mod.attributes?.source === undefined) {
         return t(
-          "This mod has no source assigned. The source tells Vortex where the mod " +
+          "This mod has no source assigned. The source tells mORTEX where the mod " +
             "came from and, if applicable, where to check for updates. " +
             'You can set the source to "Other" to disable this warning.',
         );

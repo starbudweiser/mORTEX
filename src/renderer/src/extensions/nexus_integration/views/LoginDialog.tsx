@@ -63,7 +63,7 @@ function LoginInProgress(props: ILoginInProgressProps) {
       <FormGroup>
         <ControlLabel>
           {t(
-            "Vortex should have opened the following url in your default browser. " +
+            "mORTEX should have opened the following url in your default browser. " +
               "If that failed, please copy the url into your browser manually.",
           )}
         </ControlLabel>
@@ -334,7 +334,7 @@ class LoginDialog extends ComponentEx<IProps, ILoginDialogState> {
       "question",
       "Login incomplete",
       {
-        text: "Vortex is not logged in yet, are you sure you wish to abort the login process?",
+        text: "mORTEX is not logged in yet, are you sure you wish to abort the login process?",
       },
       [
         { label: "Cancel" },

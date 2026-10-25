@@ -24,7 +24,7 @@ export default function CompatibilityIcon(props: ICompatibilityIconProps) {
         name="auto-update"
         tooltip={t(
           "SMAPI suggests updating this mod to {{update}}. " +
-            "Please use Vortex to check for mod updates",
+            "Please use mORTEX to check for mod updates",
           {
             replace: {
               update: mod.attributes?.compatibilityUpdate,

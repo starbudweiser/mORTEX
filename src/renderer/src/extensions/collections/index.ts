@@ -438,7 +438,7 @@ async function removeCollection(
     message,
     {
       text:
-        "This collection will be removed from Vortex and unlinked from any associated mods. " +
+        "This collection will be removed from mORTEX and unlinked from any associated mods. " +
         "You can also choose to uninstall mods related to this collection and delete the " +
         "downloaded archives.\n" +
         "\nPlease note, some mods may be required by multiple collections.\n" +

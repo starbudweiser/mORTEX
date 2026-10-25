@@ -34,16 +34,16 @@ function Settings(props: IProps) {
         <More id="fnis-setting" name={t("Running FNIS automatically")}>
           {useModernLayout
             ? t(
-                "Whenever you apply changes, Vortex checks whether any mods containing " +
+                "Whenever you apply changes, mORTEX checks whether any mods containing " +
                   "animations have changed. If necessary, it will run FNIS and create or update " +
                   'a mod named "FNIS Data". This mod contains the animations generated for your ' +
                   "current mod setup and should load after other mods containing animations. " +
-                  "Vortex should configure this automatically.\n\n" +
+                  "mORTEX should configure this automatically.\n\n" +
                   "Important: If FNIS reports an error, its window will remain open and applying " +
                   "your changes will pause until you close FNIS.",
               )
             : t(
-                "Any time you deploy, Vortex will check if any mod containing animations " +
+                "Any time you deploy, mORTEX will check if any mod containing animations " +
                   'has changed. If so, it will run FNIS and create or update a mod named "FNIS Data". ' +
                   "This mod contains the animations generated for your system based on your mod loadout " +
                   "and it is supposed to load after all mods containing animations. " +

@@ -145,7 +145,7 @@ function CompletedOnBoardingDashlet(props: { getMoreMods: () => {} }) {
     <Dashlet title="" className="dashlet-onboarding-completed">
       <div className="onboarding-completed-header">
         <h1>&#127881; {t("Congratulations, you've made it!")}</h1>
-        <h4>{t("Now you are all set up to enjoy Vortex and start modding!")}</h4>
+        <h4>{t("Now you are all set up to enjoy mORTEX and start modding!")}</h4>
       </div>
       <div className="onboarding-completed-body">
         <div className="onboarding-completed-body-button">

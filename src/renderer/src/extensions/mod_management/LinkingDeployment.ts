@@ -671,7 +671,7 @@ abstract class LinkingActivator implements IDeploymentMethod {
         log("debug", "created directory", createdPath);
         return fs.writeFileAsync(
           path.join(createdPath, LinkingActivator.NEW_TAG_NAME),
-          "This directory was created by Vortex deployment and will be removed " +
+          "This directory was created by mORTEX deployment and will be removed " +
             "during purging if it's empty",
         );
       } else {
@@ -996,20 +996,20 @@ abstract class LinkingActivator implements IDeploymentMethod {
                 "Confirm",
                 {
                   text:
-                    "Vortex is attempting to restore the below game file using " +
+                    "mORTEX is attempting to restore the below game file using " +
                     "a backup it generated during a deployment event, but the game " +
-                    "file appears to already exist - this usually happens when Vortex " +
+                    "file appears to already exist - this usually happens when mORTEX " +
                     "is used alongside other mod managers or when the user manipulates " +
                     "the game files manually.\n\n" +
-                    "If you choose to restore the Vortex backup, Vortex will erase " +
+                    "If you choose to restore the mORTEX backup, mORTEX will erase " +
                     "the existing file and restore the backup; alternatively you can " +
                     "choose to keep the existing file.",
                   message: targetPath,
                 },
-                [{ label: "Keep Existing File" }, { label: "Restore Vortex Backup" }],
+                [{ label: "Keep Existing File" }, { label: "Restore mORTEX Backup" }],
               )
               .then((res) =>
-                res.action === "Restore Vortex Backup"
+                res.action === "Restore mORTEX Backup"
                   ? fs.removeAsync(targetPath).then(() => this.restoreBackup(backupPath))
                   : fs.removeAsync(backupPath),
               );

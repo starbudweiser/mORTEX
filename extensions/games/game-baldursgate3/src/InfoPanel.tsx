@@ -131,7 +131,7 @@ function InfoPanel(props: any) {
       <h4 style={{ margin: 0 }}>{t("Import from Baldur's Gate 3 Mod Manager")}</h4>
       <div>
         {t(
-          "Vortex can sort your load order based on a BG3MM .json load order file. Any mods that are not installed through Vortex will be ignored.",
+          "mORTEX can sort your load order based on a BG3MM .json load order file. Any mods that are not installed through mORTEX will be ignored.",
         )}
       </div>
       <div>
@@ -145,8 +145,8 @@ function InfoPanel(props: any) {
       <h4 style={{ margin: 0 }}>{t("LSLib is not installed")}</h4>
       <div>
         {t(
-          "To take full advantage of Vortex's Baldur\s Gate 3 modding capabilities such as managing the " +
-            "order in which mods are loaded into the game; Vortex requires a 3rd party tool called LSLib.",
+          "To take full advantage of mORTEX's Baldur\s Gate 3 modding capabilities such as managing the " +
+            "order in which mods are loaded into the game; mORTEX requires a 3rd party tool called LSLib.",
         )}
       </div>
       <div>

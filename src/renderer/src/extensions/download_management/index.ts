@@ -330,7 +330,7 @@ function updateDownloadPath(api: IExtensionApi, gameId?: string) {
                 {
                   text:
                     "The download directory is not writable to your user account.\n" +
-                    "If you have admin rights on this system, Vortex can change the permissions " +
+                    "If you have admin rights on this system, mORTEX can change the permissions " +
                     "to allow it write access.",
                 },
                 [
@@ -452,7 +452,7 @@ function processInstallError(
     const downloadExists = api.getState().persistent.downloads.files[downloadId] !== undefined;
     if (!downloadExists) {
       error["message"] =
-        "Vortex attempted to install a mod archive which is no longer available " +
+        "mORTEX attempted to install a mod archive which is no longer available " +
         "in its internal state - this usually happens if the archive was scheduled " +
         "to be installed but was removed before the installation was able to start.";
       error["archiveName"] = archiveName;
@@ -655,7 +655,7 @@ async function browseAndDownload(
 ): Promise<void> {
   const instructions = api.translate(
     "This site delivers the file through your browser. Start the download on the page and " +
-      "Vortex will pick it up automatically.",
+      "mORTEX will pick it up automatically.",
   );
   const results: string[] = await api.emitAndAwait("browse-for-download", navUrl, instructions);
   const raw = (results ?? []).find(truthy);
@@ -687,7 +687,7 @@ function checkPendingTransfer(api: IExtensionApi): PromiseBB<ITestResult> {
       short: "Folder transfer was interrupted",
       long:
         "An attempt to move the download folder was interrupted. You should let " +
-        "Vortex clean up now, otherwise you may be left with unnecessary copies of files.",
+        "mORTEX clean up now, otherwise you may be left with unnecessary copies of files.",
     },
     automaticFix: () =>
       new PromiseBB<void>((fixResolve, fixReject) => {
@@ -732,7 +732,7 @@ const SHUTDOWN_DELAY_SEC = 30;
 
 function initiateShutdown() {
   if (process.platform === "win32") {
-    winapi.InitiateSystemShutdown("Vortex downloads finished", SHUTDOWN_DELAY_SEC, false, false);
+    winapi.InitiateSystemShutdown("mORTEX downloads finished", SHUTDOWN_DELAY_SEC, false, false);
     return;
   }
   shutdownTimer = setTimeout(() => {
@@ -813,7 +813,7 @@ function checkForUnfinalized(
     api.sendNotification({
       type: "error",
       title: "Some downloads were not finalized",
-      message: "Vortex may appear frozen for a moment while repairing this.",
+      message: "mORTEX may appear frozen for a moment while repairing this.",
       actions: [
         {
           title: "Repair",

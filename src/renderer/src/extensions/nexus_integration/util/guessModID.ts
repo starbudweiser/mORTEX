@@ -109,7 +109,7 @@ export function queryResetSource(api: IExtensionApi, gameId: string, mod: IMod) 
         text:
           "This mod wasn't found on the Nexus Mods servers, maybe it was modified? " +
           'To avoid warnings going forward you may want to change the "source" for ' +
-          "this mod so Vortex doesn't treat it as a Nexus Mods mod any more.",
+          "this mod so mORTEX doesn't treat it as a Nexus Mods mod any more.",
         options: {
           translated: true,
         },

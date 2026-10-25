@@ -29,7 +29,7 @@ export function registerLinuxProtocolHandler(options: IProtocolRegistrationOptio
   if (options.protocol !== NXM_PROTOCOL) {
     log(
       "warn",
-      "linux protocol registration not supported for non-nxm:// protocols (only Vortex nxm:// is currently supported)",
+      "linux protocol registration not supported for non-nxm:// protocols (only mORTEX nxm:// is currently supported)",
       {
         protocol: options.protocol,
         supportedProtocol: NXM_PROTOCOL,

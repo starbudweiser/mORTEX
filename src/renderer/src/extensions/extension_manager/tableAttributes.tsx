@@ -19,7 +19,7 @@ interface IAttributesContext {
 
 function renderLoadFailure(t: TFunction, fail: IExtensionLoadFailure) {
   if (fail.id === "unsupported-version") {
-    return t("Not compatible with this version of Vortex");
+    return t("Not compatible with this version of mORTEX");
   }
 
   if (fail.id === "unsupported-api") {

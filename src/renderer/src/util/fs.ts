@@ -228,8 +228,8 @@ function unlockConfirm(filePath: string): PromiseBB<boolean> {
 
   const baseMessage =
     processes.length === 0
-      ? `Vortex needs to access "${filePath}" but doesn't have permission to.`
-      : `Vortex needs to access "${filePath}" but it either has too restrictive ` +
+      ? `mORTEX needs to access "${filePath}" but doesn't have permission to.`
+      : `mORTEX needs to access "${filePath}" but it either has too restrictive ` +
         "permissions or is locked by another process.";
 
   const canElevate = process.platform === "win32" && processes.length === 0;
@@ -238,7 +238,7 @@ function unlockConfirm(filePath: string): PromiseBB<boolean> {
   const options: Electron.MessageBoxOptions = {
     title: "Access denied",
     message: canElevate
-      ? baseMessage + " If your account has admin rights Vortex can try to unlock the file for you."
+      ? baseMessage + " If your account has admin rights mORTEX can try to unlock the file for you."
       : baseMessage,
     detail:
       processes.length === 0
@@ -381,7 +381,7 @@ function busyRetry(filePath: string): PromiseBB<boolean> {
   const options: Electron.MessageBoxOptions = {
     title: "File busy",
     message:
-      `Vortex needs to access "${filePath}" but it's open in another application. ` +
+      `mORTEX needs to access "${filePath}" but it's open in another application. ` +
       "Please close the file in all other applications and then retry.",
     detail:
       processes.length > 0
@@ -1191,9 +1191,9 @@ function raiseUACDialog<T>(
   const options: Electron.MessageBoxOptions = {
     title: "Access denied (2)",
     message: t(
-      'Vortex needs to access "{{ fileName }}" but doesn\'t have permission to.' +
+      'mORTEX needs to access "{{ fileName }}" but doesn\'t have permission to.' +
         (canElevate
-          ? "\nIf your account has admin rights Vortex can unlock the file for you. " +
+          ? "\nIf your account has admin rights mORTEX can unlock the file for you. " +
             "Windows will show an UAC dialog."
           : ""),
       { replace: { fileName: fileToAccess } },

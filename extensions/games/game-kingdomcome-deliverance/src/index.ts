@@ -345,7 +345,7 @@ function LoadOrderBase(props) {
                   {},
                   props.t(
                     "Drag and drop the mods on the left to reorder them. Kingdom Come: Deliverance uses a mod_order.txt file " +
-                      "to define the order in which mods are loaded, Vortex will write the folder names of the displayed " +
+                      "to define the order in which mods are loaded, mORTEX will write the folder names of the displayed " +
                       "mods in the order you have set. " +
                       "Mods placed at the bottom of the load order will have priority over those above them.",
                     { ns: I18N_NAMESPACE },
@@ -355,8 +355,8 @@ function LoadOrderBase(props) {
                   "p",
                   {},
                   props.t(
-                    "Note: Vortex will detect manually added mods as long as these have been added to the mod_order.txt file. " +
-                      "Manually added mods are not managed by Vortex - to remove these, you will have to " +
+                    "Note: mORTEX will detect manually added mods as long as these have been added to the mod_order.txt file. " +
+                      "Manually added mods are not managed by mORTEX - to remove these, you will have to " +
                       "manually erase the entry from the mod_order.txt file.",
                     { ns: I18N_NAMESPACE },
                   ),

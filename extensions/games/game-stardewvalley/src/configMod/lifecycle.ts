@@ -129,7 +129,7 @@ async function createConfigMod(
     attributes: {
       name: "Stardew Valley Mod Configuration",
       description:
-        "This mod is a collective merge of SDV mod configuration files which Vortex maintains " +
+        "This mod is a collective merge of SDV mod configuration files which mORTEX maintains " +
         "for the mods you have installed. The configuration is maintained through mod updates, " +
         "but at times it may need to be manually updated",
       logicalFileName: "Stardew Valley Mod Configuration",

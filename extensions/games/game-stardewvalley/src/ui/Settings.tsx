@@ -59,7 +59,7 @@ export default function Settings(props: IBaseProps) {
 
               <More id="sdv_mod_configuration" name="SDV Mod Configuration">
                 {t(
-                  "Vortex by default is configured to attempt to pull-in newly created files (mod configuration json files for example) " +
+                  "mORTEX by default is configured to attempt to pull-in newly created files (mod configuration json files for example) " +
                     "created externally (by the game itself or tools) into their respective mod folders.\n\n" +
                     "Unfortunately the configuration files are lost during mod updates when using this method.\n\n" +
                     'Toggling this functionality creates a separate mod configuration "override" folder where all of your mod configuration files ' +

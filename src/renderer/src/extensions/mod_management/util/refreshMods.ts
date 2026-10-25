@@ -93,16 +93,16 @@ function refreshMods(
       }
 
       let bbcode = t(
-        "Mods have been changed on disk. This means that mods that were managed by Vortex " +
-          "disappeared and/or mods that Vortex previously didn't know about " +
+        "Mods have been changed on disk. This means that mods that were managed by mORTEX " +
+          "disappeared and/or mods that mORTEX previously didn't know about " +
           "appeared in the staging folder since the last time it checked.<br/>" +
-          "It is highly discouraged to modify the staging folder outside Vortex in any " +
+          "It is highly discouraged to modify the staging folder outside mORTEX in any " +
           "way!<br/>",
       );
 
       if (removedMods.length > 0) {
         bbcode += t(
-          "If you continue now, Vortex will lose all meta information about the deleted " +
+          "If you continue now, mORTEX will lose all meta information about the deleted " +
             "mods [b]irreversibly[/b]",
         );
       }
@@ -118,7 +118,7 @@ function refreshMods(
               translated: true,
             },
           },
-          [{ label: "Quit Vortex" }, { label: "Apply Changes" }],
+          [{ label: "Quit mORTEX" }, { label: "Apply Changes" }],
         )
         .then((res) => {
           if (res.action === "Apply Changes") {

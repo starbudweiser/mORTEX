@@ -284,13 +284,13 @@ export const ExtensionManager = ({
           <Alert
             action={
               <Button brand="neutral" size="sm" onClick={() => relaunch()}>
-                {t("Restart Vortex")}
+                {t("Restart mORTEX")}
               </Button>
             }
             className="shrink-0"
             severity="warning"
           >
-            {t("You need to restart Vortex to apply changes.")}
+            {t("You need to restart mORTEX to apply changes.")}
           </Alert>
         </PageContent>
       )}

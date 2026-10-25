@@ -372,7 +372,7 @@ class ExternalChangeDialog extends ComponentEx<IProps, IComponentState> {
               id: "logfile",
               type: "file",
               data: path.join(getVortexPath("userData"), "vortex.log"),
-              description: "Vortex Log",
+              description: "mORTEX Log",
             },
             {
               id: "events",

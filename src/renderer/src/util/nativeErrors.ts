@@ -25,7 +25,7 @@ export function decodeSystemError(err: Error, filePath: string): IDecoded | unde
         "a hardware problem. This may indicate the disk is defective, " +
         "if it's a network or cloud drive it may simply indicate " +
         "temporary network or server problems. " +
-        "Please do not report this to us, this is not a bug in Vortex " +
+        "Please do not report this to us, this is not a bug in mORTEX " +
         "and we can not provide remote assistance with hardware problems.",
       rethrowAs: "ENOENT",
     };

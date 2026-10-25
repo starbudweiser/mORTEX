@@ -72,7 +72,7 @@ class DefaultItemRenderer extends ComponentEx<IProps, {}> {
     const { t } = this.props;
     return (
       <div className="load-order-unmanaged-banner">
-        <span>{t("Not managed by Vortex")}</span>
+        <span>{t("Not managed by mORTEX")}</span>
         <Icon className="external-caution-logo" name="feedback-warning" />
       </div>
     );

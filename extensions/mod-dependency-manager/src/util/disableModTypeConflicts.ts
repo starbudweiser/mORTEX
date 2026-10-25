@@ -88,7 +88,7 @@ export async function disableModTypeConflictsDialog(api: types.IExtensionApi) {
           "If you proceed, and you have such conflicts, the external changes dialog will be raised " +
           "after each deployment/purge event until you manually remove the conflicting files or disable " +
           "the mods that are causing the conflict.[br][/br][br][/br]" +
-          "By default, Vortex will now clear any file overrides that were created to resolve cross-modtype conflicts. Please be aware " +
+          "By default, mORTEX will now clear any file overrides that were created to resolve cross-modtype conflicts. Please be aware " +
           "that ALL file overrides will be removed from the mods mentioned below. " +
           "Uncheck the box if you would rather keep these file overrides and manage them manually.",
       ),

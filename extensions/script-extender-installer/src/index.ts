@@ -190,7 +190,7 @@ async function testMissingScriptExtender(api: types.IExtensionApi): Promise<type
       description: {
         short: `${gameSupport.name} not installed`,
         long:
-          `Vortex could not detect "{{name}}". This means it is either not installed or installed incorrectly.\n\n` +
+          `mORTEX could not detect "{{name}}". This means it is either not installed or installed incorrectly.\n\n` +
           `For the best modding experience, we recommend downloading and installing the script extender.\n\n` +
           `You are running version {{version}} ({{store}}) of the game, please make sure you use the correct script extender version.`,
         replace: {
@@ -208,7 +208,7 @@ async function testMissingScriptExtender(api: types.IExtensionApi): Promise<type
       description: {
         short: `${gameSupport.name} not installed`,
         long:
-          `Vortex could not detect ${gameSupport.name}. This means it is either not installed or installed incorrectly.\n\n` +
+          `mORTEX could not detect ${gameSupport.name}. This means it is either not installed or installed incorrectly.\n\n` +
           `For the best modding experience, we recommend installing the script extender by visiting ${gameSupport.website}.\n\n` +
           `Click "Fix" to open the download page.`,
         replace: {

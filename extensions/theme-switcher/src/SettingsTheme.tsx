@@ -100,7 +100,7 @@ class SettingsTheme extends ComponentEx<IProps, IComponentState> {
           <FormGroup>
             <ControlLabel>{t("Appearance")}</ControlLabel>
             <Toggle checked={isLegacy} onToggle={this.toggleLegacyUI}>
-              {t("Use legacy Vortex UI")}
+              {t("Use legacy mORTEX UI")}
             </Toggle>
           </FormGroup>
           <FormGroup controlId="themeSelect">

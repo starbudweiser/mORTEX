@@ -69,7 +69,7 @@ class Settings extends ComponentEx<IProps, {}> {
             </Alert>
           ) : null}
           <Toggle checked={userSymlinks} onToggle={this.toggle} disabled={supported !== null}>
-            {t("Allow Symlinks without elevation (old mechanism, pre Vortex v1.4.3)")}
+            {t("Allow Symlinks without elevation (old mechanism, pre mORTEX v1.4.3)")}
           </Toggle>
           {supported !== null ? (
             <Alert>
@@ -122,9 +122,9 @@ class Settings extends ComponentEx<IProps, {}> {
             'windows Settings -> "Update & Security" -> "For developers" ' +
             'and enable "Developer Mode". This will however also install some software and ' +
             "services that you don't actually need as a regular user. If you want to go " +
-            "this route you should cancel now, quit Vortex and restart after enabling " +
+            "this route you should cancel now, quit mORTEX and restart after enabling " +
             '"Developer Mode".\n' +
-            "The other option is for Vortex to set up a global task in windows that has " +
+            "The other option is for mORTEX to set up a global task in windows that has " +
             "the increased permissions and can be triggered by your regular account. " +
             "You'd only have to confirm the UAC dialog once (every time you toggle this " +
             "setting). The drawback is that this might be a security risk if anyone gets " +

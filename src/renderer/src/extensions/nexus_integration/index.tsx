@@ -967,7 +967,7 @@ function once(api: IExtensionApi, callbacks: Array<(nexus: NexusT) => void>) {
     if (didRegister) {
       api.sendNotification({
         type: "info",
-        message: "Vortex will now handle Nexus Download links",
+        message: "mORTEX will now handle Nexus Download links",
         actions: [
           {
             title: "More",
@@ -978,7 +978,7 @@ function once(api: IExtensionApi, callbacks: Array<(nexus: NexusT) => void>) {
                 {
                   text:
                     'Only one application can be set up to handle Nexus "Mod Manager Download" ' +
-                    "links, Vortex is now registered to do that.\n\n" +
+                    "links, mORTEX is now registered to do that.\n\n" +
                     "To use a different application for these links, please go to " +
                     'Settings->Downloads, disable the "Handle Nexus Links" option, then go to ' +
                     "the application you do want to handle the links and enable the corresponding " +
@@ -1040,8 +1040,8 @@ function once(api: IExtensionApi, callbacks: Array<(nexus: NexusT) => void>) {
         "You have been logged out",
         {
           text:
-            "Due to an update with how Vortex communicates with Nexus Mods you will need to log back into your account.\n\n" +
-            "This change will allow Vortex to better keep your account details in sync without requiring you to log out and back in again or restart the app.",
+            "Due to an update with how mORTEX communicates with Nexus Mods you will need to log back into your account.\n\n" +
+            "This change will allow mORTEX to better keep your account details in sync without requiring you to log out and back in again or restart the app.",
         },
         [
           {

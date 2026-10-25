@@ -26,7 +26,7 @@ async function verifyUninstallEntry(api: types.IExtensionApi): Promise<types.ITe
       (hkey) => {
         const uninstallString = winapi.RegGetValue(hkey, "", "UninstallString");
         if (uninstallString === undefined || uninstallString.type !== "REG_SZ") {
-          invalid = t("Vortex uninstall key is incomplete");
+          invalid = t("mORTEX uninstall key is incomplete");
         } else {
           const match = (uninstallString.value as string).match(/\w+|"(?:\\"|[^"])+"/g);
           if (match !== null) {
@@ -36,7 +36,7 @@ async function verifyUninstallEntry(api: types.IExtensionApi): Promise<types.ITe
               expected = path.dirname(path.dirname(expected));
             }
             if (value.toLowerCase() !== expected.toLowerCase()) {
-              invalid = t("Vortex uninstall path doesn't match current executable");
+              invalid = t("mORTEX uninstall path doesn't match current executable");
               extra = t('"{{value}}" vs "{{expected}}"', {
                 replace: {
                   value,
@@ -55,13 +55,13 @@ async function verifyUninstallEntry(api: types.IExtensionApi): Promise<types.ITe
       },
     );
   } catch (err) {
-    invalid = t("No Vortex uninstall key");
+    invalid = t("No mORTEX uninstall key");
   }
 
   if (invalid !== undefined) {
     let long =
       t(
-        "The uninstall key for Vortex is missing or corrupted. This may lead to " +
+        "The uninstall key for mORTEX is missing or corrupted. This may lead to " +
           "problems the next time Vortex gets updated. Please reinstall Vortex.",
       ) +
       "<br/><br/>" +

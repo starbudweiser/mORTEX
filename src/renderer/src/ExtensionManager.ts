@@ -1156,15 +1156,15 @@ class ExtensionManager {
           "Extension failed to load",
           {
             bbcode:
-              "An unexpected error occurred while Vortex was loading extension:<br/><br/>{{message}}<br/><br/>" +
+              "An unexpected error occurred while mORTEX was loading extension:<br/><br/>{{message}}<br/><br/>" +
               "This is often caused by a bad installation of the app, " +
-              "a security app interfering with Vortex " +
+              "a security app interfering with mORTEX " +
               "or a problem with the Microsoft Visual C++ Redistributable installed on your PC. " +
               "To solve this issue please try the following:<br/><br/>" +
-              "- Wait a moment and try starting Vortex again<br/>" +
-              "- Reinstall Vortex from the Nexus Mods website<br/>" +
+              "- Wait a moment and try starting mORTEX again<br/>" +
+              "- Reinstall mORTEX from the Nexus Mods website<br/>" +
               "- Install the latest Microsoft Visual C++ Redistributable ([url]{{url}}[/url])<br/>" +
-              "- Disable anti-virus or other security apps that might interfere and install Vortex again<br/><br/>" +
+              "- Disable anti-virus or other security apps that might interfere and install mORTEX again<br/><br/>" +
               "If the issue persists, please create a thread in our support forum for further assistance.",
             parameters: {
               message: nodeLoadErr.args.message,
@@ -1177,7 +1177,7 @@ class ExtensionManager {
               action: () => disableErrorReport(),
             },
             {
-              label: "Close Vortex",
+              label: "Close mORTEX",
               action: () => appExit(),
             },
           ],
@@ -1713,7 +1713,7 @@ class ExtensionManager {
           "error",
           "Failed to connect meta database",
           {
-            text: "Please check that there is no other instance of Vortex still running.",
+            text: "Please check that there is no other instance of mORTEX still running.",
             message: getErrorMessageOrDefault(err),
           },
           [{ label: "Quit" }, { label: "Retry" }],

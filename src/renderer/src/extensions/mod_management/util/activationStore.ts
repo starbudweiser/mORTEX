@@ -192,7 +192,7 @@ function queryPurgeTextSafe(t: TFunction) {
     "IMPORTANT: This game was modded by another instance of Vortex.\n\n" +
       "If you switch between different instances (or between shared and " +
       "single-user mode) it's better if you purge mods before switching.\n\n" +
-      "Vortex can try to clean up now but this is less reliable (*) than doing it " +
+      "mORTEX can try to clean up now but this is less reliable (*) than doing it " +
       "from the instance that deployed the files in the first place.\n\n" +
       "If you modified any files in the game directory you should back them up " +
       "before continuing.\n\n" +
@@ -208,7 +208,7 @@ function queryPurgeTextSafe(t: TFunction) {
 function queryPurgeTextUnsafe(t: TFunction) {
   return t(
     "IMPORTANT: This game was modded by another instance of Vortex.\n\n" +
-      "Vortex can only proceed by purging the mods from that other instance.\n\n" +
+      "mORTEX can only proceed by purging the mods from that other instance.\n\n" +
       "This will irreversibly **destroy** the mod installations from that other " +
       "instance!\n\n" +
       "You should instead cancel now, open that other vortex instance and purge " +

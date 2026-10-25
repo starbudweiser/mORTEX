@@ -232,7 +232,7 @@ function genTestResult(
       return `[*][b]${a.name}[/b] - ${errMsg}`;
     });
 
-    const groupInfo = modName ? modName : t("not managed by Vortex");
+    const groupInfo = modName ? modName : t("not managed by mORTEX");
 
     return (
       `[h5]${t("Incompatible Archives")} ${groupInfo}:[/h5]` +

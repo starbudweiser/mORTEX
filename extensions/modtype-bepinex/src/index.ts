@@ -356,7 +356,7 @@ function init(context: types.IExtensionContext) {
         ? t(
             'The "{{game}}" game extension requires a widely used 3rd party assembly ' +
               "patching/injection library called Bepis Injector Extensible (BepInEx).{{bl}}" +
-              "Vortex has downloaded and installed this library automatically for you, and is currently " +
+              "mORTEX has downloaded and installed this library automatically for you, and is currently " +
               "available in your mods page to enable/disable just like any other regular mod. " +
               'Depending on the modding pattern of "{{game}}", BepInEx may be a hard requirement ' +
               "for mods to function in-game in which case you MUST have the library enabled and deployed " +
@@ -370,8 +370,8 @@ function init(context: types.IExtensionContext) {
               "BepInEx may be a hard requirement for some mods to function in-game in which case you should " +
               "manually download and install the latest {{bixUrl}} in order for the mods to work!{{bl}}" +
               'Choose the "BepInEx_x64_...zip" variant - you can then drag and drop it inside the mods page\'s ' +
-              '"Drop area" to have Vortex install it as any other mod.{{bl}}' +
-              'If you installed the BepInEx package through Vortex, don\'t forget to enable it and click "Deploy Mods", ' +
+              '"Drop area" to have mORTEX install it as any other mod.{{bl}}' +
+              'If you installed the BepInEx package through mORTEX, don\'t forget to enable it and click "Deploy Mods", ' +
               "for the package to be linked to your game's directory.",
             { replace },
           );

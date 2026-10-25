@@ -61,7 +61,7 @@ class ItemRenderer extends ComponentEx<IProps, {}> {
     return this.isExternal(item) ? (
       <div className="load-order-unmanaged-banner">
         <Icon className="external-caution-logo" name="feedback-warning" />
-        <span className="external-text-area">{t("Not managed by Vortex")}</span>
+        <span className="external-text-area">{t("Not managed by mORTEX")}</span>
       </div>
     ) : null;
   }

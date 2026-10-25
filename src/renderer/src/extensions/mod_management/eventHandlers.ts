@@ -83,10 +83,10 @@ async function checkStagingGame(
       "Game managed by different game extension",
       {
         text:
-          "You seem to have multiple games inside Vortex trying to manage the same game " +
+          "You seem to have multiple games inside mORTEX trying to manage the same game " +
           "directory. This can happen in case of total conversions or if you use a " +
           "third-party extension for a game that has also bundled support in Vortex.\n" +
-          "If you continue now, Vortex will purge the deployment from the other extension. " +
+          "If you continue now, mORTEX will purge the deployment from the other extension. " +
           "This is not destructive, you can go back to the other extension any time.",
       },
       [{ label: "Cancel" }, { label: "Purge" }],
@@ -122,7 +122,7 @@ async function checkStagingFolder(
       "Staging folder changed",
       {
         bbcode:
-          "The staging folder configured in Vortex doesn't match what was " +
+          "The staging folder configured in mORTEX doesn't match what was " +
           "previously used to deploy mods. This may be caused by manual tampering " +
           "with the application state or some other kind of data corruption " +
           "(hardware failure, virus, ...).<br/><br/>" +
@@ -147,9 +147,9 @@ async function checkStagingFolder(
           },
         ],
       },
-      [{ label: "Quit Vortex" }, { label: "Use selected" }],
+      [{ label: "Quit mORTEX" }, { label: "Use selected" }],
     );
-    if (result.action === "Quit Vortex") {
+    if (result.action === "Quit mORTEX") {
       getApplication().quit();
       // resolve never
       return new Promise<never>(() => {});
@@ -388,7 +388,7 @@ export function onGameModeActivated(
               "The deployment method used with this game is no longer available. " +
               "This probably means you removed the corresponding extension or " +
               "it can no longer be loaded due to a bug.\n" +
-              "Vortex can't clean up files deployed with an unsupported method. " +
+              "mORTEX can't clean up files deployed with an unsupported method. " +
               "You should try to restore it, purge deployment and then switch " +
               "to a different method.",
             method: configuredActivatorId,
@@ -764,9 +764,9 @@ function undeployMods(
         {
           text:
             "The mod you're removing has already been deleted on disk.\n" +
-            "This makes it impossible for Vortex to cleanly undeploy the mod " +
+            "This makes it impossible for mORTEX to cleanly undeploy the mod " +
             "so you may be left with files left over in your game directory.\n" +
-            "You should allow Vortex to do a full deployment now to try and " +
+            "You should allow mORTEX to do a full deployment now to try and " +
             "clean up as best as possible.\n" +
             "The mod will be removed after deployment is finished.",
         },
@@ -998,7 +998,7 @@ export async function onStartInstallDownload(
     } else {
       api.showErrorNotification(
         "Unknown Download",
-        "Vortex attempted to install a mod archive which is no longer available " +
+        "mORTEX attempted to install a mod archive which is no longer available " +
           "in its internal state - this usually happens if the archive was scheduled " +
           "to be installed but was removed before the installation was able to start. " +
           "Given that the archive is gone, information such as file name, mod name, etc is not " +
@@ -1042,7 +1042,7 @@ export async function onStartInstallDownload(
     api.events.emit("refresh-downloads", convertedGameId, () => {
       api.showErrorNotification(
         "Download invalid",
-        "Sorry, the meta data for this download is incomplete. Vortex has " +
+        "Sorry, the meta data for this download is incomplete. mORTEX has " +
           "tried to refresh it, please try again.",
         { allowReport: false },
       );

@@ -388,7 +388,7 @@ function onRestorePlugins(api: types.IExtensionApi, savegame: ISavegame) {
     util.showError(
       dispatch,
       "Failed to restore plugins",
-      "Your active game is no longer discovered by Vortex; " +
+      "Your active game is no longer discovered by mORTEX; " +
         "please manually add your game, or run the discovery " +
         "scan on the games page.",
       { allowReport: true },

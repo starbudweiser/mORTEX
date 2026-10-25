@@ -224,7 +224,7 @@ class ImportDialog extends ComponentEx<IProps, IComponentState> {
           {importStep === "setup" && capacityInformation.hasCalculationErrors ? (
             <Alert bsStyle="danger">
               {t(
-                "Vortex cannot validate NMM's mod/archive files - this usually occurs when " +
+                "mORTEX cannot validate NMM's mod/archive files - this usually occurs when " +
                   "the NMM configuration is corrupt",
               )}
             </Alert>
@@ -611,7 +611,7 @@ class ImportDialog extends ComponentEx<IProps, IComponentState> {
               <h4>{t("Please disable all mods in NMM")}</h4>
               <p>
                 {t(
-                  "NMM and Vortex would interfere with each other if they both " +
+                  "NMM and mORTEX would interfere with each other if they both " +
                     "tried to manage the same mods.",
                 )}
                 {t("You don't have to uninstall the mods, just disable them.")}
@@ -625,7 +625,7 @@ class ImportDialog extends ComponentEx<IProps, IComponentState> {
               <p>
                 {t(
                   "NMM needs to be closed during the import process and generally " +
-                    "while Vortex is installing mods otherwise it may interfere.",
+                    "while mORTEX is installing mods otherwise it may interfere.",
                 )}
               </p>
             </ListGroupItem>

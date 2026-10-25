@@ -234,7 +234,7 @@ async function checkNetInstall(api: IExtensionApi, dotnetVersion: number): Promi
       description: {
         short: `Microsoft .NET Desktop Runtime ${dotnetVersion} required`,
         long:
-          `Vortex requires .NET Desktop Runtime ${dotnetVersion} to be installed to run FOMOD mod installers.` +
+          `mORTEX requires .NET Desktop Runtime ${dotnetVersion} to be installed to run FOMOD mod installers.` +
           "[br][/br][br][/br]" +
           `If you already have .NET Desktop Runtime ${dotnetVersion} installed then there may be a problem with your installation and a reinstall might be needed.` +
           "[br][/br][br][/br]" +
@@ -249,7 +249,7 @@ async function checkNetInstall(api: IExtensionApi, dotnetVersion: number): Promi
     description: {
       short: `Microsoft .NET Desktop Runtime ${dotnetVersion} required`,
       long:
-        `Vortex requires .NET Desktop Runtime ${dotnetVersion} to be installed to run FOMOD mod installers.` +
+        `mORTEX requires .NET Desktop Runtime ${dotnetVersion} to be installed to run FOMOD mod installers.` +
         "[br][/br][br][/br]" +
         `If you already have .NET Desktop Runtime ${dotnetVersion} installed then there may be a problem with your installation and a reinstall might be needed.` +
         "[br][/br][br][/br]" +

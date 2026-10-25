@@ -26,14 +26,14 @@ async function externalFilesWarning(api: types.IExtensionApi, externalMods: stri
       "External Mod Files Detected",
       {
         bbcode: t(
-          "Vortex has discovered the following unmanaged/external files in the " +
+          "mORTEX has discovered the following unmanaged/external files in the " +
             "the game's mods directory:[br][/br][br][/br]{{files}}" +
-            "[br][/br]Please note that the existence of these mods interferes with Vortex's " +
+            "[br][/br]Please note that the existence of these mods interferes with mORTEX's " +
             "load ordering functionality and as such, they should be removed using the same " +
             "medium through which they have been added.[br][/br][br][/br]" +
-            "Alternatively, Vortex can try to import these files into its mods list which will " +
-            "allow Vortex to take control over them and display them inside the load ordering page. " +
-            "Vortex's load ordering functionality will not display external mod entries unless imported!",
+            "Alternatively, mORTEX can try to import these files into its mods list which will " +
+            "allow mORTEX to take control over them and display them inside the load ordering page. " +
+            "mORTEX's load ordering functionality will not display external mod entries unless imported!",
           { replace: { files: externalMods.map((mod) => `"${mod}"`).join("[br][/br]") } },
         ),
       },
@@ -199,7 +199,7 @@ function main(context: types.IExtensionContext) {
     gameId: GAME_ID,
     toggleableEntries: false,
     usageInstructions:
-      "Drag and drop the mods on the left to reorder them. BloodstainedROTN loads mods in alphabetic order so Vortex prefixes " +
+      "Drag and drop the mods on the left to reorder them. BloodstainedROTN loads mods in alphabetic order so mORTEX prefixes " +
       'the directory names with "AAA, AAB, AAC, ..." to ensure they load in the order you set here.',
   });
 

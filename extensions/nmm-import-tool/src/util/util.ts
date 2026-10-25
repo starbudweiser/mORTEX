@@ -110,10 +110,10 @@ export async function testAccess(t: TFunction, source: string): Promise<void> {
       : Promise.reject(
           new Error(
             t(
-              "Vortex is unable to read/open one or more of " +
+              "mORTEX is unable to read/open one or more of " +
                 "your archives - please ensure you have full permissions to those files, and " +
                 "that NMM is not running in the background before trying again. " +
-                "Additionally, now would be a good time to add an exception for Vortex to " +
+                "Additionally, now would be a good time to add an exception for mORTEX to " +
                 "your Anti-Virus software (if you have one)",
               { ns: "common" },
             ),

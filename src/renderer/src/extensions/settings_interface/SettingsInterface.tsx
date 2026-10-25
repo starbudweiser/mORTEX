@@ -206,7 +206,7 @@ export function SettingsInterfaceForm(props: IFormProps) {
   const needRestartNotification = needRestart ? (
     <div className="flex items-center gap-x-4 rounded-lg border border-info-weak bg-info-950 p-3">
       <Typography brand="neutral-translucent" className="grow">
-        {t("You need to restart Vortex to activate this change")}
+        {t("You need to restart mORTEX to activate this change")}
       </Typography>
 
       <Button brand="neutral" onClick={() => relaunch()}>
@@ -219,7 +219,7 @@ export function SettingsInterfaceForm(props: IFormProps) {
 
   const startMinimizedToggle = autoStart ? (
     <Toggle checked={startMinimized} onToggle={toggleMinimized}>
-      {t("Start Vortex in the background (Minimized)")}
+      {t("Start mORTEX in the background (Minimized)")}
     </Toggle>
   ) : null;
 
@@ -305,7 +305,7 @@ export function SettingsInterfaceForm(props: IFormProps) {
 
         <div>
           <Toggle checked={foregroundDL} onToggle={(enabled) => dispatch(setForegroundDL(enabled))}>
-            {t("Bring Vortex to foreground when starting downloads in browser")}
+            {t("Bring mORTEX to foreground when starting downloads in browser")}
           </Toggle>
         </div>
       </FormGroup>
@@ -378,7 +378,7 @@ export function SettingsInterfaceForm(props: IFormProps) {
               <div className="rounded-lg border border-warning-weak bg-warning-950 p-3">
                 <Typography brand="neutral-translucent">
                   {t(
-                    "Disabling GPU acceleration will make the Vortex UI significantly less " +
+                    "Disabling GPU acceleration will make the mORTEX UI significantly less " +
                       "responsive in places.",
                   )}
                 </Typography>
@@ -414,7 +414,7 @@ export function SettingsInterfaceForm(props: IFormProps) {
           </Toggle>
 
           <Toggle checked={autoStart} onToggle={toggleAutoStart}>
-            {t("Run Vortex when my computer starts")}
+            {t("Run mORTEX when my computer starts")}
           </Toggle>
 
           {startMinimizedToggle}

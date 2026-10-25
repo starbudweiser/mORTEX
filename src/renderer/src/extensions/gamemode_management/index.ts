@@ -453,12 +453,12 @@ function installGameExtension(
         dlInfo.name,
         {
           text:
-            'In an older version of Vortex you were managing "{{name}}", however, ' +
-            "the extension for this game is no longer included in the main Vortex release. " +
+            'In an older version of mORTEX you were managing "{{name}}", however, ' +
+            "the extension for this game is no longer included in the main mORTEX release. " +
             "A new version of this extension is available from a community developer.\n\n" +
             'If you wish to continue to manage "{{name}}" you will need to install the latest ' +
             "community release of the extension. " +
-            "Alternatively, you can unmanage this game which will remove it from Vortex and " +
+            "Alternatively, you can unmanage this game which will remove it from mORTEX and " +
             "delete all installed mods.",
           parameters: {
             name,
@@ -1203,7 +1203,7 @@ function init(context: IExtensionContext): boolean {
                         "Failed to set game mode",
                         {
                           bbcode: context.api.translate(
-                            "Vortex attempted to manage the game and has " +
+                            "mORTEX attempted to manage the game and has " +
                               'encountered a missing file:[br][/br]"{{errPath}}".[br][/br][br][/br]' +
                               "Depending on recent changes on your environment and/or the game store through " +
                               "which the game has been purchased, this error could be due to several factors:[br][/br][list]" +

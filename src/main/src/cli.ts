@@ -224,19 +224,19 @@ export function parseCommandline(argv: string[], electronIsShitHack: boolean): I
     .option(
       "-s, --set <path=value>",
       "Change a value in the state. Please be very careful " +
-        "with this, incorrect use will break Vortex and you may " +
+        "with this, incorrect use will break mORTEX and you may " +
         "lose data",
       assign,
     )
     .option("--del <path>", "Remove a value in state", collect)
     .option(
       "--user-data <path>",
-      "Starts Vortex with a custom directory for the user data. " +
+      "Starts mORTEX with a custom directory for the user data. " +
         "Only use if you know what you're doing.",
     )
-    .option("--start-minimized", "Starts Vortex in the task bar")
-    .option("--game <game id>", "Starts Vortex with a different game enabled")
-    .option("--run <path>", "Execute the js program instead of Vortex itself.")
+    .option("--start-minimized", "Starts mORTEX in the task bar")
+    .option("--game <game id>", "Starts mORTEX with a different game enabled")
+    .option("--run <path>", "Execute the js program instead of mORTEX itself.")
     .option("--report <path>", "Send an error report. For internal use")
     .option("--restore <path>", "Restore a state backup")
     .option(
@@ -251,10 +251,10 @@ export function parseCommandline(argv: string[], electronIsShitHack: boolean): I
     )
     .option(
       "--max-memory <size in MB>",
-      "Maximum amount of memory Vortex may use in MB " + "(defaults to 4096)",
+      "Maximum amount of memory mORTEX may use in MB " + "(defaults to 4096)",
     )
-    .option("--inspector", "Start Vortex with the chrome inspector opened")
-    .option("--profile <profile id>", "Start Vortex with a specific profile active")
+    .option("--inspector", "Start mORTEX with the chrome inspector opened")
+    .option("--profile <profile id>", "Start mORTEX with a specific profile active")
     .option("--epic-auth-login <login>")
     .option("--epic-auth-password <password>")
     .option("--epic-auth-type <type>")

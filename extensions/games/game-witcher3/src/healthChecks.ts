@@ -119,7 +119,7 @@ export const localModsEnabledCheck: types.IHealthCheck = {
           types.HealthCheckSeverity.Critical,
           "Mods are switched off in game",
           startedAt,
-          "The game's gameplay settings have mods disabled, so nothing Vortex deploys will load.",
+          "The game's gameplay settings have mods disabled, so nothing mORTEX deploys will load.",
         );
       case ContentManagerState.LocalModsDisabled:
         return makeResult(
@@ -128,7 +128,7 @@ export const localModsEnabledCheck: types.IHealthCheck = {
           types.HealthCheckSeverity.Critical,
           "Locally installed mods are switched off in game",
           startedAt,
-          "The game is set to ignore locally installed mods, so nothing Vortex deploys will " +
+          "The game is set to ignore locally installed mods, so nothing mORTEX deploys will " +
             "load. mod.io and Steam Workshop mods are unaffected.",
         );
       case ContentManagerState.Unknown:

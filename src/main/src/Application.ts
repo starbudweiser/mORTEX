@@ -426,7 +426,7 @@ class Application {
       } else if (parsed.data.kind === "database:locked") {
         dialog.showErrorBox(
           "Startup failed",
-          "Vortex seems to be running already. " +
+          "mORTEX seems to be running already. " +
             "If you can't see it, please check the task manager.",
         );
 
@@ -434,7 +434,7 @@ class Application {
       } else if (parsed.data.kind === "database:open-failed") {
         dialog.showErrorBox(
           "Startup failed",
-          `Vortex couldn't open its application database at:\n\n` +
+          `mORTEX couldn't open its application database at:\n\n` +
             `${parsed.data.path}\n\n` +
             `Underlying error: ${getErrorMessageOrDefault(parsed.cause)}\n\n` +
             `This is not a "database locked" condition - a different problem is preventing the database from opening. ` +
@@ -450,7 +450,7 @@ class Application {
             "Your system drive is full. " +
               "You should always ensure your system drive has some space free (ideally " +
               "at least 10% of the total capacity, especially on SSDs). " +
-              "Vortex can't start until you have freed up some space.",
+              "mORTEX can't start until you have freed up some space.",
           );
           app.quit();
           return;
@@ -497,11 +497,11 @@ class Application {
           title: "Error",
           message: "Data corrupted",
           detail:
-            "The application state which contains things like your Vortex " +
+            "The application state which contains things like your mORTEX " +
             "settings, meta data about mods and other important data is " +
             "corrupted and can't be read. This could be a result of " +
             "hard disk corruption, a power outage or something similar. " +
-            "Vortex will now try to repair the database, usually this " +
+            "mORTEX will now try to repair the database, usually this " +
             "should work fine but please check that settings, mod list and so " +
             "on are ok before you deploy anything. " +
             "If not, you can go to settings->workarounds and restore a backup " +
@@ -1228,10 +1228,10 @@ class Application {
       type: "error",
       title: "Installation corrupted",
       message:
-        "Your Vortex installation has been corrupted. " +
+        "Your mORTEX installation has been corrupted. " +
         "This could be the result of a virus or manual manipulation. " +
-        "Vortex might still appear to work (partially) but we suggest " +
-        "you reinstall it. For more information please refer to Vortex's log files.",
+        "mORTEX might still appear to work (partially) but we suggest " +
+        "you reinstall it. For more information please refer to mORTEX's log files.",
       noLink: true,
       buttons: ["Quit", "Ignore"],
     });
@@ -1267,8 +1267,8 @@ class Application {
       // TODO: this instructions aren't very correct because we know Vortex doesn't have
       // a UI and needs to be shut down from the task manager
       dialog.showErrorBox(
-        "Vortex unresponsive",
-        "Vortex appears to be frozen, please close Vortex and try again",
+        "mORTEX unresponsive",
+        "mORTEX appears to be frozen, please close mORTEX and try again",
       );
 
       return;

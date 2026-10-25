@@ -493,7 +493,7 @@ function testPluginsLocked(gameMode: string): Bluebird<ITestResult> {
             short: "plugins.txt is write protected",
             long:
               "This file is used to control which plugins the game uses and while it's " +
-              "write protected Vortex will not be able to enable or disable plugins.\n" +
+              "write protected mORTEX will not be able to enable or disable plugins.\n" +
               'If you click "fix" the file will be marked writable.',
           },
           severity: "error",
@@ -599,7 +599,7 @@ function testUserlistInvalid(
         short: "Duplicate entries",
         long: t(
           'Your userlist contains multiple entries for "{{name}}". ' +
-            "This is not allowed and Vortex shouldn't create entries like that, " +
+            "This is not allowed and mORTEX shouldn't create entries like that, " +
             "although earlier versions may have.\n" +
             'Please close vortex and remove duplicate entries from "{{userlistPath}}".',
           {

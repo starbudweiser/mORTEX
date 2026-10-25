@@ -41,7 +41,7 @@ import { remoteCode } from "./remoteCode";
 import Settings from "./Settings";
 import walk from "./walk";
 
-const TASK_NAME = "Vortex Symlink Deployment";
+const TASK_NAME = "mORTEX Symlink Deployment";
 const SCRIPT_NAME = "vortexSymlinkService.js";
 const IPC_ID = "vortex_elevate_symlink";
 
@@ -579,7 +579,7 @@ class DeploymentMethod extends LinkingDeployment {
               "but if that doesn't help there is probably some Windows setting " +
               "in your system or external software interfering with it that we're not aware of, " +
               "you will have to disable the workaround.\n" +
-              "Unless you have an idea why your system may prevent Vortex from creating or running " +
+              "Unless you have an idea why your system may prevent mORTEX from creating or running " +
               "scheduler tasks, please don't report this. We are aware of the problem " +
               "but we have no lead to investigate.\n" +
               "The error message was: {{error}}",
@@ -807,7 +807,7 @@ function installTask(scriptPath: string) {
           registrationInfo: {
             Author: "Vortex",
             Description:
-              "This task is required for Vortex to create symlinks without elevation." +
+              "This task is required for mORTEX to create symlinks without elevation." +
               "Do not change anything unless you really know what you're doing.",
           },
           user: `${osRemote.hostname()}\\${osRemote.userInfo().username}`,

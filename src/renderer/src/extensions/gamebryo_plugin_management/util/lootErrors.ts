@@ -114,13 +114,13 @@ export function describeLootError(
     case "loot:api-misuse":
       return {
         severity: "error",
-        message: translate("Vortex asked LOOT for something it could not accept", options),
+        message: translate("mORTEX asked LOOT for something it could not accept", options),
       };
     default:
       return {
         severity: "error",
         message: translate(
-          "something went wrong in LOOT; the details are in the Vortex log",
+          "something went wrong in LOOT; the details are in the mORTEX log",
           options,
         ),
       };

@@ -334,7 +334,7 @@ function testProtectedFolderAccess(): PromiseBB<ITestResult> {
         description: {
           short: "Anti-Virus protection detected",
           long:
-            "Vortex is being blocked from running file operations by your Anti-Virus software " +
+            "mORTEX is being blocked from running file operations by your Anti-Virus software " +
             "and will not function correctly unless an exception is added manually. <br /><br />" +
             "Most Anti-Virus applications should inform you of this attempt while others such as " +
             "Windows 10's Windows Defender will block access without prompt.<br /><br />" +
@@ -342,7 +342,7 @@ function testProtectedFolderAccess(): PromiseBB<ITestResult> {
             "[url]" +
             `https://wiki.${NEXUS_DOMAIN}/index.php/Configuring_your_anti-virus_to_work_with_Vortex` +
             "[/url]<br /><br />" +
-            "[b][color=red]Important: Error reporting from Vortex will be disabled " +
+            "[b][color=red]Important: Error reporting from mORTEX will be disabled " +
             "until you remedy this situation.[/color][/b]",
         },
         severity: "error",
@@ -391,7 +391,7 @@ function main(context: IExtensionContext) {
                 "work correctly on those drives. " +
                 `We therefore can't apply ini tweaks to '{{ filePath }}'.\n` +
                 "Please disable this feature and restart Vortex.\n" +
-                "Please keep an eye out on Vortex Changelogs so you know when this is fixed.",
+                "Please keep an eye out on mORTEX Changelogs so you know when this is fixed.",
               {
                 allowReport: false,
                 replace: { filePath: err.path },

@@ -4,16 +4,16 @@ import { PluginFileConflict } from "./PluginPersistor";
 /** What the keep/revert question says, for each reason the persistor asks it. */
 const DIALOG: Record<PluginFileConflict, { title: string; text: string }> = {
   [PluginFileConflict.ForeignChange]: {
-    title: "Plugin list changed outside Vortex",
+    title: "Plugin list changed outside mORTEX",
     text:
       "Another tool or the game changed the plugin list files. " +
-      "Keep those changes or revert to the load order Vortex manages?",
+      "Keep those changes or revert to the load order mORTEX manages?",
   },
   [PluginFileConflict.Unreadable]: {
     title: "Plugin list could not be read",
     text:
-      "Vortex could not read your plugin list files, so it does not know your current load " +
-      "order. Keep the files as they are, or overwrite them with what Vortex has? " +
+      "mORTEX could not read your plugin list files, so it does not know your current load " +
+      "order. Keep the files as they are, or overwrite them with what mORTEX has? " +
       "Overwriting will disable the plugins it never managed to read.",
   },
 };

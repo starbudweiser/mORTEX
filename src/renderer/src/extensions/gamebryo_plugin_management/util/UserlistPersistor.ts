@@ -181,7 +181,7 @@ class UserlistPersistor implements IPersistor {
           "\n\n" +
           "If you continue now, the masterlist will be reset.",
 
-        buttons: ["Reset Masterlist", "Quit Vortex"],
+        buttons: ["Reset Masterlist", "Quit mORTEX"],
       });
     } else {
       res = await showMessageBox({
@@ -189,7 +189,7 @@ class UserlistPersistor implements IPersistor {
         message:
           `The LOOT userlist "${this.mUserlistPath}" can\'t be read. ` +
           "\n\n" +
-          "You should quit Vortex now and repair the file.\n" +
+          "You should quit mORTEX now and repair the file.\n" +
           "If (and only if!) you're certain you didn't modify the file yourself, " +
           "please send in a bug report with that file attached." +
           "\n\n" +
@@ -197,7 +197,7 @@ class UserlistPersistor implements IPersistor {
           "rules and group assignments will be lost.",
         noLink: true,
         defaultId: 1,
-        buttons: ["Reset Userlist", "Quit Vortex"],
+        buttons: ["Reset Userlist", "Quit mORTEX"],
       });
     }
 
@@ -300,7 +300,7 @@ class UserlistPersistor implements IPersistor {
             {
               message:
                 "Failed to read userlist file for this game. " +
-                "Repair or delete this file and then try to start Vortex again",
+                "Repair or delete this file and then try to start mORTEX again",
               path: this.mUserlistPath,
               details: `Error: ${err.message}`,
             },

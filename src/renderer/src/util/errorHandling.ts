@@ -250,7 +250,7 @@ export function terminate(
           message:
             `This crash was caused by an extension (${error.extension}). ` +
             "Do you want to disable this extension? All functionality provided " +
-            "by the extension will be removed from Vortex!",
+            "by the extension will be removed from mORTEX!",
           noLink: true,
         });
         if (result.response === 0) {

@@ -62,11 +62,11 @@ class Settings extends ComponentEx<IProps, {}> {
             <HelpBlock>
               <div>
                 {t(
-                  "Vortex stores application settings as well as mod meta data and a lot " +
+                  "mORTEX stores application settings as well as mod meta data and a lot " +
                     "of other important things in a database. Here you can restore a " +
-                    "backup of this database (Vortex creates automatic updates). " +
+                    "backup of this database (mORTEX creates automatic updates). " +
                     "Please note that after this reset, the state may not agree with other " +
-                    "data stored on disk, e.g. Vortex may report external file changes for things " +
+                    "data stored on disk, e.g. mORTEX may report external file changes for things " +
                     "that it installed itself. Please be very careful to not lose data. " +
                     'We strongly advise you use this only in an emergency, not as an "undo" ' +
                     "function.",
@@ -74,9 +74,9 @@ class Settings extends ComponentEx<IProps, {}> {
               </div>
               <div>
                 {t(
-                  "You can have up to 3 backups: One is automatically created whenever Vortex " +
+                  "You can have up to 3 backups: One is automatically created whenever mORTEX " +
                     "starts up with no issue, one is automatically created hourly (while using " +
-                    "Vortex) and one you can create manually.",
+                    "mORTEX) and one you can create manually.",
                 )}
               </div>
             </HelpBlock>
@@ -166,7 +166,7 @@ class Settings extends ComponentEx<IProps, {}> {
           {
             bbcode:
               paragraph(
-                "This will reset Vortex settings and persistent data " +
+                "This will reset mORTEX settings and persistent data " +
                   "to a state from {{time}}.",
               ) +
               paragraph(

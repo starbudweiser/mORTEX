@@ -64,7 +64,7 @@ const settings = (props: IInstructionProps) => {
 
         <More id="collection-settings-recommendnewprofile" name={t("Recommend new profile")}>
           {t(
-            "If enabled, Vortex will recommend creating a new profile when installing this collection. If disabled, the collection will be installed into the currently active profile.",
+            "If enabled, mORTEX will recommend creating a new profile when installing this collection. If disabled, the collection will be installed into the currently active profile.",
           )}
         </More>
       </Toggle>

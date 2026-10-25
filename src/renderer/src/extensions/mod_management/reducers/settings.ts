@@ -29,7 +29,7 @@ export const settingsReducer: IReducerSpec = {
   defaults: {
     installPath: {},
     installPathMode: "userData",
-    suggestInstallPathDirectory: "Vortex Mods",
+    suggestInstallPathDirectory: "mORTEX Mods",
     modlistState: {},
     activator: {},
     showDropzone: true,

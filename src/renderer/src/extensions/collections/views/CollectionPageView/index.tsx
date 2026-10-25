@@ -804,7 +804,7 @@ class CollectionPage extends ComponentEx<IProps, IComponentState> {
         "Cloning incomplete",
         {
           text:
-            "The collection you're trying to clone is incomplete. Vortex can " +
+            "The collection you're trying to clone is incomplete. mORTEX can " +
             "not include a mod in a collection that isn't installed so if you continue, " +
             "the clone will not include these missing mods..",
           message: incomplete.map((mod) => renderModName(mod)).join("\n"),

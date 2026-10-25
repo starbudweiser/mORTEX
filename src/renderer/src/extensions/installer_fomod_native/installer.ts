@@ -122,7 +122,7 @@ export const install = async (
         "Invalid fomod",
         {
           text:
-            "This fomod failed validation. Vortex tends to be stricter validating installers " +
+            "This fomod failed validation. mORTEX tends to be stricter validating installers " +
             "than other tools to ensure mods actually work as expected.\n" +
             "You can try installing it anyway but we strongly suggest you test if it " +
             "actually works correctly afterwards - and you should still inform the mod author " +

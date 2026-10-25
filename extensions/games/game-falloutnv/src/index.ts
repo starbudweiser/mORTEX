@@ -162,7 +162,7 @@ function prepareForModding(api, discovery) {
                 {
                   bbcode:
                     "{{gameName}} has multiple language options when downloaded from {{storeName}}. [br][/br][br][/br]" +
-                    "Vortex has selected the {{selectedLanguage}} variant by default. [br][/br][br][/br]" +
+                    "mORTEX has selected the {{selectedLanguage}} variant by default. [br][/br][br][/br]" +
                     'If you would prefer to manage a different language you can change the path to the game using the "Manually Set Location" option in the games tab.',
                   parameters: { gameName, storeName, selectedLanguage },
                 },

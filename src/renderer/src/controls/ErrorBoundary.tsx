@@ -160,7 +160,7 @@ class ErrorBoundary extends ComponentEx<IErrorBoundaryProps, IErrorBoundaryState
     }
     let errMessage =
       "Component rendering error\n\n" +
-      `Vortex Version: ${getApplication().version}\n\n` +
+      `mORTEX Version: ${getApplication().version}\n\n` +
       `${error.stack}`;
 
     if (errorInfo !== undefined) {

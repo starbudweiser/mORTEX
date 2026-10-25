@@ -175,7 +175,7 @@ function describeMasterState(
       return translate('requires "{{master}}" to be enabled, but it is disabled', options);
     case MasterState.RemovedExternally:
       return translate(
-        'requires "{{master}}", which was in the game folder when Vortex last scanned it but is gone',
+        'requires "{{master}}", which was in the game folder when mORTEX last scanned it but is gone',
         options,
       );
     case MasterState.Unscanned:

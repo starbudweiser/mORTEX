@@ -63,7 +63,7 @@ class CollectionsDataView extends ComponentEx<IProps, IComponentState> {
             "The Witcher 3 game extension executes a series of file merges for UI/menu mods " +
               "whenever the mods are deployed - these will be included in the collection. " +
               "(separate from the ones done using the script " +
-              "merger utility) To ensure that Vortex includes the correct data when " +
+              "merger utility) To ensure that mORTEX includes the correct data when " +
               "uploading this collection, please make sure that the mods are enabled and " +
               "deployed before attempting to upload the collection.",
           )}

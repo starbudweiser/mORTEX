@@ -132,12 +132,12 @@ async function moveFiles(src: string, dest: string, props: IBaseProps) {
           "Failed to restore merged files",
           {
             bbcode: t(
-              "Vortex encountered a permissions related error while attempting " +
+              "mORTEX encountered a permissions related error while attempting " +
                 'to replace:{{bl}}"{{filePath}}"{{bl}}' +
                 "Please try to resolve any permissions related issues and return to this " +
                 "dialog when you think you managed to fix it. There are a couple of things " +
                 "you can try to fix this:[br][/br][list][*] Close/Disable any applications that may " +
-                "interfere with Vortex's operations such as the game itself, the witcher script merger, " +
+                "interfere with mORTEX's operations such as the game itself, the witcher script merger, " +
                 "any external modding tools, any anti-virus software. " +
                 "[*] Ensure that your Windows user account has full read/write permissions to the file specified " +
                 "[/list]",

@@ -159,7 +159,7 @@ function showFullReleaseModFixerRecommendation(api: types.IExtensionApi) {
               {
                 text:
                   "We recommend installing \"Baldur's Gate 3 Mod Fixer\" to be able to mod Baldur's Gate 3.\n\n" +
-                  'This can be downloaded from Nexus Mods and installed using Vortex by pressing "Open Nexus Mods',
+                  'This can be downloaded from Nexus Mods and installed using mORTEX by pressing "Open Nexus Mods',
               },
               [{ label: "Dismiss" }, { label: "Open Nexus Mods", default: true }],
             )

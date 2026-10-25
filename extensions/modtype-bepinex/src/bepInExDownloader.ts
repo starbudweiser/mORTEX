@@ -312,7 +312,7 @@ export async function raiseConsentDialog(api: types.IExtensionApi, gameConf: IBe
       bbcode: t(
         "The {{game}} game extension requires a widely used 3rd party assembly " +
           "patching/injection library called Bepis Injector Extensible (BepInEx).{{bl}}" +
-          "Vortex can walk you through the download/installation process; once complete, BepInEx " +
+          "mORTEX can walk you through the download/installation process; once complete, BepInEx " +
           "will be available in your mods page to enable/disable just like any other regular mod. " +
           "Depending on the modding pattern of {{game}}, BepInEx may be a hard requirement " +
           "for mods to function in-game, in which case you MUST have the library enabled and deployed " +

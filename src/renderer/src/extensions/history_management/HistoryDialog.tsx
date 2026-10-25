@@ -115,7 +115,7 @@ export function HistoryDialog(props: IDialogProps & WithTranslation) {
             {t(
               'Please note that this is not "Undo"! This screen allows you to revert ' +
                 "specific actions but we make no promises that this actually returns " +
-                "Vortex or your game to the state before that action. Not every " +
+                "mORTEX or your game to the state before that action. Not every " +
                 "Action can be undone.",
             )}
           </div>

@@ -69,12 +69,12 @@ function makeResultPage(success: boolean) {
 
   if (success) {
     html.push(`
-    <h1>Vortex log in successful!</h1>
+    <h1>mORTEX log in successful!</h1>
   `);
   } else {
     html.push(`
-    <h1>Vortex was unable to log in</h1>
-    <p style="font-size: 1.2em;">Please check Vortex for more information</a></p>
+    <h1>mORTEX was unable to log in</h1>
+    <p style="font-size: 1.2em;">Please check mORTEX for more information</a></p>
   `);
   }
 

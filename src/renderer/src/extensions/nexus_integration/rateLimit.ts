@@ -28,8 +28,8 @@ export function notifyRateLimited(api: IExtensionApi): void {
     type: "warning",
     title: "Rate limited",
     message:
-      "Nexus Mods is asking Vortex to slow down, so some information couldn't be loaded. " +
-      "Vortex will try again on its own.",
+      "Nexus Mods is asking mORTEX to slow down, so some information couldn't be loaded. " +
+      "mORTEX will try again on its own.",
     displayMS: 10000,
   });
 }

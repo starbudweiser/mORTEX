@@ -86,7 +86,7 @@ async function combineMods(api: IExtensionApi, gameId: string, modIds: string[])
       {
         bbcode:
           "You are combining the mods listed below into the selected one.<br/>" +
-          "Please be aware that Vortex will then only track updates for the one " +
+          "Please be aware that mORTEX will then only track updates for the one " +
           "mod that remains and if you do update or reinstall it, the other mods are gone.<br/>" +
           "Thus we would suggest you [color=red]only use this to merge in patches/fixes[/color] that " +
           "become obsolete with the next update anyway.<br/>" +

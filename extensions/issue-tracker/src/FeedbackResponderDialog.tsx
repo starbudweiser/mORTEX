@@ -314,9 +314,9 @@ class FeedbackResponderDialog extends ComponentEx<IProps, IComponentState> {
         dropup
         style={{ display: "block", marginLeft: "auto", marginRight: 0 }}
       >
-        <MenuItem eventKey="log">{t("Vortex Log")}</MenuItem>
-        <MenuItem eventKey="netlog">{t("Vortex Network Log")}</MenuItem>
-        <MenuItem eventKey="session">{t("Vortex Session Log")}</MenuItem>
+        <MenuItem eventKey="log">{t("mORTEX Log")}</MenuItem>
+        <MenuItem eventKey="netlog">{t("mORTEX Network Log")}</MenuItem>
+        <MenuItem eventKey="session">{t("mORTEX Session Log")}</MenuItem>
         <MenuItem eventKey="settings">{t("Application Settings")}</MenuItem>
         <MenuItem eventKey="state">{t("Application State")}</MenuItem>
         <MenuItem eventKey="actions">{t("Recent State Changes")}</MenuItem>
@@ -414,13 +414,13 @@ class FeedbackResponderDialog extends ComponentEx<IProps, IComponentState> {
         this.attachActions("Action History");
         break;
       case "session":
-        this.attachState("session", "Vortex Session");
+        this.attachState("session", "mORTEX Session");
         break;
       case "settings":
-        this.attachState("settings", "Vortex Settings");
+        this.attachState("settings", "mORTEX Settings");
         break;
       case "state":
-        this.attachState("persistent", "Vortex State");
+        this.attachState("persistent", "mORTEX State");
         break;
       case "custom":
         this.openFileBrowser();
@@ -430,7 +430,7 @@ class FeedbackResponderDialog extends ComponentEx<IProps, IComponentState> {
 
   private systemInfo() {
     return [
-      "Vortex Version: " + util["getApplication"]().version,
+      "mORTEX Version: " + util["getApplication"]().version,
       "Memory: " + util.bytesToString((process as any).getSystemMemoryInfo().total * 1024),
       "System: " + `${os.platform()} ${process.arch} (${os.release()})`,
     ].join("\n");

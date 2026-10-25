@@ -64,7 +64,7 @@ async function downloadConsent(api: types.IExtensionApi): Promise<void> {
         bbcode: api.translate(
           "Baldur's Gate 3's modding pattern in most (if not all) cases will require a 3rd " +
             'party tool named "{{name}}" to manipulate game files.[br][/br][br][/br]' +
-            "Vortex can download and install this tool for you as a mod entry. Please ensure that the " +
+            "mORTEX can download and install this tool for you as a mod entry. Please ensure that the " +
             "tool is always enabled and deployed on the mods page.[br][/br][br][/br]" +
             "Please note that some Anti-Virus software may flag this tool as malicious due " +
             "to the nature of the tool (unpacks .pak files). We suggest you ensure that " +
@@ -107,7 +107,7 @@ async function notifyUpdate(
               "{{name}} Update",
               {
                 text:
-                  "Vortex has detected a newer version of {{name}} ({{latest}}) available to download from {{website}}. You currently have version {{current}} installed." +
+                  "mORTEX has detected a newer version of {{name}} ({{latest}}) available to download from {{website}}. You currently have version {{current}} installed." +
                   "\nVortex can download and attempt to install the new update for you.",
                 parameters: {
                   name: "LSLib/Divine Tool",

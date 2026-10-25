@@ -38,13 +38,13 @@ function checkFailedResult(
 
   const long = {
     missing: t(
-      "You have configured Vortex to run FNIS automatically but it's not installed for this game. " +
+      "You have configured mORTEX to run FNIS automatically but it's not installed for this game. " +
         "For the automation to work, FNIS has to be installed and configured for the current game. " +
         "You can download it from [url]{{url}}[/url].",
       { replace: { url: nexusPageURL(gameMode) } },
     ),
     outdated: t(
-      "You have configured Vortex to run FNIS automatically but the installed version of FNIS is " +
+      "You have configured mORTEX to run FNIS automatically but the installed version of FNIS is " +
         "too old and doesn't support being embedded. Please download and install at least " +
         "version 7.4 from [url]{{url}}[/url].",
       { replace: { url: nexusPageURL(gameMode) } },
@@ -320,7 +320,7 @@ function init(context: types.IExtensionContext) {
                 const isMisconfigured = err instanceof util.SetupError;
                 context.api.showErrorNotification(
                   "Failed to run FNIS",
-                  isMisconfigured ? "Please install FNIS and add it as a tool inside Vortex" : err,
+                  isMisconfigured ? "Please install FNIS and add it as a tool inside mORTEX" : err,
                   { allowReport: !isMisconfigured, id: "fnis-failed-to-run" },
                 );
               }

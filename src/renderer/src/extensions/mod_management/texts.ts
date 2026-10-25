@@ -4,10 +4,10 @@ function getText(id: string, t: TFunction) {
   switch (id) {
     case "deployment":
       return t(
-        "When you install a mod through Vortex it is stored in a separate directory and has " +
+        "When you install a mod through mORTEX it is stored in a separate directory and has " +
           "no immediate effect on the game. We call the process of actually placing the " +
           'files into the game directory "deployment".\n\n' +
-          "There are different methods available in Vortex to do this Deployment, the best " +
+          "There are different methods available in mORTEX to do this Deployment, the best " +
           "one will usually get picked automatically, based on which game you're modding " +
           "and your system configuration.\n" +
           "All methods have in common that deployment is way quicker than copying files and " +
@@ -15,23 +15,23 @@ function getText(id: string, t: TFunction) {
           "By default, deployment happens automatically after you enable/disable a mod.\n" +
           "If you want more control you can disable this automation and will then have " +
           "to manually click a button to start the deployment.\n\n" +
-          "Please note that parts of Vortex (i.e. the list of plugins for TES games) will only " +
+          "Please note that parts of mORTEX (i.e. the list of plugins for TES games) will only " +
           'reflect the "deployed" state.',
       );
     // The modern layout's wording for "deployment": the user applies, Vortex deploys.
     case "deploymentmethod":
       return t(
-        "When you install a mod through Vortex, its files are stored separately and don't " +
-          "immediately affect the game. Deployment is the process Vortex uses to make those " +
+        "When you install a mod through mORTEX, its files are stored separately and don't " +
+          "immediately affect the game. Deployment is the process mORTEX uses to make those " +
           "files available in the game directory.\n\n" +
-          "Vortex supports different deployment methods and will usually choose the best one " +
+          "mORTEX supports different deployment methods and will usually choose the best one " +
           "automatically based on the game and your system configuration. These methods are " +
           "much faster than copying files and use little or no additional disk space.\n\n" +
-          "By default, Vortex applies your changes automatically when you enable or disable a " +
+          "By default, mORTEX applies your changes automatically when you enable or disable a " +
           "mod. You can turn this automation off if you prefer to make several changes first " +
           "and then select Apply. Applying your changes will run the required deployment " +
           "process.\n\n" +
-          "Some parts of Vortex, such as the plugins list for Bethesda games, only reflect " +
+          "Some parts of mORTEX, such as the plugins list for Bethesda games, only reflect " +
           "changes once they have been applied.",
       );
     case "versionmatch":
@@ -62,9 +62,9 @@ function getText(id: string, t: TFunction) {
     case "version":
       return t(
         "Version of the mod. A warning here means that the mod doesn't follow the recognized " +
-          "versioning standard but that just means Vortex may not be able to provide some " +
+          "versioning standard but that just means mORTEX may not be able to provide some " +
           "of the more advanced features or they are slightly less convenient to use.\n\n" +
-          'Vortex supports "semantic versioning" (see http://semver.org/) where a ' +
+          'mORTEX supports "semantic versioning" (see http://semver.org/) where a ' +
           'version consists of three numbers separated by dots like this: "1.2.0".\n' +
           'In semantic versioning the first number is the "major" version that gets incremented ' +
           "only on a big update that isn't compatible with previous versions so updating may " +
@@ -94,7 +94,7 @@ function getText(id: string, t: TFunction) {
       return t(
         'The "Source" specifies where you got the mod. That source will be consulted for certain ' +
           "features, i.e. to find updates.\n\n" +
-          "Only sources that are supported by Vortex can be selected.\n" +
+          "Only sources that are supported by mORTEX can be selected.\n" +
           "If the mod was removed from the source it may make sense to select no source here to " +
           "quiet error messages.",
       );
@@ -103,7 +103,7 @@ function getText(id: string, t: TFunction) {
         "The downloads folder holds all mod archives you have downloaded with Vortex. It is shared across all " +
           "games and includes a subfolder for each of them. e.g. if your downloads folder is set to\n" +
           '"D:\\Vortex Downloads\\", archive files for Skyrim will be stored in: "D:\\Vortex Downloads\\skyrim\\".\n' +
-          "By default Vortex will select a user data directory that is guaranteed to have write access.\n" +
+          "By default mORTEX will select a user data directory that is guaranteed to have write access.\n" +
           "When changing the Downloads Folder, the downloads for all your games will be moved to the new location " +
           "automatically. Make sure the new location has plenty of available space and that you have permission " +
           "to write files to it.\n" +
@@ -116,13 +116,13 @@ function getText(id: string, t: TFunction) {
     }
     case "modspath": {
       return t(
-        "Vortex uses default paths to store mods you download and install.\n" +
+        "mORTEX uses default paths to store mods you download and install.\n" +
           "If you don't like these defaults or can't use them (i.e. because you need to use " +
           "the hard link deployment method and the game is on a different drive) " +
           "then use this input box to change the directories. Existing files will be " +
           "moved to the new location automatically once you confirm the new paths.\n" +
           "Please make sure you have write permission to the new directories. Do NOT use your " +
-          "Vortex application directory!\n\n" +
+          "mORTEX application directory!\n\n" +
           'You can use "variables" to save yourself some typing:\n' +
           " - {GAME} is replaced with the id of the game\n" +
           " - {USERDATA} is replaced with a platform dependent data directory that is guaranteed " +
@@ -138,7 +138,7 @@ function getText(id: string, t: TFunction) {
         "A file conflict happens every time two mods contain the same file so one mod has to overwrite the other. " +
           "This is a very common occurrence in modding.\n\n" +
           "When installing mods manually or through NMM you're asked during mod installation whether to " +
-          "overwrite files or not but with Vortex you make that choice after the installation and you can change " +
+          "overwrite files or not but with mORTEX you make that choice after the installation and you can change " +
           "your choice at any time without reinstalling the mod.\n\n" +
           "You still need to choose though, otherwise files you deploy may be incompatible and the game " +
           "could become unstable or have all sorts of errors.\n\n" +

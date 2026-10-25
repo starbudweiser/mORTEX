@@ -146,7 +146,7 @@ export async function downloadAndInstallExtension(
   }
 }
 
-const UPDATE_PREFIX = "Vortex Extension Update -";
+const UPDATE_PREFIX = "mORTEX Extension Update -";
 
 function archiveFileName(ext: IExtensionDownloadInfo): string {
   const name = ext.name.startsWith("Game:")

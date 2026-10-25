@@ -130,7 +130,7 @@ function runCheck(api: IExtensionApi, check: ICheckEntry): Promise<void> {
 
         if (result.severity === "fatal") {
           dialogActions.unshift({
-            label: "Quit Vortex",
+            label: "Quit mORTEX",
             action: () => getApplication().quit(0),
           });
           showMore();

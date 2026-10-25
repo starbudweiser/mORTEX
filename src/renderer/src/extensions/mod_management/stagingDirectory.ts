@@ -44,8 +44,8 @@ async function validateStagingTag(api: IExtensionApi, tagPath: string): Promise<
         "Confirm",
         {
           text:
-            "This is a staging folder but it appears to belong to a different Vortex " +
-            'instance. If you\'re using Vortex in shared and "regular" mode, do not use ' +
+            "This is a staging folder but it appears to belong to a different mORTEX " +
+            'instance. If you\'re using mORTEX in shared and "regular" mode, do not use ' +
             "the same staging folder for both!",
         },
         [{ label: "Cancel" }, { label: "Continue" }],
@@ -88,16 +88,16 @@ async function queryStagingFolderInvalid(
       {
         bbcode:
           'Your mod staging folder "{{path}}" is not marked correctly. This may be ok ' +
-          "if you've updated from a very old version of Vortex and you can ignore this.<br/>" +
+          "if you've updated from a very old version of mORTEX and you can ignore this.<br/>" +
           "[b]However[/b], if you use a removable medium (network or USB drive) and that path " +
           "does not actually point to your real staging folder, you [b]have[/b] " +
-          "to make sure the actual folder is available and tell Vortex where it is.",
+          "to make sure the actual folder is available and tell mORTEX where it is.",
         message: err.message,
         parameters: {
           path: instPath,
         },
       },
-      [{ label: "Quit Vortex" }, { label: "Ignore" }, { label: "Browse..." }],
+      [{ label: "Quit mORTEX" }, { label: "Ignore" }, { label: "Browse..." }],
     );
   }
   return api.showDialog(
@@ -117,7 +117,7 @@ async function queryStagingFolderInvalid(
         path: instPath,
       },
     },
-    [{ label: "Quit Vortex" }, { label: "Reinitialize" }, { label: "Browse..." }],
+    [{ label: "Quit mORTEX" }, { label: "Reinitialize" }, { label: "Browse..." }],
   );
 }
 
@@ -175,7 +175,7 @@ async function ensureStagingDirectoryImpl(
     } else {
       const err = unknownToError(unknownError);
       const dialogResult = await queryStagingFolderInvalid(api, err, dirExists, instPath);
-      if (dialogResult.action === "Quit Vortex") {
+      if (dialogResult.action === "Quit mORTEX") {
         getApplication().quit(0);
         throw new UserCanceled();
       } else if (dialogResult.action === "Reinitialize") {

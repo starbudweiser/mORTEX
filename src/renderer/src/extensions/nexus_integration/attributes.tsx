@@ -262,7 +262,7 @@ export function genGameAttribute(api: IExtensionApi): ITableAttribute<IMod> {
         "So if you manually downloaded this mod from the Skyrim section and installed it for " +
         'Skyrim Special Edition, set this to "Skyrim".\n\n' +
         "Otherwise, please don't change this. It is required to be correct so " +
-        "Vortex can retrieve the correct mod information (including update info).",
+        "mORTEX can retrieve the correct mod information (including update info).",
     ),
     edit: {
       readOnly: (mod: IModWithState) => mod.state === "downloaded",

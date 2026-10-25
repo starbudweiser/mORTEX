@@ -68,7 +68,7 @@ async function errorHandler(
 
   const vortexLog: IAttachmentData = {
     filePath: path.join(util.getVortexPath("userData"), "vortex.log"),
-    description: "Vortex log file",
+    description: "mORTEX log file",
   };
 
   let addedAttachments: IAttachmentData[] = [];

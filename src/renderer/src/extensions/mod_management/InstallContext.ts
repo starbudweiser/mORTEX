@@ -124,7 +124,7 @@ class InstallContext implements IInstallContext {
             id: "log",
             type: "file",
             data: path.join(getVortexPath("userData"), "vortex.log"),
-            description: "Vortex Log",
+            description: "mORTEX Log",
           },
         ],
       });

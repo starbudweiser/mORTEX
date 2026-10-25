@@ -1835,7 +1835,7 @@ function checkPendingTransfer(api: IExtensionApi): Promise<ITestResult> {
       short: "Folder transfer was interrupted",
       long:
         "An attempt to move the staging folder was interrupted. You should let " +
-        "Vortex clean up now, otherwise you may be left with unnecessary copies of files.",
+        "mORTEX clean up now, otherwise you may be left with unnecessary copies of files.",
     },
     automaticFix: () =>
       new Promise<void>((fixResolve, fixReject) => {
@@ -1961,9 +1961,9 @@ function checkDuplicateMods(api: IExtensionApi): Promise<ITestResult> {
 
   const preSelectedTxt =
     duplicateMap.preselected.length > 0
-      ? ", Vortex has identified and pre-selected some of the duplicate mods as they were not referenced by " +
+      ? ", mORTEX has identified and pre-selected some of the duplicate mods as they were not referenced by " +
         "any of your profiles. Given that the mod is not used it should be safe to remove it, but please " +
-        "bear in mind that Vortex does not check for manual file modifications - you should double check " +
+        "bear in mind that mORTEX does not check for manual file modifications - you should double check " +
         "any mod before agreeing to remove it.<br/><br/>"
       : ".<br/><br/>";
   result = {
@@ -1971,7 +1971,7 @@ function checkDuplicateMods(api: IExtensionApi): Promise<ITestResult> {
     description: {
       short: "Potential Duplicate Mods",
       long:
-        "Due to a bug in older versions of Vortex, it was possible to duplicate mod entries " +
+        "Due to a bug in older versions of mORTEX, it was possible to duplicate mod entries " +
         "when re-installing recently updated mods.<br/><br/>" +
         `Unfortunately your machine has some of these potential duplicates${preSelectedTxt}` +
         "Proceeding past this point will allow you to select which mods to remove.",
@@ -2013,7 +2013,7 @@ function checkStagingFolder(api: IExtensionApi): Promise<ITestResult> {
       description: {
         short: "Invalid staging folder",
         long:
-          "Your mod staging folder is inside the Vortex application directory. " +
+          "Your mod staging folder is inside the mORTEX application directory. " +
           "This is a very bad idea because that folder gets removed during updates so you would " +
           "lose all your files on the next update.",
       },

@@ -634,7 +634,7 @@ function manageGameUndiscovered(api: IExtensionApi, gameId: string): PromiseBB<v
                 setUIBlocker(
                   "installing-game",
                   "download",
-                  "Installing Game, Vortex will restart upon completion.",
+                  "Installing Game, mORTEX will restart upon completion.",
                   true,
                 ),
               );
@@ -814,7 +814,7 @@ function unmanageGame(api: IExtensionApi, gameId: string, gameName?: string): Pr
         bbcode:
           "This will uninstall all mods managed by vortex and delete all profiles " +
           'for "{{gameName}}", ' +
-          "potentially including associated savegames, ini files and everything else Vortex " +
+          "potentially including associated savegames, ini files and everything else mORTEX " +
           "stores per-profile." +
           "[br][/br][br][/br]" +
           "[style=dialog-danger-text]This is irreversible and we will not warn again, continue only if " +
@@ -861,7 +861,7 @@ function unmanageGame(api: IExtensionApi, gameId: string, gameName?: string): Pr
                 {
                   text:
                     "Failed to purge mods deployed for this game. To ensure there are no " +
-                    "leftovers before Vortex stops managing the game, please solve any " +
+                    "leftovers before mORTEX stops managing the game, please solve any " +
                     "setup problems for the game first.",
                 },
                 [{ label: "Close" }],

@@ -418,12 +418,12 @@ function prettifyNodeErrorMessageInner(
   } else if (err.code === "EPERM") {
     const filePath = err.path || err.filename || undefined;
     const firstLine = filePath
-      ? 'Vortex needs to access "{{filePath}}" but it\'s write protected.\n'
-      : "Vortex needs to access a file that is write protected.\n";
+      ? 'mORTEX needs to access "{{filePath}}" but it\'s write protected.\n'
+      : "mORTEX needs to access a file that is write protected.\n";
     return {
       message:
         firstLine +
-        "When you configure directories and access rights you need to ensure Vortex can " +
+        "When you configure directories and access rights you need to ensure mORTEX can " +
         "still access data directories.\n" +
         "This is usually not a bug in Vortex.",
       replace: { filePath },
@@ -434,7 +434,7 @@ function prettifyNodeErrorMessageInner(
       const filePath = err.path || err.filename;
 
       return {
-        message: 'Vortex tried to access "{{filePath}}" but it doesn\'t exist.',
+        message: 'mORTEX tried to access "{{filePath}}" but it doesn\'t exist.',
         replace: { filePath },
         allowReport: false,
       };
@@ -453,7 +453,7 @@ function prettifyNodeErrorMessageInner(
   } else if (err.code === "EACCES" && err.port === undefined && err.path) {
     return {
       message:
-        'Vortex was denied access to "{{filePath}}".\n' +
+        'mORTEX was denied access to "{{filePath}}".\n' +
         "Please check the permissions of this file or directory.",
       replace: { filePath: err.path },
       allowReport: false,
@@ -508,13 +508,13 @@ function prettifyNodeErrorMessageInner(
     };
   } else if (err.code === "EISDIR") {
     return {
-      message: 'Vortex expected a file but found a directory: "{{path}}".',
+      message: 'mORTEX expected a file but found a directory: "{{path}}".',
       replace: { path: err.path },
       allowReport: false,
     };
   } else if (err.code === "ENOTDIR") {
     return {
-      message: "Vortex expected a directory but found a file.",
+      message: "mORTEX expected a directory but found a file.",
       allowReport: false,
     };
   } else if (err.code === "EROFS") {

@@ -65,7 +65,7 @@ export async function ensureUMM(
           bbcode: t(
             "The {{game}} game extension requires a 3rd party mod " +
               "patching/injection tool called Unity Mod Manager (UMM).{{bl}}" +
-              "Vortex can walk you through the download/installation process; once complete, UMM " +
+              "mORTEX can walk you through the download/installation process; once complete, UMM " +
               "will be available as a tool in your dashboard." +
               "Depending on the modding pattern of {{game}}, UMM may be a hard requirement " +
               "for mods to function in-game, in which case you MUST have the tool installed " +
@@ -102,7 +102,7 @@ async function downloadFromGithub(api: types.IExtensionApi, dlInfo: INexusDownlo
     archiveName: dlInfo.archiveName,
   };
   const instructions = t(
-    "Once you allow Vortex to browse to GitHub - " +
+    "Once you allow mORTEX to browse to GitHub - " +
       'Please scroll down and click on "{{archiveName}}"',
     { replace },
   );

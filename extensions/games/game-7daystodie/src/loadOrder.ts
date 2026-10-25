@@ -23,7 +23,7 @@ function corruptLODialog(props: IProps, filePath: string, err: Error) {
       {
         bbcode: props.api.translate(
           "The load order file is in a corrupt state or missing. " +
-            "You can try to fix it yourself or Vortex can regenerate the file for you, but " +
+            "You can try to fix it yourself or mORTEX can regenerate the file for you, but " +
             "that may result in loss of data. Will only affect load order items you added manually, if any).",
         ),
       },

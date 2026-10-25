@@ -109,7 +109,7 @@ const TUTORIAL_DATA = {
   [TODO_GROUP]: [
     createTutorialVideo(
       VIDEO_IDS.intro,
-      "Vortex Introduction",
+      "mORTEX Introduction",
       "2.05",
       "8.14",
       ATTRIBUTIONS.gopher,

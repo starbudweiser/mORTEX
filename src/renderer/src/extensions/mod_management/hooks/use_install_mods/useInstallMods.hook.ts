@@ -15,7 +15,7 @@ const notInstallable = (api: IExtensionApi, archiveId: string): string | undefin
   const download = api.getState().persistent.downloads.files[archiveId];
 
   if (download === undefined) {
-    return "Vortex no longer knows about this archive, so it can't be installed.";
+    return "mORTEX no longer knows about this archive, so it can't be installed.";
   }
   if (download.state !== "finished") {
     return "The download must finish before it can be installed.";

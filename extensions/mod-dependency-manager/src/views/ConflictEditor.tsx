@@ -375,11 +375,11 @@ class ConflictEditor extends ComponentEx<IProps, IComponentState> {
       t("Confirm"),
       {
         bbcode: t(
-          "Vortex can set some of the rules automatically based on the last modified date. " +
+          "mORTEX can set some of the rules automatically based on the last modified date. " +
             "Mods with newer files will be loaded after mods with older files, effectively overriding " +
             "older mods. While this is a quick way to resolve mod conflicts with generally decent results, " +
             "it is no guarantee for a working mod load order.[br][/br][br][/br]" +
-            "Please note: Vortex will be unable to suggest rules for mods with files " +
+            "Please note: mORTEX will be unable to suggest rules for mods with files " +
             "that are both older than some and newer than others from a conflicting mod.[br][/br][br][/br]" +
             "Loading mods in the incorrect order can lead to in-game errors such as:[br][/br][br][/br]" +
             "[list][*]Mods not having an effect on the game[*]Incorrect textures or models showing up " +

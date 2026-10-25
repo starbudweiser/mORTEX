@@ -105,7 +105,7 @@ async function notifyUpdate(
               "{{name}} Update",
               {
                 text:
-                  "Vortex has detected a newer version of {{name}} ({{latest}}) available to download from {{website}}. You currently have version {{current}} installed." +
+                  "mORTEX has detected a newer version of {{name}} ({{latest}}) available to download from {{website}}. You currently have version {{current}} installed." +
                   "\nVortex can download and attempt to install the new update for you.",
                 parameters: {
                   name: "BepInEx",
