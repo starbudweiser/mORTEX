@@ -25,6 +25,8 @@ interface ITableRowProps<T, G extends ITableGroup<T>> {
   onClick?: (click: ITableRowClick) => void;
   /** Opens the row's context menu, from a right-click or the keyboard's menu key. */
   onContextMenu?: (event: MouseEvent<HTMLDivElement>) => void;
+  /** A double-click on the row, not on a control in it. */
+  onDoubleClick?: () => void;
 }
 
 // What a click lands on to use a control in the row, rather than to select the row.
@@ -75,6 +77,7 @@ export const TableRow = <T, G extends ITableGroup<T>>({
   sortedColumnId,
   onClick,
   onContextMenu,
+  onDoubleClick,
 }: ITableRowProps<T, G>) => (
   <EngagingRow
     aria-level={level}
@@ -92,6 +95,11 @@ export const TableRow = <T, G extends ITableGroup<T>>({
     onContextMenu={(event) => {
       if (onContextMenu && event.currentTarget.contains(event.target as Node)) {
         onContextMenu(event);
+      }
+    }}
+    onDoubleClick={(event) => {
+      if (onDoubleClick !== undefined && isRowClick(event)) {
+        onDoubleClick();
       }
     }}
     // Shift and Ctrl would otherwise select the text between this click and the last.

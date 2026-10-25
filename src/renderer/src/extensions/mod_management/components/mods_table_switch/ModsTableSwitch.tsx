@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
 import type { ITableRowAction } from "@/controls/Table";
+import { ExtensionContext } from "@/ExtensionProvider";
+import { activeGameId } from "@/extensions/profile_management/selectors";
 import type { IState } from "@/types/IState";
 import { useDisplayOptionsAction } from "@/ui/components/display_options/useDisplayOptionsAction.hook";
 import { DropdownBlock } from "@/ui/components/dropdown/DropdownBlock";
@@ -57,6 +59,7 @@ import { CollectionHoverCard } from "../collection_hover_card/CollectionHoverCar
 import { CollectionRevision } from "../collection_revision/CollectionRevision";
 import { DisableSharedModsModal } from "../disable_shared_mods_modal/DisableSharedModsModal";
 import { ModHoverCard } from "../mod_hover_card/ModHoverCard";
+import { ModInspector } from "../mod_inspector/ModInspector";
 import {
   actionsWidth,
   ModRowActions,
@@ -169,6 +172,40 @@ export const ModsTableSwitch = ({
   const dataColumns = useModsTableDataColumns(memberships);
 
   const { actionsFor, pinnedCount } = useModRowActions(rowActions);
+
+  // mORTEX : la fiche du mod double-cliqué, à droite de la liste, comme dans l'ancienne interface
+  const [inspectedId, setInspectedId] = useState<string>();
+  const inspected =
+    inspectedId === undefined ? undefined : rows.find(({ mod }) => mod.id === inspectedId);
+  const closeInspector = useCallback(() => setInspectedId(undefined), []);
+  const inspectedAction = (title: string) => {
+    const action = inspected && actionsFor(inspected.mod.id).find(({ id }) => id === title);
+    return action?.onClick !== undefined && !action.disabled ? action.onClick : undefined;
+  };
+  // Une archive importée (sans données de téléchargement Nexus) garde ses identifiants dans
+  // ses attributs : la fiche ouvre alors la page elle-même, par l'événement de Vortex.
+  const extensions = React.useContext(ExtensionContext);
+  const gameMode = useSelector(activeGameId);
+  const openNexus = (() => {
+    const viaAction = inspectedAction("Open on Nexus Mods");
+    const attributes = inspected?.mod.attributes;
+    if (
+      viaAction !== undefined ||
+      attributes?.source !== "nexus" ||
+      attributes.modId === undefined
+    ) {
+      return viaAction;
+    }
+    return () =>
+      extensions
+        ?.getApi()
+        .events.emit(
+          "open-mod-page",
+          attributes.downloadGame ?? gameMode,
+          attributes.modId,
+          "nexus",
+        );
+  })();
   const analytics = useModsTableAnalytics();
   const rowTracking = useToolbarAnalytics(MODS_TABLE_TOOLBARS.row);
   const selectionTracking = useToolbarAnalytics(MODS_TABLE_TOOLBARS.selection);
@@ -412,6 +449,7 @@ export const ModsTableSwitch = ({
   );
 
   const tableProps = {
+    onRowDoubleClick: ({ mod }: IModRow) => setInspectedId(mod.id),
     // mORTEX : par catégorie, la liste s'ouvre repliée ; une recherche montre ses résultats ouverts
     collapsedByDefault: grouping === "category" && !isSearching,
     focusGroupId,
@@ -487,7 +525,21 @@ export const ModsTableSwitch = ({
 
   return (
     <>
-      <Table {...tableProps} {...data} />
+      {/* Toujours enveloppé : ouvrir la fiche ne remonte pas le tableau (groupes, défilement) */}
+      <div className="mortex-mods-body">
+        <Table {...tableProps} {...data} />
+
+        {inspected !== undefined && (
+          <ModInspector
+            key={inspected.mod.id}
+            mod={inspected.mod}
+            name={inspected.name}
+            onClose={closeInspector}
+            onOpenFolder={inspectedAction("Open in File Manager")}
+            onOpenNexus={openNexus}
+          />
+        )}
+      </div>
 
       <DisableSharedModsModal
         collections={pendingDisable?.shared.collections ?? []}

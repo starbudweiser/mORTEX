@@ -82,5 +82,18 @@
   "mORTEX uninstall path doesn't match current executable": "La ruta de desinstalación de mORTEX no coincide con el ejecutable actual",
   "mORTEX was installed through a third-party service which will take care of updating it.": "mORTEX se instaló mediante un servicio de terceros que se encargará de actualizarlo.",
   "Vortex": "mORTEX",
-  "No {{column}}": "Sin {{column}}"
+  "No {{column}}": "Sin {{column}}",
+  "Mod information": "Información del mod",
+  "Close": "Cerrar",
+  "Local file": "Archivo local",
+  "Website": "Sitio web",
+  "Category": "Categoría",
+  "Source": "Origen",
+  "Nexus ID": "ID de Nexus",
+  "Installed": "Instalado",
+  "Archive": "Archivo comprimido",
+  "Folder": "Carpeta",
+  "Notes": "Notas",
+  "Open on Nexus Mods": "Abrir en Nexus Mods",
+  "Show in Finder": "Mostrar en el Finder"
 }

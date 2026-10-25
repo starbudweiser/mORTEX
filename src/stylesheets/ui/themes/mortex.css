@@ -275,7 +275,9 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     align-items: center;
     gap: 18px;
     height: 24px;
-    margin: -6px 0 6px;
+    /* sous la liste, pas par-dessus sa dernière ligne */
+    margin: 0;
+    border-top: 1px solid var(--color-stroke-weak);
     /* loin des coins arrondis de la fenêtre, comme la maquette */
     padding-inline: 14px;
     color: var(--color-neutral-subdued);
@@ -805,4 +807,160 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     display: inline-flex !important;
     align-items: center;
     gap: 6px;
+}
+
+/* ---- Mods : la fiche d'un mod (double-clic), ancrée à droite comme l'inspecteur des Plugins ---- */
+.mortex-mods-body {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: flex-start;
+    min-width: 0;
+
+    > :first-child {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+}
+
+.mortex-inspector {
+    position: sticky;
+    top: 0;
+    flex: none;
+    width: 300px;
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+    margin-left: 12px;
+    padding: 16px;
+    border-left: 1px solid var(--color-stroke-weak);
+    background-color: var(--color-surface-low);
+    color: var(--color-neutral-moderate);
+    font-size: 12px;
+
+    h4 {
+        margin: 0;
+        color: var(--color-neutral-strong);
+        font-size: 15px;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    small {
+        display: block;
+        margin-top: 2px;
+        color: var(--color-neutral-subdued);
+    }
+
+    p {
+        margin: 12px 0 0;
+        line-height: 1.45;
+    }
+}
+
+.mortex-inspector-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.mortex-inspector-picture {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin-top: 12px;
+    border-radius: 6px;
+}
+
+.mortex-inspector-fields {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 8px;
+    margin: 14px 0 0;
+
+    dt {
+        color: var(--color-neutral-subdued);
+        font-weight: 400;
+    }
+
+    dd {
+        margin: 0;
+        color: var(--color-neutral-moderate);
+        overflow-wrap: anywhere;
+    }
+}
+
+.mortex-inspector-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+/* ---- Fenêtre Groupes (Plugins) : grande d'emblée et redimensionnable par son coin ; le graphe
+   occupe toute la place au lieu de 500 px fixes ---- */
+/* sans !important sur la taille : le coin de redimensionnement la pose en style en ligne */
+#plugin-group-editor.modal .modal-dialog {
+    display: flex;
+    width: min(1400px, calc(100vw - 64px));
+    max-width: calc(100vw - 32px);
+    height: calc(100vh - 96px);
+    min-width: 520px;
+    min-height: 380px;
+    max-height: calc(100vh - 32px);
+    margin: 48px auto 0 !important;
+    overflow: hidden;
+    resize: both;
+}
+
+#plugin-group-editor .modal-content {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+#plugin-group-editor .modal-body {
+    position: relative;
+    min-height: 0;
+}
+
+#plugin-group-editor .group-graph {
+    height: 100% !important;
+}
+
+/* Bandeaux d'aide (LOOT, Groupes…) : un petit × dans le coin, pas un bloc gris sur toute la hauteur */
+.usage-instructions .close-button {
+    top: 6px !important;
+    right: 6px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 22px !important;
+    min-width: 0 !important;
+    height: 22px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 6px !important;
+    background-color: transparent !important;
+    color: var(--color-neutral-subdued) !important;
+
+    &:hover {
+        background-color: var(--color-zinc-700) !important;
+        color: var(--color-neutral-strong) !important;
+    }
+
+    svg {
+        width: 12px !important;
+        height: 12px !important;
+    }
+}
+
+/* Ancienne interface : la fenêtre des notifications, centrée sous la cloche près du bord, débordait
+   à droite et coupait ses ×. Elle s'aligne sur le bord droit, la flèche restant sous la cloche. */
+#notifications-popover.popover.bottom {
+    left: auto !important;
+    right: 12px !important;
+    max-width: min(420px, calc(100vw - 24px));
+}
+
+#notifications-popover.popover.bottom > .arrow {
+    left: auto !important;
+    right: 46px;
 }

@@ -83,6 +83,7 @@ export const Table = <T, G extends ITableGroup<T> = ITableGroup<T>>({
   groupMenu,
   groupTracking,
   collapsedByDefault = false,
+  onRowDoubleClick,
   focusGroupId,
   onGroupFocused,
   onMenuOpen,
@@ -329,6 +330,7 @@ export const Table = <T, G extends ITableGroup<T> = ITableGroup<T>>({
             ? (click) => selection.click({ key: item.key, id: getRowId(item.row) }, click)
             : undefined
         }
+        onDoubleClick={onRowDoubleClick ? () => onRowDoubleClick(item.row) : undefined}
         onContextMenu={
           rowMenu
             ? (event) => {

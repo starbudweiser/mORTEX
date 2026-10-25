@@ -123,5 +123,18 @@
   "Install From File": "Install From File",
   "Manage games": "Manage games",
   "Vortex": "mORTEX",
-  "No {{column}}": "No {{column}}"
+  "No {{column}}": "No {{column}}",
+  "Mod information": "Mod information",
+  "Close": "Close",
+  "Local file": "Local file",
+  "Website": "Website",
+  "Category": "Category",
+  "Source": "Source",
+  "Nexus ID": "Nexus ID",
+  "Installed": "Installed",
+  "Archive": "Archive",
+  "Folder": "Folder",
+  "Notes": "Notes",
+  "Open on Nexus Mods": "Open on Nexus Mods",
+  "Show in Finder": "Show in Finder"
 }

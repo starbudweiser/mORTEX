@@ -50,6 +50,8 @@ function san(input: string): string {
 class GraphView extends React.Component<IGraphViewProps, {}> {
   private mGraph: cytoscape.Core;
   private mLayout: cytoscape.LayoutManipulation;
+  // mORTEX : la fenêtre Groupes se redimensionne ; le graphe suit son cadre, pas seulement la fenêtre
+  private mResizeObserver: ResizeObserver | undefined;
   private mEdgeHandler: any;
   private mMousePos: { x: number; y: number } = { x: 0, y: 0 };
   private mHoveredNode: any;
@@ -188,6 +190,8 @@ class GraphView extends React.Component<IGraphViewProps, {}> {
   private setRef = (ref: HTMLDivElement) => {
     const { className, elements, visualStyle } = this.props;
     if (ref === null) {
+      this.mResizeObserver?.disconnect();
+      this.mResizeObserver = undefined;
       window.removeEventListener("keydown", this.onKeyDown);
       window.removeEventListener("keyup", this.onKeyUp);
       (this.mGraph as any).off("cxttap", this.handleContext);
@@ -207,6 +211,8 @@ class GraphView extends React.Component<IGraphViewProps, {}> {
     window.addEventListener("keyup", this.onKeyUp);
     this.addElements(elements);
     this.mGraph.resize();
+    this.mResizeObserver = new ResizeObserver(() => this.mGraph?.resize());
+    this.mResizeObserver.observe(ref);
     this.mGraph.center();
     this.mLayout = this.mGraph.layout({
       name: "cose-bilkent",

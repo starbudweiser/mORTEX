@@ -911,6 +911,36 @@ describe("ModsTableSwitch", () => {
       });
     });
   });
+  describe("mod information", () => {
+    const rowOf = (name: string) =>
+      screen.getAllByRole("row").find((row) => within(row).queryByText(name) !== null)!;
+
+    it("opens a double-clicked mod's information beside the list, and closes it on Escape", async () => {
+      renderSwitch({ a: mod("a", "Alpha", true), b: mod("b", "Beta", true) });
+
+      await userEvent.dblClick(within(rowOf("Beta")).getByText("Beta"));
+
+      const panel = screen.getByRole("complementary", { name: "Mod information" });
+      expect(within(panel).getByRole("heading", { name: "Beta" })).toBeInTheDocument();
+
+      await userEvent.keyboard("{Escape}");
+
+      expect(screen.queryByRole("complementary", { name: "Mod information" })).toBeNull();
+    });
+
+    it("opens the mod's Nexus Mods page through its row action", async () => {
+      const openNexus = vi.fn();
+      renderSwitch({ a: mod("a", "Alpha", true) }, [
+        { title: "Open on Nexus Mods", action: openNexus },
+      ]);
+
+      await userEvent.dblClick(within(rowOf("Alpha")).getByText("Alpha"));
+      await userEvent.click(screen.getByRole("button", { name: "Open on Nexus Mods" }));
+
+      expect(openNexus).toHaveBeenCalledWith(["a"]);
+    });
+  });
+
   describe("row actions", () => {
     const rowOf = (name: string) =>
       screen.getAllByRole("row").find((row) => within(row).queryByText(name) !== null)!;
