@@ -572,3 +572,8 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 .mortex-toolbar-button:hover {
     background-color: var(--color-zinc-600);
 }
+
+/* Cloche de la barre de titre : pas d'anneau, même ouverte */
+.mortex-header-bell > button {
+    border-color: transparent !important;
+}

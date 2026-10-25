@@ -50,7 +50,9 @@ export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
         </Typography>
 
         {count !== undefined && !menuIsCollapsed && (
-          <span className="mortex-menu-count">{count}</span>
+          <span className="mortex-menu-count">
+            {count >= 10000 ? `${Math.floor(count / 1000)} k` : count}
+          </span>
         )}
 
         {Badge && <Badge />}
