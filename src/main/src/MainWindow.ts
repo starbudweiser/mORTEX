@@ -434,7 +434,7 @@ class MainWindow {
       // macOS : feux tricolores natifs sur une barre de titre transparente (frame conservé)
       frame: process.platform === "darwin" ? true : !(windowMetrics?.customTitlebar ?? true),
       show: false,
-      title: "mORTEX - Gestionnaire de mods pour Mac Silicon",
+      title: "mORTEX",
       titleBarStyle:
         process.platform === "darwin" || windowMetrics?.customTitlebar === true
           ? "hidden"

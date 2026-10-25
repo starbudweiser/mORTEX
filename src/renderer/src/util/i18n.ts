@@ -136,6 +136,41 @@ class HighlightPP implements PostProcessorModule {
   };
 }
 
+let mortexListeners = false;
+
+/**
+ * mORTEX : ses textes intégrés (locales/<langue>/common.json) complètent la traduction active
+ * sans la masquer (un pack communautaire garde la priorité), et les traductions écrites pour
+ * « Vortex » servent aussi aux mêmes textes renommés en « mORTEX ».
+ */
+function mergeMortexStrings(i18nObj: i18n, bundled: string, lng: string) {
+  try {
+    const own = JSON.parse(
+      fs.readFileSync(path.join(bundled, lng.split("-")[0], "common.json"), "utf8"),
+    );
+    i18nObj.addResourceBundle(lng, "common", own, true, false);
+  } catch {
+    // pas de textes intégrés pour cette langue
+  }
+
+  const data = i18nObj.store?.data?.[lng] ?? {};
+  for (const ns of Object.keys(data)) {
+    const strings = data[ns] as Record<string, unknown>;
+    const alias: Record<string, string> = {};
+    for (const [key, value] of Object.entries(strings)) {
+      if (typeof value === "string" && key.includes("Vortex")) {
+        const renamed = key.replace(/Vortex/g, "mORTEX");
+        if (strings[renamed] === undefined) {
+          alias[renamed] = value.replace(/Vortex/g, "mORTEX");
+        }
+      }
+    }
+    if (Object.keys(alias).length > 0) {
+      i18nObj.addResourceBundle(lng, ns, alias, true, false);
+    }
+  }
+}
+
 /**
  * initialize the internationalization library
  */
@@ -156,6 +191,17 @@ export async function init(
   }
 
   i18nObj.use(MultiBackend).use(initReactI18next);
+
+  const bundledLocales = getVortexPath("locales");
+  if (!mortexListeners) {
+    mortexListeners = true;
+    i18nObj.on("loaded", (loaded: Record<string, unknown>) => {
+      Object.keys(loaded).forEach((lng) => mergeMortexStrings(i18nObj, bundledLocales, lng));
+    });
+    i18nObj.on("languageChanged", (lng: string) =>
+      mergeMortexStrings(i18nObj, bundledLocales, lng),
+    );
+  }
 
   try {
     const tFunc = await i18nObj.init({
@@ -214,12 +260,13 @@ export async function init(
       },
 
       backend: {
-        bundled: getVortexPath("locales"),
+        bundled: bundledLocales,
         user: path.normalize(path.join(getVortexPath("userData"), "locales")),
         translationExts,
       } satisfies BackendOptions,
     });
 
+    mergeMortexStrings(i18nObj, bundledLocales, language);
     actualT = tFunc;
     return {
       i18n: i18nObj,

@@ -4,6 +4,20 @@ import type { IReducerSpec } from "@/types/IExtensionContext";
 
 import * as actions from "../actions/interface";
 
+const MORTEX_LANGUAGES = ["fr", "en", "es", "it"];
+
+/**
+ * mORTEX : langue préférée du système si c'est l'une des quatre traduites, sinon l'anglais
+ */
+function systemLanguage(): string {
+  const preferred =
+    typeof navigator !== "undefined"
+      ? navigator.languages?.[0]
+      : Intl.DateTimeFormat().resolvedOptions().locale;
+  const base = (preferred ?? "en").split("-")[0].toLowerCase();
+  return MORTEX_LANGUAGES.includes(base) ? base : "en";
+}
+
 /**
  * reducer for changes to interface settings
  */
@@ -32,7 +46,7 @@ const settingsReducer: IReducerSpec = {
       update(state, { reduceMotion: { $set: payload } }),
   },
   defaults: {
-    language: "en",
+    language: systemLanguage(),
     advanced: false,
     profilesVisible: true,
     desktopNotifications: false,

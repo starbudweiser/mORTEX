@@ -832,6 +832,13 @@ async function load(extensions: ExtensionManager): Promise<void> {
 
   setTFunction(tFunc);
 
+  // mORTEX : titre de la fenêtre dans la langue de l'interface
+  const updateTitle = () => {
+    document.title = i18n.t("mORTEX - Mod manager for Mac Silicon");
+  };
+  updateTitle();
+  i18n.on("languageChanged", updateTitle);
+
   const dynamicExts = extensions.extensions
     .filter((ext) => ext.dynamic)
     .map((ext) => ({
