@@ -1,0 +1,27 @@
+// Socle : totalement plat, aucune ombre ni dégradé ; les éléments se distinguent par un aplat et un filet de 1px.
+* {
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+
+.btn,
+.form-control,
+.modal-content,
+.dropdown-menu {
+    background-image: none !important;
+}
+
+.modal-content {
+    border: 1px solid #333333;
+    border-radius: 8px;
+}
+
+.btn {
+    border-radius: 4px;
+}
+
+// focus clavier : contour de 2px, décalé de 2px
+:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px;
+}

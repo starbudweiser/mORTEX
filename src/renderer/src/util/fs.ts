@@ -33,7 +33,6 @@ import type * as permissionT from "permissions";
 import rimraf from "rimraf";
 import { generate as shortid } from "shortid";
 import * as tmp from "tmp";
-import type * as whoLocksT from "wholocks";
 
 import { ProcessCanceled, SelfCopyCheckError, UserCanceled } from "./CustomErrors";
 import { runElevated } from "./elevated";
@@ -41,11 +40,11 @@ import { createErrorReport, getVisibleWindow } from "./errorHandling";
 import type { TFunction } from "./i18n";
 import lazyRequire from "./lazyRequire";
 import { log } from "./log";
+import { whoLocks } from "./macos/whoLocks";
 import { decodeSystemError } from "./nativeErrors";
 import { restackErr, truthy } from "./util";
 
 const permission: typeof permissionT = lazyRequire(() => require("permissions"));
-const wholocks: typeof whoLocksT = lazyRequire(() => require("wholocks"));
 
 const showMessageBox = async (
   options: Electron.MessageBoxOptions,
@@ -219,7 +218,7 @@ function unlockConfirm(filePath: string): PromiseBB<boolean> {
 
   let processes = [];
   try {
-    processes = wholocks.default(filePath);
+    processes = whoLocks(filePath);
   } catch (err) {
     log("warn", "failed to determine list of processes locking file", {
       filePath,
@@ -371,7 +370,7 @@ function busyRetry(filePath: string): PromiseBB<boolean> {
 
   let processes = [];
   try {
-    processes = wholocks.default(filePath);
+    processes = whoLocks(filePath);
   } catch (err) {
     log("warn", "failed to determine list of processes locking file", {
       filePath,
