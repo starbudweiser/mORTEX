@@ -14,6 +14,7 @@ import type { IState } from "../../types/IState";
 import { getGame, UserCanceled } from "../../util/api";
 import * as fs from "../../util/fs";
 import type { Normalize } from "../../util/getNormalizeFunc";
+import { FINDER_JUNK, isFinderJunk } from "../../util/macos/finderJunk";
 import { activeGameId } from "../../util/selectors";
 import { truthy } from "../../util/util";
 import type { IDeploymentFailure } from "./actions/session";
@@ -908,7 +909,10 @@ abstract class LinkingActivator implements IDeploymentMethod {
           // then check files. if there are any, this isn't empty. plus we
           // restore backups here
           const files = allEntries.filter(
-            (entry) => !entry.isDirectory && !LinkingActivator.isTagName(entry.filePath),
+            (entry) =>
+              !entry.isDirectory &&
+              !LinkingActivator.isTagName(entry.filePath) &&
+              !isFinderJunk(entry.filePath),
           );
           if (files.length > 0) {
             empty = false;
@@ -958,6 +962,13 @@ abstract class LinkingActivator implements IDeploymentMethod {
                 }
                 throw err;
               })
+              .then(() =>
+                Promise.all(
+                  FINDER_JUNK.map((name) =>
+                    fs.unlinkAsync(path.join(baseDir, name)).catch(() => undefined),
+                  ),
+                ),
+              )
               .then(() =>
                 fs.rmdirAsync(baseDir).catch((err) => {
                   log("error", "failed to remove directory, it was supposed to be empty", {

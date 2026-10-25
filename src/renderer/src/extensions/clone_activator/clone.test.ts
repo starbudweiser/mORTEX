@@ -50,6 +50,19 @@ describe.skipIf(process.platform !== "darwin")("clone APFS deployment", () => {
   });
 });
 
+describe.skipIf(process.platform !== "darwin")("purge and the Finder", () => {
+  test("a folder left with only a .DS_Store is removed", async ({ makeDeployment }) => {
+    const h = makeDeployment({ files: FILES, method: "clone" });
+    await h.deploy();
+    const folder = path.dirname(h.inGame("meshes/armor/helmet.nif"));
+    nodeFs.writeFileSync(path.join(folder, ".DS_Store"), "finder");
+
+    await h.method.purge(h.stagingDir, h.gameDir, "skyrimse");
+
+    expect(nodeFs.existsSync(folder)).toBe(false);
+  });
+});
+
 describe("cloneKey", () => {
   test("ignores case and sub-second time", () => {
     expect(cloneKey("Meshes/A.nif", 3, 1_000_400)).toBe(cloneKey("meshes/a.nif", 3, 1_000_900));
