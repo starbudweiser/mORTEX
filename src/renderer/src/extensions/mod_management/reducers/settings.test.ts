@@ -80,7 +80,7 @@ describe("setBetaModsTable", () => {
     expect(settingsReducer.reducers.SET_BETA_MODS_TABLE(on, false)).toEqual({ betaTable: false });
   });
 
-  it("is off by default", () => {
-    expect(settingsReducer.defaults.betaTable).toBe(false);
+  it("is on by default", () => {
+    expect(settingsReducer.defaults.betaTable).toBe(true);
   });
 });

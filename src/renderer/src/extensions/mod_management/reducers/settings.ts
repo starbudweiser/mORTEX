@@ -35,7 +35,7 @@ export const settingsReducer: IReducerSpec = {
     showDropzone: true,
     confirmPurge: true,
     cleanupOnDeploy: false,
-    betaTable: false,
+    betaTable: true,
   },
   verifiers: {
     installPath: {
