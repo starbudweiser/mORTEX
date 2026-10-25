@@ -106,5 +106,10 @@
   "mORTEX settings": "mORTEX settings",
   "mORTEX uninstall key is incomplete": "mORTEX uninstall key is incomplete",
   "mORTEX uninstall path doesn't match current executable": "mORTEX uninstall path doesn't match current executable",
-  "mORTEX was installed through a third-party service which will take care of updating it.": "mORTEX was installed through a third-party service which will take care of updating it."
+  "mORTEX was installed through a third-party service which will take care of updating it.": "mORTEX was installed through a third-party service which will take care of updating it.",
+  "All mods": "All mods",
+  "Installation time": "Installation time",
+  "Actions": "Actions",
+  "{{count}} archives": "{{count}} archive",
+  "{{count}} archives_plural": "{{count}} archives"
 }

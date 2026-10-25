@@ -58,8 +58,10 @@ function MortexStatusDashlet() {
 
         <div className="mortex-card">
           <h5>{t("Downloads")}</h5>
-          <div className="mortex-card-big">{counts.downloads}</div>
-          <p>{t("{{count}} in progress", { count: counts.active })}</p>
+          <div className="mortex-card-big">
+            {t("{{count}} in progress", { count: counts.active })}
+          </div>
+          <p>{t("{{count}} archives", { count: counts.downloads })}</p>
         </div>
 
         <div className="mortex-card">
