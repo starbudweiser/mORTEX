@@ -201,6 +201,8 @@ function watchDownloads(
   }
 }
 
+const BULK_ADD_LOOKUP_LIMIT = 50;
+
 async function removeInvalidDownloads(api: IExtensionApi, gameId?: string) {
   const state: IState = api.store.getState();
   gameId = gameId || selectors.activeGameId(state);
@@ -267,110 +269,114 @@ function updateDownloadPath(api: IExtensionApi, gameId?: string) {
   // when the folder turns out to be unavailable nothing gets reconciled, so
   // there is also nothing to watch and no refresh to announce
   let folderAvailable = true;
-  return (removeInvalidDownloads(api, gameId) as any)
-    .then(() =>
-      getNormalizeFunc(currentDownloadPath, {
-        separators: false,
-        relative: false,
-      }),
-    )
-    .then((normalize) => {
-      downloads = api.getState().persistent.downloads.files;
-      nameIdMap = Object.keys(downloads).reduce((prev, value) => {
-        if (downloads[value].localPath !== undefined) {
-          prev[normalize(downloads[value].localPath)] = value;
-        }
-        return prev;
-      }, {});
-
-      downloadChangeHandler = genDownloadChangeHandler(
-        api,
-        currentDownloadPath,
-        gameId,
-        nameIdMap,
-        normalize,
-      );
-
-      // Get the downloads for this game, but only the ones that
-      // have a valid localPath.
-      const knownDLs = Object.keys(downloads)
-        .filter(
-          (dlId) =>
-            getDownloadGames(downloads[dlId])[0] === gameId &&
-            downloads[dlId].localPath !== undefined &&
-            !isTempDownloadName(downloads[dlId].localPath),
-        )
-        .map((dlId) => normalize(downloads[dlId].localPath || ""));
-
-      // dispatched in one batch afterwards: one action per archive froze the UI on huge folders
-      const addedActions: Array<ReturnType<typeof addLocalDownload>> = [];
-      return refreshDownloads(
-        currentDownloadPath,
-        knownDLs,
-        normalize,
-        (fileName: string) =>
-          fs.statAsync(path.join(currentDownloadPath, fileName)).then((stats: fs.Stats) => {
-            const dlId = shortid();
-            addedActions.push(addLocalDownload(dlId, gameId, fileName, stats.size));
-            nameIdMap[normalize(fileName)] = dlId;
-          }),
-        (fileName: string) => {
-          // the fileName here is already normalized
-          api.store.dispatch(removeDownload(nameIdMap[fileName]));
-          return PromiseBB.resolve();
-        },
-        () =>
-          new PromiseBB((resolve, reject) => {
-            api.showDialog(
-              "question",
-              "Access Denied",
-              {
-                text:
-                  "The download directory is not writable to your user account.\n" +
-                  "If you have admin rights on this system, Vortex can change the permissions " +
-                  "to allow it write access.",
-              },
-              [
-                { label: "Cancel", action: () => reject(new UserCanceled()) },
-                { label: "Allow access", action: () => resolve() },
-              ],
-            );
-          }),
+  return (
+    (removeInvalidDownloads(api, gameId) as any)
+      .then(() =>
+        getNormalizeFunc(currentDownloadPath, {
+          separators: false,
+          relative: false,
+        }),
       )
-        .then(() => batchDispatch(api.store, addedActions))
-        .catch((err: unknown) => {
-          if (err instanceof UserCanceled) {
-            return null;
+      .then((normalize) => {
+        downloads = api.getState().persistent.downloads.files;
+        nameIdMap = Object.keys(downloads).reduce((prev, value) => {
+          if (downloads[value].localPath !== undefined) {
+            prev[normalize(downloads[value].localPath)] = value;
           }
-          if (err instanceof VortexError && err.data.kind === "fs:not-found") {
-            // reconciling against a folder Vortex can't see would delete every
-            // download record for this game, so reconciliation is skipped
-            folderAvailable = false;
-            api.showErrorNotification(
-              "Download folder is not available",
-              getErrorMessageOrDefault(err),
-              { allowReport: false },
-            );
-            return null;
-          }
-          api.showErrorNotification("Failed to refresh download directory", err, {
-            allowReport: getErrorCode(err) !== "EPERM",
+          return prev;
+        }, {});
+
+        downloadChangeHandler = genDownloadChangeHandler(
+          api,
+          currentDownloadPath,
+          gameId,
+          nameIdMap,
+          normalize,
+        );
+
+        // Get the downloads for this game, but only the ones that
+        // have a valid localPath.
+        const knownDLs = Object.keys(downloads)
+          .filter(
+            (dlId) =>
+              getDownloadGames(downloads[dlId])[0] === gameId &&
+              downloads[dlId].localPath !== undefined &&
+              !isTempDownloadName(downloads[dlId].localPath),
+          )
+          .map((dlId) => normalize(downloads[dlId].localPath || ""));
+
+        // dispatched in one batch afterwards: one action per archive froze the UI on huge folders
+        const addedActions: Array<ReturnType<typeof addLocalDownload>> = [];
+        return refreshDownloads(
+          currentDownloadPath,
+          knownDLs,
+          normalize,
+          (fileName: string) =>
+            fs.statAsync(path.join(currentDownloadPath, fileName)).then((stats: fs.Stats) => {
+              const dlId = shortid();
+              addedActions.push(addLocalDownload(dlId, gameId, fileName, stats.size));
+              nameIdMap[normalize(fileName)] = dlId;
+            }),
+          (fileName: string) => {
+            // the fileName here is already normalized
+            api.store.dispatch(removeDownload(nameIdMap[fileName]));
+            return PromiseBB.resolve();
+          },
+          () =>
+            new PromiseBB((resolve, reject) => {
+              api.showDialog(
+                "question",
+                "Access Denied",
+                {
+                  text:
+                    "The download directory is not writable to your user account.\n" +
+                    "If you have admin rights on this system, Vortex can change the permissions " +
+                    "to allow it write access.",
+                },
+                [
+                  { label: "Cancel", action: () => reject(new UserCanceled()) },
+                  { label: "Allow access", action: () => resolve() },
+                ],
+              );
+            }),
+        )
+          .then(() => batchDispatch(api.store, addedActions))
+          .catch((err: unknown) => {
+            if (err instanceof UserCanceled) {
+              return null;
+            }
+            if (err instanceof VortexError && err.data.kind === "fs:not-found") {
+              // reconciling against a folder Vortex can't see would delete every
+              // download record for this game, so reconciliation is skipped
+              folderAvailable = false;
+              api.showErrorNotification(
+                "Download folder is not available",
+                getErrorMessageOrDefault(err),
+                { allowReport: false },
+              );
+              return null;
+            }
+            api.showErrorNotification("Failed to refresh download directory", err, {
+              allowReport: getErrorCode(err) !== "EPERM",
+            });
           });
+      })
+      .then(() => {
+        if (!folderAvailable) {
+          return;
+        }
+        watchDownloads(api, currentDownloadPath, downloadChangeHandler);
+        api.events.emit("downloads-refreshed");
+      })
+      // no bulk metadata lookup of every archive here: on a library of tens of thousands of
+      // archives it hashed the whole folder at startup (md5 of each file) and starved the UI.
+      // Each new download still gets its lookup in finalizeDownload.
+      .catch((err) => {
+        api.showErrorNotification("Failed to read downloads directory", err, {
+          allowReport: err.code !== "ENOENT",
         });
-    })
-    .then(() => {
-      if (!folderAvailable) {
-        return;
-      }
-      watchDownloads(api, currentDownloadPath, downloadChangeHandler);
-      api.events.emit("downloads-refreshed");
-    })
-    .then(() => checkDownloadsWithMissingMeta(api))
-    .catch((err) => {
-      api.showErrorNotification("Failed to read downloads directory", err, {
-        allowReport: err.code !== "ENOENT",
-      });
-    });
+      })
+  );
 }
 
 function testDownloadPath(api: IExtensionApi): PromiseBB<void> {
@@ -887,22 +893,6 @@ function removeDownloadsWithoutFile(store: Redux.Store, downloads: { [id: string
     });
 }
 
-function checkDownloadsWithMissingMeta(api: IExtensionApi) {
-  const state = api.getState();
-  const downloads = state.persistent.downloads.files ?? {};
-
-  const missingInfo = Object.keys(downloads).filter(
-    (dlId) => downloads[dlId].modInfo?.source === undefined,
-  );
-
-  if (missingInfo.length > 0) {
-    log("info", "downloads missing meta information", { dlIds: missingInfo });
-    queryInfo(api, missingInfo, false);
-  } else {
-    log("debug", "no missing meta information");
-  }
-}
-
 function processCommandline(api: IExtensionApi) {
   const state = api.getState();
 
@@ -1135,9 +1125,15 @@ function init(context: IExtensionContext): boolean {
       (prev: { [dlId: string]: IDownload }, cur: { [dlId: string]: IDownload }) => {
         // when files are added without mod info, query the meta database
         const added = _.difference(Object.keys(cur), Object.keys(prev));
-        const filtered = added.filter(
-          (dlId) => cur[dlId].state === "finished" && Object.keys(cur[dlId].modInfo).length === 0,
-        );
+        // A folder scan registering thousands of archives at once would hash every one of them
+        // (all in parallel): skip the lookup then, it only enriches metadata.
+        const filtered =
+          added.length > BULK_ADD_LOOKUP_LIMIT
+            ? []
+            : added.filter(
+                (dlId) =>
+                  cur[dlId].state === "finished" && Object.keys(cur[dlId].modInfo).length === 0,
+              );
 
         const state: IState = context.api.store.getState();
 
