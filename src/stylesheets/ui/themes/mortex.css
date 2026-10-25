@@ -459,6 +459,18 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
                 white-space: nowrap !important;
             }
         }
+
+        /* Menu Tutoriels : son titre est en position absolue (icône au-dessus du texte) ;
+           dans un bouton plat il ne donne aucune largeur et déborde sur le bouton voisin. */
+        .menubar > .tutorial-dropdown-group {
+            height: auto !important;
+        }
+
+        .tutorial-dropdown-title {
+            position: static !important;
+            flex-direction: row !important;
+            gap: 6px !important;
+        }
     }
 
     /* Compteurs de plugins : police système, une ligne, discrets */
