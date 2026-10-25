@@ -57,7 +57,12 @@ await copy(
 try {
   const rendererRequire = createRequire(join(WORKSPACE, "src/renderer/package.json"));
   const lootDir = dirname(rendererRequire.resolve("loot/package.json"));
-  const library = process.platform === "win32" ? "libloot.dll" : "libloot.so.0";
+  const library =
+    process.platform === "win32"
+      ? "libloot.dll"
+      : process.platform === "darwin"
+        ? "libloot.0.dylib"
+        : "libloot.so.0";
   await copy(join(lootDir, "index.js"), join(ASSETS, "loot/index.js"));
   await copy(join(lootDir, "async.js"), join(ASSETS, "loot/async.js"));
   await copy(

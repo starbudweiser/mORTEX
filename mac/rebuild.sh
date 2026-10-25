@@ -2,7 +2,7 @@
 # mORTEX : installe les dépendances et recompile les addons natifs pour Electron (arm64).
 # Le postinstall de src/main est reporté (VORTEX_ELECTRON_REBUILD=defer) car electron-rebuild
 # ne sait pas exclure un module : on liste ici ceux qui compilent sur macOS.
-# FOMOD natif et 7zz : mac/fomod_native.sh et mac/install_7zz.sh (étape 3). LOOT (étape 5) à venir.
+# FOMOD natif et 7zz : mac/fomod_native.sh et mac/install_7zz.sh (étape 3). LOOT : mac/loot_native.sh (étape 5).
 set -e
 cd "$(dirname "$0")/.."
 source mac/env.sh
@@ -12,3 +12,4 @@ pnpm exec electron-rebuild --arch arm64 -o drivelist,leveldown,winapi-bindings,x
 cd ../..
 mac/install_7zz.sh
 mac/fomod_native.sh
+mac/loot_native.sh
