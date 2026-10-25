@@ -92,6 +92,8 @@ function init(context: types.IExtensionContext) {
       store.dispatch(actions.markThemeMigrated(true));
     }
 
+    document.body.setAttribute("data-platform", process.platform);
+
     const applyWatermark = () => {
       const mode = store.getState().settings.interface.watermark ?? "center";
       document.body.setAttribute("data-watermark", mode);

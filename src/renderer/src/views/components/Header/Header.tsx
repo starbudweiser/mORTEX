@@ -94,7 +94,7 @@ export const Header: FC<React.PropsWithChildren<unknown>> = () => {
 
           <div className="h-6 w-0.5 rounded-md bg-stroke-weak" />
 
-          <WindowControls />
+          {process.platform !== "darwin" && <WindowControls />}
         </div>
       </div>
     </div>

@@ -149,3 +149,37 @@ body[data-watermark="mono"]::after {
     background-color: transparent;
     color: var(--color-neutral-subdued);
 }
+
+/* macOS : les feux tricolores natifs se posent sur le haut de la colonne des jeux */
+body[data-platform="darwin"] [data-testid="spine"] {
+    padding-top: 44px;
+}
+
+/* Bouton Lancer : en haut à droite de la fenêtre, comme dans la maquette (reste dans son composant, seulement déplacé) */
+.mortex-play-wrap {
+    position: fixed !important;
+    top: 7px;
+    right: 16px;
+    width: auto !important;
+    z-index: 60;
+    -webkit-app-region: no-drag;
+}
+
+.mortex-play-wrap .mortex-play {
+    height: 30px !important;
+    min-width: 92px;
+    width: auto !important;
+    padding-inline: 14px;
+}
+
+.mortex-play-wrap .mortex-play span {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* L'en-tête laisse la place du bouton à droite */
+body[data-platform="darwin"] [data-testid="window-titlebar"] {
+    padding-right: 128px;
+}

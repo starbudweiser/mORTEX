@@ -429,12 +429,17 @@ class MainWindow {
       minHeight: MIN_HEIGHT,
       x: windowMetrics?.position?.x ?? undefined,
       y: windowMetrics?.position?.y ?? undefined,
-      backgroundColor: "#fff",
+      backgroundColor: "#141414",
       autoHideMenuBar: windowMetrics?.customTitlebar ?? true,
-      frame: !(windowMetrics?.customTitlebar ?? true),
+      // macOS : feux tricolores natifs sur une barre de titre transparente (frame conservé)
+      frame: process.platform === "darwin" ? true : !(windowMetrics?.customTitlebar ?? true),
       show: false,
       title: "mORTEX - Gestionnaire de mods pour Mac Silicon",
-      titleBarStyle: windowMetrics?.customTitlebar === true ? "hidden" : "default",
+      titleBarStyle:
+        process.platform === "darwin" || windowMetrics?.customTitlebar === true
+          ? "hidden"
+          : "default",
+      trafficLightPosition: process.platform === "darwin" ? { x: 22, y: 15 } : undefined,
       webPreferences: {
         preload: path.join(getVortexPath("base"), "preload.cjs"),
         nodeIntegration: true, // Required for @electron/remote compatibility
