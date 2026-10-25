@@ -45,7 +45,8 @@
           "default",
           "typescript",
           "vortex-api",
-          "{projectRoot}/themes/**/*"
+          "{projectRoot}/themes/**/*",
+          "{projectRoot}/src/**/*.scss"
         ]
       },
       "typecheck": {

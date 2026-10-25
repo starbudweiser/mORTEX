@@ -116,7 +116,10 @@ export const PlayButton: FC<React.PropsWithChildren<PlayButtonProps>> = ({
           aria-disabled={disabled}
           aria-label={playLabel}
           brand="neutral"
-          className={joinClasses(["w-full transition-all", isCollapsed ? "h-10" : "h-12"])}
+          className={joinClasses([
+            "mortex-play w-full transition-all",
+            isCollapsed ? "h-10" : "h-12",
+          ])}
           customContent={
             <>
               <Icon filled className="nxm-button-icon" name="play_arrow" size="lg" />

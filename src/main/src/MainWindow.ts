@@ -16,7 +16,11 @@ import { ReloadBudget } from "./reloadBudget";
 import { isTelemetryEnabled } from "./telemetry/state";
 import { closeAllViews } from "./webview";
 
-const MIN_HEIGHT = 700;
+// Taille minimale et par défaut : assez large pour la barre latérale et les libellés les plus longs (fr, en, es, it).
+const MIN_WIDTH = 1200;
+const MIN_HEIGHT = 760;
+const DEFAULT_WIDTH = 1440;
+const DEFAULT_HEIGHT = 900;
 // a renderer that dies more often than this isn't recovering, it's looping
 const MAX_RENDERER_RELOADS = 3;
 const RENDERER_RELOAD_WINDOW_MS = 60_000;
@@ -410,15 +414,18 @@ class MainWindow {
     windowMetrics: IWindow | null | undefined,
   ): Electron.BrowserWindowConstructorOptions {
     const screenArea = screen.getPrimaryDisplay().workAreaSize;
-    const width = Math.max(1024, windowMetrics?.size?.width ?? Math.floor(screenArea.width * 0.8));
-    const height = Math.max(
-      MIN_HEIGHT,
-      windowMetrics?.size?.height ?? Math.floor(screenArea.height * 0.8),
+    const width = Math.min(
+      screenArea.width,
+      Math.max(MIN_WIDTH, windowMetrics?.size?.width ?? DEFAULT_WIDTH),
+    );
+    const height = Math.min(
+      screenArea.height,
+      Math.max(MIN_HEIGHT, windowMetrics?.size?.height ?? DEFAULT_HEIGHT),
     );
     return {
       width,
       height,
-      minWidth: 1024,
+      minWidth: MIN_WIDTH,
       minHeight: MIN_HEIGHT,
       x: windowMetrics?.position?.x ?? undefined,
       y: windowMetrics?.position?.y ?? undefined,

@@ -7,10 +7,13 @@ const settingsReducer: types.IReducerSpec = {
     [actions.selectTheme as any]: (state, payload) =>
       util.setSafe(state, ["currentTheme"], payload),
     [actions.setWatermark as any]: (state, payload) => util.setSafe(state, ["watermark"], payload),
+    [actions.markThemeMigrated as any]: (state, payload) =>
+      util.setSafe(state, ["themeMigrated"], payload),
   },
   defaults: {
     currentTheme: "socle",
     watermark: "center",
+    themeMigrated: false,
   },
 };
 

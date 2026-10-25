@@ -3,6 +3,7 @@ import * as path from "path";
 import { fs, log, types, util } from "@nexusmods/vortex-api";
 import Bluebird from "bluebird";
 
+import * as actions from "./actions";
 import * as ops from "./operations";
 import settingsReducer from "./reducers";
 import SettingsTheme from "./SettingsTheme";
@@ -84,6 +85,12 @@ function init(context: types.IExtensionContext) {
     context.api.events.on("select-theme", (selectedThemePath: string) => {
       applyTheme(context.api, selectedThemePath, false);
     });
+
+    // Une seule fois : les profils existants gardent « default » ; mORTEX passe à Socle.
+    if (!store.getState().settings.interface.themeMigrated) {
+      store.dispatch(actions.selectTheme("socle"));
+      store.dispatch(actions.markThemeMigrated(true));
+    }
 
     const applyWatermark = () => {
       const mode = store.getState().settings.interface.watermark ?? "center";
