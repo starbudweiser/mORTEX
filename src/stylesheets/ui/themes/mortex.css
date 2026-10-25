@@ -1084,3 +1084,91 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     left: auto !important;
     right: 46px;
 }
+
+/* Assistant : explications d'un plugin ou d'un mod, sans IA */
+.mortex-assistant {
+    margin: 12px 0 0;
+}
+
+.mortex-assistant h6 {
+    margin: 0 0 6px;
+    color: var(--color-neutral-strong);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.mortex-assistant-list,
+.mortex-assistant-details,
+.mortex-assistant-sources {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.mortex-assistant-item {
+    padding: 10px 0;
+    border-top: 1px solid var(--color-stroke-weak);
+    background: transparent !important;
+}
+
+.mortex-assistant-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-neutral-strong);
+}
+
+.mortex-assistant-dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-neutral-subdued);
+}
+
+.mortex-assistant-warning > .mortex-assistant-head .mortex-assistant-dot {
+    background: var(--color-warning-500);
+}
+
+.mortex-assistant-error > .mortex-assistant-head .mortex-assistant-dot {
+    background: var(--color-danger-strong);
+}
+
+.mortex-assistant-text,
+.mortex-assistant-note,
+.mortex-assistant-details li,
+.mortex-assistant-sources li {
+    margin: 4px 0 0 16px;
+    color: var(--color-neutral-moderate);
+    background: transparent !important;
+}
+
+.mortex-assistant-note {
+    margin-left: 0;
+    color: var(--color-neutral-subdued);
+    font-size: 11px;
+}
+
+.mortex-assistant-quote {
+    margin: 6px 0 0 16px;
+    padding: 4px 10px;
+    border-left: 2px solid var(--color-stroke-weak);
+    color: var(--color-neutral-moderate);
+}
+
+.mortex-assistant-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 0 0 16px;
+}
+
+.mortex-assistant-toggle {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-neutral-subdued);
+    cursor: pointer;
+    text-decoration: underline;
+}

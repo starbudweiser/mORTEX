@@ -11,6 +11,7 @@ import { Image } from "@/ui/components/image/Image";
 import { getCurrentLanguage } from "@/util/i18n";
 import { bytesToString } from "@/util/util";
 
+import { ModAssistant } from "../../../mortex_assistant/ModAssistant";
 import { ModCrashes } from "../../../mortex_crashes/ModCrashes";
 import type { IMod } from "../../types/IMod";
 import { modAuthor } from "../mod_author/ModAuthor";
@@ -136,6 +137,8 @@ export const ModInspector = ({
       </dl>
 
       <ModCrashes mod={mod} onOpenConflicts={onOpenConflicts} />
+
+      <ModAssistant mod={mod} onOpenConflicts={onOpenConflicts} />
 
       <div className="mortex-inspector-actions">
         {onOpenNexus !== undefined && (

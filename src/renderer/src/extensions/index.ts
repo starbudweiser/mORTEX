@@ -28,6 +28,7 @@ import {} from "./installer_nested_fomod";
 import {} from "./instructions_overlay";
 import {} from "./mod_load_order";
 import {} from "./mod_management";
+import {} from "./mortex_assistant";
 import {} from "./mortex_crashes";
 import {} from "./mortex_dashlet";
 import {} from "./move_activator";
