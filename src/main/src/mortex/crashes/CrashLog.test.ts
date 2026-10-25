@@ -112,3 +112,25 @@ describe("CrashLog", () => {
     expect(events[0]?.verdict).toBe("nouveau");
   });
 });
+
+describe("contrat réel de sKYCRASH", () => {
+  it("lit une ligne produite par export_events.py (scores entiers, constats env)", async () => {
+    const real = path.join(
+      path.dirname(fileURLToPath(import.meta.url)),
+      "__fixtures__",
+      "crash_events.skycrash_real.jsonl",
+    );
+    const dir2 = await mkdtemp(path.join(tmpdir(), "mortex-real-"));
+    const copy = path.join(dir2, "crash_events.jsonl");
+    await writeFile(copy, await readFile(real));
+    const result = await new CrashLog(copy).read();
+    await rm(dir2, { recursive: true, force: true });
+    expect(result.skipped).toBe(0);
+    const event = result.events?.[0];
+    expect(event?.log_name).toBe("crash-2026-10-07-22-35-01.log");
+    expect(event?.suspects[0]).toMatchObject({ name: "tbbmalloc.dll", kind: "dll", score: 6 });
+    expect(event?.suspects.filter((s) => s.kind === "env").map((s) => s.name)).toContain(
+      "renderer:D3DMetal",
+    );
+  });
+});

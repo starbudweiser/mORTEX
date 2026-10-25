@@ -50,7 +50,7 @@ export const ModCrashes = ({
           </p>
           <ul className="mortex-suspect-reasons">
             <li>
-              {latest.suspect.suspect.name} · {Math.round(latest.suspect.suspect.score * 100)} %
+              {latest.suspect.suspect.name} · {latest.suspect.suspect.score}
             </li>
             {latest.suspect.suspect.reasons.map((reason, i) => (
               <li key={i}>{reason}</li>

@@ -32,8 +32,9 @@ export interface IEnvSources {
   files: FileIndex;
 }
 
-const GRAPHICS = /d3dmetal|dxmt|dxvk|d3d11|d3d12|dxgi|moltenvk|metal|vram|vidéo|video|gpu/i;
-const ADDRESS_LIBRARY = /address\s*library|versionlib/i;
+const GRAPHICS =
+  /d3dmetal|dxmt|dxvk|d3d11|d3d12|dxgi|moltenvk|metal|vram|vidéo|video|gpu|renderer:|graphics_proxy|dlss|unified_memory|memory_pressure/i;
+const ADDRESS_LIBRARY = /address[\s_]*library|versionlib/i;
 const SKSE = /skse/i;
 
 /** « 1.6.1170 » → « 1-6-1170 » (nom des fichiers de l'Address Library). */
@@ -62,7 +63,7 @@ export function diagnoseEnvironment(
     const notes: IEnvNote[] = [];
     const name = linked.suspect.name;
 
-    if (GRAPHICS.test(name) || linked.suspect.reasons.some((r) => GRAPHICS.test(r))) {
+    if (GRAPHICS.test(name)) {
       if (bottle === undefined) {
         notes.push({ key: "Bottle unknown to mORTEX: graphics settings cannot be compared." });
       } else {

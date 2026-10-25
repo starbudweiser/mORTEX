@@ -127,5 +127,16 @@
   "{{file}} is deployed by mod {{mod}}.": "{{file}} est déployé par le mod {{mod}}.",
   "{{file}} is not deployed by any mORTEX mod.": "{{file}} n'est déployé par aucun mod de mORTEX.",
   "SKSE runtime {{file}} is deployed.": "Le runtime SKSE {{file}} est déployé.",
-  "No SKSE runtime {{file}} deployed by mORTEX.": "Aucun runtime SKSE {{file}} déployé par mORTEX (à vérifier à la racine du jeu)."
+  "No SKSE runtime {{file}} deployed by mORTEX.": "Aucun runtime SKSE {{file}} déployé par mORTEX (à vérifier à la racine du jeu).",
+  "Wine / CrossOver layer": "Couche Wine / CrossOver",
+  "Renderer: D3DMetal": "Moteur de rendu : D3DMetal",
+  "Renderer: DXVK": "Moteur de rendu : DXVK",
+  "Renderer: DXMT": "Moteur de rendu : DXMT",
+  "DLSS unavailable under Wine": "DLSS indisponible sous Wine",
+  "Unified memory": "Mémoire unifiée",
+  "Memory pressure": "Mémoire sous pression",
+  "Game / SKSE version mismatch": "Versions du jeu et de SKSE incompatibles",
+  "Address Library missing": "Address Library absente",
+  "Plugin limit": "Limite de plugins",
+  "Graphics proxy DLL": "DLL graphique intermédiaire"
 }

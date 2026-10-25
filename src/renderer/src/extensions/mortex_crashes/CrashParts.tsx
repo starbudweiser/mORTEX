@@ -22,6 +22,21 @@ const KIND_LABEL = {
   env: "Environment",
 } as const;
 
+/** Noms stables des constats d'environnement de sKYCRASH. */
+const ENV_LABEL: Record<string, string> = {
+  wine_layer: "Wine / CrossOver layer",
+  "renderer:D3DMetal": "Renderer: D3DMetal",
+  "renderer:DXVK": "Renderer: DXVK",
+  "renderer:DXMT": "Renderer: DXMT",
+  dlss_unavailable: "DLSS unavailable under Wine",
+  unified_memory: "Unified memory",
+  memory_pressure: "Memory pressure",
+  game_skse_mismatch: "Game / SKSE version mismatch",
+  address_library_missing: "Address Library missing",
+  plugin_limit: "Plugin limit",
+  graphics_proxy: "Graphics proxy DLL",
+};
+
 export const formatCrashTime = (time: string): string => {
   const date = new Date(time);
   return Number.isNaN(date.getTime())
@@ -77,9 +92,9 @@ export const SuspectRow = ({
     <li className="mortex-suspect">
       <div className="mortex-suspect-head">
         <span className="mortex-suspect-rank">{rank}</span>
-        <strong>{suspect.name}</strong>
+        <strong>{ENV_LABEL[suspect.name] ? t(ENV_LABEL[suspect.name]) : suspect.name}</strong>
         <span className="mortex-badge">{t(KIND_LABEL[suspect.kind])}</span>
-        <span className="mortex-suspect-score">{Math.round(suspect.score * 100)} %</span>
+        <span className="mortex-suspect-score">{suspect.score}</span>
       </div>
 
       {status === "external" && <p className="mortex-suspect-where">{t("Outside mORTEX")}</p>}
