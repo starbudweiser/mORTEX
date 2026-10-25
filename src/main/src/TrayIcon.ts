@@ -15,11 +15,14 @@ class TrayIcon {
   private mInitialized: boolean = false;
 
   constructor() {
-    this.mImagePath = path.resolve(
-      getVortexPath("assets"),
-      "images",
-      process.platform === "win32" ? "vortex.ico" : "vortex.png",
-    );
+    // macOS: icône de 18 px (tray@2x.png pour Retina) ; vortex.png est trop grand pour la barre de menus
+    const trayImage =
+      process.platform === "win32"
+        ? "vortex.ico"
+        : process.platform === "darwin"
+          ? "tray.png"
+          : "vortex.png";
+    this.mImagePath = path.resolve(getVortexPath("assets"), "images", trayImage);
     try {
       this.initTrayIcon();
     } catch {
