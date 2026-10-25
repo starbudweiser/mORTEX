@@ -398,10 +398,13 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 .mortex-suspect {
     padding: 10px 0;
     border-top: 1px solid var(--color-stroke-weak);
+    background: transparent !important;
 }
 
+/* en grille : les règles globales sur span/li (flex, fond) ne s'y appliquent pas */
 .mortex-suspect-head {
-    display: flex;
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr) auto auto;
     align-items: center;
     gap: 8px;
     color: var(--color-neutral-strong);
@@ -414,7 +417,6 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 }
 
 .mortex-suspect-score {
-    margin-left: auto;
     color: var(--color-neutral-subdued);
     font-variant-numeric: tabular-nums;
 }
@@ -455,6 +457,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     li {
         position: relative;
         padding-left: 12px;
+        background: transparent !important;
     }
 
     li::before {

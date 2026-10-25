@@ -3056,6 +3056,7 @@ class ExtensionManager {
       mod_load_order: () => require("./extensions/mod_load_order/index.ts"),
       mod_management: () => require("./extensions/mod_management/index.ts"),
       move_activator: () => require("./extensions/move_activator/index.ts"),
+      mortex_crashes: () => require("./extensions/mortex_crashes/index.ts"),
       mortex_dashlet: () => require("./extensions/mortex_dashlet/index.ts"),
       news_dashlet: () => require("./extensions/news_dashlet/index.ts"),
       nexus_integration: () => require("./extensions/nexus_integration/index.tsx"),
