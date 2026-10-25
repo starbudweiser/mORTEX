@@ -221,9 +221,10 @@ class Application {
           // Terminate the worker_thread pools so no idle worker lingers past quit.
           void shutdownHashWorker();
           void shutdownBsdiffWorker();
-          if (process.platform !== "darwin") {
-            app.quit();
-          }
+          // mORTEX : on quitte aussi sous macOS. La base d'état vient d'être fermée ; une fenêtre
+          // rouverte depuis le Dock dans ce même processus démarrerait sans état et planterait
+          // à la première sauvegarde (« connection disconnected »).
+          app.quit();
         })
         .catch((err: unknown) => {
           log("error", "error finalizing write", unknownToError(err));
