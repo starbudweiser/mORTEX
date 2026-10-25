@@ -109,8 +109,9 @@ body[data-watermark="mono"]::after {
     font-weight: 800;
 }
 
-/* ---- Écran Plugins (tableau historique) : dense, sans zébrure, sélection bleue ---- */
-.modern-layout #table-gamebryo-plugins {
+/* ---- Écrans Plugins et Téléchargements (tableaux historiques) : denses, sans zébrure, sélection bleue ---- */
+.modern-layout #table-gamebryo-plugins,
+.modern-layout #table-downloads {
     .xtable > .xtbody > .xtr > .xtd,
     .xtable > tbody > tr > td {
         padding-block: 3px;
@@ -286,4 +287,96 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 
 .mortex-statusbar-end {
     margin-left: auto;
+}
+
+/* ---- Plugins : le volet de détails devient un inspecteur ancré à droite (300 px), plat ---- */
+.modern-layout #table-gamebryo-plugins {
+    .table-details-pane.open {
+        width: 300px !important;
+        max-width: 300px !important;
+        right: 0;
+        border: 0;
+        border-left: 1px solid var(--color-stroke-weak);
+        box-shadow: none !important;
+        background-color: var(--color-surface-low);
+    }
+
+    .table-details-inner {
+        padding: 16px;
+    }
+
+    .table-details-inner .control-label,
+    .table-details-inner label {
+        color: var(--color-neutral-subdued);
+        font-weight: 500;
+        font-size: 11px;
+    }
+}
+
+/* La liste se resserre à côté de l'inspecteur au lieu d'être recouverte */
+.modern-layout #table-gamebryo-plugins:has(> .table-details-pane.open) {
+    .table-container-inner {
+        margin-right: 300px;
+    }
+
+    .table-header-pane {
+        right: calc(300px + 12px) !important;
+    }
+}
+
+/* ---- Accueil : cartes d'état mORTEX ---- */
+.mortex-status-dashlet {
+    background: transparent !important;
+    border: 0 !important;
+}
+
+.mortex-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    height: 100%;
+}
+
+.mortex-card {
+    background-color: var(--color-surface-mid);
+    border: 1px solid var(--color-stroke-weak);
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.mortex-card h5 {
+    margin: 0 0 8px;
+    color: var(--color-neutral-strong);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.mortex-card-big {
+    color: var(--color-neutral-strong);
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.mortex-card-mid {
+    font-size: 18px;
+}
+
+.mortex-card p {
+    margin: 4px 0 0;
+    color: var(--color-neutral-subdued);
+}
+
+/* ---- Téléchargements : zone de dépôt et boutons plats ---- */
+.modern-layout .dropzone.stand-alone {
+    border: 1px dashed var(--color-stroke-subdued);
+    border-radius: 10px;
+    background-color: transparent;
+    color: var(--color-neutral-subdued);
+}
+
+.modern-layout #table-downloads .btn {
+    height: 26px;
+    padding: 2px 10px;
+    border-radius: 6px;
 }
