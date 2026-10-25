@@ -309,9 +309,9 @@ const usePurgeAction = (t: TFunction): IPositionedAction => {
 };
 
 /** Install From File — was `InstallArchiveButton`. */
-const useInstallFromFileAction = (t: TFunction): IPositionedAction => {
+export const useInstallFromFileAction = (t: TFunction): IPositionedAction => {
   const { api } = useMainContext();
-  const copyOnIFF = useSelector((state: IState) => state.settings.downloads.copyOnIFF);
+  const copyOnIFF = useSelector((state: IState) => state.settings.downloads?.copyOnIFF);
 
   const install = useCallback(() => {
     void api.selectFile({ title: t("Select archive") }).then((filePath) => {

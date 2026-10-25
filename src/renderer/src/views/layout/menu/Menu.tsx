@@ -1,17 +1,20 @@
-import React, { useState, type FC, useRef, useEffect } from "react";
+import React, { useState, type FC, useRef, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { setOpenMainPage } from "@/actions";
 import { usePagesContext, useWindowContext } from "@/contexts";
+import type { IMainPage } from "@/types/IMainPage";
+import type { IState } from "@/types/IState";
 import { TooltipDelayGroup } from "@/ui/components/tooltip/TooltipDelayGroup";
 import { joinClasses } from "@/ui/utils/joinClasses";
+import { activeGameId as activeGameIdSelector } from "@/util/selectors";
 import { getIcon } from "@/views/components/icon_map/iconMap";
 import { useSpineContext } from "@/views/components/Spine/SpineContext";
 
-import { DownloadsMenuContent } from "./components/DownloadsMenuContent";
 import { GameActions } from "./components/game_actions/GameActions";
 import { MenuButton } from "./components/MenuButton";
+import { MenuSection } from "./components/MenuSection";
 import { ToolsProvider, useToolsContext } from "./context/ToolsContext";
 
 const toolPadding = {
@@ -22,10 +25,31 @@ const toolPadding = {
   5: "pb-72",
 };
 
+/** mORTEX : pages rangées sous « Outils » ; les autres pages du jeu vont sous « Jeu » */
+const TOOL_PAGE_IDS = new Set(["Browse Nexus Mods", "Tools", "Health check"]);
+
+/** Mods installés et archives téléchargées du jeu actif, pour les compteurs de la barre latérale */
+const useMenuCounts = () => {
+  const gameId = useSelector(activeGameIdSelector);
+  const mods = useSelector((state: IState) =>
+    gameId === undefined ? undefined : state.persistent.mods[gameId],
+  );
+  const downloads = useSelector((state: IState) => state.persistent.downloads?.files);
+
+  return useMemo(() => {
+    const installed = Object.values(mods ?? {}).filter((mod) => mod?.state === "installed").length;
+    const archives = Object.values(downloads ?? {}).filter(
+      (download) => gameId !== undefined && (download?.game ?? []).includes(gameId),
+    ).length;
+    return { installed, archives, gameId };
+  }, [mods, downloads, gameId]);
+};
+
 const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
   const { t } = useTranslation();
   const { menuIsCollapsed } = useWindowContext();
-  const { selection, visiblePages } = useSpineContext();
+  const { selection, homePages, gamePages, selectDownloads } = useSpineContext();
+  const counts = useMenuCounts();
   const dispatch = useDispatch();
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -46,6 +70,32 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
     return () => element.removeEventListener("scroll", onScroll);
   }, [scrollRef]);
 
+  const renderPage = (page: IMainPage) => (
+    <MenuButton
+      icon={page.menuIcon ?? getIcon(page.icon)}
+      Badge={page.menuBadge}
+      count={page.id === "Mods" ? counts.installed : undefined}
+      isActive={mainPage === page.id && selection.type !== "downloads"}
+      key={page.id}
+      onClick={() => {
+        if (mainPage === page.id) {
+          page.onReset?.();
+        } else {
+          dispatch(setOpenMainPage(page.id, false));
+        }
+      }}
+    >
+      {t(page.title, { ns: page.namespace })}
+    </MenuButton>
+  );
+
+  // mORTEX : une seule barre latérale, en trois groupes comme sur les maquettes
+  const sections = [
+    { title: "Game", pages: gamePages.filter((page) => !TOOL_PAGE_IDS.has(page.id)) },
+    { title: "Tools", pages: gamePages.filter((page) => TOOL_PAGE_IDS.has(page.id)) },
+    { title: "Application", pages: homePages },
+  ];
+
   return (
     <TooltipDelayGroup
       as="div"
@@ -65,26 +115,24 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
             menuIsCollapsed ? `w-10 ${toolPadding[toolCount]}` : "w-49 pb-34",
           ])}
         >
-          {selection.type === "downloads" ? (
-            <DownloadsMenuContent />
-          ) : (
-            visiblePages.map((page) => (
-              <MenuButton
-                icon={page.menuIcon ?? getIcon(page.icon)}
-                Badge={page.menuBadge}
-                isActive={mainPage === page.id}
-                key={page.id}
-                onClick={() => {
-                  if (mainPage === page.id) {
-                    page.onReset?.();
-                  } else {
-                    dispatch(setOpenMainPage(page.id, false));
-                  }
-                }}
-              >
-                {t(page.title, { ns: page.namespace })}
-              </MenuButton>
-            ))
+          {sections.map(
+            (section) =>
+              section.pages.length > 0 && (
+                <MenuSection key={section.title} title={t(section.title)}>
+                  {section.pages.map(renderPage)}
+
+                  {section.title === "Game" && (
+                    <MenuButton
+                      count={counts.archives}
+                      icon={getIcon("download")}
+                      isActive={selection.type === "downloads"}
+                      onClick={() => selectDownloads(counts.gameId)}
+                    >
+                      {t("Downloads")}
+                    </MenuButton>
+                  )}
+                </MenuSection>
+              ),
           )}
         </div>
 

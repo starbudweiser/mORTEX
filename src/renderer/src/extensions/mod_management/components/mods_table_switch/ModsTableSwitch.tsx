@@ -47,6 +47,7 @@ import {
 import { useModsTableSearch } from "../../hooks/use_mods_table_search/useModsTableSearch.hook";
 import { useModsTableView } from "../../hooks/use_mods_table_view/useModsTableView.hook";
 import type { IModWithState } from "../../types/IModProps";
+import { modHasUpdate } from "../../util/mod_has_update/modHasUpdate";
 import {
   allModRows,
   type IModGroup,
@@ -56,12 +57,17 @@ import { CollectionHoverCard } from "../collection_hover_card/CollectionHoverCar
 import { CollectionRevision } from "../collection_revision/CollectionRevision";
 import { DisableSharedModsModal } from "../disable_shared_mods_modal/DisableSharedModsModal";
 import { ModHoverCard } from "../mod_hover_card/ModHoverCard";
-import { actionsWidth, ModRowActions, PINNED_ACTION_WIDTH } from "../mod_row_actions/ModRowActions";
+import {
+  actionsWidth,
+  ModRowActions,
+  ModRowToggle,
+  PINNED_ACTION_WIDTH,
+} from "../mod_row_actions/ModRowActions";
 import { ModStatusPill, modStatusKind } from "../mod_status_pill/ModStatusPill";
 import { ModVersion, modVersionGroup, modVersionText } from "../mod_version/ModVersion";
 import { ModsTableColumnToggles } from "../mods_table_column_toggles/ModsTableColumnToggles";
 import { ModsTableGroupBy } from "../mods_table_group_by/ModsTableGroupBy";
-import { ModsTableToolbar } from "../mods_table_toolbar/ModsTableToolbar";
+import { ModsTableToolbar, type ModsQuickFilter } from "../mods_table_toolbar/ModsTableToolbar";
 
 interface IModsTableSwitchProps {
   /** The mods, collections among them: the collections head their groups, never rows. */
@@ -120,9 +126,34 @@ export const ModsTableSwitch = ({
     renameView,
     removeView,
   } = useModsTableView(mods);
-  const rows = useMemo(() => allModRows(mods), [mods]);
+  const [quickFilter, setQuickFilter] = useState<ModsQuickFilter>("all");
+  const conflicts = useSelector(
+    (state: IState) =>
+      (state.session as { dependencies?: { conflicts?: Record<string, unknown[]> } }).dependencies
+        ?.conflicts,
+  );
   const memberships = useCollectionMemberships(mods);
   const { changing, setEnabled, isEnabled } = useModsEnabled(onSetModsEnabled);
+
+  // mORTEX : les filtres segmentés de la barre d'outils (Tous, Activés, Conflits, Mises à jour)
+  const shownMods = useMemo(() => {
+    if (quickFilter === "all") {
+      return mods;
+    }
+
+    const keep = (mod: IModWithState) => {
+      if (quickFilter === "enabled") {
+        return isEnabled(mod);
+      }
+      if (quickFilter === "conflicts") {
+        return (conflicts?.[mod.id]?.length ?? 0) > 0;
+      }
+      return modHasUpdate(mod);
+    };
+
+    return Object.fromEntries(Object.entries(mods).filter(([, mod]) => keep(mod)));
+  }, [mods, quickFilter, conflicts, isEnabled]);
+  const rows = useMemo(() => allModRows(shownMods), [shownMods]);
 
   const enableInstalled = useCallback((ids: string[]) => setEnabled(ids, true), [setEnabled]);
   const installMods = useInstallMods(enableInstalled);
@@ -160,6 +191,38 @@ export const ModsTableSwitch = ({
 
   const columns = useMemo<IModsTableColumn[]>(
     () => [
+      // mORTEX : l'interrupteur en première colonne, comme sur les maquettes
+      {
+        id: "mortex-enabled",
+        header: t("Enabled"),
+        width: "72px",
+        cell: ({ mod, name }) => (
+          <ModRowToggle
+            enabled={isEnabled(mod)}
+            installLabel={t("Install {{name}}", { name })}
+            isLoading={changing.has(mod.id)}
+            label={t("{{name}} enabled", { name })}
+            modId={mod.id}
+            modState={mod.state}
+            onInstall={mod.state === "downloaded" ? install : undefined}
+            onSetEnabled={setEnabled}
+          />
+        ),
+        // Part on while only some of its mods are, as after keeping the shared ones.
+        groupCell: (group) => {
+          const enabled = group.rows.filter(({ mod }) => isEnabled(mod)).length;
+
+          return (
+            <Switch
+              aria-label={t("{{name}} enabled", { name: group.label })}
+              checked={group.rows.length > 0 && enabled === group.rows.length}
+              indeterminate={enabled > 0 && enabled < group.rows.length}
+              isLoading={group.rows.some(({ mod }) => changing.has(mod.id))}
+              onChange={(checked) => setGroupEnabled(group, checked)}
+            />
+          );
+        },
+      },
       {
         id: "name",
         header: t("Name"),
@@ -230,28 +293,10 @@ export const ModsTableSwitch = ({
             switchOnly={multiSelected}
             width={actionsWidth(shownPins)}
             onInstall={mod.state === "downloaded" ? install : undefined}
+            showToggle={false}
             onSetEnabled={setEnabled}
           />
         ),
-        /**
-         * Part on while only some of its mods are, as after keeping the shared ones; right-aligned
-         * before the "…" the table puts at the cell's end, so it lines up with its rows' switches.
-         */
-        groupCell: (group) => {
-          const enabled = group.rows.filter(({ mod }) => isEnabled(mod)).length;
-
-          return (
-            <div className="flex min-w-0 flex-1 items-center justify-end">
-              <Switch
-                aria-label={t("{{name}} enabled", { name: group.label })}
-                checked={group.rows.length > 0 && enabled === group.rows.length}
-                indeterminate={enabled > 0 && enabled < group.rows.length}
-                isLoading={group.rows.some(({ mod }) => changing.has(mod.id))}
-                onChange={(checked) => setGroupEnabled(group, checked)}
-              />
-            </div>
-          );
-        },
       },
       // The legacy table's, sharing its choice to show it and its place.
       {
@@ -306,7 +351,7 @@ export const ModsTableSwitch = ({
 
   const { visibleColumns, toggles, groupable } = useModsTableColumns(columns, isColumnShown);
 
-  const groups = useModsTableGroups(mods, grouping, groupable, memberships, t);
+  const groups = useModsTableGroups(shownMods, grouping, groupable, memberships, t);
 
   const { search, setSearch, changeSearch, isSearching, shownRows, shownGroups } =
     useModsTableSearch({
@@ -373,10 +418,12 @@ export const ModsTableSwitch = ({
     toolbar: (
       <ModsTableToolbar
         displayOptions={displayOptions}
+        quickFilter={quickFilter}
         search={search}
         selectedView={view.id}
         views={views}
         onAddView={addView}
+        onQuickFilterChange={setQuickFilter}
         onRemoveView={removeView}
         onRenameView={renameView}
         onSearchChange={changeSearch}

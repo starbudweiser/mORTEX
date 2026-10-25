@@ -24,6 +24,7 @@ vi.mock("./profile/ProfileSection", () => ({ ProfileSection: () => null }));
 vi.mock("./StagingIndicator", () => ({ StagingIndicator: () => null }));
 vi.mock("./VersionIndicator", () => ({ VersionIndicator: () => null }));
 vi.mock("./WindowControls", () => ({ WindowControls: () => null }));
+vi.mock("../Spine/notifications/Notifications", () => ({ Notifications: () => null }));
 
 import { Header } from "./Header";
 

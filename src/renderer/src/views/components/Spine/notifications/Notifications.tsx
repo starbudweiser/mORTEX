@@ -64,9 +64,20 @@ export const pipSeverity = (notifications: INotification[]): PipSeverity | undef
   return "info";
 };
 
+/** mORTEX : la cloche vit dans la barre de titre ; le plateau descend sous elle */
+type NotificationsPlacement = "spine" | "header";
+
+/**
+ * mORTEX : au démarrage, les avertissements arrivent en rafale (SKSE absent, téléchargements
+ * à réparer…). Ils restent dans le plateau, signalés par la pastille, sans le déplier
+ * par-dessus la liste. Passé ce délai, le plateau s'ouvre de nouveau de lui-même.
+ */
+export const STARTUP_QUIET_MS = 30_000;
+
 interface INotificationsContentProps {
   close: () => void;
   popoverOpen: boolean;
+  placement: NotificationsPlacement;
 }
 
 /**
@@ -74,7 +85,7 @@ interface INotificationsContentProps {
  * react to it directly. The outer component just manages the Popover state.
  * This allows us to reset expand state and trigger auto-open when new notifications arrive.
  */
-const NotificationsContent = ({ close, popoverOpen }: INotificationsContentProps) => {
+const NotificationsContent = ({ close, popoverOpen, placement }: INotificationsContentProps) => {
   const extensions = useExtensionContext();
   const api = extensions.getApi();
 
@@ -89,6 +100,7 @@ const NotificationsContent = ({ close, popoverOpen }: INotificationsContentProps
   // before this component rendered, e.g. during startup) count as new
   // on the first effect run and trigger the auto-open.
   const prevIdsRef = useRef<Set<string>>(new Set());
+  const mountedAtRef = useRef(Date.now());
   const [expand, setExpand] = useState<string | undefined>(undefined);
 
   const filtered = useNotificationFiltering({
@@ -120,7 +132,8 @@ const NotificationsContent = ({ close, popoverOpen }: INotificationsContentProps
     );
     prevIdsRef.current = currentIds;
 
-    if (hasNew && !popoverOpen && buttonRef.current) {
+    const startingUp = Date.now() - mountedAtRef.current < STARTUP_QUIET_MS;
+    if (hasNew && !startingUp && !popoverOpen && buttonRef.current) {
       openWithoutTakingFocus(buttonRef.current);
     }
   }, [notifications, popoverOpen]);
@@ -169,10 +182,16 @@ const NotificationsContent = ({ close, popoverOpen }: INotificationsContentProps
 
       {popoverOpen && !!items.length && (
         <PopoverPanel
-          anchor={{ gap: 8 + OVERLAY_ARROW_HEIGHT, to: "right end" }}
+          anchor={{
+            gap: 8 + OVERLAY_ARROW_HEIGHT,
+            to: placement === "header" ? "bottom end" : "right end",
+          }}
           className="w-xs overflow-visible!"
         >
-          <OverlayArrow side="right" tipFromEnd={24} />
+          <OverlayArrow
+            side={placement === "header" ? "bottom" : "right"}
+            tipFromEnd={placement === "header" ? 16 : 24}
+          />
 
           <div className="max-h-[50vh] space-y-0.5 overflow-y-auto">
             {items.map((notification) => (
@@ -193,8 +212,10 @@ const NotificationsContent = ({ close, popoverOpen }: INotificationsContentProps
   );
 };
 
-export const Notifications = () => (
-  <Popover>
-    {({ close, open }) => <NotificationsContent close={close} popoverOpen={open} />}
+export const Notifications = ({ placement = "spine" }: { placement?: NotificationsPlacement }) => (
+  <Popover className={placement === "header" ? "mortex-header-bell" : undefined}>
+    {({ close, open }) => (
+      <NotificationsContent close={close} placement={placement} popoverOpen={open} />
+    )}
   </Popover>
 );

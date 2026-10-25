@@ -111,5 +111,14 @@
   "Installation time": "Installation time",
   "Actions": "Actions",
   "{{count}} archives": "{{count}} archive",
-  "{{count}} archives_plural": "{{count}} archives"
+  "{{count}} archives_plural": "{{count}} archives",
+  "Game": "Game",
+  "Tools": "Tools",
+  "Application": "Application",
+  "All": "All",
+  "Enabled": "Enabled",
+  "Conflicts": "Conflicts",
+  "Updates": "Updates",
+  "Filter": "Filter",
+  "Install From File": "Install From File"
 }

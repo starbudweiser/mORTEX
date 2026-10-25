@@ -29,6 +29,9 @@ const storedArchiveIds = createSelector(
   (stored) => new Set(Object.values(stored ?? {}).map((mod) => mod.archiveId)),
 );
 
+/** Marks the switch, or the install button in its place, for focus to return to. */
+const ROW_CONTROL = "data-row-control";
+
 /** A mod being installed or uninstalled, which its row shows on the install button. */
 type RowBusy = "installing" | "uninstalling";
 
@@ -92,10 +95,78 @@ interface IModRowActionsProps {
   modState: IModWithState["state"];
   /** The install button's name, while there is one. */
   installLabel?: string;
+  /** mORTEX : l'interrupteur vit dans la première colonne ; ici, seulement les épingles et le menu */
+  showToggle?: boolean;
 }
 
-/** Marks the switch, or the install button in its place, for focus to return to. */
-const ROW_CONTROL = "data-row-control";
+type IModRowToggleProps = Pick<
+  IModRowActionsProps,
+  | "modId"
+  | "label"
+  | "enabled"
+  | "isLoading"
+  | "onSetEnabled"
+  | "onInstall"
+  | "modState"
+  | "installLabel"
+>;
+
+/**
+ * A row's switch, or the Install button in its place for a mod only downloaded, loading while
+ * the mod is installed or uninstalled.
+ */
+export const ModRowToggle = memo(
+  ({
+    modId,
+    label,
+    enabled,
+    isLoading,
+    onSetEnabled,
+    onInstall,
+    modState,
+    installLabel,
+  }: IModRowToggleProps) => {
+    const { t } = useTranslation(["common"]);
+    const busy = useRowBusy(modId, modState);
+
+    const installDescription = t(
+      "Installs the mod into your game, where it can be enabled or disabled.",
+    );
+
+    return onInstall === undefined && busy === undefined ? (
+      <Switch
+        {...{ [ROW_CONTROL]: true }}
+        aria-label={label}
+        checked={enabled}
+        isLoading={isLoading}
+        onChange={(checked) => onSetEnabled([modId], checked)}
+      />
+    ) : (
+      // On a wrapper, as a loading button is disabled and takes no hover. As wide as the switch
+      // it stands in for, from its start, so it lines up with theirs.
+      <Tooltip
+        {...(busy === undefined
+          ? { customContent: <TitledTooltip body={installDescription} title={t("Install")} /> }
+          : { content: busy === "installing" ? t("Installing…") : t("Uninstalling…") })}
+      >
+        <span className="flex w-8 shrink-0">
+          <Button
+            {...{ [ROW_CONTROL]: true }}
+            // a step lighter while loading, so it drops its border
+            appearance={busy === undefined ? "subdued" : "weak"}
+            aria-description={busy === undefined ? installDescription : undefined}
+            aria-label={installLabel}
+            brand="primary"
+            isLoading={isLoading || busy !== undefined}
+            leftIcon="add"
+            size="sm"
+            onClick={() => onInstall?.(modId)}
+          />
+        </span>
+      </Tooltip>
+    );
+  },
+);
 
 /**
  * A row's pinned actions, its switch, then its menu of every action. Against the cell's end,
@@ -125,10 +196,9 @@ export const ModRowActions = memo(
     onInstall,
     installLabel,
     modState,
+    showToggle = true,
   }: IModRowActionsProps) => {
-    const { t } = useTranslation(["common"]);
     const tracking = useToolbarAnalytics(MODS_TABLE_TOOLBARS.row);
-    const busy = useRowBusy(modId, modState);
     const engaged = useTableRowEngaged();
     const restingRef = useRef<HTMLDivElement>(null);
     // the cell, while the resting switch has focus as the toolbar replaces it
@@ -141,43 +211,18 @@ export const ModRowActions = memo(
       }
     }, [engaged]);
 
-    const installDescription = t(
-      "Installs the mod into your game, where it can be enabled or disabled.",
-    );
-
-    const toggle =
-      onInstall === undefined && busy === undefined ? (
-        <Switch
-          {...{ [ROW_CONTROL]: true }}
-          aria-label={label}
-          checked={enabled}
-          isLoading={isLoading}
-          onChange={(checked) => onSetEnabled([modId], checked)}
-        />
-      ) : (
-        // On a wrapper, as a loading button is disabled and takes no hover. As wide as the switch
-        // it stands in for, from its start, so it lines up with theirs.
-        <Tooltip
-          {...(busy === undefined
-            ? { customContent: <TitledTooltip body={installDescription} title={t("Install")} /> }
-            : { content: busy === "installing" ? t("Installing…") : t("Uninstalling…") })}
-        >
-          <span className="flex w-8 shrink-0">
-            <Button
-              {...{ [ROW_CONTROL]: true }}
-              // a step lighter while loading, so it drops its border
-              appearance={busy === undefined ? "subdued" : "weak"}
-              aria-description={busy === undefined ? installDescription : undefined}
-              aria-label={installLabel}
-              brand="primary"
-              isLoading={isLoading || busy !== undefined}
-              leftIcon="add"
-              size="sm"
-              onClick={() => onInstall?.(modId)}
-            />
-          </span>
-        </Tooltip>
-      );
+    const toggle = showToggle ? (
+      <ModRowToggle
+        enabled={enabled}
+        installLabel={installLabel}
+        isLoading={isLoading}
+        label={label}
+        modId={modId}
+        modState={modState}
+        onInstall={onInstall}
+        onSetEnabled={onSetEnabled}
+      />
+    ) : undefined;
 
     if (!engaged || switchOnly) {
       return (

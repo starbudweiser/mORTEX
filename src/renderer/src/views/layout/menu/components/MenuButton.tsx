@@ -12,6 +12,8 @@ interface MenuButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: IIconSource;
   isActive?: boolean;
   Badge?: ComponentType<React.PropsWithChildren<unknown>>;
+  /** mORTEX : compteur discret à droite (mods installés, archives) */
+  count?: number;
 }
 
 export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
@@ -19,6 +21,7 @@ export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
   icon,
   isActive,
   Badge,
+  count,
   ...props
 }) => {
   const { menuIsCollapsed } = useWindowContext();
@@ -45,6 +48,10 @@ export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
         >
           {children}
         </Typography>
+
+        {count !== undefined && !menuIsCollapsed && (
+          <span className="mortex-menu-count">{count}</span>
+        )}
 
         {Badge && <Badge />}
       </button>

@@ -1,7 +1,7 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { INotification, NotificationType } from "@/types/INotification";
 
@@ -36,7 +36,7 @@ vi.mock("./hooks/useNotificationActions.hook", () => ({
   }),
 }));
 
-import { Notifications, pipSeverity } from "./Notifications";
+import { Notifications, pipSeverity, STARTUP_QUIET_MS } from "./Notifications";
 
 // --- Helpers ---
 
@@ -60,9 +60,16 @@ const focusElsewhere = (tag: "button" | "input" | "textarea") => {
   return element;
 };
 
+/** Lets the startup's quiet spell pass, after which new notifications open the tray again. */
+const passStartup = () => vi.setSystemTime(Date.now() + STARTUP_QUIET_MS + 1);
+
+/** Mounts the bell with nothing waiting, then has the notifications arrive after startup. */
 const renderComponent = (types: NotificationType[]) => {
+  mocks.notifications = [];
+  const { container, rerender } = render(<Notifications />);
+  passStartup();
   mocks.notifications = types.map(notification);
-  const { container } = render(<Notifications />);
+  rerender(<Notifications />);
 
   return {
     container,
@@ -72,10 +79,16 @@ const renderComponent = (types: NotificationType[]) => {
 };
 
 beforeEach(() => {
+  // only the clock: the tray's quiet spell at startup reads it, userEvent needs real timers
+  vi.useFakeTimers({ toFake: ["Date"] });
   vi.clearAllMocks();
   mocks.items = [];
   mocks.notifications = [];
   document.querySelectorAll("[data-focus-stand-in]").forEach((node) => node.remove());
+});
+
+afterEach(() => {
+  vi.useRealTimers();
 });
 
 // --- Tests ---
@@ -195,11 +208,25 @@ describe("Notifications trigger", () => {
     expect(document.activeElement).toBe(bell);
   });
 
+  it("stays shut for what arrives at startup, leaving the pip to show it", () => {
+    // mORTEX: startup's burst of warnings (SKSE missing, downloads to repair) waits in the
+    // tray rather than covering the list the user opened the app for.
+    mocks.notifications = [notification("error"), notification("warning")];
+    render(<Notifications />);
+
+    const bell = screen.getByRole("button", { name: "Notifications" });
+    expect(bell).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByTestId("notification-pip")).toBeInTheDocument();
+  });
+
   it("closes itself once the last notification has gone", async () => {
     // Switching game fires a burst of notifications that expire on their own. The tray
     // auto-opens for them, and an open tray with nothing in it is just a lit bell.
-    mocks.notifications = [notification("info")];
+    mocks.notifications = [];
     const { rerender } = render(<Notifications />);
+    passStartup();
+    mocks.notifications = [notification("info")];
+    rerender(<Notifications />);
     const bell = screen.getByRole("button", { name: "Notifications" });
     expect(bell).toHaveAttribute("aria-expanded", "true");
 

@@ -10,6 +10,7 @@ import { useToolbarAnalytics } from "@/ui/components/toolbar/useToolbarAnalytics
 import { type IViewPickerView, ViewPicker } from "@/ui/components/view_picker/ViewPicker";
 
 import { MODS_TABLE_TOOLBARS } from "../../hooks/use_mods_table_analytics/useModsTableAnalytics.hook";
+import { useInstallFromFileAction } from "../../hooks/useModToolbarActions.hook";
 import type { IModsTableView } from "../../util/mods_table_views/modsTableViews";
 import { DeleteModsTableViewModal } from "../delete_mods_table_view_modal/DeleteModsTableViewModal";
 import { ModsTableViewNameModal } from "../mods_table_view_name_modal/ModsTableViewNameModal";
@@ -18,7 +19,20 @@ import { ModsTableViewNameModal } from "../mods_table_view_name_modal/ModsTableV
 export const MODS_TABLE_FEEDBACK_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSeQgFzQQjWgVGwsFOC22JL2KZpKcKltN6_narrxyxUYydChxQ/viewform";
 
+/** mORTEX : les filtres segmentés des maquettes, appliqués avant la recherche */
+export type ModsQuickFilter = "all" | "enabled" | "conflicts" | "updates";
+
+const QUICK_FILTERS: { id: ModsQuickFilter; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "enabled", label: "Enabled" },
+  { id: "conflicts", label: "Conflicts" },
+  { id: "updates", label: "Updates" },
+];
+
 interface IModsTableToolbarProps {
+  /** mORTEX : le filtre segmenté actif */
+  quickFilter: ModsQuickFilter;
+  onQuickFilterChange: (filter: ModsQuickFilter) => void;
   /** The views to offer: the built-in ones, then the user's own. */
   views: IModsTableView[];
   /** The open view's id. */
@@ -54,8 +68,11 @@ export const ModsTableToolbar = ({
   displayOptions,
   search,
   onSearchChange,
+  quickFilter,
+  onQuickFilterChange,
 }: IModsTableToolbarProps) => {
   const { t } = useTranslation(["common"]);
+  const installFromFile = useInstallFromFileAction(t).action;
   // "new" while making a view, the view while renaming one, and unset otherwise.
   const [naming, setNaming] = useState<IModsTableView | "new">();
   const [deleting, setDeleting] = useState<IModsTableView>();
@@ -113,6 +130,19 @@ export const ModsTableToolbar = ({
 
   return (
     <>
+      <div aria-label={t("Filter")} className="mortex-segmented" role="group">
+        {QUICK_FILTERS.map((filter) => (
+          <button
+            aria-pressed={quickFilter === filter.id}
+            key={filter.id}
+            type="button"
+            onClick={() => onQuickFilterChange(filter.id)}
+          >
+            {t(filter.label)}
+          </button>
+        ))}
+      </div>
+
       <ViewPicker
         className="min-w-0 flex-1"
         label={t("Views")}
@@ -121,6 +151,15 @@ export const ModsTableToolbar = ({
         onAddView={() => setNaming("new")}
         onSelectView={onSelectView}
       />
+
+      <button
+        className="mortex-toolbar-button"
+        data-testid="mortex-install-from-file"
+        type="button"
+        onClick={() => installFromFile.onClick?.()}
+      >
+        {installFromFile.label}
+      </button>
 
       <Toolbar className="shrink-0 justify-end" tracking={tracking}>
         <ToolbarGroup actions={actions} />

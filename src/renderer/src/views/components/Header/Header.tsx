@@ -12,6 +12,7 @@ import {
   gameProfiles as gameProfilesSelector,
   knownGames as knownGamesSelector,
 } from "../../../util/selectors";
+import { Notifications } from "../Spine/notifications/Notifications";
 import { useSpineContext } from "../Spine/SpineContext";
 import { PremiumIndicator } from "./premium/PremiumIndicator";
 import { ProfileSection } from "./profile/ProfileSection";
@@ -90,6 +91,8 @@ export const Header: FC<React.PropsWithChildren<unknown>> = () => {
         <PremiumIndicator />
 
         <div className="flex items-center gap-x-5">
+          <Notifications placement="header" />
+
           <ProfileSection />
 
           <div className="h-6 w-0.5 rounded-md bg-stroke-weak" />

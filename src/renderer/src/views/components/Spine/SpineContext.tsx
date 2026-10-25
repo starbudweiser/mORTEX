@@ -42,6 +42,9 @@ interface IStateWithPlugins extends IState {
 interface ISpineContext {
   selection: SpineSelection;
   visiblePages: IMainPage[];
+  /** mORTEX : les pages de l'accueil et du jeu actif, pour la barre latérale unique */
+  homePages: IMainPage[];
+  gamePages: IMainPage[];
   /** When selection is "downloads", the game to filter by (null = all) */
   downloadGameFilter: string | null;
   selectHome: () => void;
@@ -275,6 +278,8 @@ export const SpineProvider: FC<React.PropsWithChildren<unknown>> = ({
     () => ({
       selection,
       visiblePages,
+      homePages,
+      gamePages,
       downloadGameFilter,
       selectHome,
       selectGame,
@@ -285,6 +290,8 @@ export const SpineProvider: FC<React.PropsWithChildren<unknown>> = ({
     [
       selection,
       visiblePages,
+      homePages,
+      gamePages,
       downloadGameFilter,
       selectHome,
       selectGame,

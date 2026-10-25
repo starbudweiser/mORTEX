@@ -81,7 +81,8 @@ const bodyRows = (table: HTMLElement) =>
     .getAllByRole("row")
     .filter((row) => row.closest(".nxm-table-head") === null);
 
-const cellText = (row: HTMLElement) => within(row).getAllByRole("gridcell")[0].textContent;
+// The name's cell: the first holds the row's switch, as on the mORTEX mockups.
+const cellText = (row: HTMLElement) => within(row).getAllByRole("gridcell")[1].textContent;
 
 describe("ModsTableSwitch", () => {
   it("shows the classic table while the beta view is off", () => {
@@ -263,6 +264,7 @@ describe("ModsTableSwitch", () => {
 
       expect(screen.getByRole("grid")).toBeInTheDocument();
       expect(screen.getAllByRole("columnheader").map((header) => header.textContent)).toEqual([
+        "Enabled",
         "Name",
         "Version",
         "Mod status",
@@ -733,7 +735,14 @@ describe("ModsTableSwitch", () => {
     it("shows the version and installation time columns by default", () => {
       renderSwitch({ a: mod("a", "Alpha", true) });
 
-      expect(headers()).toEqual(["Name", "Version", "Mod status", "Installation time", "Actions"]);
+      expect(headers()).toEqual([
+        "Enabled",
+        "Name",
+        "Version",
+        "Mod status",
+        "Installation time",
+        "Actions",
+      ]);
     });
 
     it("shows the collection column too in the Collections view", async () => {
@@ -742,6 +751,7 @@ describe("ModsTableSwitch", () => {
       await showView("Collections");
 
       expect(headers()).toEqual([
+        "Enabled",
         "Name",
         "Version",
         "Mod status",
@@ -970,7 +980,7 @@ describe("ModsTableSwitch", () => {
       expect(within(rowOf("Beta")).getByRole("button", { name: "Remove" })).toBeInTheDocument();
     });
 
-    it("shows a pinned action before the switch, and the menu after it", async () => {
+    it("shows a pinned action before the menu, the switch being in the first column", async () => {
       renderSwitch({ a: mod("a", "Alpha", true) }, [{ title: "Remove", action: vi.fn() }]);
 
       await openMenu("Alpha");
@@ -983,8 +993,13 @@ describe("ModsTableSwitch", () => {
       const controls = Array.from(
         actionsCell.querySelectorAll<HTMLElement>('button, [role="checkbox"]'),
       ).map((control) => control.getAttribute("aria-label"));
+      expect(controls).toEqual(["Remove", "More actions"]);
+
       // the switch by its untranslated label, which `t` leaves uninterpolated here
-      expect(controls).toEqual(["Remove", "{{name}} enabled", "More actions"]);
+      const switchCell = within(rowOf("Alpha")).getAllByRole("gridcell")[0];
+      expect(
+        within(switchCell).getByRole("checkbox", { name: "{{name}} enabled" }),
+      ).toBeInTheDocument();
     });
   });
 

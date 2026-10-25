@@ -3,7 +3,6 @@ import React, { type FC } from "react";
 import { useSwitchingProfile } from "../../hooks";
 import { ModernContentPane } from "../components/ContentPane";
 import { Header } from "../components/Header/Header";
-import { Spine } from "../components/Spine/Spine";
 import { SpineProvider } from "../components/Spine/SpineContext";
 import { StatusBar } from "../components/StatusBar/StatusBar";
 import { DialogLayer } from "./DialogLayer";
@@ -19,8 +18,7 @@ export const ModernLayout: FC<React.PropsWithChildren<unknown>> = () => {
   return (
     <SpineProvider>
       <LayoutContainer className="flex h-full bg-surface-base">
-        <Spine />
-
+        {/* mORTEX : plus de colonne d'icônes ; la barre latérale unique (Menu) la remplace */}
         <div className="flex min-w-0 grow flex-col">
           <Header />
 

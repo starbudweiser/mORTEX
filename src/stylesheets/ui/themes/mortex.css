@@ -183,6 +183,8 @@ body[data-platform="darwin"] [data-testid="spine"] {
 /* L'en-tête laisse la place du bouton à droite */
 body[data-platform="darwin"] [data-testid="window-titlebar"] {
     padding-right: 128px;
+    /* sans colonne d'icônes, l'en-tête laisse la place des feux tricolores (x 22, ~70 px) */
+    padding-left: 92px;
 }
 
 /* Pastilles d'état de la liste des mods : aplat doux + mot, jamais la couleur seule */
@@ -482,4 +484,91 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
         color: var(--color-neutral-subdued) !important;
         font-size: 12px !important;
     }
+}
+
+/* ---- Barre latérale unique : groupes Jeu / Outils / Application, compteurs ---- */
+.mortex-menu-section + .mortex-menu-section {
+    margin-top: 10px;
+}
+
+.mortex-menu-section-title {
+    margin: 4px 12px 4px;
+    color: var(--color-neutral-subdued);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.mortex-menu-section-rule {
+    height: 1px;
+    margin: 6px 8px;
+    background-color: var(--color-stroke-weak);
+}
+
+.mortex-menu-count {
+    color: var(--color-neutral-subdued);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+}
+
+.mortex-menu-active .mortex-menu-count {
+    color: #cfe8f7;
+}
+
+/* Cloche des notifications dans la barre de titre : 32 px, sans bordure */
+.mortex-header-bell > button {
+    width: 32px;
+    height: 32px;
+    border-width: 0;
+}
+
+.mortex-header-bell > button [data-testid="notification-pip"] {
+    width: 9px;
+    height: 9px;
+}
+
+/* ---- Liste Mods : filtres segmentés et bouton Installer depuis un fichier ---- */
+.mortex-segmented {
+    display: flex;
+    flex-shrink: 0;
+    padding: 2px;
+    border-radius: 7px;
+    background-color: #181818;
+}
+
+.mortex-segmented button {
+    height: 22px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--color-neutral-subdued);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.mortex-segmented button:hover {
+    color: var(--color-neutral-moderate);
+}
+
+.mortex-segmented button[aria-pressed="true"] {
+    background-color: var(--color-zinc-700);
+    color: var(--color-neutral-strong);
+}
+
+.mortex-toolbar-button {
+    flex-shrink: 0;
+    height: 26px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 6px;
+    background-color: var(--color-zinc-700);
+    color: var(--color-neutral-moderate);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.mortex-toolbar-button:hover {
+    background-color: var(--color-zinc-600);
 }
