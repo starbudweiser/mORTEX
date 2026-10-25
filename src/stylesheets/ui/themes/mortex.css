@@ -212,7 +212,8 @@ body[data-platform="darwin"] [data-testid="spine"] {
 
 /* Sur Mac, pas de boutons de fenêtre à droite : même marge de 16 px que l'écart entre les éléments */
 body[data-platform="darwin"] [data-testid="window-titlebar"] {
-    padding-right: 16px;
+    /* LANCER (fixe, ~108 px à 16 px du bord) : la place est réservée, le reste se serre */
+    padding-right: 140px;
     /* sans colonne d'icônes, l'en-tête laisse la place des feux tricolores (x 22, ~70 px) */
     padding-left: 92px;
 }
@@ -295,7 +296,28 @@ body[data-platform="darwin"] [data-testid="window-titlebar"] {
 }
 
 body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titlebar"] {
-    padding-right: 250px;
+    padding-right: 256px;
+}
+
+/* En-tête étroit : la marque cède d'abord, puis le nom du jeu se tronque ; version, badge Premium et
+   cloche gardent leur taille et ne passent jamais sous LANCER / DÉPLOYER */
+[data-testid="window-titlebar"] > div:first-child {
+    min-width: 0;
+    overflow: hidden;
+}
+
+[data-testid="window-titlebar"] > div:last-child {
+    flex-shrink: 1;
+    min-width: 0;
+    gap: 12px;
+}
+
+[data-testid="window-titlebar"] > div:last-child > :not(:first-child) {
+    flex-shrink: 0;
+}
+
+[data-testid="window-titlebar"] > div:last-child > :first-child {
+    min-width: 0;
 }
 
 /* Barre d'état au pied de la fenêtre */

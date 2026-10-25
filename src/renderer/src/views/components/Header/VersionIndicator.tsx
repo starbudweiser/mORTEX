@@ -11,7 +11,7 @@ export const VersionIndicator: FC<React.PropsWithChildren<unknown>> = () => {
     <Typography
       appearance="weak"
       brand="neutral-translucent"
-      className="text-translucent-weaker!"
+      className="text-[#38bdf8]!"
       data-testid="version-indicator"
       typographyType="body-sm"
     >
