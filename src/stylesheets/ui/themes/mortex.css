@@ -372,6 +372,123 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     color: var(--color-neutral-subdued);
 }
 
+/* ---- Plantages sKYCRASH : carte d'Accueil et section de la fiche d'un mod ---- */
+.mortex-crashes .mortex-card-crashes {
+    max-width: 760px;
+}
+
+.mortex-crash-meta,
+.mortex-card p.mortex-crash-meta {
+    color: var(--color-neutral-subdued);
+    font-size: 12px;
+}
+
+.mortex-crash-verdict {
+    color: var(--color-neutral-moderate);
+}
+
+.mortex-suspects,
+.mortex-suspect-reasons,
+.mortex-suspect-notes {
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.mortex-suspect {
+    padding: 10px 0;
+    border-top: 1px solid var(--color-stroke-weak);
+}
+
+.mortex-suspect-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-neutral-strong);
+}
+
+.mortex-suspect-rank {
+    min-width: 16px;
+    color: var(--color-neutral-subdued);
+    font-variant-numeric: tabular-nums;
+}
+
+.mortex-suspect-score {
+    margin-left: auto;
+    color: var(--color-neutral-subdued);
+    font-variant-numeric: tabular-nums;
+}
+
+.mortex-badge {
+    padding: 1px 6px;
+    border-radius: 4px;
+    background-color: var(--color-surface-high);
+    color: var(--color-neutral-moderate);
+    font-size: 11px;
+}
+
+.mortex-suspect-where {
+    margin: 4px 0 0 24px;
+    color: var(--color-neutral-subdued);
+}
+
+.mortex-suspect-mod {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 6px 0 0 24px;
+    color: var(--color-neutral-moderate);
+}
+
+.mortex-suspect-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.mortex-suspect-reasons,
+.mortex-suspect-notes {
+    margin: 6px 0 0 24px;
+    color: var(--color-neutral-moderate);
+
+    li {
+        position: relative;
+        padding-left: 12px;
+    }
+
+    li::before {
+        content: "\2022";
+        position: absolute;
+        left: 0;
+        color: var(--color-neutral-subdued);
+    }
+}
+
+.mortex-crash-env {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-stroke-weak);
+}
+
+.mortex-crash-env h6,
+.mortex-inspector-crashes h6 {
+    margin: 0 0 6px;
+    color: var(--color-neutral-strong);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.mortex-inspector-crashes {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-stroke-weak);
+
+    p {
+        margin: 4px 0 0;
+    }
+}
+
 /* ---- Téléchargements : zone de dépôt et boutons plats ---- */
 .modern-layout .dropzone.stand-alone {
     border: 1px dashed var(--color-stroke-subdued);

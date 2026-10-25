@@ -11,6 +11,7 @@ import { Image } from "@/ui/components/image/Image";
 import { getCurrentLanguage } from "@/util/i18n";
 import { bytesToString } from "@/util/util";
 
+import { ModCrashes } from "../../../mortex_crashes/ModCrashes";
 import type { IMod } from "../../types/IMod";
 import { modAuthor } from "../mod_author/ModAuthor";
 
@@ -23,6 +24,8 @@ interface IModInspectorProps {
   onOpenNexus?: () => void;
   /** Shows its folder in the Finder; unset when it isn't installed. */
   onOpenFolder?: () => void;
+  /** Opens the file conflict editor; unset when the mod has no conflicts. */
+  onOpenConflicts?: () => void;
   /** Closes the panel, from its button or Escape. */
   onClose: () => void;
 }
@@ -44,6 +47,7 @@ export const ModInspector = ({
   name,
   onOpenNexus,
   onOpenFolder,
+  onOpenConflicts,
   onClose,
 }: IModInspectorProps) => {
   const { t } = useTranslation(["common"]);
@@ -130,6 +134,8 @@ export const ModInspector = ({
         {!!mod.installationPath && <Field label={t("Folder")}>{mod.installationPath}</Field>}
         {!!attributes.notes && <Field label={t("Notes")}>{attributes.notes}</Field>}
       </dl>
+
+      <ModCrashes mod={mod} onOpenConflicts={onOpenConflicts} />
 
       <div className="mortex-inspector-actions">
         {onOpenNexus !== undefined && (

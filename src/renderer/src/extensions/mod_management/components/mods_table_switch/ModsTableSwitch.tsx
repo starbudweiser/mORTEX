@@ -535,6 +535,7 @@ export const ModsTableSwitch = ({
             mod={inspected.mod}
             name={inspected.name}
             onClose={closeInspector}
+            onOpenConflicts={inspectedAction("Manage File Conflicts")}
             onOpenFolder={inspectedAction("Open in File Manager")}
             onOpenNexus={openNexus}
           />
