@@ -426,7 +426,7 @@ class MainWindow {
       autoHideMenuBar: windowMetrics?.customTitlebar ?? true,
       frame: !(windowMetrics?.customTitlebar ?? true),
       show: false,
-      title: "mORTEX",
+      title: "mORTEX - Gestionnaire de mods pour Mac Silicon",
       titleBarStyle: windowMetrics?.customTitlebar === true ? "hidden" : "default",
       webPreferences: {
         preload: path.join(getVortexPath("base"), "preload.cjs"),
