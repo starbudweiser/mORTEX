@@ -184,7 +184,7 @@ describe("updater state rendering", () => {
 
     const updates = sent(sendNotification, "vortex-update-available");
     expect(updates).toHaveLength(1);
-    expect(updates[0]!.message).toBe("Vortex 2.7.0 is available to download");
+    expect(updates[0]!.message).toBe("mORTEX 2.7.0 is available to download");
     expect(updates[0]!.actions!.map((action) => action.title)).toEqual(["What's New", "Download"]);
   });
 
@@ -198,7 +198,7 @@ describe("updater state rendering", () => {
 
     const updates = sent(sendNotification, "vortex-update-available");
     expect(updates).toHaveLength(2);
-    expect(updates[1]!.message).toBe("Vortex 2.7.0 is ready to install");
+    expect(updates[1]!.message).toBe("mORTEX 2.7.0 is ready to install");
     expect(updates[1]!.actions!.map((action) => action.title)).toEqual([
       "What's New",
       "Restart Now",
@@ -318,7 +318,7 @@ describe("manual check feedback (a pressed button always answers)", () => {
 
     const updates = sent(sendNotification, "vortex-update-available");
     const last = updates.at(-1)!;
-    expect(last.message).toBe("Downloading Vortex 2.6.1 (30%)");
+    expect(last.message).toBe("Downloading mORTEX 2.6.1 (30%)");
     expect(last.type).toBe("activity");
     expect(last.actions).toBeUndefined();
   });
@@ -404,7 +404,7 @@ describe("downloads", () => {
     expect(dismissNotification).not.toHaveBeenCalledWith("vortex-update-available");
     const updates = sent(sendNotification, "vortex-update-available");
     const last = updates.at(-1)!;
-    expect(last.message).toBe("Downloading Vortex 2.7.0 (42%)");
+    expect(last.message).toBe("Downloading mORTEX 2.7.0 (42%)");
     expect(last.progress).toBe(42);
     // "activity" is what makes the notifications panel render the bar
     expect(last.type).toBe("activity");
@@ -429,7 +429,7 @@ describe("downloads", () => {
     await pushState({ type: "staged", version: "2.6.1", kind: "patch" });
     const updates = sent(sendNotification, "vortex-update-available");
     expect(updates).toHaveLength(1);
-    expect(updates[0]!.message).toBe("Vortex will update on restart");
+    expect(updates[0]!.message).toBe("mORTEX will update on restart");
     expect(updates[0]!.actions!.map((action) => action.title)).toEqual(["Restart Now"]);
 
     updates[0]!.actions![0]!.action(() => undefined);
@@ -460,7 +460,7 @@ describe("downloads", () => {
     expect(notifications.some((entry) => entry.id === "vortex-update-error")).toBe(true);
     const updates = sent(sendNotification, "vortex-update-available");
     const last = updates.at(-1)!;
-    expect(last.message).toBe("Vortex 2.7.0 is available to download");
+    expect(last.message).toBe("mORTEX 2.7.0 is available to download");
     expect(last.actions!.map((action) => action.title)).toEqual(["What's New", "Download"]);
   });
 
@@ -531,14 +531,14 @@ describe("downgrades", () => {
     });
 
     let updates = sent(sendNotification, "vortex-update-available");
-    expect(updates[0]!.message).toBe("Downgrading to Vortex 2.5.0 (12%)");
+    expect(updates[0]!.message).toBe("Downgrading to mORTEX 2.5.0 (12%)");
     expect(updates[0]!.actions).toBeUndefined();
 
     // once staged it installs on quit, like a patch, and says so
     await pushState({ type: "staged", version: "2.5.0", kind: "downgrade" });
     updates = sent(sendNotification, "vortex-update-available");
     const last = updates.at(-1)!;
-    expect(last.message).toBe("Vortex will update on restart");
+    expect(last.message).toBe("mORTEX will update on restart");
     expect(last.actions!.map((action) => action.title)).toEqual(["Restart Now"]);
   });
 

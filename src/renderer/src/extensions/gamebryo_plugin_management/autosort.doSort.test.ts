@@ -216,7 +216,7 @@ describe("LootInterface doSort", () => {
   });
 
   // the plugin list says the master is deployed, the game folder has no such file
-  test("reports a sort that failed on a master Vortex deployed as an error", async ({
+  test("reports a sort that failed on a master mORTEX deployed as an error", async ({
     makeLoot,
   }) => {
     const harness = await makeLoot(LootInterface);
@@ -233,7 +233,7 @@ describe("LootInterface doSort", () => {
     );
     expect(notSorted?.type).toBe("error");
     expect(notSorted?.message).toBe(
-      'Plugins not sorted because: a plugin requires "M.esm", which was in the game folder when Vortex last scanned it but is gone',
+      'Plugins not sorted because: a plugin requires "M.esm", which was in the game folder when mORTEX last scanned it but is gone',
     );
   });
 

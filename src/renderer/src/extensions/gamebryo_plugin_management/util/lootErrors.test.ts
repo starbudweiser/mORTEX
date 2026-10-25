@@ -164,14 +164,14 @@ describe("describeLootError", () => {
   test("points an unrecognised failure at the log instead of repeating it", () => {
     const failure = describe_(new Error("access violation reading 0x0"));
 
-    expect(failure.message).toBe("something went wrong in LOOT; the details are in the Vortex log");
+    expect(failure.message).toBe("something went wrong in LOOT; the details are in the mORTEX log");
     expect(failure.message).not.toContain("access violation");
   });
 
-  test("names Vortex, not LOOT, when the worker rejected an argument", () => {
+  test("names mORTEX, not LOOT, when the worker rejected an argument", () => {
     const failure = describe_(new Error("parameter 2 expected to be a string"));
 
-    expect(failure.message).toBe("Vortex asked LOOT for something it could not accept");
+    expect(failure.message).toBe("mORTEX asked LOOT for something it could not accept");
     expect(failure.message).not.toContain("parameter 2");
   });
 });

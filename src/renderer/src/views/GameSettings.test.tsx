@@ -53,9 +53,9 @@ describe("GameSettings header", () => {
     store.gameName = undefined;
   });
 
-  it("opens the Vortex settings page from the header button", async () => {
+  it("opens the mORTEX settings page from the header button", async () => {
     render(<GameSettings />);
-    await userEvent.click(screen.getByRole("button", { name: "Vortex settings" }));
+    await userEvent.click(screen.getByRole("button", { name: "mORTEX settings" }));
 
     expect(dispatch).toHaveBeenCalledWith(setOpenMainPage("application_settings", false));
   });

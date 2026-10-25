@@ -140,7 +140,7 @@ describe("ModUpdate", () => {
 
     expect(screen.getByRole("img", { name: "Mod source unknown" })).toHaveAttribute(
       "aria-description",
-      "Vortex doesn't know where this mod came from, so it can't check for updates.",
+      "mORTEX doesn't know where this mod came from, so it can't check for updates.",
     );
   });
 
