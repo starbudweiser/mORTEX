@@ -250,31 +250,6 @@ async function removeInvalidDownloads(api: IExtensionApi, gameId?: string) {
   ]);
 }
 
-function removeInvalidFileExts(api: IExtensionApi, gameId?: string) {
-  const state: IState = api.store.getState();
-  gameId = gameId || selectors.activeGameId(state);
-  if (!gameId) {
-    return PromiseBB.resolve();
-  }
-  const downloadPath = selectors.downloadPathForGame(state, gameId);
-  return fs
-    .readdirAsync(downloadPath)
-    .then((files: string[]) => {
-      return PromiseBB.all(
-        files.map((fileName) => {
-          if (!knownArchiveExt(fileName) && !isTempDownloadName(fileName)) {
-            return fs.removeAsync(path.join(downloadPath, fileName)).catch(() => null);
-          }
-        }),
-      );
-    })
-    .catch((err) =>
-      ["ENOENT", "EACCES", "EPERM"].includes(err.code)
-        ? null
-        : log("warn", "failed to remove invalid download files", err),
-    );
-}
-
 function updateDownloadPath(api: IExtensionApi, gameId?: string) {
   const state: IState = api.store.getState();
   if (gameId === undefined) {
@@ -293,7 +268,6 @@ function updateDownloadPath(api: IExtensionApi, gameId?: string) {
   // there is also nothing to watch and no refresh to announce
   let folderAvailable = true;
   return (removeInvalidDownloads(api, gameId) as any)
-    .then(() => removeInvalidFileExts(api, gameId))
     .then(() =>
       getNormalizeFunc(currentDownloadPath, {
         separators: false,
@@ -328,6 +302,8 @@ function updateDownloadPath(api: IExtensionApi, gameId?: string) {
         )
         .map((dlId) => normalize(downloads[dlId].localPath || ""));
 
+      // dispatched in one batch afterwards: one action per archive froze the UI on huge folders
+      const addedActions: Array<ReturnType<typeof addLocalDownload>> = [];
       return refreshDownloads(
         currentDownloadPath,
         knownDLs,
@@ -335,8 +311,7 @@ function updateDownloadPath(api: IExtensionApi, gameId?: string) {
         (fileName: string) =>
           fs.statAsync(path.join(currentDownloadPath, fileName)).then((stats: fs.Stats) => {
             const dlId = shortid();
-            log("debug", "registering previously unknown archive", fileName);
-            api.store.dispatch(addLocalDownload(dlId, gameId, fileName, stats.size));
+            addedActions.push(addLocalDownload(dlId, gameId, fileName, stats.size));
             nameIdMap[normalize(fileName)] = dlId;
           }),
         (fileName: string) => {
@@ -361,25 +336,27 @@ function updateDownloadPath(api: IExtensionApi, gameId?: string) {
               ],
             );
           }),
-      ).catch((err: unknown) => {
-        if (err instanceof UserCanceled) {
-          return null;
-        }
-        if (err instanceof VortexError && err.data.kind === "fs:not-found") {
-          // reconciling against a folder Vortex can't see would delete every
-          // download record for this game, so reconciliation is skipped
-          folderAvailable = false;
-          api.showErrorNotification(
-            "Download folder is not available",
-            getErrorMessageOrDefault(err),
-            { allowReport: false },
-          );
-          return null;
-        }
-        api.showErrorNotification("Failed to refresh download directory", err, {
-          allowReport: getErrorCode(err) !== "EPERM",
+      )
+        .then(() => batchDispatch(api.store, addedActions))
+        .catch((err: unknown) => {
+          if (err instanceof UserCanceled) {
+            return null;
+          }
+          if (err instanceof VortexError && err.data.kind === "fs:not-found") {
+            // reconciling against a folder Vortex can't see would delete every
+            // download record for this game, so reconciliation is skipped
+            folderAvailable = false;
+            api.showErrorNotification(
+              "Download folder is not available",
+              getErrorMessageOrDefault(err),
+              { allowReport: false },
+            );
+            return null;
+          }
+          api.showErrorNotification("Failed to refresh download directory", err, {
+            allowReport: getErrorCode(err) !== "EPERM",
+          });
         });
-      });
     })
     .then(() => {
       if (!folderAvailable) {

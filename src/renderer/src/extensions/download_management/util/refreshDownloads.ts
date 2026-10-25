@@ -7,6 +7,8 @@ import { knownArchiveExt } from "../../../util/archives";
 import { folderIsMissing } from "../../../util/folderIsMissing";
 import * as fs from "../../../util/fs";
 
+const ADD_CHUNK_SIZE = 256;
+
 /** archive files in the folder; read errors propagate */
 async function readArchiveNames(downloadPath: string): Promise<string[]> {
   const entries: string[] = await fs.readdirAsync(downloadPath);
@@ -48,10 +50,16 @@ export async function refreshDownloads(
   const downloadNames = await readArchiveNames(downloadPath);
 
   const dlsNormalized = downloadNames.map(normalize);
-  const addedDLs = downloadNames.filter((_name, idx) => !knownDLs.includes(dlsNormalized[idx]));
-  const removedDLs = knownDLs.filter((name) => !dlsNormalized.includes(name));
+  // Sets: with tens of thousands of archives, array lookups made this quadratic.
+  const knownSet = new Set(knownDLs);
+  const presentSet = new Set(dlsNormalized);
+  const addedDLs = downloadNames.filter((_name, idx) => !knownSet.has(dlsNormalized[idx]));
+  const removedDLs = knownDLs.filter((name) => !presentSet.has(name));
 
-  await Promise.all(addedDLs.map((name) => onAddDownload(name)));
+  // In chunks, so a huge folder doesn't open thousands of stat calls at once.
+  for (let i = 0; i < addedDLs.length; i += ADD_CHUNK_SIZE) {
+    await Promise.all(addedDLs.slice(i, i + ADD_CHUNK_SIZE).map((name) => onAddDownload(name)));
+  }
 
   if (removedDLs.length === 0) {
     return;

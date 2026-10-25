@@ -87,6 +87,18 @@ describe("refreshDownloads", () => {
     expect(removed).toEqual([]);
   });
 
+  it("handles a folder of many thousands of archives, registering each once", async () => {
+    // 1.4 TB folders shared with other tools: the scan must stay linear and chunked
+    const names = Array.from({ length: 20000 }, (_v, i) => `mod-${i}.7z`);
+    onDisk = names;
+    const known = names.slice(0, 10000).map((n) => n.toLowerCase());
+
+    const { added, removed } = await run(known);
+
+    expect(added).toEqual(names.slice(10000));
+    expect(removed).toEqual([]);
+  });
+
   it("removes a record whose archive is gone", async () => {
     onDisk = ["SkyUI.7z"];
 
