@@ -90,3 +90,21 @@ body[data-watermark="mono"]::after {
 .mortex-play * {
     color: #1a1200 !important;
 }
+
+/* Sélection de la barre latérale : aplat bleu plein, à la macOS */
+.mortex-menu-active,
+.mortex-menu-active:hover {
+    background-color: var(--color-primary-700) !important;
+    color: #ffffff !important;
+}
+
+/* Logotype mORTEX : le « m » reprend l'ambre du bouton Jouer */
+.mortex-wordmark {
+    color: var(--color-neutral-strong);
+    font-size: 14px;
+}
+
+.mortex-wordmark b {
+    color: #f59e0b;
+    font-weight: 800;
+}

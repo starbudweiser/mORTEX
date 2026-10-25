@@ -79,6 +79,10 @@ export const Header: FC<React.PropsWithChildren<unknown>> = () => {
       </div>
 
       <div className="flex shrink-0 items-center gap-x-2 [-webkit-app-region:no-drag]">
+        <span aria-label="mORTEX" className="mortex-wordmark mr-2 font-bold tracking-wide">
+          <b>m</b>ORTEX
+        </span>
+
         <StagingIndicator />
 
         <VersionIndicator />

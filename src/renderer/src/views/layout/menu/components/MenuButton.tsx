@@ -29,7 +29,9 @@ export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
         className={joinClasses([
           "relative flex h-10 items-center gap-x-3 rounded-lg px-3 text-left transition-colors",
           "hover:bg-surface-mid hover:text-neutral-moderate focus-visible:z-1",
-          isActive ? "bg-surface-low text-neutral-moderate" : "text-neutral-subdued",
+          isActive
+            ? "mortex-menu-active bg-surface-low text-neutral-moderate"
+            : "text-neutral-subdued",
         ])}
         {...props}
       >
