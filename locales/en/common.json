@@ -179,5 +179,6 @@
   "Game / SKSE version mismatch": "Game / SKSE version mismatch",
   "Address Library missing": "Address Library missing",
   "Plugin limit": "Plugin limit",
-  "Graphics proxy DLL": "Graphics proxy DLL"
+  "Graphics proxy DLL": "Graphics proxy DLL",
+  "Bottle not reported by sKYCRASH: graphics settings cannot be compared.": "Bottle not reported by sKYCRASH: graphics settings cannot be compared."
 }

@@ -64,7 +64,11 @@ export function diagnoseEnvironment(
     const name = linked.suspect.name;
 
     if (GRAPHICS.test(name)) {
-      if (bottle === undefined) {
+      if (event.bottle === null) {
+        notes.push({
+          key: "Bottle not reported by sKYCRASH: graphics settings cannot be compared.",
+        });
+      } else if (bottle === undefined) {
         notes.push({ key: "Bottle unknown to mORTEX: graphics settings cannot be compared." });
       } else {
         for (const dll of ["d3d11", "dxgi", "d3d12"]) {

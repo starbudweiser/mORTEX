@@ -138,5 +138,6 @@
   "Game / SKSE version mismatch": "Versions du jeu et de SKSE incompatibles",
   "Address Library missing": "Address Library absente",
   "Plugin limit": "Limite de plugins",
-  "Graphics proxy DLL": "DLL graphique intermédiaire"
+  "Graphics proxy DLL": "DLL graphique intermédiaire",
+  "Bottle not reported by sKYCRASH: graphics settings cannot be compared.": "Bouteille non indiquée par sKYCRASH : les réglages graphiques ne peuvent pas être comparés."
 }
