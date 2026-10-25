@@ -110,7 +110,8 @@ export function explainPlugin(plugin: IPluginCombined, env: IPluginExplainEnv): 
         itm: d.itmCount,
         udr: d.deletedReferenceCount,
         nav: d.deletedNavmeshCount,
-        utility: d.cleaningUtility || "xEdit",
+        // LOOT écrit l'outil en lien Markdown : « [SSEEdit](https://…) »
+        utility: (d.cleaningUtility ?? "").replace(/\[([^\]]+)\]\([^)]*\)/g, "$1") || "xEdit",
       },
       sources: [{ ...LOOT_META_SOURCE, detail: `CRC ${d.crc.toString(16).toUpperCase()}` }],
     });

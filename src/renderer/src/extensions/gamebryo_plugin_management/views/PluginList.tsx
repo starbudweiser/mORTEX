@@ -1667,6 +1667,7 @@ class PluginList extends ComponentEx<IProps, IComponentState> {
         id: "loot_messages",
         name: "LOOT Messages (only updates on sort)",
         edit: {},
+        position: 101,
         customRenderer: (plugin: IPluginCombined) => this.renderLootMessages(plugin),
         calc: (plugin: IPluginCombined) => plugin.messages,
         placement: "detail",

@@ -12,8 +12,8 @@ function init(context: IExtensionContext): boolean {
     id: "mortex_assistant",
     name: "Assistant",
     edit: {},
-    // juste avant « LOOT Messages » (position 100 par défaut)
-    position: 99,
+    // avec les attributs par défaut ; « LOOT Messages » passe à 101 (PluginList) pour venir après
+    position: 100,
     customRenderer: (plugin: any) => React.createElement(PluginAssistant, { plugin }),
     calc: (plugin: any) => plugin.id,
     placement: "detail",

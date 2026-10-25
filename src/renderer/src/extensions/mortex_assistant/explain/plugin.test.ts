@@ -62,7 +62,7 @@ describe("explainPlugin", () => {
             itmCount: 4,
             deletedReferenceCount: 2,
             deletedNavmeshCount: 1,
-            cleaningUtility: "SSEEdit",
+            cleaningUtility: "[SSEEdit](https://example.org/x)",
           },
         ],
       }),
