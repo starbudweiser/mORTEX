@@ -412,6 +412,8 @@ export const ModsTableSwitch = ({
   );
 
   const tableProps = {
+    // mORTEX : par catégorie, la liste s'ouvre repliée ; une recherche montre ses résultats ouverts
+    collapsedByDefault: grouping === "category" && !isSearching,
     focusGroupId,
     onGroupFocused,
     className: "mb-2 flex-1",

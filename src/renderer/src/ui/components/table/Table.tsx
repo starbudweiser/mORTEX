@@ -82,6 +82,7 @@ export const Table = <T, G extends ITableGroup<T> = ITableGroup<T>>({
   rowMenu,
   groupMenu,
   groupTracking,
+  collapsedByDefault = false,
   focusGroupId,
   onGroupFocused,
   onMenuOpen,
@@ -95,10 +96,32 @@ export const Table = <T, G extends ITableGroup<T> = ITableGroup<T>>({
     [getRowId, groups, rows],
   );
 
-  const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(() => new Set());
+  // The groups toggled away from the default: the open ones when groups start collapsed,
+  // the closed ones otherwise. A new default starts every group over.
+  const [toggled, setToggled] = useState<ReadonlySet<string>>(() => new Set());
+  const [toggledDefault, setToggledDefault] = useState(collapsedByDefault);
+
+  if (toggledDefault !== collapsedByDefault) {
+    setToggledDefault(collapsedByDefault);
+    setToggled(new Set());
+  }
+
+  const collapsed = useMemo<{ has: (groupId: string) => boolean }>(
+    () => ({
+      has: (groupId) => toggled.has(groupId) !== collapsedByDefault,
+    }),
+    [collapsedByDefault, toggled],
+  );
+
+  const setCollapsed = (ids: ReadonlySet<string>) =>
+    setToggled(
+      new Set(
+        (groups ?? []).map((group) => group.id).filter((id) => ids.has(id) !== collapsedByDefault),
+      ),
+    );
 
   const toggle = (groupId: string) =>
-    setCollapsed((previous) => {
+    setToggled((previous) => {
       const next = new Set(previous);
       if (!next.delete(groupId)) {
         next.add(groupId);
@@ -208,9 +231,7 @@ export const Table = <T, G extends ITableGroup<T> = ITableGroup<T>>({
   const hasFocusGroup = !!focusGroupId && !!groups?.some((group) => group.id === focusGroupId);
 
   if (hasFocusGroup && collapsed.has(focusGroupId)) {
-    const next = new Set(collapsed);
-    next.delete(focusGroupId);
-    setCollapsed(next);
+    toggle(focusGroupId);
   }
 
   const { ready, scrollToIndex } = virtual;

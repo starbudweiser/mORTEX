@@ -121,5 +121,7 @@
   "Updates": "Updates",
   "Filter": "Filter",
   "Install From File": "Install From File",
-  "Manage games": "Manage games"
+  "Manage games": "Manage games",
+  "Vortex": "mORTEX",
+  "No {{column}}": "No {{column}}"
 }

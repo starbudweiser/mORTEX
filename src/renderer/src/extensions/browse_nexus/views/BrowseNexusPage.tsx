@@ -5,7 +5,6 @@ import type {
   SortDirection,
 } from "@nexusmods/nexus-api";
 import { VortexGameId } from "@vortex/shared";
-import numeral from "numeral";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -30,6 +29,7 @@ import { TabPanel } from "@/ui/components/tabs/TabPanel";
 import { TabProvider } from "@/ui/components/tabs/Tabs.context";
 import { Typography } from "@/ui/components/typography/Typography";
 import { UserCanceled } from "@/util/api";
+import { getCurrentLanguage } from "@/util/i18n";
 import { activeGameId } from "@/util/selectors";
 import MainPage from "@/views/MainPage";
 
@@ -323,7 +323,7 @@ function BrowseNexusPage(props: IBrowseNexusPageProps) {
                       typographyType="body-sm"
                     >
                       {t("collection:browse.resultsCount", {
-                        total: numeral(totalCount).format("0,0"),
+                        total: totalCount.toLocaleString(getCurrentLanguage()),
                       })}
                     </Typography>
                   </div>

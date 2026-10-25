@@ -589,3 +589,177 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 .mortex-header-bell > button {
     border-color: transparent !important;
 }
+
+/* ---- Interrupteurs façon macOS (maquette) : piste 30 × 18, pastille blanche, bleu activé ----
+   Les deux familles : l'ancien Toggle (Paramètres) et le Switch moderne (liste Mods). */
+.toggle-container .toggle {
+    width: 30px;
+    height: 18px;
+    margin-right: 4px;
+    flex: none;
+    cursor: pointer;
+
+    .toggle-track {
+        border-radius: 9px;
+        transition: background-color 150ms ease;
+
+        svg {
+            display: none;
+        }
+    }
+
+    .toggle-handle {
+        top: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background-color: #ffffff;
+        box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+        transition: left 150ms ease;
+
+        svg {
+            display: none;
+        }
+    }
+
+    &.toggle-off .toggle-track {
+        background-color: #555555;
+    }
+
+    &.toggle-off .toggle-handle {
+        left: 2px;
+    }
+
+    &.toggle-on .toggle-track {
+        background-color: var(--color-primary-500);
+    }
+
+    &.toggle-on .toggle-handle {
+        left: 14px;
+    }
+}
+
+.toggle-container.toggle-disabled {
+    filter: none;
+    opacity: 0.45;
+}
+
+.nxm-switch {
+    width: 30px;
+    height: 18px;
+    border: 0;
+    background-color: #555555;
+
+    &[data-checked],
+    &[data-indeterminate] {
+        background-color: var(--color-primary-500);
+    }
+
+    .nxm-switch-thumb {
+        left: 2px;
+        width: 14px;
+        height: 14px;
+        border: 0;
+        background-color: #ffffff;
+        box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
+    }
+
+    &[data-checked] .nxm-switch-thumb,
+    &[data-indeterminate] .nxm-switch-thumb {
+        width: 14px;
+        height: 14px;
+        background-color: #ffffff;
+        transform: translate(12px, -50%);
+    }
+}
+
+/* ---- Filtres d'en-tête de tableau : une ligne alignée, 24 px, fond creusé, bord fin ----
+   Le bouton de regroupement (liste) gonflait la ligne de titre et décalait son filtre vers le bas. */
+.table-container .xthead .table-header-cell {
+    .cell-controls .btn-embed {
+        height: 18px !important;
+        min-height: 0 !important;
+        padding: 0 3px !important;
+        border: 0 !important;
+        border-radius: 4px !important;
+        background-color: transparent !important;
+        line-height: 1 !important;
+
+        svg {
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    .form-field-compact,
+    .react-datepicker__input-container > input,
+    .select-compact .Select-control {
+        height: 24px !important;
+        border: 1px solid var(--color-stroke-weak) !important;
+        border-radius: 6px !important;
+        background-color: #181818 !important;
+        color: var(--color-neutral-strong) !important;
+        font-size: 12px !important;
+    }
+
+    .form-field-compact,
+    .react-datepicker__input-container > input {
+        padding: 0 8px !important;
+    }
+
+    .select-compact .Select-control .Select-placeholder,
+    .select-compact .Select-control .Select-value {
+        line-height: 22px !important;
+        padding-left: 8px !important;
+    }
+
+    /* Filtre de date : le comparateur (=, <, >) collé au champ, du même gris que les boutons */
+    .datetime-filter {
+        display: flex !important;
+        align-items: center;
+        gap: 4px;
+        line-height: normal;
+
+        .group-addon-btn {
+            display: block;
+            width: auto;
+            padding: 0;
+            border: 0;
+            background: none;
+
+            button {
+                width: 24px;
+                height: 24px;
+                border-radius: 6px;
+                background-color: var(--color-zinc-700);
+                color: var(--color-neutral-moderate);
+                font-size: 12px;
+            }
+        }
+
+        > div {
+            flex: 1 1 auto;
+            line-height: normal;
+        }
+    }
+}
+
+/* ---- Champ de chemin avec bouton Parcourir incrusté : le texte s'arrête avant l'icône ---- */
+.input-group:has(> .inset-btn) > .form-control {
+    padding-right: 34px;
+}
+
+.input-group > .inset-btn {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.download-path-input,
+.install-path-input {
+    min-width: min(40em, 55vw);
+}
+
+.download-path-row {
+    align-items: center;
+    gap: 8px;
+}

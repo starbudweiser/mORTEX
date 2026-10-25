@@ -138,6 +138,31 @@ class HighlightPP implements PostProcessorModule {
 
 let mortexListeners = false;
 
+// « Vortex », le nom de l'appli, mais pas dans un chemin ou un mot plus long (…/Vortex/, VortexStaging)
+const BRAND = /(?<![/\w])Vortex(?![\w/])/g;
+
+/**
+ * mORTEX : les textes (y compris les clés imbriquées comme « browse.modsComingSoon.description »)
+ * qui nomment « Vortex » le nomment « mORTEX ». Renvoie seulement ce qui change, ou undefined.
+ */
+export function renameBrand(strings: Record<string, unknown>): Record<string, unknown> | undefined {
+  let changed: Record<string, unknown> | undefined;
+  for (const [key, value] of Object.entries(strings)) {
+    let next: unknown;
+    if (typeof value === "string") {
+      const renamed = value.replace(BRAND, "mORTEX");
+      next = renamed !== value ? renamed : undefined;
+    } else if (value !== null && typeof value === "object") {
+      next = renameBrand(value as Record<string, unknown>);
+    }
+    if (next !== undefined) {
+      changed ??= {};
+      changed[key] = next;
+    }
+  }
+  return changed;
+}
+
 /**
  * mORTEX : ses textes intégrés (locales/<langue>/common.json) complètent la traduction active
  * sans la masquer (un pack communautaire garde la priorité), et les traductions écrites pour
@@ -167,6 +192,10 @@ function mergeMortexStrings(i18nObj: i18n, bundled: string, lng: string) {
     }
     if (Object.keys(alias).length > 0) {
       i18nObj.addResourceBundle(lng, ns, alias, true, false);
+    }
+    const renamed = renameBrand(strings);
+    if (renamed !== undefined) {
+      i18nObj.addResourceBundle(lng, ns, renamed, true, true);
     }
   }
 }

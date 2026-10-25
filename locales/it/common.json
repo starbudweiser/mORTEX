@@ -80,5 +80,7 @@
   "mORTEX settings": "Impostazioni di mORTEX",
   "mORTEX uninstall key is incomplete": "La chiave di disinstallazione di mORTEX è incompleta",
   "mORTEX uninstall path doesn't match current executable": "Il percorso di disinstallazione di mORTEX non corrisponde all'eseguibile attuale",
-  "mORTEX was installed through a third-party service which will take care of updating it.": "mORTEX è stato installato tramite un servizio di terzi che si occuperà di aggiornarlo."
+  "mORTEX was installed through a third-party service which will take care of updating it.": "mORTEX è stato installato tramite un servizio di terzi che si occuperà di aggiornarlo.",
+  "Vortex": "mORTEX",
+  "No {{column}}": "Senza {{column}}"
 }

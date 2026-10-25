@@ -813,13 +813,13 @@ describe("ModsTableSwitch", () => {
         ]);
       });
 
-      it("groups the open view by a column's values, which stays open", async () => {
+      it("groups the open view by a column's values, which stays open, categories folded", async () => {
         renderSwitch(CATEGORISED);
 
         await groupBy("Category");
 
         const rows = bodyRows(screen.getByRole("treegrid"));
-        expect(rows.map(cellText)).toEqual(["No {{column}}2", "Alpha", "Beta"]);
+        expect(rows.map(cellText)).toEqual(["No {{column}}2"]);
         expect(pressedViews()).toEqual(["true", "false", "false"]);
       });
 

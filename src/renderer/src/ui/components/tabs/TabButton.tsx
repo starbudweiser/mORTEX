@@ -1,5 +1,5 @@
-import numeral from "numeral";
 import React, { useEffect, useRef, type ButtonHTMLAttributes } from "react";
+import { useTranslation } from "react-i18next";
 
 import { joinClasses } from "@/ui/utils/joinClasses";
 
@@ -28,6 +28,8 @@ export const TabButton = ({
   ...props
 }: ITabButtonProps) => {
   const ref = useRef<HTMLButtonElement>(null!);
+  const { i18n } = useTranslation();
+  const lang = i18n?.language;
   const { onKeyDown, onTabClick, registerTab, selectedTab, tabListId, tabType } = useTabContext();
 
   const selected = selectedTab === panelId;
@@ -58,8 +60,8 @@ export const TabButton = ({
         {count !== undefined && (
           <span className="nxm-tab-button-count">
             {tabType === "secondary"
-              ? `(${numeral(count).format("0,0")})`
-              : numeral(count).format("0,0")}
+              ? `(${count.toLocaleString(lang)})`
+              : count.toLocaleString(lang)}
           </span>
         )}
       </span>

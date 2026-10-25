@@ -84,6 +84,8 @@ export type ITableProps<T, G extends ITableGroup<T> = ITableGroup<T>> = {
   groupMenu?: (group: G) => IToolbarAction[];
   /** Counts the clicks in a heading's menus, built-ins included, as a toolbar's `tracking` does. */
   groupTracking?: IToolbarContext["tracking"];
+  /** Groups start collapsed, each opened by hand; changing it starts every group over that way. */
+  collapsedByDefault?: boolean;
   /** A group to open and bring into view, once the table has it. */
   focusGroupId?: string;
   /** Told once `focusGroupId`'s group is open and being scrolled to, so it can be dropped. */
