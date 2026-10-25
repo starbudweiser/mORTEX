@@ -57,6 +57,7 @@ import { CollectionRevision } from "../collection_revision/CollectionRevision";
 import { DisableSharedModsModal } from "../disable_shared_mods_modal/DisableSharedModsModal";
 import { ModHoverCard } from "../mod_hover_card/ModHoverCard";
 import { actionsWidth, ModRowActions, PINNED_ACTION_WIDTH } from "../mod_row_actions/ModRowActions";
+import { ModStatusPill, modStatusKind } from "../mod_status_pill/ModStatusPill";
 import { ModVersion, modVersionGroup, modVersionText } from "../mod_version/ModVersion";
 import { ModsTableColumnToggles } from "../mods_table_column_toggles/ModsTableColumnToggles";
 import { ModsTableGroupBy } from "../mods_table_group_by/ModsTableGroupBy";
@@ -273,6 +274,16 @@ export const ModsTableSwitch = ({
         // A collection's group shows its revision, as the collection's own row does.
         groupCell: ({ collection }) =>
           collection === undefined ? null : <CollectionRevision collection={collection} />,
+      },
+      // mORTEX : l'état du mod en pastille (à jour, mise à jour, non installé)
+      {
+        id: "mortex-status",
+        header: t("Mod status"),
+        width: "140px",
+        isToggleable: true,
+        position: 45,
+        searchText: ({ mod }) => modStatusKind(mod),
+        cell: ({ mod }) => <ModStatusPill mod={mod} />,
       },
       ...dataColumns,
     ],

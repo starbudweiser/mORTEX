@@ -265,6 +265,7 @@ describe("ModsTableSwitch", () => {
       expect(screen.getAllByRole("columnheader").map((header) => header.textContent)).toEqual([
         "Name",
         "Version",
+        "Mod status",
         "Installation time",
         "Actions",
       ]);
@@ -732,7 +733,7 @@ describe("ModsTableSwitch", () => {
     it("shows the version and installation time columns by default", () => {
       renderSwitch({ a: mod("a", "Alpha", true) });
 
-      expect(headers()).toEqual(["Name", "Version", "Installation time", "Actions"]);
+      expect(headers()).toEqual(["Name", "Version", "Mod status", "Installation time", "Actions"]);
     });
 
     it("shows the collection column too in the Collections view", async () => {
@@ -740,7 +741,14 @@ describe("ModsTableSwitch", () => {
 
       await showView("Collections");
 
-      expect(headers()).toEqual(["Name", "Version", "Collection", "Installation time", "Actions"]);
+      expect(headers()).toEqual([
+        "Name",
+        "Version",
+        "Mod status",
+        "Collection",
+        "Installation time",
+        "Actions",
+      ]);
     });
 
     it("keeps the columns shown to the view they were shown in", async () => {

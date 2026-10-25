@@ -60,7 +60,8 @@ interface IBuiltInModsTableView extends IModsTableView {
   isAvailable?: (mods: { [id: string]: IModWithState }) => boolean;
 }
 
-const BASE_COLUMNS = ["version", "installTime"];
+// mORTEX : la pastille d'état après la version
+const BASE_COLUMNS = ["version", "mortex-status", "installTime"];
 
 /** How a view the user makes starts out. */
 export const NEW_VIEW_DEFAULTS: IModsTableViewDefaults = {
@@ -87,7 +88,10 @@ export const MODS_TABLE_VIEWS: IBuiltInModsTableView[] = [
   {
     id: "collections",
     label: "Collections",
-    defaults: { grouping: "collection", columns: ["version", "collection", "installTime"] },
+    defaults: {
+      grouping: "collection",
+      columns: ["version", "mortex-status", "collection", "installTime"],
+    },
     isAvailable: (mods) => Object.values(mods).some((mod) => mod.type === COLLECTION_TYPE),
   },
 ];

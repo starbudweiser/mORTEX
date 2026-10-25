@@ -68,7 +68,12 @@ export const ApplyButton = ({ isCollapsed, progress, step, onClick }: IApplyButt
       : t("Applying mod changes…");
 
   return (
-    <div className={joinClasses(["relative", isCollapsed ? "w-full" : "min-w-0 flex-1"])}>
+    <div
+      className={joinClasses([
+        "mortex-apply-wrap relative",
+        isCollapsed ? "w-full" : "min-w-0 flex-1",
+      ])}
+    >
       <Tooltip
         closeOnPress={false}
         customContent={

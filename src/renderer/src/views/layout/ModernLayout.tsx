@@ -5,6 +5,7 @@ import { ModernContentPane } from "../components/ContentPane";
 import { Header } from "../components/Header/Header";
 import { Spine } from "../components/Spine/Spine";
 import { SpineProvider } from "../components/Spine/SpineContext";
+import { StatusBar } from "../components/StatusBar/StatusBar";
 import { DialogLayer } from "./DialogLayer";
 import { LayoutContainer } from "./LayoutContainer";
 import { Menu } from "./menu/Menu";
@@ -38,6 +39,8 @@ export const ModernLayout: FC<React.PropsWithChildren<unknown>> = () => {
 
             <ToastContainer />
           </div>
+
+          <StatusBar />
         </div>
       </LayoutContainer>
 

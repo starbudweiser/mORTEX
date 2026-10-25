@@ -183,3 +183,107 @@ body[data-platform="darwin"] [data-testid="spine"] {
 body[data-platform="darwin"] [data-testid="window-titlebar"] {
     padding-right: 128px;
 }
+
+/* Pastilles d'état de la liste des mods : aplat doux + mot, jamais la couleur seule */
+.mortex-pill {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 9px;
+    font-size: 11px;
+    line-height: 16px;
+    white-space: nowrap;
+}
+
+.mortex-pill-ok {
+    background-color: #12301d;
+    color: #22c55e;
+}
+
+.mortex-pill-update {
+    background-color: #33260a;
+    color: #f59e0b;
+}
+
+.mortex-pill-absent {
+    background-color: #2a2a2a;
+    color: #a0a0a0;
+}
+
+.mortex-pill-busy {
+    background-color: #0c2a3d;
+    color: #38bdf8;
+}
+
+/* Filtres de vues de la liste des mods : contrôle segmenté à la macOS */
+.modern-layout .nxm-view-picker {
+    gap: 2px;
+    padding: 2px;
+    border-radius: 7px;
+    background-color: var(--color-surface-base);
+    width: fit-content;
+    flex: 0 0 auto !important;
+}
+
+.modern-layout .nxm-view-button {
+    height: 24px;
+    border-radius: 5px;
+    background-color: transparent;
+}
+
+.modern-layout .nxm-view-button[aria-pressed="true"],
+.modern-layout .nxm-view-button:has(> [aria-pressed="true"]) {
+    background-color: var(--color-surface-high);
+}
+
+/* DÉPLOYER (« Appliquer ») : bouton bleu en haut à droite, à gauche de LANCER */
+.mortex-apply-wrap {
+    position: fixed !important;
+    top: 7px;
+    right: 132px;
+    width: auto !important;
+    z-index: 60;
+    -webkit-app-region: no-drag;
+}
+
+.mortex-apply-wrap button {
+    height: 30px !important;
+    min-width: 100px;
+    padding-inline: 14px;
+    background-color: var(--color-primary-700) !important;
+    color: #ffffff !important;
+}
+
+.mortex-apply-wrap button span {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #ffffff !important;
+}
+
+body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titlebar"] {
+    padding-right: 250px;
+}
+
+/* Barre d'état au pied de la fenêtre */
+.mortex-statusbar {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 18px;
+    height: 24px;
+    margin: -6px 12px 6px 0;
+    padding-inline: 4px;
+    color: var(--color-neutral-subdued);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.mortex-statusbar-warn {
+    color: #f59e0b;
+}
+
+.mortex-statusbar-end {
+    margin-left: auto;
+}
