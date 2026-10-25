@@ -18,7 +18,7 @@ import type {
   TraceCategoriesAndOptions,
 } from "./electron";
 import type { FeatureFlag } from "./flags";
-import type { FlagContext, FlagMetricsBucket } from "./ipc";
+import type { CrashReadResult, FlagContext, FlagMetricsBucket } from "./ipc";
 import type {
   DiffOperation,
   AppInitMetadata,
@@ -114,6 +114,9 @@ export interface Api {
   /** file hashing API (run on a main-process worker_thread) */
   hash: HashApi;
 
+  /** mORTEX : plantages analysés par sKYCRASH */
+  crashes: CrashesApi;
+
   /** Diagnostic APIs */
   diag: Diag;
 
@@ -122,6 +125,11 @@ export interface Api {
 
   /** Filesystem API */
   fs: FileSystem;
+}
+
+export interface CrashesApi {
+  /** Relit l'export de sKYCRASH ; sans changement depuis `knownRevision`, `events` est absent. */
+  read(knownRevision?: number): Promise<CrashReadResult>;
 }
 
 export interface Example {

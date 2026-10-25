@@ -269,6 +269,10 @@ try {
         betterIpcRenderer.invoke("hash:compute", algorithm, filePath),
     },
 
+    crashes: {
+      read: (knownRevision) => betterIpcRenderer.invoke("crashes:read", knownRevision),
+    },
+
     diag: {
       // Raw ipcRenderer because betterIpcRenderer has no sendSync helper.
       fatal: (message: string) => {

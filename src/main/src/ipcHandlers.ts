@@ -49,6 +49,7 @@ import { relaunch } from "./cli";
 import { getVortexPath } from "./getVortexPath";
 import { hashFile } from "./hash/host";
 import { betterIpcMain } from "./ipc";
+import { CrashLog } from "./mortex/crashes/CrashLog";
 import { openUrl, openFile, showItemInFolder } from "./open";
 import { extraWebViews } from "./webview";
 
@@ -671,6 +672,12 @@ export function init(fs: FileSystem) {
     "hash:compute",
     (_event: IpcMainInvokeEvent, algorithm: HashAlgorithm, filePath: string) =>
       hashFile(algorithm, filePath),
+  );
+
+  // mORTEX : plantages analysés par sKYCRASH (JSONL en lecture seule, curseur de lecture)
+  const crashLog = new CrashLog();
+  betterIpcMain.handle("crashes:read", (_event: IpcMainInvokeEvent, knownRevision?: number) =>
+    crashLog.read(knownRevision),
   );
 
   // FS

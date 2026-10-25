@@ -251,6 +251,38 @@ export type RendererCallbackChannels = {
     : never;
 };
 
+/** mORTEX : un suspect d'un plantage, tel que l'exporte sKYCRASH (crash_events.jsonl, schema 1). */
+export interface CrashSuspect {
+  name: string;
+  kind: "dll" | "plugin" | "object" | "mod" | "env";
+  score: number;
+  reasons: string[];
+}
+
+/** mORTEX : un plantage analysé par sKYCRASH (une ligne de crash_events.jsonl). */
+export interface CrashEvent {
+  schema: 1;
+  crash_time: string;
+  log_name: string;
+  game_runtime: string | null;
+  skse_runtime: string | null;
+  verdict: string | null;
+  suspects: CrashSuspect[];
+  plugins_hash: string | null;
+  bottle: string | null;
+}
+
+/** mORTEX : lecture du journal de plantages. `events` est absent si `revision` n'a pas changé. */
+export interface CrashReadResult {
+  /** Le fichier d'export existe. */
+  available: boolean;
+  /** Augmente à chaque changement du contenu lu. */
+  revision: number;
+  events?: CrashEvent[];
+  /** Lignes ignorées (illisibles ou d'un `schema` inconnu). */
+  skipped: number;
+}
+
 /** Type containing all known channels used by renderer processes to send messages to the main process */
 export interface RendererChannels extends RendererCallbackChannels {
   // NOTE(erri120): Parameters must be serializable and return values must be void.
@@ -389,6 +421,9 @@ export interface InvokeChannels {
     algorithm: HashAlgorithm,
     filePath: string,
   ) => Promise<{ hash: string; numBytes: number }>;
+
+  // mORTEX : plantages analysés par sKYCRASH (lecture seule du JSONL d'export, curseur côté main)
+  "crashes:read": (knownRevision?: number) => Promise<CrashReadResult>;
 
   // Persistence: Get all hydration data at startup (called once during init)
   "persist:get-hydration": () => Promise<Partial<PersistedState>>;
