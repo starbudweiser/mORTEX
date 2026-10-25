@@ -25,6 +25,7 @@ vi.mock("./StagingIndicator", () => ({ StagingIndicator: () => null }));
 vi.mock("./VersionIndicator", () => ({ VersionIndicator: () => null }));
 vi.mock("./WindowControls", () => ({ WindowControls: () => null }));
 vi.mock("../Spine/notifications/Notifications", () => ({ Notifications: () => null }));
+vi.mock("./GameSwitcher", () => ({ GameSwitcher: () => null }));
 
 import { Header } from "./Header";
 

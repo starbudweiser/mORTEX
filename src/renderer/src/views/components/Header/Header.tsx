@@ -14,6 +14,7 @@ import {
 } from "../../../util/selectors";
 import { Notifications } from "../Spine/notifications/Notifications";
 import { useSpineContext } from "../Spine/SpineContext";
+import { GameSwitcher } from "./GameSwitcher";
 import { PremiumIndicator } from "./premium/PremiumIndicator";
 import { ProfileSection } from "./profile/ProfileSection";
 import { StagingIndicator } from "./StagingIndicator";
@@ -71,7 +72,11 @@ export const Header: FC<React.PropsWithChildren<unknown>> = () => {
           brand="none"
           className="flex grow items-center gap-x-2 overflow-hidden font-medium whitespace-nowrap"
         >
-          <span className="truncate text-neutral-strong">{title}</span>
+          {selection.type === "game" ? (
+            <GameSwitcher title={title} />
+          ) : (
+            <span className="truncate text-neutral-strong">{title}</span>
+          )}
 
           {!!profileName && (
             <span className="shrink-9999 truncate text-neutral-subdued">{profileName}</span>
