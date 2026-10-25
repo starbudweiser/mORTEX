@@ -98,10 +98,40 @@ body[data-watermark="mono"]::after {
     color: #ffffff !important;
 }
 
+/* Marque de la barre de titre : logo, nom et accroche, alignés à gauche */
+.mortex-brand {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 10px;
+    margin-right: 12px;
+}
+
+.mortex-logo {
+    width: 30px;
+    height: 30px;
+    flex: none;
+    background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYmciIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMzQzNjNkIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzEyMTMxNyIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ2xvc3MiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmZmZmIiBzdG9wLW9wYWNpdHk9IjAuMTYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIwLjUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYXJtIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmYzE1YSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZjVlMGEiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8cGF0aCBpZD0iYmxhZGUiIGQ9Ik0xMjggNTAgQTc4IDc4IDAgMCAxIDIwNiAxMjggQTU2IDU2IDAgMCAwIDEyOCA1MCBaIi8+CiAgPC9kZWZzPgogIDxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjIzNiIgaGVpZ2h0PSIyMzYiIHJ4PSI1NCIgZmlsbD0idXJsKCNiZykiLz4KICA8cmVjdCB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMzYiIGhlaWdodD0iMjM2IiByeD0iNTQiIGZpbGw9InVybCgjZ2xvc3MpIi8+CiAgPGcgZmlsbD0idXJsKCNhcm0pIj4KICAgIDx1c2UgaHJlZj0iI2JsYWRlIi8+CiAgICA8dXNlIGhyZWY9IiNibGFkZSIgdHJhbnNmb3JtPSJyb3RhdGUoMTIwIDEyOCAxMjgpIi8+CiAgICA8dXNlIGhyZWY9IiNibGFkZSIgdHJhbnNmb3JtPSJyb3RhdGUoMjQwIDEyOCAxMjgpIi8+CiAgPC9nPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEyOCAxMjgpIHNjYWxlKDEuMzUpIj4KICAgIDxwYXRoIGQ9Ik0wIC0zMCBMMjYgLTE1IEwwIDAgTC0yNiAtMTUgWiIgZmlsbD0iI2ZmZmZmZiIvPgogICAgPHBhdGggZD0iTS0yNiAtMTUgTDAgMCBMMCAzMCBMLTI2IDE1IFoiIGZpbGw9IiNkNmQ5ZGYiLz4KICAgIDxwYXRoIGQ9Ik0yNiAtMTUgTDI2IDE1IEwwIDMwIEwwIDAgWiIgZmlsbD0iIzlhYTBhYiIvPgogIDwvZz4KPC9zdmc+Cg==")
+        no-repeat center / contain;
+}
+
+.mortex-brand-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.15;
+}
+
+.mortex-brand-tagline {
+    color: var(--color-neutral-subdued);
+    font-size: 10.5px;
+    white-space: nowrap;
+}
+
 /* Logotype mORTEX : le « m » reprend l'ambre du bouton Jouer */
 .mortex-wordmark {
     color: var(--color-neutral-strong);
-    font-size: 14px;
+    font-size: 15px;
 }
 
 .mortex-wordmark b {

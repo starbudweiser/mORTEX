@@ -57,6 +57,18 @@ export const Header: FC<React.PropsWithChildren<unknown>> = () => {
       data-testid="window-titlebar"
     >
       <div className="flex min-w-0 flex-1 items-center gap-x-1">
+        <div className="mortex-brand">
+          <span aria-hidden="true" className="mortex-logo" />
+          <span className="mortex-brand-text">
+            <span aria-label="mORTEX" className="mortex-wordmark font-bold tracking-wide">
+              <b>m</b>ORTEX
+            </span>
+            <span className="mortex-brand-tagline max-xl:hidden">
+              {t("The mod manager for Mac Silicon")}
+            </span>
+          </span>
+        </div>
+
         <Tooltip content={menuIsCollapsed ? t("Open menu") : t("Collapse menu")} placement="right">
           <Button
             appearance="weak"
@@ -84,25 +96,24 @@ export const Header: FC<React.PropsWithChildren<unknown>> = () => {
         </Typography>
       </div>
 
-      <div className="flex shrink-0 items-center gap-x-2 [-webkit-app-region:no-drag]">
-        <span aria-label="mORTEX" className="mortex-wordmark mr-2 font-bold tracking-wide">
-          <b>m</b>ORTEX
-        </span>
-
+      <div className="flex shrink-0 items-center gap-x-4 pr-4 [-webkit-app-region:no-drag]">
         <StagingIndicator />
 
         <VersionIndicator />
 
         <PremiumIndicator />
 
-        <div className="flex items-center gap-x-5">
+        <div className="flex items-center gap-x-4">
           <Notifications placement="header" />
 
           <ProfileSection />
 
-          <div className="h-6 w-0.5 rounded-md bg-stroke-weak" />
-
-          {process.platform !== "darwin" && <WindowControls />}
+          {process.platform !== "darwin" && (
+            <>
+              <div className="h-6 w-0.5 rounded-md bg-stroke-weak" />
+              <WindowControls />
+            </>
+          )}
         </div>
       </div>
     </div>

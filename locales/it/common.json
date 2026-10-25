@@ -215,5 +215,6 @@
   "DLC requirement": "Requisito DLC",
   "This mod lists {{dlc}} as a requirement; mORTEX cannot verify DLC automatically.": "Questa mod indica {{dlc}} come requisito; mORTEX non può verificare i DLC automaticamente.",
   "Plugins with a LOOT problem": "Plugin con un problema LOOT",
-  "{{count}} plugin(s) of this mod have a LOOT warning or need cleaning: {{names}}.": "{{count}} plugin di questa mod hanno un avviso LOOT o vanno puliti: {{names}}."
+  "{{count}} plugin(s) of this mod have a LOOT warning or need cleaning: {{names}}.": "{{count}} plugin di questa mod hanno un avviso LOOT o vanno puliti: {{names}}.",
+  "The mod manager for Mac Silicon": "Il gestore di mod per Mac Silicon"
 }
