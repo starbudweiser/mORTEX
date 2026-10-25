@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="fr">
+    <meta charset="utf-8" /><title>Maquette mORTEX — Filigranes</title>
+    <style>
+        :root {
+            --bg: #1e1e1e;
+            --sunken: #181818;
+            --surface: #232323;
+            --raised: #2a2a2a;
+            --control: #3a3a3a;
+            --control-h: #444;
+            --border: #333;
+            --text: #ddd;
+            --strong: #fff;
+            --muted: #a0a0a0;
+            --accent: #0ea5e9;
+            --accent-fill: #0369a1;
+            --accent-text: #38bdf8;
+            --action: #f59e0b;
+            --ok: #22c55e;
+            --warn: #f59e0b;
+            --danger: #ef4444;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+        }
+        body {
+            background: #111;
+            color: var(--text);
+            font:
+                13px -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Text",
+                sans-serif;
+            padding: 24px;
+        }
+        .win {
+            width: 1180px;
+            height: 690px;
+            margin: auto;
+            background: var(--bg);
+            border-radius: 10px;
+            border: 1px solid #444;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            grid-template-rows: 44px 1fr 26px;
+            overflow: hidden;
+            position: relative;
+        }
+        .title {
+            grid-column: 1/3;
+            background: var(--raised);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            gap: 14px;
+        }
+        .dots {
+            display: flex;
+            gap: 8px;
+        }
+        .dots i {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #555;
+            display: block;
+        }
+        .dots i:nth-child(1) {
+            background: #ff5f57;
+        }
+        .dots i:nth-child(2) {
+            background: #febc2e;
+        }
+        .dots i:nth-child(3) {
+            background: #28c840;
+        }
+        .logo {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--strong);
+        }
+        .logo b {
+            color: var(--action);
+            font-weight: 800;
+        }
+        .game {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn {
+            background: var(--control);
+            color: var(--text);
+            border: 0;
+            border-radius: 6px;
+            padding: 5px 12px;
+            font: inherit;
+            height: 26px;
+        }
+        .btn:hover {
+            background: var(--control-h);
+        }
+        .btn.primary {
+            background: var(--accent-fill);
+            color: #fff;
+        }
+        .btn.action {
+            background: var(--action);
+            color: #1a1200;
+            font-weight: 600;
+        }
+        .side {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 10px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .side h6 {
+            font-size: 11px;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin: 12px 8px 4px;
+            font-weight: 600;
+        }
+        .side a {
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: flex;
+            gap: 9px;
+            align-items: center;
+            color: var(--text);
+        }
+        .side a.on {
+            background: var(--accent-fill);
+            color: #fff;
+        }
+        .side a span {
+            margin-left: auto;
+            font-size: 11px;
+            color: var(--muted);
+        }
+        .side a.on span {
+            color: #cfe8f7;
+        }
+        .ic {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            background: #666;
+            display: inline-block;
+        }
+        .on .ic {
+            background: #fff;
+        }
+        .main {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .tool {
+            display: flex;
+            gap: 10px;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+        }
+        .seg {
+            display: flex;
+            background: var(--sunken);
+            border-radius: 7px;
+            padding: 2px;
+        }
+        .seg span {
+            padding: 3px 12px;
+            border-radius: 5px;
+            color: var(--muted);
+        }
+        .seg .on {
+            background: var(--control);
+            color: var(--strong);
+        }
+        .search {
+            background: var(--sunken);
+            border-radius: 6px;
+            padding: 5px 10px;
+            width: 240px;
+            color: #777;
+            height: 26px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            font-weight: 500;
+            color: var(--muted);
+            text-align: left;
+            padding: 6px 14px;
+            font-size: 11px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+        }
+        td {
+            padding: 0 14px;
+            height: 30px;
+            border-bottom: 1px solid #272727;
+        }
+        tr.sel td {
+            background: #1d3a52;
+        }
+        tr:hover td {
+            background: #262626;
+        }
+        tr.sel:hover td {
+            background: #1d3a52;
+        }
+        .tag {
+            font-size: 11px;
+            padding: 1px 7px;
+            border-radius: 9px;
+        }
+        .t-ok {
+            background: #12301d;
+            color: var(--ok);
+        }
+        .t-w {
+            background: #33260a;
+            color: var(--warn);
+        }
+        .t-d {
+            background: #3a1717;
+            color: var(--danger);
+        }
+        .sw {
+            width: 30px;
+            height: 18px;
+            border-radius: 9px;
+            background: #555;
+            position: relative;
+            display: inline-block;
+        }
+        .sw:after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #fff;
+        }
+        .sw.on {
+            background: var(--accent);
+        }
+        .sw.on:after {
+            left: 14px;
+        }
+        .status {
+            grid-column: 1/3;
+            background: var(--raised);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            gap: 18px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+        .sheet {
+            position: absolute;
+            left: 50%;
+            top: 44px;
+            transform: translateX(-50%);
+            width: 420px;
+            background: var(--raised);
+            border: 1px solid #484848;
+            border-top: 0;
+            border-radius: 0 0 12px 12px;
+            padding: 18px;
+        }
+        .sheet h3 {
+            color: var(--strong);
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        .sheet p {
+            color: var(--muted);
+            margin-bottom: 14px;
+            line-height: 1.45;
+        }
+        .sheet .row {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        .note {
+            max-width: 1180px;
+            margin: 18px auto 0;
+            color: #aaa;
+            line-height: 1.6;
+        }
+    </style>
+    <style>
+        .win {
+            width: 1000px;
+            height: 520px;
+            margin: 0 auto 6px;
+        }
+        .main {
+            position: relative;
+            overflow: hidden;
+        }
+        .main > * {
+            position: relative;
+            z-index: 1;
+        }
+        .wm {
+            position: absolute !important;
+            z-index: 0 !important;
+            pointer-events: none;
+            background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYmciIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMzQzNjNkIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzEyMTMxNyIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ2xvc3MiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmZmZmIiBzdG9wLW9wYWNpdHk9IjAuMTYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIwLjUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYXJtIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmYzE1YSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZjVlMGEiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8cGF0aCBpZD0iYmxhZGUiIGQ9Ik0xMjggNTAgQTc4IDc4IDAgMCAxIDIwNiAxMjggQTU2IDU2IDAgMCAwIDEyOCA1MCBaIi8+CiAgPC9kZWZzPgogIDxnIGZpbGw9InVybCgjYXJtKSI+CiAgICA8dXNlIGhyZWY9IiNibGFkZSIvPgogICAgPHVzZSBocmVmPSIjYmxhZGUiIHRyYW5zZm9ybT0icm90YXRlKDEyMCAxMjggMTI4KSIvPgogICAgPHVzZSBocmVmPSIjYmxhZGUiIHRyYW5zZm9ybT0icm90YXRlKDI0MCAxMjggMTI4KSIvPgogIDwvZz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMjggMTI4KSBzY2FsZSgxLjM1KSI+CiAgICA8cGF0aCBkPSJNMCAtMzAgTDI2IC0xNSBMMCAwIEwtMjYgLTE1IFoiIGZpbGw9IiNmZmZmZmYiLz4KICAgIDxwYXRoIGQ9Ik0tMjYgLTE1IEwwIDAgTDAgMzAgTC0yNiAxNSBaIiBmaWxsPSIjZDZkOWRmIi8+CiAgICA8cGF0aCBkPSJNMjYgLTE1IEwyNiAxNSBMMCAzMCBMMCAwIFoiIGZpbGw9IiM5YWEwYWIiLz4KICA8L2c+Cjwvc3ZnPgo=)
+                no-repeat center/contain;
+        }
+        .w1 .wm {
+            width: 380px;
+            height: 380px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -45%);
+            opacity: 0.05;
+        }
+        .w2 .wm {
+            width: 560px;
+            height: 560px;
+            right: -130px;
+            bottom: -170px;
+            opacity: 0.07;
+        }
+        .w3 .wm {
+            width: 300px;
+            height: 300px;
+            right: 30px;
+            bottom: 24px;
+            opacity: 0.12;
+            filter: grayscale(1);
+        }
+        .w3 .wm2 {
+            position: absolute;
+            left: 12px;
+            bottom: 12px;
+            width: 26px;
+            height: 26px;
+            opacity: 0.5;
+            background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYmciIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMzQzNjNkIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzEyMTMxNyIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ2xvc3MiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmZmZmIiBzdG9wLW9wYWNpdHk9IjAuMTYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIwLjUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYXJtIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmYzE1YSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZjVlMGEiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8cGF0aCBpZD0iYmxhZGUiIGQ9Ik0xMjggNTAgQTc4IDc4IDAgMCAxIDIwNiAxMjggQTU2IDU2IDAgMCAwIDEyOCA1MCBaIi8+CiAgPC9kZWZzPgogIDxnIGZpbGw9InVybCgjYXJtKSI+CiAgICA8dXNlIGhyZWY9IiNibGFkZSIvPgogICAgPHVzZSBocmVmPSIjYmxhZGUiIHRyYW5zZm9ybT0icm90YXRlKDEyMCAxMjggMTI4KSIvPgogICAgPHVzZSBocmVmPSIjYmxhZGUiIHRyYW5zZm9ybT0icm90YXRlKDI0MCAxMjggMTI4KSIvPgogIDwvZz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMjggMTI4KSBzY2FsZSgxLjM1KSI+CiAgICA8cGF0aCBkPSJNMCAtMzAgTDI2IC0xNSBMMCAwIEwtMjYgLTE1IFoiIGZpbGw9IiNmZmZmZmYiLz4KICAgIDxwYXRoIGQ9Ik0tMjYgLTE1IEwwIDAgTDAgMzAgTC0yNiAxNSBaIiBmaWxsPSIjZDZkOWRmIi8+CiAgICA8cGF0aCBkPSJNMjYgLTE1IEwyNiAxNSBMMCAzMCBMMCAwIFoiIGZpbGw9IiM5YWEwYWIiLz4KICA8L2c+Cjwvc3ZnPgo=)
+                no-repeat center/contain;
+        }
+        h2 {
+            color: #ddd;
+            font:
+                600 15px -apple-system,
+                sans-serif;
+            max-width: 1000px;
+            margin: 26px auto 8px;
+        }
+        td,
+        th {
+            background: transparent;
+        }
+        tr.sel td {
+            background: rgba(29, 58, 82, 0.85);
+        }
+    </style>
+    <h2>Filigrane 1 — Centré, très léger (5 %)</h2>
+    <div class="win w1">
+        <div class="title">
+            <div class="dots"><i></i><i></i><i></i></div>
+            <div class="logo"><b>m</b>ORTEX</div>
+            <div class="game"><button class="btn action">JOUER</button></div>
+        </div>
+        <nav class="side">
+            <h6>Jeu</h6>
+            <a><i class="ic"></i>Accueil</a><a class="on"><i class="ic"></i>Mods<span>412</span></a
+            ><a><i class="ic"></i>Plugins</a><a><i class="ic"></i>Téléchargements</a>
+        </nav>
+        <div class="main">
+            <div class="wm"></div>
+            <div class="tool">
+                <div class="seg">
+                    <span class="on">Tous</span><span>Activés</span><span>Conflits</span>
+                </div>
+                <div class="search">Rechercher…</div>
+                <button class="btn primary" style="margin-left: auto">DÉPLOYER</button>
+            </div>
+            <table>
+                <tr>
+                    <th>Activé</th>
+                    <th>Nom</th>
+                    <th>Version</th>
+                    <th>Statut</th>
+                </tr>
+                <tr>
+                    <td><i class="sw on"></i></td>
+                    <td>SkyUI</td>
+                    <td>5.2 SE</td>
+                    <td><span class="tag t-ok">À jour</span></td>
+                </tr>
+                <tr class="sel">
+                    <td><i class="sw on"></i></td>
+                    <td style="color: #fff">USSEP</td>
+                    <td>4.3.4</td>
+                    <td><span class="tag t-w">Mise à jour</span></td>
+                </tr>
+                <tr>
+                    <td><i class="sw"></i></td>
+                    <td>SMIM</td>
+                    <td>2.0</td>
+                    <td><span class="tag t-d">Conflit</span></td>
+                </tr>
+            </table>
+        </div>
+        <div class="status"><span>412 mods</span></div>
+    </div>
+    <h2>Filigrane 2 — Grand, rogné dans le coin bas-droit (7 %)</h2>
+    <div class="win w2">
+        <div class="title">
+            <div class="dots"><i></i><i></i><i></i></div>
+            <div class="logo"><b>m</b>ORTEX</div>
+            <div class="game"><button class="btn action">JOUER</button></div>
+        </div>
+        <nav class="side">
+            <h6>Jeu</h6>
+            <a><i class="ic"></i>Accueil</a><a class="on"><i class="ic"></i>Mods<span>412</span></a
+            ><a><i class="ic"></i>Plugins</a><a><i class="ic"></i>Téléchargements</a>
+        </nav>
+        <div class="main">
+            <div class="wm"></div>
+            <div class="tool">
+                <div class="seg">
+                    <span class="on">Tous</span><span>Activés</span><span>Conflits</span>
+                </div>
+                <div class="search">Rechercher…</div>
+                <button class="btn primary" style="margin-left: auto">DÉPLOYER</button>
+            </div>
+            <table>
+                <tr>
+                    <th>Activé</th>
+                    <th>Nom</th>
+                    <th>Version</th>
+                    <th>Statut</th>
+                </tr>
+                <tr>
+                    <td><i class="sw on"></i></td>
+                    <td>SkyUI</td>
+                    <td>5.2 SE</td>
+                    <td><span class="tag t-ok">À jour</span></td>
+                </tr>
+                <tr class="sel">
+                    <td><i class="sw on"></i></td>
+                    <td style="color: #fff">USSEP</td>
+                    <td>4.3.4</td>
+                    <td><span class="tag t-w">Mise à jour</span></td>
+                </tr>
+                <tr>
+                    <td><i class="sw"></i></td>
+                    <td>SMIM</td>
+                    <td>2.0</td>
+                    <td><span class="tag t-d">Conflit</span></td>
+                </tr>
+            </table>
+        </div>
+        <div class="status"><span>412 mods</span></div>
+    </div>
+    <h2>Filigrane 3 — Monochrome en bas-droite (12 %) + sceau discret sous la barre latérale</h2>
+    <div class="win w3">
+        <div class="title">
+            <div class="dots"><i></i><i></i><i></i></div>
+            <div class="logo"><b>m</b>ORTEX</div>
+            <div class="game"><button class="btn action">JOUER</button></div>
+        </div>
+        <nav class="side">
+            <h6>Jeu</h6>
+            <a><i class="ic"></i>Accueil</a><a class="on"><i class="ic"></i>Mods<span>412</span></a
+            ><a><i class="ic"></i>Plugins</a><a><i class="ic"></i>Téléchargements</a>
+            <div class="wm2" style="position: absolute; left: 12px; bottom: 10px"></div>
+        </nav>
+        <div class="main">
+            <div class="wm"></div>
+            <div class="tool">
+                <div class="seg">
+                    <span class="on">Tous</span><span>Activés</span><span>Conflits</span>
+                </div>
+                <div class="search">Rechercher…</div>
+                <button class="btn primary" style="margin-left: auto">DÉPLOYER</button>
+            </div>
+            <table>
+                <tr>
+                    <th>Activé</th>
+                    <th>Nom</th>
+                    <th>Version</th>
+                    <th>Statut</th>
+                </tr>
+                <tr>
+                    <td><i class="sw on"></i></td>
+                    <td>SkyUI</td>
+                    <td>5.2 SE</td>
+                    <td><span class="tag t-ok">À jour</span></td>
+                </tr>
+                <tr class="sel">
+                    <td><i class="sw on"></i></td>
+                    <td style="color: #fff">USSEP</td>
+                    <td>4.3.4</td>
+                    <td><span class="tag t-w">Mise à jour</span></td>
+                </tr>
+                <tr>
+                    <td><i class="sw"></i></td>
+                    <td>SMIM</td>
+                    <td>2.0</td>
+                    <td><span class="tag t-d">Conflit</span></td>
+                </tr>
+            </table>
+        </div>
+        <div class="status"><span>412 mods</span></div>
+    </div>
+    <p class="note">
+        Les trois restent derrière le contenu (lignes de table transparentes, texte inchangé), sans
+        gêner la lecture. 1 : sobre, symétrique. 2 : plus de caractère, à la manière d'un fond de
+        fenêtre macOS. 3 : monochrome gris, plus visible mais écarté du contenu.
+    </p>
+</html>

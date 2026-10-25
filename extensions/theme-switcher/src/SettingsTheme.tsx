@@ -15,6 +15,7 @@ import { connect } from "react-redux";
 import * as Redux from "redux";
 import { ThunkDispatch } from "redux-thunk";
 
+import { setWatermark } from "./actions";
 import ThemeEditor from "./ThemeEditor";
 
 export interface ISettingsThemeProps {
@@ -34,6 +35,7 @@ export interface ISettingsThemeProps {
 interface IConnectedProps {
   currentTheme: string;
   useModernLayout: boolean;
+  watermark: string;
 }
 
 interface IActionProps {
@@ -45,6 +47,7 @@ interface IActionProps {
   ) => Bluebird<types.IDialogResult>;
   onShowError: (title: string, details: any) => void;
   onSetUseModernLayout: (useModern: boolean) => void;
+  onSetWatermark: (mode: string) => void;
 }
 
 type IWrapperProps = ISettingsThemeProps & IConnectedProps & IActionProps;
@@ -102,6 +105,24 @@ class SettingsTheme extends ComponentEx<IProps, IComponentState> {
             <Toggle checked={isLegacy} onToggle={this.toggleLegacyUI}>
               {t("Use legacy mORTEX UI")}
             </Toggle>
+          </FormGroup>
+          <FormGroup controlId="watermarkSelect">
+            <ControlLabel>{t("Watermark")}</ControlLabel>
+            <InputGroup style={{ width: 300 }}>
+              <FormControl
+                componentClass="select"
+                onChange={(evt: any) => this.props.onSetWatermark(evt.currentTarget.value)}
+                value={this.props.watermark}
+              >
+                <option value="none">{t("None")}</option>
+                <option value="center">{t("Centered, very light")}</option>
+                <option value="corner">{t("Large, cropped in the corner")}</option>
+                <option value="mono">{t("Monochrome, bottom right")}</option>
+              </FormControl>
+            </InputGroup>
+            <HelpBlock>
+              {t("Shows the mORTEX logo faintly in the background of the window.")}
+            </HelpBlock>
           </FormGroup>
           <FormGroup controlId="themeSelect">
             <ControlLabel>{t("Theme")}</ControlLabel>
@@ -288,6 +309,7 @@ function mapStateToProps(state: any): IConnectedProps {
   return {
     currentTheme: state.settings.interface.currentTheme,
     useModernLayout: state.settings.window.useModernLayout ?? true,
+    watermark: state.settings.interface.watermark ?? "center",
   };
 }
 
@@ -297,6 +319,7 @@ function mapDispatchToProps(dispatch: ThunkDispatch<any, any, Redux.Action>): IA
     onShowDialog: (type, title, content, dialogActions) =>
       dispatch(actions.showDialog(type, title, content, dialogActions)),
     onSetUseModernLayout: (useModern: boolean) => dispatch(actions.setUseModernLayout(useModern)),
+    onSetWatermark: (mode: string) => dispatch(setWatermark(mode)),
   };
 }
 

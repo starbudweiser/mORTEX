@@ -85,6 +85,13 @@ function init(context: types.IExtensionContext) {
       applyTheme(context.api, selectedThemePath, false);
     });
 
+    const applyWatermark = () => {
+      const mode = store.getState().settings.interface.watermark ?? "center";
+      document.body.setAttribute("data-watermark", mode);
+    };
+    applyWatermark();
+    store.subscribe(applyWatermark);
+
     return applyTheme(context.api, store.getState().settings.interface.currentTheme, true);
   });
 
