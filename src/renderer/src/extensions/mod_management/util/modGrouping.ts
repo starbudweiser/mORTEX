@@ -61,13 +61,47 @@ function byFile(input: IModWithState[]): IModWithState[][] {
     return [input];
   }
   const groups: IModWithState[][] = [];
+  // Index des groupes par clé de rapprochement du premier membre (même résultat que fileMatch,
+  // sans comparer chaque mod à tous les groupes) : on garde le premier groupe qui correspond.
+  const byNewest = new Map<unknown, number>();
+  const byName = new Map<string, number>();
   input.forEach((mod: IModWithState) => {
-    // TODO: O(n^2)
-    const fileGroup = groups.find((iter) => fileMatch(iter[0], mod));
-    if (fileGroup === undefined) {
+    let index: number | undefined;
+    const attrs = mod.attributes;
+    if (attrs !== undefined && attrs?.collectionSlug === undefined) {
+      const candidates: number[] = [];
+      if (attrs.newestFileId !== undefined && byNewest.has(attrs.newestFileId)) {
+        candidates.push(byNewest.get(attrs.newestFileId));
+      }
+      const name = logicalName(attrs);
+      if (name !== undefined && byName.has(name)) {
+        candidates.push(byName.get(name));
+      }
+      if (candidates.length > 0) {
+        index = Math.min(...candidates);
+      }
+    }
+    if (index === undefined) {
+      index = groups.length;
       groups.push([mod]);
+      const rep = mod.attributes;
+      if (rep !== undefined && rep?.collectionSlug === undefined) {
+        if (
+          truthy(rep.newestFileId) &&
+          rep.modId !== undefined &&
+          !byNewest.has(rep.newestFileId)
+        ) {
+          byNewest.set(rep.newestFileId, index);
+        }
+        if (truthy(rep.logicalFileName)) {
+          const name = logicalName(rep);
+          if (!byName.has(name)) {
+            byName.set(name, index);
+          }
+        }
+      }
     } else {
-      fileGroup.push(mod);
+      groups[index].push(mod);
     }
   });
   return groups;

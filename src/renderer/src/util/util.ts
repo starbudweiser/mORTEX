@@ -313,6 +313,10 @@ export function decodeHTML(input: string | undefined): string | undefined {
   if (input === undefined) {
     return undefined;
   }
+  if (!/[&<]/.test(input)) {
+    // ni entité ni balise : le décodage rendrait le texte tel quel (évite un passage par le DOM)
+    return input;
+  }
   if (convertDiv === undefined) {
     convertDiv = document.createElement("div");
   }
