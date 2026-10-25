@@ -19,6 +19,7 @@ function makeBottle(): IBottle {
   const steam = path.join(root, "drive_c/Program Files (x86)/Steam");
   fs.mkdirSync(path.join(steam, "config"), { recursive: true });
   fs.mkdirSync(path.join(steam, "steamapps/common/Skyrim Special Edition"), { recursive: true });
+  fs.writeFileSync(path.join(steam, "steamapps/common/Skyrim Special Edition/SkyrimSE.exe"), "");
   fs.writeFileSync(path.join(steam, "config/libraryfolders.vdf"), '"libraryfolders"\n{\n}\n');
   fs.writeFileSync(
     path.join(steam, "steamapps/appmanifest_489830.acf"),

@@ -4,7 +4,6 @@ import * as util from "util";
 import { getErrorCode, getErrorMessageOrDefault, unknownToError } from "@vortex/shared";
 import PromiseBB from "bluebird";
 import type { TFunction } from "i18next";
-import turbowalk from "turbowalk";
 
 import { setSettingsPage } from "../../actions/session";
 import { log } from "../../logging";
@@ -13,6 +12,7 @@ import type { IGame } from "../../types/IGame";
 import type { IState } from "../../types/IState";
 import * as fs from "../../util/fs";
 import { getVolumePath } from "../../util/getVolumePath";
+import { turbowalkLinks as turbowalk } from "../../util/macos/turbowalkLinks";
 import { installPathForGame } from "../../util/selectors";
 import type { IDiscoveryResult } from "../gamemode_management/types/IDiscoveryResult";
 import { getGame } from "../gamemode_management/util/getGame";
