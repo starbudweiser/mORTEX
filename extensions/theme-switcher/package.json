@@ -44,7 +44,8 @@
         "inputs": [
           "default",
           "typescript",
-          "vortex-api"
+          "vortex-api",
+          "{projectRoot}/themes/**/*"
         ]
       },
       "typecheck": {

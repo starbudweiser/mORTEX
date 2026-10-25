@@ -426,7 +426,7 @@ class MainWindow {
       autoHideMenuBar: windowMetrics?.customTitlebar ?? true,
       frame: !(windowMetrics?.customTitlebar ?? true),
       show: false,
-      title: "Vortex",
+      title: "mORTEX",
       titleBarStyle: windowMetrics?.customTitlebar === true ? "hidden" : "default",
       webPreferences: {
         preload: path.join(getVortexPath("base"), "preload.cjs"),
