@@ -257,5 +257,10 @@
   "This mod lists {{dlc}} as a requirement; mORTEX cannot verify DLC automatically.": "This mod lists {{dlc}} as a requirement; mORTEX cannot verify DLC automatically.",
   "Plugins with a LOOT problem": "Plugins with a LOOT problem",
   "{{count}} plugin(s) of this mod have a LOOT warning or need cleaning: {{names}}.": "{{count}} plugin(s) of this mod have a LOOT warning or need cleaning: {{names}}.",
-  "The mod manager for Mac Silicon": "The mod manager for Mac Silicon"
+  "The mod manager for Mac Silicon": "The mod manager for Mac Silicon",
+  "APFS Clone Deployment": "APFS Clone Deployment",
+  "Deploys mods as APFS clones: no extra disk space, and edits to deployed files leave your staging folder untouched.": "Deploys mods as APFS clones: no extra disk space, and edits to deployed files leave your staging folder untouched.",
+  "APFS clones share their data with the original file until one of them is modified.\nAdvantages:\n - no extra disk space, like hard links\n - a tool that edits a deployed file (xEdit, BethINI) does not change the file in the staging folder\nDisadvantages:\n - macOS only, mods have to be on the same APFS volume as the game\n - deploying is a little slower than with hard links": "APFS clones share their data with the original file until one of them is modified.\nAdvantages:\n - no extra disk space, like hard links\n - a tool that edits a deployed file (xEdit, BethINI) does not change the file in the staging folder\nDisadvantages:\n - macOS only, mods have to be on the same APFS volume as the game\n - deploying is a little slower than with hard links",
+  "APFS clones are only available on macOS.": "APFS clones are only available on macOS.",
+  "Filesystem doesn't support APFS clones.": "Filesystem doesn't support APFS clones."
 }

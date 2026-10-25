@@ -2,6 +2,7 @@ import * as nodeFs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 
+import cloneInit from "../extensions/clone_activator";
 import hardlinkInit from "../extensions/hardlink_activator";
 import type {
   IDeployedFile,
@@ -23,6 +24,7 @@ import { test as harnessTest } from "./harnessTest";
 import type { IApiHarness, IDriverHarnessState } from "./harnessTypes";
 
 const METHOD_INIT = {
+  clone: cloneInit,
   hardlink: hardlinkInit,
   symlink: symlinkInit,
   move: moveInit,

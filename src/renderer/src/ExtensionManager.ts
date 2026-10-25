@@ -3037,6 +3037,7 @@ class ExtensionManager {
       dashboard: () => require("./extensions/dashboard/index.ts"),
       design_system_dev: () => require("./extensions/design_system_dev/index.ts"),
       diagnostics_files: () => require("./extensions/diagnostics_files/index.ts"),
+      clone_activator: () => require("./extensions/clone_activator/index.ts"),
       download_management: () => require("./extensions/download_management/index.ts"),
       extension_manager: () => require("./extensions/extension_manager/index.ts"),
       file_based_loadorder: () => require("./extensions/file_based_loadorder/index.ts"),

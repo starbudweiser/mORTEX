@@ -6,6 +6,7 @@ import {} from "./analytics";
 import {} from "./browse_nexus";
 import {} from "./browser";
 import {} from "./category_management";
+import {} from "./clone_activator";
 import {} from "./collections";
 import {} from "./dashboard";
 import {} from "./design_system_dev";
