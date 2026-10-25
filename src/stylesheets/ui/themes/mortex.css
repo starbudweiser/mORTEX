@@ -210,9 +210,9 @@ body[data-platform="darwin"] [data-testid="spine"] {
     text-transform: uppercase;
 }
 
-/* L'en-tête laisse la place du bouton à droite */
+/* Sur Mac, pas de boutons de fenêtre à droite : même marge de 16 px que l'écart entre les éléments */
 body[data-platform="darwin"] [data-testid="window-titlebar"] {
-    padding-right: 128px;
+    padding-right: 16px;
     /* sans colonne d'icônes, l'en-tête laisse la place des feux tricolores (x 22, ~70 px) */
     padding-left: 92px;
 }

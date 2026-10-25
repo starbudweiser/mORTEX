@@ -57,18 +57,6 @@ export const Header: FC<React.PropsWithChildren<unknown>> = () => {
       data-testid="window-titlebar"
     >
       <div className="flex min-w-0 flex-1 items-center gap-x-1">
-        <div className="mortex-brand">
-          <span aria-hidden="true" className="mortex-logo" />
-          <span className="mortex-brand-text">
-            <span aria-label="mORTEX" className="mortex-wordmark font-bold tracking-wide">
-              <b>m</b>ORTEX
-            </span>
-            <span className="mortex-brand-tagline max-xl:hidden">
-              {t("The mod manager for Mac Silicon")}
-            </span>
-          </span>
-        </div>
-
         <Tooltip content={menuIsCollapsed ? t("Open menu") : t("Collapse menu")} placement="right">
           <Button
             appearance="weak"
@@ -80,9 +68,23 @@ export const Header: FC<React.PropsWithChildren<unknown>> = () => {
           />
         </Tooltip>
 
+        <div className="mortex-brand">
+          <span aria-hidden="true" className="mortex-logo" />
+          <span className="mortex-brand-text">
+            <span aria-label="mORTEX" className="mortex-wordmark font-bold tracking-wide">
+              <b>m</b>ORTEX
+            </span>
+            <span className="mortex-brand-tagline max-xl:hidden">
+              {t("The mod manager for Mac Silicon")}
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <div className="flex shrink-0 items-center gap-x-4 [-webkit-app-region:no-drag]">
         <Typography
           brand="none"
-          className="flex grow items-center gap-x-2 overflow-hidden font-medium whitespace-nowrap"
+          className="flex max-w-72 items-center gap-x-2 overflow-hidden font-medium whitespace-nowrap"
         >
           {selection.type === "game" ? (
             <GameSwitcher title={title} />
@@ -94,9 +96,7 @@ export const Header: FC<React.PropsWithChildren<unknown>> = () => {
             <span className="shrink-9999 truncate text-neutral-subdued">{profileName}</span>
           )}
         </Typography>
-      </div>
 
-      <div className="flex shrink-0 items-center gap-x-4 pr-4 [-webkit-app-region:no-drag]">
         <StagingIndicator />
 
         <VersionIndicator />
