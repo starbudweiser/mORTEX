@@ -6,7 +6,7 @@
  * Also covers is_legacy_ui, which app_launched reports for the session and
  * app_ui_mode_changed reports when the user switches.
  */
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { IValidateKeyDataV2 } from "../../nexus_integration/types/IValidateKeyData";
 
@@ -25,6 +25,13 @@ vi.mock("../../../util/application", () => ({ getApplication: () => ({ version: 
 
 import analyticsMixpanel from "./MixpanelAnalytics";
 import { AppLaunchedEvent, AppUIModeChangedEvent } from "./MixpanelEvents";
+
+// these tests exercise Vortex's reporting, which mORTEX switches off on macOS (covered last)
+const realPlatform = process.platform;
+const setPlatform = (platform: NodeJS.Platform) =>
+  Object.defineProperty(process, "platform", { value: platform, configurable: true });
+beforeAll(() => setPlatform("win32"));
+afterAll(() => setPlatform(realPlatform));
 
 const userInfo = {
   userId: 42,
@@ -250,5 +257,21 @@ describe("MixpanelAnalytics pre-start queue", () => {
     analyticsMixpanel.start(userInfo, false);
 
     expect(mp.track).not.toHaveBeenCalled();
+  });
+});
+
+describe("MixpanelAnalytics on macOS", () => {
+  it("never starts, so nothing reaches Nexus Mods", () => {
+    analyticsMixpanel.stop();
+    vi.clearAllMocks();
+    setPlatform("darwin");
+    try {
+      analyticsMixpanel.start(userInfo, true);
+      analyticsMixpanel.setGameContext({ gameId: 1704, profileId: "abc123" });
+      expect(mp.init).not.toHaveBeenCalled();
+      expect(mp.register).not.toHaveBeenCalled();
+    } finally {
+      setPlatform("win32");
+    }
   });
 });

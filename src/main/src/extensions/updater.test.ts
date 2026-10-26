@@ -7,8 +7,14 @@ vi.mock("../logging", () => ({ log: vi.fn() }));
 
 import { initUpdater, isUpdaterActive } from "./updater";
 
+const realPlatform = process.platform;
+const setPlatform = (platform: NodeJS.Platform) =>
+  Object.defineProperty(process, "platform", { value: platform, configurable: true });
+
 beforeEach(() => {
   vi.clearAllMocks();
+  // the release feed logic below is the Windows/Linux one; macOS is covered on its own
+  setPlatform("win32");
   // a developer machine may have the dev-updater opt-in persisted in the user
   // environment; tests must never depend on ambient env
   vi.stubEnv("VORTEX_DEV_UPDATER", "");
@@ -17,9 +23,19 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.unstubAllEnvs();
+  setPlatform(realPlatform);
 });
 
 describe("isUpdaterActive", () => {
+  // mORTEX: the Vortex feed ships no macOS build, so the updater stays off whatever the install
+  it("is always off on macOS", () => {
+    setPlatform("darwin");
+    expect(isUpdaterActive("regular")).toBe(false);
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("VORTEX_DEV_UPDATER", "1");
+    expect(isUpdaterActive("regular")).toBe(false);
+  });
+
   it("is on for a regular install outside development", () => {
     expect(isUpdaterActive("regular")).toBe(true);
   });
