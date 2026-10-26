@@ -123,6 +123,7 @@ import {
 } from "../../util/errorHandling";
 import * as fs from "../../util/fs";
 import type { TFunction } from "../../util/i18n";
+import { extractWithUnar, needsUnarFallback } from "../../util/macos/unarFallback";
 import { prettifyNodeErrorMessage } from "../../util/message";
 import {
   activeGameId,
@@ -3990,7 +3991,16 @@ class InstallManager {
     }
 
     return extractProm
-      .then(async ({ code, errors }: { code: number; errors: string[] }) => {
+      .then(async (result: { code: number; errors: string[] }) => {
+        let { code, errors } = result;
+        if (code !== 0 && needsUnarFallback(errors)) {
+          log("info", "7-Zip can't read this archive, extracting with unar", {
+            archivePath: path.basename(archivePath),
+          });
+          await extractWithUnar(archivePath, tempPath);
+          code = 0;
+          errors = [];
+        }
         log("debug", "extraction completed", {
           archivePath: path.basename(archivePath),
           extractionTimeMs: Date.now() - (extractProm as any).startTime,
