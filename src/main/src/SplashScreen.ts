@@ -6,8 +6,11 @@ import { BrowserWindow } from "electron";
 import { getVortexPath } from "./getVortexPath";
 import { log } from "./logging";
 
+const MIN_SHOWN_MS = 2300;
+
 class SplashScreen {
   private mWindow: Electron.BrowserWindow | null = null;
+  private mShownAt = 0;
 
   public async fadeOut(): Promise<void> {
     // apparently we can't prevent the user from closing the splash with alt-f4...
@@ -24,7 +27,8 @@ class SplashScreen {
         setTimeout(() => resolve(), ms);
       });
 
-    await delay(200);
+    // l'animation d'ouverture dure ~2 s : on la laisse finir avant de disparaître
+    await delay(Math.max(200, MIN_SHOWN_MS - (Date.now() - this.mShownAt)));
 
     if (!this.mWindow?.isDestroyed()) {
       try {
@@ -52,6 +56,7 @@ class SplashScreen {
 
       const onReady = () => {
         clearTimeout(timeout);
+        this.mShownAt = Date.now();
         if (process.env.VORTEX_E2E_HEADLESS !== "1") {
           this.mWindow?.show();
         }
@@ -60,8 +65,9 @@ class SplashScreen {
 
       this.mWindow = new BrowserWindow({
         frame: false,
-        width: 475,
-        height: 166,
+        // carte de 476 × 166 et marge de 12 px pour son ombre
+        width: 500,
+        height: 190,
         transparent: !disableGPU,
         show: false,
         resizable: false,

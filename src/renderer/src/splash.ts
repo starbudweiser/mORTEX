@@ -1,23 +1,25 @@
 import { ipcRenderer } from "electron";
 
 ipcRenderer.on("fade-out", () => {
-  const splash = document.getElementById("splash");
-  if (splash) {
-    splash.style.transition = "opacity 500ms ease-in-out";
-    splash.style.opacity = "0";
-  }
+  document.body.classList.add("leaving");
 });
 
 const url = new URL(window.location.href);
 if (url.searchParams.get("disableGPU") === "1") {
-  document.getElementById("bg").style.backgroundColor = "#d78f46";
+  // Fenêtre opaque sans GPU : fond uni de la carte plutôt que la transparence
+  document.getElementById("bg").style.backgroundColor = "#121317";
 }
 
-// Variante localisée (mention « non officiel ») : fr par défaut (splash.png), sinon en/es/it, anglais par repli.
+// Mention « non officiel » dans la langue du système : fr, en, es, it, anglais par repli.
+// La fenêtre de lancement s'affiche avant i18next, d'où ce petit dictionnaire local.
+const FOOTER: Record<string, string> = {
+  fr: "Non officiel · basé sur Vortex",
+  en: "Unofficial · based on Vortex",
+  es: "No oficial · basado en Vortex",
+  it: "Non ufficiale · basato su Vortex",
+};
 const lang = (navigator.language || "en").slice(0, 2).toLowerCase();
-const variant =
-  lang === "fr" ? "splash" : ["es", "it"].includes(lang) ? `splash_${lang}` : "splash_en";
-const img = document.getElementById("splash") as HTMLImageElement | null;
-if (img) {
-  img.src = `assets/images/${variant}.png`;
+const footer = document.getElementById("footer");
+if (footer) {
+  footer.textContent = FOOTER[lang] ?? FOOTER.en;
 }
