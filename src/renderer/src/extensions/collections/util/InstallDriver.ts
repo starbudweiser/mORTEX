@@ -78,6 +78,9 @@ export type UpdateCB = () => void;
 
 class InstallDriver {
   private mApi: IExtensionApi;
+  // revisions whose game-version warning the user already accepted this session, so the
+  // install that resumes after it doesn't ask a second time
+  private mVersionMismatchAccepted = new Set<string>();
   private mProfile: IProfile;
   private mGameId: string;
   private mCollection: IMod;
@@ -884,7 +887,12 @@ class InstallDriver {
     const gameVersion = await currentgame.getInstalledVersion(discovery);
     const gvMatch = (gv) => gv.reference === gameVersion;
     const revGameVersions = this.mRevisionInfo?.gameVersions ?? [];
-    if ((revGameVersions.length ?? 0 !== 0) && revGameVersions.find(gvMatch) === undefined) {
+    const mismatchKey = `${slug}:${this.revisionNumber}:${gameVersion}`;
+    if (
+      revGameVersions.length > 0 &&
+      revGameVersions.find(gvMatch) === undefined &&
+      !this.mVersionMismatchAccepted.has(mismatchKey)
+    ) {
       const choice = await this.mApi.showDialog(
         "question",
         "Game version mismatch",
@@ -912,6 +920,7 @@ class InstallDriver {
         this.mInstallDone = true;
         return false;
       }
+      this.mVersionMismatchAccepted.add(mismatchKey);
     }
 
     this.mApi.events.emit("will-install-collection", gameId, collection.id);

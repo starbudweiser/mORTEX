@@ -221,5 +221,8 @@
   "Deploys mods as APFS clones: no extra disk space, and edits to deployed files leave your staging folder untouched.": "Déploie les mods en clones APFS : aucun espace disque en plus, et une modification d'un fichier déployé laisse le dossier de staging intact.",
   "APFS clones share their data with the original file until one of them is modified.\nAdvantages:\n - no extra disk space, like hard links\n - a tool that edits a deployed file (xEdit, BethINI) does not change the file in the staging folder\nDisadvantages:\n - macOS only, mods have to be on the same APFS volume as the game\n - deploying is a little slower than with hard links": "Un clone APFS partage ses données avec le fichier d'origine tant que l'un des deux n'est pas modifié.\nAvantages :\n - aucun espace disque en plus, comme un lien physique\n - un outil qui modifie un fichier déployé (xEdit, BethINI) ne touche pas au fichier du dossier de staging\nInconvénients :\n - macOS uniquement, les mods doivent être sur le même volume APFS que le jeu\n - le déploiement est un peu plus lent qu'avec des liens physiques",
   "APFS clones are only available on macOS.": "Les clones APFS ne sont disponibles que sur macOS.",
-  "Filesystem doesn't support APFS clones.": "Ce système de fichiers ne gère pas les clones APFS."
+  "Filesystem doesn't support APFS clones.": "Ce système de fichiers ne gère pas les clones APFS.",
+  "Collection instructions": "Instructions de la collection",
+  "Instructions can be reviewed during installation.": "Les instructions resteront consultables pendant l'installation.",
+  "No additional instructions.": "Aucune instruction supplémentaire."
 }

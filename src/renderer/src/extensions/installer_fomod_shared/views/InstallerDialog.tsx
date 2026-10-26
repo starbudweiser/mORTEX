@@ -494,7 +494,9 @@ class InstallerDialog extends PureComponentEx<IProps, IDialogState> {
 
     return (
       <ZoomableImage
-        url={pathToFileURL(path.join(installerInfo.dataPath, image)).href}
+        // FOMOD scripts are written on Windows ("images\header.png"); split on both separators so
+        // the image resolves on macOS and Linux too
+        url={pathToFileURL(path.join(installerInfo.dataPath, ...image.split(/[\\/]/))).href}
         className="installer-image"
         overlayClass="installer-zoom"
         container={undefined}

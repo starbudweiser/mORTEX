@@ -249,10 +249,10 @@ class InstallDialog extends ComponentEx<IProps, IInstallDialogState> {
 
             <Media.Right style={{ width: "100%", display: "flex" }}>
               <Media.Body>
-                <Media.Heading>Collection instructions</Media.Heading>
+                <Media.Heading>{t("Collection instructions")}</Media.Heading>
 
                 <p className="collections-instructions-canbereviewed">
-                  Instructions can be reviewed during installation.
+                  {t("Instructions can be reviewed during installation.")}
                 </p>
 
                 {ownCollection ? <YouCuratedTag t={t} /> : null}
