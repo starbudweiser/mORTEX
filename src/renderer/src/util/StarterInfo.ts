@@ -320,7 +320,7 @@ class StarterInfo implements IStarterInfo {
       );
     }
 
-    // macOS: les .exe tournent dans leur bouteille Wine (CrossOver/Whisky)
+    // macOS: les .exe tournent dans leur bouteille Wine (CrossOver)
     const cwd = info.workingDirectory || path.dirname(info.exePath);
     const bottled =
       process.platform === "darwin" ? runInBottle(info.exePath, info.commandLine, cwd) : undefined;

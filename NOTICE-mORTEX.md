@@ -16,5 +16,5 @@ its changes are in this repository's history. mORTEX is not affiliated with or e
 | node-loot © Black Tree Gaming                   | GPL-3.0                        | https://github.com/Nexus-Mods/node-loot                                                       |
 
 The unRAR code in 7-Zip may not be used to recreate the RAR compression algorithm.
-Wine, CrossOver and Whisky are not bundled: they are separate products with their own licences.
+Wine, CrossOver are not bundled: they are separate products with their own licences.
 The full list of npm dependencies and their licences is in `src/main/build/assets/bom.json` (generated at build time).
