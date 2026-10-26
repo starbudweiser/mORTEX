@@ -88,6 +88,8 @@ class SplashScreen {
           backgroundThrottling: false,
           sandbox: false,
           nodeIntegration: true,
+          // sans ça, require("./splash.js") échoue en silence : ni mention localisée, ni sortie animée
+          contextIsolation: false,
         },
       });
 
