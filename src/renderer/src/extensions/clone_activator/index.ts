@@ -45,17 +45,23 @@ async function cloneFile(sourcePath: string, linkPath: string): Promise<void> {
   await nodeFs.promises.utimes(linkPath, stats.atime, stats.mtime);
 }
 
-/** clé d'un fichier : chemin relatif (casse ignorée, comme APFS), taille et date à la seconde */
-export function cloneKey(relPath: string, size: number, mtimeMs: number): string {
-  return `${relPath.toLowerCase()}|${size}|${Math.floor(mtimeMs / 1000)}`;
+/** clé d'un fichier : chemin relatif (casse ignorée, comme APFS) et taille */
+export function cloneKey(relPath: string, size: number): string {
+  return `${relPath.toLowerCase()}|${size}`;
 }
 
-/** même fichier qu'à son déploiement : même taille, même date (à la seconde) */
+/**
+ * même date à moins d'une seconde près. La date recopiée sur le clone est arrondie à la
+ * milliseconde (886,9996 s devient 887,000 s) : comparer des secondes tronquées signalait
+ * à tort des fichiers modifiés et en laissait au retrait.
+ */
+export function sameTime(aMs: number, bMs: number): boolean {
+  return Math.abs(aMs - bMs) < 1000;
+}
+
+/** même fichier qu'à son déploiement : même taille, même date */
 export function sameAsSource(link: fs.Stats, source: fs.Stats): boolean {
-  return (
-    link.size === source.size &&
-    Math.floor(link.mtimeMs / 1000) === Math.floor(source.mtimeMs / 1000)
-  );
+  return link.size === source.size && sameTime(link.mtimeMs, source.mtimeMs);
 }
 
 class DeploymentMethod extends LinkingDeployment {
@@ -167,14 +173,16 @@ class DeploymentMethod extends LinkingDeployment {
    * Un fichier modifié après déploiement n'est pas retiré : il n'est plus le clone d'un mod.
    */
   protected purgeLinks(installPath: string, dataPath: string): PromiseBB<void> {
-    const staged = new Set<string>();
+    // clé chemin+taille → dates des fichiers du staging qui la portent
+    const staged = new Map<string, number[]>();
     return PromiseBB.resolve(
       walk(installPath, (iterPath: string, stats: fs.Stats) => {
         if (stats.isFile()) {
           // <staging>/<mod>/<chemin relatif>
           const rel = path.relative(installPath, iterPath).split(path.sep).slice(1).join(path.sep);
           if (rel.length > 0) {
-            staged.add(cloneKey(rel, stats.size, stats.mtimeMs));
+            const key = cloneKey(rel, stats.size);
+            staged.set(key, [...(staged.get(key) ?? []), stats.mtimeMs]);
           }
         }
         return PromiseBB.resolve();
@@ -186,7 +194,8 @@ class DeploymentMethod extends LinkingDeployment {
             return PromiseBB.resolve();
           }
           const rel = path.relative(dataPath, iterPath);
-          if (!staged.has(cloneKey(rel, stats.size, stats.mtimeMs))) {
+          const times = staged.get(cloneKey(rel, stats.size)) ?? [];
+          if (!times.some((mtimeMs) => sameTime(mtimeMs, stats.mtimeMs))) {
             return PromiseBB.resolve();
           }
           return fs

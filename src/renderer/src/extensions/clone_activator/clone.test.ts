@@ -4,7 +4,7 @@ import * as path from "node:path";
 import { describe, expect } from "vitest";
 
 import { test } from "../../test-utils/deploymentTest";
-import { cloneKey } from "./index";
+import { cloneKey, sameTime } from "./index";
 
 const FILES = {
   "SkyUI_SE.esp": "esp data",
@@ -64,11 +64,22 @@ describe.skipIf(process.platform !== "darwin")("purge and the Finder", () => {
 });
 
 describe("cloneKey", () => {
-  test("ignores case and sub-second time", () => {
-    expect(cloneKey("Meshes/A.nif", 3, 1_000_400)).toBe(cloneKey("meshes/a.nif", 3, 1_000_900));
+  test("ignores case", () => {
+    expect(cloneKey("Meshes/A.nif", 3)).toBe(cloneKey("meshes/a.nif", 3));
   });
 
   test("differs when the size differs", () => {
-    expect(cloneKey("a.esp", 3, 1000)).not.toBe(cloneKey("a.esp", 4, 1000));
+    expect(cloneKey("a.esp", 3)).not.toBe(cloneKey("a.esp", 4));
+  });
+});
+
+describe("sameTime", () => {
+  // cas réel du stress test : 886,999636 s recopié en 887,000 s sur le clone
+  test("accepts a date rounded across a second boundary", () => {
+    expect(sameTime(1_792_976_886_999.636, 1_792_976_887_000)).toBe(true);
+  });
+
+  test("rejects a file touched later", () => {
+    expect(sameTime(1_792_976_886_999.636, 1_792_976_889_000)).toBe(false);
   });
 });
