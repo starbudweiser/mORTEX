@@ -172,7 +172,8 @@ body[data-watermark="mono"]::after {
     .xtable > tbody > tr.table-selected,
     .xtable > tbody > tr.selected,
     .xtable > tbody > tr.active {
-        background-color: #1d3a52;
+        background-color: rgb(251 191 36 / 14%);
+        box-shadow: inset 3px 0 0 #fbbf24;
     }
 }
 
@@ -745,22 +746,6 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     color: var(--color-neutral-strong);
 }
 
-.mortex-toolbar-button {
-    flex-shrink: 0;
-    height: 26px;
-    padding: 0 12px;
-    border: 0;
-    border-radius: 6px;
-    background-color: var(--color-zinc-700);
-    color: var(--color-neutral-moderate);
-    font-size: 12px;
-    white-space: nowrap;
-}
-
-.mortex-toolbar-button:hover {
-    background-color: var(--color-zinc-600);
-}
-
 /* Cloche de la barre de titre : pas d'anneau, même ouverte */
 .mortex-header-bell > button {
     border-color: transparent !important;
@@ -1254,4 +1239,84 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+}
+
+/* Mod sélectionné : surbrillance au jaune Socle (--action) */
+.nxm-table .nxm-table-row[aria-selected="true"] {
+    --nxm-table-row-tint: rgb(251 191 36 / 14%);
+    box-shadow: inset 3px 0 0 #fbbf24;
+}
+
+/* Notifications de la nouvelle interface : cartes colorées comme dans l'interface classique
+   (couleurs du thème Socle : info #0ea5e9, succès #22c55e, alerte #f59e0b, erreur #ef4444) */
+.mortex-notification {
+    --mortex-notif-bg: #f59e0b;
+    margin: 2px 0;
+    padding: 6px 8px !important;
+    border: 0 !important;
+    border-radius: 6px;
+    background-color: var(--mortex-notif-bg);
+    color: #ffffff;
+}
+
+.mortex-notification:is([data-type="info"], [data-type="activity"]) {
+    --mortex-notif-bg: #0ea5e9;
+}
+
+.mortex-notification[data-type="success"] {
+    --mortex-notif-bg: #22c55e;
+}
+
+.mortex-notification[data-type="error"] {
+    --mortex-notif-bg: #ef4444;
+}
+
+/* Icône dans un carré sombre, comme le bouton d'icône classique */
+.mortex-notification > :first-child {
+    box-sizing: content-box;
+    margin-top: 0 !important;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: #262626;
+    color: #ffffff !important;
+}
+
+.mortex-notification p,
+.mortex-notification div,
+.mortex-notification span {
+    color: #ffffff;
+}
+
+.mortex-notification p.font-semibold {
+    font-weight: 700;
+}
+
+/* Boutons d'action : blancs, texte noir */
+.mortex-notification .nxm-button:not(.nxm-button-icon-only) {
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
+    font-weight: 600;
+}
+
+.mortex-notification .nxm-button:not(.nxm-button-icon-only) * {
+    color: #1a1a1a !important;
+}
+
+.mortex-notification .nxm-button-icon-only,
+.mortex-notification .nxm-button-icon-only * {
+    color: #ffffff !important;
+}
+
+/* Barre de progression : sombre sur fond coloré */
+.mortex-notification [class*="bg-surface-high"] {
+    background-color: rgb(0 0 0 / 30%);
+}
+
+.mortex-notification [class*="bg-info-strong"] {
+    background-color: #ffffff;
+}
+
+/* Zone de dépôt sous la liste des mods (nouvelle interface) : chevron de repli sur la zone */
+#page-Mods .mod-drop-panel {
+    position: relative;
 }

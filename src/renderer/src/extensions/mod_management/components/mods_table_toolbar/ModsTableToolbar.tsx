@@ -10,7 +10,6 @@ import { useToolbarAnalytics } from "@/ui/components/toolbar/useToolbarAnalytics
 import { type IViewPickerView, ViewPicker } from "@/ui/components/view_picker/ViewPicker";
 
 import { MODS_TABLE_TOOLBARS } from "../../hooks/use_mods_table_analytics/useModsTableAnalytics.hook";
-import { useInstallFromFileAction } from "../../hooks/useModToolbarActions.hook";
 import type { IModsTableView } from "../../util/mods_table_views/modsTableViews";
 import { DeleteModsTableViewModal } from "../delete_mods_table_view_modal/DeleteModsTableViewModal";
 import { ModsTableViewNameModal } from "../mods_table_view_name_modal/ModsTableViewNameModal";
@@ -72,7 +71,6 @@ export const ModsTableToolbar = ({
   onQuickFilterChange,
 }: IModsTableToolbarProps) => {
   const { t } = useTranslation(["common"]);
-  const installFromFile = useInstallFromFileAction(t).action;
   // "new" while making a view, the view while renaming one, and unset otherwise.
   const [naming, setNaming] = useState<IModsTableView | "new">();
   const [deleting, setDeleting] = useState<IModsTableView>();
@@ -151,15 +149,6 @@ export const ModsTableToolbar = ({
         onAddView={() => setNaming("new")}
         onSelectView={onSelectView}
       />
-
-      <button
-        className="mortex-toolbar-button"
-        data-testid="mortex-install-from-file"
-        type="button"
-        onClick={() => installFromFile.onClick?.()}
-      >
-        {installFromFile.label}
-      </button>
 
       <Toolbar className="shrink-0 justify-end" tracking={tracking}>
         <ToolbarGroup actions={actions} />

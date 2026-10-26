@@ -471,6 +471,7 @@ class ModList extends ComponentEx<IProps, IComponentState> {
 
           <PageContent isFullWidth>
             <div ref={this.setTableFooterRef} />
+            <div className="mod-drop-container">{this.renderDropPanel()}</div>
           </PageContent>
         </ModsDropTarget>
       </Page>
@@ -484,7 +485,7 @@ class ModList extends ComponentEx<IProps, IComponentState> {
    * wrappers this needs — the header is a portal into one of them.
    */
   private renderClassicPage(): JSX.Element {
-    const { t, modSources, showDropzone } = this.props;
+    const { t, modSources } = this.props;
 
     let content: JSX.Element;
 
@@ -538,28 +539,33 @@ class ModList extends ComponentEx<IProps, IComponentState> {
             <FlexLayout.Flex className="mod-list-container">{content}</FlexLayout.Flex>
 
             <FlexLayout.Fixed className="mod-drop-container">
-              <Panel className="mod-drop-panel" expanded={showDropzone} onToggle={nop}>
-                <Panel.Collapse>
-                  <Panel.Body>
-                    <Dropzone
-                      accept={["files"]}
-                      clickable={false}
-                      drop={this.dropMod}
-                      icon="folder-download"
-                    />
-                  </Panel.Body>
-                </Panel.Collapse>
-
-                <CollapseIcon
-                  position="topright"
-                  visible={showDropzone}
-                  onClick={this.toggleDropzone}
-                />
-              </Panel>
+              {this.renderDropPanel()}
             </FlexLayout.Fixed>
           </FlexLayout>
         </MainPage.Body>
       </MainPage>
+    );
+  }
+
+  /** The collapsible drop zone under the list, shared by both layouts. */
+  private renderDropPanel(): JSX.Element {
+    const { showDropzone } = this.props;
+
+    return (
+      <Panel className="mod-drop-panel" expanded={showDropzone} onToggle={nop}>
+        <Panel.Collapse>
+          <Panel.Body>
+            <Dropzone
+              accept={["files"]}
+              clickable={false}
+              drop={this.dropMod}
+              icon="folder-download"
+            />
+          </Panel.Body>
+        </Panel.Collapse>
+
+        <CollapseIcon position="topright" visible={showDropzone} onClick={this.toggleDropzone} />
+      </Panel>
     );
   }
 

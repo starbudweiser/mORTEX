@@ -77,7 +77,10 @@ export const NotificationItem = ({
   const lines = addWordBreakOpportunities(translatedMessage || "");
 
   return (
-    <div className="flex gap-x-3 border-stroke-weak p-2 not-last:border-b">
+    <div
+      className="mortex-notification flex gap-x-3 border-stroke-weak p-2 not-last:border-b"
+      data-type={type}
+    >
       <Icon
         className={joinClasses(["relative mt-0.5 shrink-0", status.className])}
         {...getIconProps(status.icon)}
