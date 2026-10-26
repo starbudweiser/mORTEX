@@ -66,6 +66,7 @@ import { PathResolverRegistryImpl } from "./filesystem/path-resolver-registry";
 import { getVortexPath } from "./getVortexPath";
 import { init as initIpcHandlers } from "./ipcHandlers";
 import { log } from "./logging";
+import { guardLaunch } from "./macos/launchGuard";
 import StylesheetCompiler from "./stylesheetCompiler";
 import { initTelemetryIpcHandler } from "./telemetry/ipcHandler";
 import { createMainTelemetryProvider } from "./telemetry/setup";
@@ -182,6 +183,8 @@ const handleError = (error: Error) => {
 async function main(): Promise<void> {
   // important: The following has to be synchronous!
   const mainArgs = parseCommandline(process.argv, false);
+
+  guardLaunch(log);
 
   // Elevation diagnostics (issue #23043). Uses synchronous fs.appendFileSync
   // (not winston) because the elevated Vortex.exe app.quit()s immediately
