@@ -32,6 +32,15 @@ import { getGameStores, getGameStoresSafe } from "./getGame";
 import { identifyStore } from "./identifyStore";
 import Progress from "./Progress";
 
+/**
+ * A game or tool that isn't installed is the normal outcome of discovery, not an error. On macOS
+ * every game is looked for in Windows-only stores and registries too, so any miss there is
+ * expected; logging each one as an error buried the real problems.
+ */
+function discoveryMissLevel(err: unknown): "debug" | "error" {
+  return err instanceof GameEntryNotFound || process.platform === "darwin" ? "debug" : "error";
+}
+
 export type DiscoveredCB = (gameId: string, result: IDiscoveryResult) => void;
 export type DiscoveredToolCB = (gameId: string, result: IDiscoveredTool) => void;
 
@@ -85,7 +94,7 @@ export async function quickDiscoveryTools(
         });
       }
     } catch (err) {
-      log("error", "failed to determine tool setup", {
+      log(discoveryMissLevel(err), "failed to determine tool setup", {
         err,
         gameId,
         toolId: tool.id,
@@ -310,7 +319,7 @@ export async function quickDiscovery(
     } catch (err) {
       const error = unknownToError(err);
 
-      log("error", "failed to use game support plugin", {
+      log(discoveryMissLevel(error), "failed to use game support plugin", {
         id: game.id,
         err: error.message,
         stack: error.stack,

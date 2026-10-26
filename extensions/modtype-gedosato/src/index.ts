@@ -10,6 +10,10 @@ import { gameSupported, getPath } from "./gameSupport";
 let gedosatoPath: string;
 
 function getLocation(): Promise<string> {
+  // GeDoSaTo is a Windows-only injector; there is no registry to read anywhere else
+  if (process.platform !== "win32") {
+    return Promise.resolve(undefined);
+  }
   try {
     const instPath = winapi.RegGetValue(
       "HKEY_LOCAL_MACHINE",

@@ -333,12 +333,17 @@ function findGameEntry(
     } catch (err) {
       // It's possible for a game store to be missing
       //  especially if it is added by a 3rd party extension.
-      log("warn", "Game entry not found in specified store", {
-        pattern: name,
-        storeId,
-        availableStores,
-        err,
-      });
+      // on macOS the Windows-only stores (GOG, Epic, Xbox…) are never registered
+      log(
+        process.platform === "darwin" ? "debug" : "warn",
+        "Game entry not found in specified store",
+        {
+          pattern: name,
+          storeId,
+          availableStores,
+          err,
+        },
+      );
 
       throw new GameEntryNotFound(name, availableStores);
     }

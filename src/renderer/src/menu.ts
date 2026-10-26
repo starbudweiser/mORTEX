@@ -114,12 +114,17 @@ export function initApplicationMenu(extensions: ExtensionManager) {
     const viewMenu: Electron.MenuItemConstructorOptions[] = [];
 
     const alreadyAssigned = new Set<string>();
+    // same filter as PagesContext: a page made for the other layout isn't in this one's menu,
+    // where it would also claim its twin's hotkey (Profiles exists once per layout)
+    const modernLayout = extensions.getApi().store?.getState().settings.window.useModernLayout;
+    const inLayout = (options: IMainPageOptions) =>
+      !(modernLayout ? options.isClassicOnly : options.isModernOnly);
 
     // main pages
     extensions.apply(
       "registerMainPage",
       (icon: string, title: string, element: any, options: IMainPageOptions) => {
-        if (options.visible === undefined || options.visible()) {
+        if (inLayout(options) && (options.visible === undefined || options.visible())) {
           let accelerator =
             options.hotkeyRaw !== undefined
               ? options.hotkeyRaw
