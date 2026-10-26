@@ -101,6 +101,32 @@ function init(context: types.IExtensionContext) {
     applyWatermark();
     store.subscribe(applyWatermark);
 
+    // filigrane « centré » : au centre de la page affichée (hors barre latérale et en-tête),
+    // pas de la fenêtre ; recalculé au changement de page, de taille ou de barre latérale
+    let placePending = false;
+    const placeWatermark = () => {
+      if (placePending) {
+        return;
+      }
+      placePending = true;
+      requestAnimationFrame(() => {
+        placePending = false;
+        const page = [...document.querySelectorAll<HTMLElement>('[id^="page-"]')].find((el) => {
+          const style = getComputedStyle(el);
+          return el.offsetWidth > 0 && style.visibility !== "hidden" && style.opacity !== "0";
+        });
+        if (page === undefined) {
+          return;
+        }
+        const rect = page.getBoundingClientRect();
+        document.body.style.setProperty("--mortex-wm-cx", `${rect.left + rect.width / 2}px`);
+        document.body.style.setProperty("--mortex-wm-cy", `${rect.top + rect.height / 2}px`);
+      });
+    };
+    placeWatermark();
+    store.subscribe(placeWatermark);
+    window.addEventListener("resize", placeWatermark);
+
     return applyTheme(context.api, store.getState().settings.interface.currentTheme, true);
   });
 

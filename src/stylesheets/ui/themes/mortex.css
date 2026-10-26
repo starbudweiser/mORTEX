@@ -60,12 +60,13 @@ body[data-watermark="mono"]::after {
         no-repeat center / contain;
 }
 
+/* centré sur la zone de contenu (variables posées par theme-switcher), pas sur la fenêtre */
 body[data-watermark="center"]::after {
-    width: 380px;
-    height: 380px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -45%);
+    width: 520px;
+    height: 520px;
+    left: var(--mortex-wm-cx, 50%);
+    top: var(--mortex-wm-cy, 50%);
+    transform: translate(-50%, -50%);
     opacity: 0.05;
 }
 
@@ -390,7 +391,6 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 .mortex-cards {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: start;
     gap: 14px;
 }
 
@@ -398,7 +398,8 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     background-color: var(--color-surface-mid);
     border: 1px solid var(--color-stroke-weak);
     border-radius: 10px;
-    padding: 16px;
+    /* tient dans la hauteur d'une case du tableau de bord (114 px) sans déborder sur la suivante */
+    padding: 12px 16px;
 }
 
 .mortex-card h5 {
@@ -961,14 +962,17 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     gap: 8px;
 }
 
-/* ---- Ancienne interface sous macOS : une bande de titre de 28 px accueille les feux tricolores
-   au-dessus de la bannière du jeu, au lieu de la recouvrir ; la version y monte à droite. ---- */
+/* ---- Ancienne interface sous macOS : une bande de titre de 40 px accueille les feux tricolores
+   (placés à y 15, 14 px de haut : MainWindow.trafficLightPosition) au-dessus de la bannière du jeu,
+   au lieu de la recouvrir ; la version y monte à droite. ---- */
 body[data-platform="darwin"] #main-toolbar {
-    padding-top: 28px;
+    padding-top: 40px;
+    /* hauteur de l'amont (105 px, boîte bordure comprise) + la bande : la bannière garde sa taille */
+    height: 145px;
 }
 
 body[data-platform="darwin"] #main-toolbar .toolbar-version {
-    top: 7px;
+    top: 13px;
     right: 14px;
     margin-right: 0;
 }
@@ -1223,4 +1227,31 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     color: var(--color-neutral-subdued);
     cursor: pointer;
     text-decoration: underline;
+}
+
+/* Tableau de bord : cartes d'état sans retrait, de même hauteur, alignées sur le panneau Outils */
+.mortex-status-dashlet {
+    padding: 0 !important;
+}
+
+.mortex-cards {
+    align-items: stretch;
+}
+
+/* Tableau de bord : le panneau Outils aligné sur les cartes d'état (même rayon, mêmes marges internes),
+   sans la marge droite de 50 px de l'amont qui décalait la grille des outils */
+.dashlet-starter {
+    padding: 12px 16px !important;
+    border-radius: 10px !important;
+}
+
+/* Nouvelle interface : la liste des jeux au centre de la barre de titre */
+[data-testid="window-titlebar"] {
+    position: relative;
+}
+
+[data-testid="window-titlebar"] > div:last-child > :first-child {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
