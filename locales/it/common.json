@@ -224,5 +224,10 @@
   "Filesystem doesn't support APFS clones.": "Questo file system non supporta i cloni APFS.",
   "Collection instructions": "Istruzioni della collezione",
   "Instructions can be reviewed during installation.": "Le istruzioni restano consultabili durante l'installazione.",
-  "No additional instructions.": "Nessuna istruzione aggiuntiva."
+  "No additional instructions.": "Nessuna istruzione aggiuntiva.",
+  "This bottle shares its game settings and saves with your other bottles": "Questa bottiglia condivide impostazioni e salvataggi del gioco con le altre bottiglie",
+  "The Documents folder of this bottle is a link to your Mac's Documents folder ({{target}}), as CrossOver sets it up. Every bottle therefore uses the same My Games folder: an INI change made for this game, by mORTEX or a mod, also applies to your other bottles, and they share the same saves.\n\nFix gives this bottle its own Documents folder and copies this game's My Games folder into it. Nothing is removed from your Mac's Documents, and you can undo it.": "La cartella Documenti di questa bottiglia è un collegamento alla cartella Documenti del tuo Mac ({{target}}), come la configura CrossOver. Tutte le bottiglie usano quindi la stessa cartella My Games: una modifica agli INI fatta per questo gioco, da mORTEX o da una mod, vale anche per le altre bottiglie, che condividono gli stessi salvataggi.\n\nCorreggi dà a questa bottiglia una propria cartella Documenti e vi copia la cartella My Games di questo gioco. Nulla viene tolto dai Documenti del Mac e puoi annullare.",
+  "Failed to give the bottle its own Documents folder": "Impossibile dare alla bottiglia una propria cartella Documenti",
+  "This bottle now has its own Documents folder": "Questa bottiglia ha ora una propria cartella Documenti",
+  "Undo": "Annulla"
 }
