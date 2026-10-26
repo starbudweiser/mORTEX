@@ -1320,3 +1320,15 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
 #page-Mods .mod-drop-panel {
     position: relative;
 }
+
+/* Mods (interface classique) et plugins : ligne sélectionnée au jaune Socle, liseré sur la 1re cellule */
+.xtbody > .xtr.table-selected,
+.xtbody > .xtr.selected,
+.xtbody > .xtr.table-selected:hover {
+    background-color: rgb(251 191 36 / 14%);
+}
+
+.xtbody > .xtr:is(.table-selected, .selected) > .xtd:first-child {
+    /* les cellules du tableau classique retirent toute ombre en !important */
+    box-shadow: inset 3px 0 0 #fbbf24 !important;
+}

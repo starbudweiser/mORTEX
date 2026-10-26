@@ -6,7 +6,7 @@ import { BrowserWindow } from "electron";
 import { getVortexPath } from "./getVortexPath";
 import { log } from "./logging";
 
-const MIN_SHOWN_MS = 2300;
+const MIN_SHOWN_MS = 4000;
 
 class SplashScreen {
   private mWindow: Electron.BrowserWindow | null = null;
@@ -27,7 +27,7 @@ class SplashScreen {
         setTimeout(() => resolve(), ms);
       });
 
-    // l'animation d'ouverture dure ~2 s : on la laisse finir avant de disparaître
+    // l'animation reste au moins 4 s à l'écran, même si le démarrage est plus rapide
     await delay(Math.max(200, MIN_SHOWN_MS - (Date.now() - this.mShownAt)));
 
     if (!this.mWindow?.isDestroyed()) {
@@ -38,7 +38,8 @@ class SplashScreen {
       }
     }
 
-    await delay(500);
+    // laisse la sortie animée (600 ms) aller au bout
+    await delay(650);
 
     if (!this.mWindow?.isDestroyed()) {
       this.mWindow?.close();
@@ -69,6 +70,10 @@ class SplashScreen {
         width: 500,
         height: 190,
         transparent: !disableGPU,
+        // pas d'ombre native : sur une fenêtre transparente, macOS la dessine autour du cadre
+        // entier et non autour de la carte, qui a déjà la sienne
+        hasShadow: false,
+        backgroundColor: "#00000000",
         show: false,
         resizable: false,
         movable: false,

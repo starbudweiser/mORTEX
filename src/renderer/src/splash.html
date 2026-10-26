@@ -229,15 +229,23 @@
                 animation: fade-in 600ms 1.5s ease-out both;
             }
 
-            /* Sortie : la carte avance vers l'écran en se floutant */
+            /* Sortie : zoom arrière avec rebond (easeInBack) — la carte gonfle un peu puis se replie */
             body.leaving .stage {
-                transition:
-                    opacity 450ms ease-in,
-                    transform 450ms ease-in,
-                    filter 450ms ease-in;
-                opacity: 0;
-                transform: scale(1.08) translateZ(0);
-                filter: blur(6px);
+                animation: leave 600ms cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+            }
+
+            @keyframes leave {
+                from {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                70% {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                    transform: scale(0.05);
+                }
             }
 
             @keyframes card-in {
