@@ -1202,8 +1202,11 @@ class InstallManager {
     modReference?: IModReference,
   ): void {
     const baseName = path.basename(archivePath, path.extname(archivePath)).trim() || "EMPTY_NAME";
-    const installId = this.generateDependencyInstallKey(sourceModId, archiveId);
     const dummyArchiveId = archiveId || "direct-install-" + shortid();
+    // Installs without a download (files dropped or picked from disk) have neither id, so
+    // keying on archiveId alone gave them all "undefined:undefined" and concurrent ones
+    // overwrote each other's tracking.
+    const installId = this.generateDependencyInstallKey(sourceModId, dummyArchiveId);
     const installInfo: IActiveInstallation = {
       installId,
       archiveId: archiveId || dummyArchiveId,
@@ -1217,7 +1220,13 @@ class InstallManager {
     this.mActiveInstalls.set(installId, installInfo);
 
     // Wrap callback to ensure proper cleanup and tracking
+    let settled = false;
     const trackedCallback = (err: Error, id: string) => {
+      // a failure is reported here and again by the rejection it causes; the caller hears once
+      if (settled) {
+        return;
+      }
+      settled = true;
       const activeInstall = this.mActiveInstalls.get(installId);
       if (activeInstall) {
         activeInstall.modId = id || activeInstall.modId;
