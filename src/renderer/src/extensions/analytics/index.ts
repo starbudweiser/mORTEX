@@ -183,6 +183,11 @@ function init(context: IExtensionContext): boolean {
     }
 
     function showConsentDialog() {
+      // mORTEX: analytics never start on macOS (see MixpanelAnalytics.start), so asking for
+      // consent would only promise something that can't happen
+      if (process.platform === "darwin") {
+        return;
+      }
       context.api.sendNotification({
         id: "vortex-analytics-consent",
         type: "info",
