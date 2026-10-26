@@ -376,9 +376,8 @@ export function initGameSupport(api: IExtensionApi): Bluebird<void> {
 export function appDataPath(gameMode: string): string {
   const dataPath = gameSupport.get(gameMode, "appDataPath");
 
-  return process.env.LOCALAPPDATA !== undefined
-    ? path.join(process.env.LOCALAPPDATA, dataPath)
-    : path.resolve(getVortexPath("appData"), "..", "Local", dataPath);
+  // localAppData: %LOCALAPPDATA% on Windows, the active bottle's AppData/Local on macOS
+  return path.join(getVortexPath("localAppData"), dataPath);
 }
 
 export function gameDataPath(gameMode: string): string {

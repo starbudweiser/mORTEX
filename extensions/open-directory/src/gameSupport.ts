@@ -12,8 +12,8 @@ const localAppData: () => string = (() => {
   let cached: string;
   return () => {
     if (cached === undefined) {
-      cached =
-        process.env.LOCALAPPDATA || path.resolve(util.getVortexPath("appData"), "..", "Local");
+      // %LOCALAPPDATA% on Windows, the active bottle's AppData/Local on macOS
+      cached = util.getVortexPath("localAppData");
     }
     return cached;
   };
