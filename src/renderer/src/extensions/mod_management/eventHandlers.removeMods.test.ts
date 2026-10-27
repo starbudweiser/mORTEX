@@ -73,6 +73,11 @@ test("a removal failing for one mod type holds the next removal until its other 
   const slowHeld = new Promise<void>((resolve) => {
     releaseSlow = resolve;
   });
+  // resolved when the slow type reaches finalize, however long the disk takes to get there
+  let reachedSlow: () => void;
+  const slowReached = new Promise<void>((resolve) => {
+    reachedSlow = resolve;
+  });
   const preparedPaths: string[] = [];
   const finalizedPaths: string[] = [];
   const method = makeDeploymentMethod({
@@ -88,6 +93,7 @@ test("a removal failing for one mod type holds the next removal until its other 
     finalize: async (_gameId, dataPath) => {
       finalizedPaths.push(dataPath);
       if (dataPath === secondTypePath) {
+        reachedSlow();
         await slowHeld;
       }
       return [];
@@ -97,11 +103,13 @@ test("a removal failing for one mod type holds the next removal until its other 
 
   const failing = removeMods(game, ["Broken", "Slow"]).catch((err: unknown) => err);
   const next = removeMods(game, ["Next"]);
-  await vi.waitFor(() => expect(finalizedPaths).toContain(secondTypePath));
+  await slowReached;
   await settle(100);
   const preparedBeforeRelease = [...preparedPaths];
   releaseSlow();
   await Promise.all([failing, next]);
 
-  expect(preparedBeforeRelease).toEqual([game.dataPath, secondTypePath]);
+  // the failing removal's two types prepare in parallel, in whichever order the disk answers;
+  // what matters is that the next removal hasn't prepared yet
+  expect([...preparedBeforeRelease].sort()).toEqual([game.dataPath, secondTypePath].sort());
 });
