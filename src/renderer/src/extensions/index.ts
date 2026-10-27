@@ -13,6 +13,7 @@ import {} from "./dashboard";
 import {} from "./design_system_dev";
 import {} from "./diagnostics_files";
 import {} from "./download_management";
+import {} from "./dxmt_workshop";
 import {} from "./extension_manager";
 import {} from "./file_based_loadorder";
 import {} from "./file_preview";
