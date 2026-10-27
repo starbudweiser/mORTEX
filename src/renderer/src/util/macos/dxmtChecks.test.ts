@@ -72,6 +72,8 @@ describe("DXMT checks", () => {
     );
     const checks = await byId();
     expect(checks.displayTweaks.status).toBe("warning");
+    // pas de Bottled Shaders : ni bon ni mauvais
+    expect(checks.bottledDuplicates.status).toBe("na");
   });
 
   it("applies the DXMT settings, keeping comments and other lines", async () => {

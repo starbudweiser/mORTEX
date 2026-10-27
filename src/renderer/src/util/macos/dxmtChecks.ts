@@ -14,7 +14,7 @@
  *    est obligatoire (seul flip_discard crée la swap chain, sinon 0x80070057 et écran noir), les
  *    autres sont des optimisations
  *  - bottledDuplicates : Terrain Helper et Inverse Square Lighting autonomes, déjà intégrés à
- *    Bottled Shaders, qui font planter le jeu
+ *    Bottled Shaders, qui font planter le jeu (« na » sans Bottled Shaders)
  */
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import * as os from "node:os";
@@ -75,10 +75,10 @@ export async function displayTweaksSettings(
   );
 }
 
-/** DLL autonomes en double avec Bottled Shaders (vide si Bottled n'est pas là) */
-export async function bottledDuplicates(gamePath: string): Promise<string[]> {
+/** DLL autonomes en double avec Bottled Shaders, undefined si Bottled n'est pas installé */
+export async function bottledDuplicates(gamePath: string): Promise<string[] | undefined> {
   const files = await readdir(path.join(gamePath, ...PLUGINS_DIR)).catch(() => [] as string[]);
-  if (!files.some((file) => /^communityshaders\.dll$/i.test(file))) return [];
+  if (!files.some((file) => /^communityshaders\.dll$/i.test(file))) return undefined;
   return files.filter((file) => /^(terrain.?helper|inverse.?square.*)\.dll$/i.test(file));
 }
 
@@ -95,8 +95,8 @@ export async function runDxmtChecks(bottlePath: string, gamePath: string): Promi
     displayTweaksCheck(tweaks),
     {
       id: "bottledDuplicates",
-      status: duplicates.length > 0 ? "error" : "ok",
-      found: duplicates.join(", "),
+      status: duplicates === undefined ? "na" : duplicates.length > 0 ? "error" : "ok",
+      found: duplicates?.join(", ") ?? "",
     },
   ];
 }

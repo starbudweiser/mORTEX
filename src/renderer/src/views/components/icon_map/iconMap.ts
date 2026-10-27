@@ -12,6 +12,8 @@ const iconMap: Record<string, IIconSource> = {
   download: "download",
   game: "stadia_controller",
   health: "cardiology",
+  // mORTEX : Atelier DXMT
+  memory: "memory",
   support: "help",
   about: "info",
   menu: "menu",

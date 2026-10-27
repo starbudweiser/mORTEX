@@ -23,6 +23,7 @@ import { activeGameId } from "@/util/selectors";
 import MainPage from "@/views/MainPage";
 
 import { PITFALLS } from "./pitfalls";
+import { RECIPES, RENDER_PATH, type IRenderStage } from "./renderPath";
 
 interface IProps {
   api: IExtensionApi;
@@ -55,8 +56,81 @@ function statusText(check: IDxmtCheck, t: IProps["api"]["translate"]): string {
           ? t("Optimized for DXMT")
           : (check.found ?? "");
     case "bottledDuplicates":
-      return check.status === "ok" ? t("None") : (check.found ?? "");
+      return check.status === "na"
+        ? t("Bottled Shaders not installed")
+        : check.status === "ok"
+          ? t("None")
+          : (check.found ?? "");
   }
+}
+
+type Translate = (text: string, options?: Record<string, unknown>) => string;
+
+function SectionTitle({ icon, children }: { icon: SymbolName; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-x-2 pt-2">
+      <Icon className="text-neutral-subdued" name={icon} size="md" />
+      <Typography className="font-semibold" typographyType="body-xl">
+        {children}
+      </Typography>
+    </div>
+  );
+}
+
+/** une étape du chemin du rendu, colorée d'après le contrôle qui la concerne */
+function RenderStage({
+  stage,
+  status,
+  t,
+}: {
+  stage: IRenderStage;
+  status?: IDxmtCheck["status"];
+  t: Translate;
+}) {
+  // absente de la bouteille : en pointillés
+  const missing = status === "na";
+  const frame =
+    status === "error"
+      ? "ring-1 ring-danger-moderate"
+      : missing
+        ? "border border-dashed border-stroke-moderate"
+        : status === "ok"
+          ? "ring-1 ring-success-moderate"
+          : "";
+  const iconColor =
+    status === "error"
+      ? "text-danger-strong"
+      : missing
+        ? "text-neutral-subdued"
+        : status === "ok"
+          ? "text-success-strong"
+          : "text-warning-strong";
+  return (
+    <div
+      className={`flex min-w-0 flex-1 basis-36 flex-col items-center gap-y-1 rounded-md bg-surface-mid px-3 py-3 text-center ${frame} ${missing ? "opacity-70" : ""}`}
+      data-testid={`dxmt-stage-${stage.id}`}
+    >
+      <Icon className={iconColor} name={stage.icon as SymbolName} size="lg" />
+      <Typography className="font-semibold" typographyType="body-md">
+        {t(stage.name)}
+      </Typography>
+      <Typography appearance="moderate" typographyType="body-xs">
+        {t(stage.role)}
+      </Typography>
+      {missing ? (
+        <Typography appearance="subdued" typographyType="body-xs">
+          {stage.optional === true ? t("Optional, for ENB presets") : t("Not installed")}
+        </Typography>
+      ) : (
+        stage.optional === true &&
+        status === "ok" && (
+          <Typography brand="success" typographyType="body-xs">
+            {t("Installed")}
+          </Typography>
+        )
+      )}
+    </div>
+  );
 }
 
 export default function DxmtWorkshopPage({ api }: IProps) {
@@ -162,6 +236,67 @@ export default function DxmtWorkshopPage({ api }: IProps) {
             })}
           </div>
 
+          <SectionTitle icon="route">{t("How a frame reaches your Mac")}</SectionTitle>
+          <div className="flex flex-wrap items-stretch gap-2">
+            {RENDER_PATH.map((stage, idx) => (
+              <React.Fragment key={stage.id}>
+                {idx > 0 && (
+                  <Icon
+                    className="self-center text-neutral-subdued"
+                    name="arrow_forward"
+                    size="md"
+                  />
+                )}
+                <RenderStage stage={stage} status={statusOf(stage.check)} t={t} />
+              </React.Fragment>
+            ))}
+          </div>
+
+          <SectionTitle icon="menu_book">{t("Recipes")}</SectionTitle>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(24rem,1fr))] gap-4">
+            {RECIPES.map((recipe) => (
+              <div
+                className="flex flex-col gap-y-3 rounded-md bg-surface-mid p-4"
+                data-testid={`dxmt-recipe-${recipe.id}`}
+                key={recipe.id}
+              >
+                <div className="flex items-center gap-x-2">
+                  <Icon
+                    className="text-warning-strong"
+                    name={recipe.icon as SymbolName}
+                    size="md"
+                  />
+                  <div>
+                    <Typography className="font-semibold" typographyType="body-lg">
+                      {t(recipe.title)}
+                    </Typography>
+                    <Typography appearance="moderate" typographyType="body-xs">
+                      {t(recipe.intro)}
+                    </Typography>
+                  </div>
+                </div>
+                <ol className="flex flex-col gap-y-2">
+                  {recipe.steps.map((step, idx) => {
+                    const status = statusOf(step.check);
+                    const done = status === "ok";
+                    const wrong = status === "error" || status === "warning";
+                    return (
+                      <li className="flex items-start gap-x-2" key={step.text}>
+                        <span
+                          className={`flex size-5 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${done ? "bg-success-moderate" : wrong ? "bg-danger-moderate" : "bg-surface-high"}`}
+                        >
+                          {done ? <Icon name="check" size="xs" /> : idx + 1}
+                        </span>
+                        <Typography typographyType="body-sm">{t(step.text)}</Typography>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </div>
+            ))}
+          </div>
+
+          <SectionTitle icon="build">{t("Pitfalls we solved")}</SectionTitle>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(24rem,1fr))] gap-4">
             {PITFALLS.map((pitfall) => {
               const status = statusOf(pitfall.check);
