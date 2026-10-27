@@ -29,5 +29,9 @@
   "{{numOptionals}} optional mods available": "{{numOptionals}} mod facoltative disponibili",
   "Clone the collection to the workshop for editing": "Clona la collezione nel workshop per modificarla",
   "You have been logged out. Please log in and resume.": "Sei stato disconnesso. Accedi e riprendi.",
-  "The option to \"bundle\" already bundles the edited files, storing ": "L'opzione «includi» include già i file modificati, salvando "
+  "The option to \"bundle\" already bundles the edited files, storing ": "L'opzione «includi» include già i file modificati, salvando ",
+  "Mod not found on nexusmods.com: {{modName}} (modId: {{modId}}), it may have been removed.": "Mod non trovata su nexusmods.com: {{modName}} (modId: {{modId}}), potrebbe essere stata rimossa.",
+  "You can also add mods to a collection from the mods screen: Right-click > Add to Collection": "Puoi anche aggiungere mod a una collezione dalla schermata delle mod: clic destro > Aggiungi alla collezione",
+  "You now have the whole collection installed, you can start editing your collection by cloning it.": "Ora hai l'intera collezione installata: puoi modificarla clonandola.",
+  "The sources \"Browse a website\" and \"Direct download\" require that you provide a URL to download from.": "Le origini «Sfoglia un sito» e «Download diretto» richiedono un URL da cui scaricare."
 }

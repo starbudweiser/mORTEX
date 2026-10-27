@@ -72,5 +72,6 @@
   "Your userlist refers to groups that don't exist: {{missing}}[br][/br]": "La lista utente fa riferimento a gruppi inesistenti: {{missing}}[br][/br]",
   "In addition you can have up to 256 medium plugins, and 4096 light plugins.": "Inoltre, puoi avere fino a 256 plugin medi e 4096 leggeri.",
   "Your userlist contains multiple identical \"{{plugin}} after {{reference}}\"": "La lista utente contiene più regole identiche «{{plugin}} dopo {{reference}}»",
-  "This plugin can't be an esl since it contains form-ids outside the valid range": "Questo plugin non può essere ESL perché contiene form-id fuori dall'intervallo valido"
+  "This plugin can't be an esl since it contains form-ids outside the valid range": "Questo plugin non può essere ESL perché contiene form-id fuori dall'intervallo valido",
+  "Reset customized groups between \"{{first}}@{{firstGroup}}\" and \"{{second}}@{{secondGroup}}\"": "Ripristina i gruppi personalizzati tra «{{first}}@{{firstGroup}}» e «{{second}}@{{secondGroup}}»"
 }

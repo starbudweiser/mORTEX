@@ -160,5 +160,9 @@
   "Your collection must be installed first and then cloned to make edits.": "La collezione va prima installata e poi clonata per modificarla.",
   "I have tried the above steps and confirm this collection does not work.": "Ho provato i passaggi sopra e confermo che questa collezione non funziona.",
   "The below settings can optionally be changed to customize this collection": "Puoi modificare le impostazioni seguenti per personalizzare questa collezione",
-  "This screen lets you include tools you manually configured to be run from Vortex.": "Questa schermata ti permette di includere strumenti configurati manualmente da avviare da Vortex."
+  "This screen lets you include tools you manually configured to be run from Vortex.": "Questa schermata ti permette di includere strumenti configurati manualmente da avviare da Vortex.",
+  "Select (click, shift-click, ...) installed mods you want to add to your collection below:": "Seleziona (clic, Maiusc+clic…) le mod installate da aggiungere alla collezione:",
+  "You can also add mods to a collection from the mods screen: Right-click > Add to Collection": "Puoi anche aggiungere mod a una collezione dalla schermata delle mod: clic destro > Aggiungi alla collezione",
+  "The sources \"Browse a website\" and \"Direct download\" require that you provide a URL to download from.": "Le origini «Sfoglia un sito» e «Download diretto» richiedono un URL da cui scaricare.",
+  "By default the collection will replicate all your custom rules that dictate the deployment order of mods.": "Per impostazione predefinita, la collezione replicherà tutte le tue regole personalizzate sull'ordine di distribuzione."
 }
