@@ -793,6 +793,7 @@ async function init(): Promise<ExtensionManager | null> {
         log("warn", "Attempt to set invalid language", newLanguage);
         return;
       }
+      log("info", "interface language changed", { from: currentLanguage, to: newLanguage });
       currentLanguage = newLanguage;
 
       changeLanguage(newLanguage, (err: Error) => {
