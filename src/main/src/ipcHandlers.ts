@@ -49,6 +49,7 @@ import { relaunch } from "./cli";
 import { getVortexPath } from "./getVortexPath";
 import { hashFile } from "./hash/host";
 import { betterIpcMain } from "./ipc";
+import { popupMenu } from "./macos/popupMenu";
 import { CrashLog } from "./mortex/crashes/CrashLog";
 import { openUrl, openFile, showItemInFolder } from "./open";
 import { extraWebViews } from "./webview";
@@ -627,6 +628,12 @@ export function init(fs: FileSystem) {
 
     const menu = Menu.buildFromTemplate(processTemplate(template as SerializableMenuItem[]));
     Menu.setApplicationMenu(menu);
+  });
+
+  betterIpcMain.handle("menu:popup", async (event, items, x, y) => {
+    const window = BrowserWindow.fromWebContents(event.sender);
+    if (window === null) return undefined;
+    return popupMenu(window, items as SerializableMenuItem[], x, y);
   });
 
   // ============================================================================

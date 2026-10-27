@@ -229,5 +229,6 @@
   "The Documents folder of this bottle is a link to your Mac's Documents folder ({{target}}), as CrossOver sets it up. Every bottle therefore uses the same My Games folder: an INI change made for this game, by mORTEX or a mod, also applies to your other bottles, and they share the same saves.\n\nFix gives this bottle its own Documents folder and copies this game's My Games folder into it. Nothing is removed from your Mac's Documents, and you can undo it.": "La carpeta Documentos de esta botella es un enlace a la carpeta Documentos de tu Mac ({{target}}), tal como la configura CrossOver. Por eso todas las botellas usan la misma carpeta My Games: un cambio de INI hecho para este juego, por mORTEX o por un mod, también se aplica a tus otras botellas, y comparten las mismas partidas guardadas.\n\nCorregir da a esta botella su propia carpeta Documentos y copia en ella la carpeta My Games de este juego. No se quita nada de los Documentos de tu Mac y puedes deshacerlo.",
   "Failed to give the bottle its own Documents folder": "No se pudo dar a la botella su propia carpeta Documentos",
   "This bottle now has its own Documents folder": "Esta botella ya tiene su propia carpeta Documentos",
-  "Undo": "Deshacer"
+  "Undo": "Deshacer",
+  "More actions": "Más acciones"
 }

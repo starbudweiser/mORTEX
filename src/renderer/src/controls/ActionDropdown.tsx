@@ -13,6 +13,7 @@ import ActionControl from "./ActionControl";
 import { HOVER_DELAY } from "./constants";
 import ContextMenu from "./ContextMenu";
 import Icon from "./Icon";
+import { canPullDown, MacPullDownButton } from "./macos/MacPullDownButton";
 import PortalMenu from "./PortalMenu";
 
 export type ButtonType = "text" | "icon" | "both" | "menu";
@@ -170,6 +171,18 @@ class DropdownMenu extends React.PureComponent<IProps, { open: boolean }> {
     }
     const rest = actions.slice(0);
     rest.splice(defaultIdx, 1);
+
+    if (process.platform === "darwin" && canPullDown(rest)) {
+      const { instanceId } = this.props;
+      return (
+        <MacPullDownButton
+          instanceIds={typeof instanceId === "string" ? [instanceId] : instanceId}
+          primary={actions[defaultIdx]}
+          rest={rest}
+          t={t}
+        />
+      );
+    }
 
     const title: any = (
       <div title={genTooltip(actions[defaultIdx].show)} style={{ width: "100%", height: "100%" }}>

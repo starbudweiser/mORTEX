@@ -336,6 +336,9 @@ export interface Menu {
 
   /** Set the application menu (template should have click handlers removed and replaced with IDs) */
   setApplicationMenu(template: SerializableMenuItem[]): Promise<void>;
+
+  /** Shows a native menu at (x, y) in the window; resolves with the chosen item's id, if any */
+  popup(items: SerializableMenuItem[], x: number, y: number): Promise<string | undefined>;
 }
 
 export interface ContentTracing {

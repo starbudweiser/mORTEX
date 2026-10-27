@@ -210,6 +210,7 @@ try {
       },
       setApplicationMenu: (template) =>
         betterIpcRenderer.invoke("menu:setApplicationMenu", template),
+      popup: (items, x, y) => betterIpcRenderer.invoke("menu:popup", items, x, y),
     },
     contentTracing: {
       startRecording: (options) =>

@@ -1332,3 +1332,79 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     /* les cellules du tableau classique retirent toute ombre en !important */
     box-shadow: inset 3px 0 0 #fbbf24 !important;
 }
+
+/* mORTEX (macOS) : bouton à menu façon AppKit (controls/macos/MacPullDownButton) */
+.mac-pulldown {
+    display: inline-flex;
+    height: 22px;
+    border-radius: 6px;
+    background: rgb(255 255 255 / 16%);
+    box-shadow:
+        0 0 0 0.5px rgb(0 0 0 / 45%),
+        0 1px 1.5px rgb(0 0 0 / 25%),
+        inset 0 0.5px 0 rgb(255 255 255 / 16%);
+    font:
+        400 13px/22px -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    user-select: none;
+}
+.mac-pulldown > button {
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    color: rgb(255 255 255 / 88%);
+    font: inherit;
+    cursor: default;
+}
+.mac-pulldown-main {
+    gap: 5px;
+    padding: 0 9px 0 7px;
+    border-radius: 6px 0 0 6px;
+}
+.mac-pulldown-main:only-child {
+    border-radius: 6px;
+}
+.mac-pulldown-main .icon {
+    width: 13px;
+    height: 13px;
+}
+.mac-pulldown-menu {
+    position: relative;
+    padding: 0 6px;
+    border-radius: 0 6px 6px 0;
+}
+.mac-pulldown-menu::before {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 0;
+    width: 1px;
+    background: rgb(0 0 0 / 35%);
+    content: "";
+}
+.mac-pulldown > button:active:not(:disabled),
+.mac-pulldown-open .mac-pulldown-menu {
+    background: rgb(255 255 255 / 14%);
+}
+.mac-pulldown > button:disabled {
+    color: rgb(255 255 255 / 30%);
+}
+.mac-pulldown > button:focus-visible {
+    outline: 3px solid rgb(10 132 255 / 60%);
+    outline-offset: -1px;
+}
+.mac-pulldown-chevron {
+    width: 9px;
+    height: 6px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.5;
+}
