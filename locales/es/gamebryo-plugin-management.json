@@ -69,5 +69,8 @@
   "Enable automatic load order sorting powered by LOOT": "Activar la ordenación automática del orden de carga con LOOT",
   "Disable automatic load order sorting powered by LOOT": "Desactivar la ordenación automática del orden de carga con LOOT",
   "Please activate \"{{ gameId }}\" to enable plugins manually": "Activa «{{ gameId }}» para activar plugins manualmente",
-  "Your userlist refers to groups that don't exist: {{missing}}[br][/br]": "Tu lista de usuario hace referencia a grupos inexistentes: {{missing}}[br][/br]"
+  "Your userlist refers to groups that don't exist: {{missing}}[br][/br]": "Tu lista de usuario hace referencia a grupos inexistentes: {{missing}}[br][/br]",
+  "In addition you can have up to 256 medium plugins, and 4096 light plugins.": "Además, puedes tener hasta 256 plugins medianos y 4096 ligeros.",
+  "Your userlist contains multiple identical \"{{plugin}} after {{reference}}\"": "Tu lista de usuario contiene varias reglas idénticas «{{plugin}} después de {{reference}}»",
+  "This plugin can't be an esl since it contains form-ids outside the valid range": "Este plugin no puede ser ESL porque contiene form-ids fuera del rango válido"
 }

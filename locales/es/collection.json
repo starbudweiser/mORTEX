@@ -159,5 +159,6 @@
   "Enter instructions here (Markdown supported - Links, Bold, Italics)": "Escribe aquí las instrucciones (Markdown: enlaces, negrita, cursiva)",
   "Your collection must be installed first and then cloned to make edits.": "Primero instala tu colección y luego clónala para editarla.",
   "I have tried the above steps and confirm this collection does not work.": "He probado los pasos anteriores y confirmo que esta colección no funciona.",
-  "The below settings can optionally be changed to customize this collection": "Puedes cambiar los siguientes ajustes para personalizar esta colección"
+  "The below settings can optionally be changed to customize this collection": "Puedes cambiar los siguientes ajustes para personalizar esta colección",
+  "This screen lets you include tools you manually configured to be run from Vortex.": "Esta pantalla te permite incluir herramientas configuradas manualmente para ejecutarlas desde Vortex."
 }

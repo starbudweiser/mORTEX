@@ -9,5 +9,6 @@
       "update": "Aggiorna selezionate"
     }
   },
-  "Extensions": "Estensioni"
+  "Extensions": "Estensioni",
+  "Failed to install the extension \"{{extensionName}}\", please check the notifications.": "Impossibile installare l'estensione «{{extensionName}}», controlla le notifiche."
 }
