@@ -68,7 +68,7 @@ export const Header: FC<React.PropsWithChildren<unknown>> = () => {
           />
         </Tooltip>
 
-        <div className="mortex-brand">
+        <div className="mortex-brand" data-tour="brand">
           <span aria-hidden="true" className="mortex-logo" />
           <span className="mortex-brand-text">
             <span aria-label="mORTEX" className="mortex-wordmark font-bold tracking-wide">
@@ -85,6 +85,7 @@ export const Header: FC<React.PropsWithChildren<unknown>> = () => {
         <Typography
           brand="none"
           className="flex max-w-72 items-center gap-x-2 overflow-hidden font-medium whitespace-nowrap"
+          data-tour="game"
         >
           {selection.type === "game" ? (
             <GameSwitcher title={title} />

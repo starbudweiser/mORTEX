@@ -138,6 +138,7 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
   const renderPage = (page: IMainPage, extra = {}) => (
     <MenuButton
       accent={MAC_PAGE_IDS.has(page.id)}
+      data-tour={page.id}
       icon={page.menuIcon ?? getIcon(page.icon)}
       Badge={page.menuBadge}
       count={page.id === "Mods" ? counts.installed : undefined}
@@ -173,6 +174,7 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
         render: (extra) => (
           <MenuButton
             count={counts.archives}
+            data-tour={DOWNLOADS_ID}
             icon={getIcon("download")}
             isActive={selection.type === "downloads"}
             key={DOWNLOADS_ID}

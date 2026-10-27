@@ -326,6 +326,19 @@ export function initApplicationMenu(extensions: ExtensionManager) {
       { label: "File", submenu: fileMenu },
       { label: "View", submenu: viewMenu },
       { label: "Performance", submenu: performanceMenu },
+      // mORTEX : la visite guidée (extension mortex_tour)
+      {
+        label: extensions.getApi().translate("Help", { ns: "common" }),
+        role: "help",
+        submenu: [
+          {
+            label: extensions.getApi().translate("mORTEX guided tour", { ns: "common" }),
+            click() {
+              extensions.getApi().events.emit("mortex-start-tour");
+            },
+          },
+        ],
+      },
     ]);
 
     // Send the processed template (without click handlers) to main process

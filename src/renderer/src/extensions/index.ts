@@ -38,6 +38,7 @@ import {} from "./mortex_assistant";
 import {} from "./mortex_brand";
 import {} from "./mortex_crashes";
 import {} from "./mortex_dashlet";
+import {} from "./mortex_tour";
 import {} from "./move_activator";
 import {} from "./news_dashlet";
 import {} from "./nexus_integration";

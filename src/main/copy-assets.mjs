@@ -81,7 +81,7 @@ await copy(join(WORKSPACE, "src/renderer/src/splash.html"), join(BUILD, "splash.
 await copy(join(WORKSPACE, "src/queries"), join(BUILD, "queries"));
 
 // Static assets
-for (const dir of ["fonts", "icons", "images", "pictograms"]) {
+for (const dir of ["fonts", "icons", "images", "pictograms", "tour"]) {
   await copy(join(WORKSPACE, "assets", dir), join(ASSETS, dir));
 }
 

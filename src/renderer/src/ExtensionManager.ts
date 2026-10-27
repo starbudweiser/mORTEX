@@ -3040,6 +3040,7 @@ class ExtensionManager {
       bottle_health: () => require("./extensions/bottle_health/index.ts"),
       mac_activity: () => require("./extensions/mac_activity/index.ts"),
       mortex_brand: () => require("./extensions/mortex_brand/index.ts"),
+      mortex_tour: () => require("./extensions/mortex_tour/index.ts"),
       browser: () => require("./extensions/browser/index.ts"),
       category_management: () => require("./extensions/category_management/index.ts"),
       dashboard: () => require("./extensions/dashboard/index.ts"),

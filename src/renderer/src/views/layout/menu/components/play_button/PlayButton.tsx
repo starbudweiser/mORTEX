@@ -66,6 +66,7 @@ export const PlayButton: FC<React.PropsWithChildren<PlayButtonProps>> = ({
 
   return (
     <div
+      data-tour="launch"
       className={joinClasses([
         "mortex-play-wrap relative",
         !isCollapsed && hideLabel ? "w-12 shrink-0" : "w-full",
