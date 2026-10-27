@@ -26,5 +26,7 @@
   "Resolve conflicts before uploading": "Resuelve los conflictos antes de subir",
   "You have been blocked by the curator.": "El curador te ha bloqueado.",
   "Auto-download collections at max speed": "Descarga automática de colecciones a máxima velocidad",
-  "{{numOptionals}} optional mods available": "{{numOptionals}} mods opcionales disponibles"
+  "{{numOptionals}} optional mods available": "{{numOptionals}} mods opcionales disponibles",
+  "Clone the collection to the workshop for editing": "Clona la colección en el workshop para editarla",
+  "You have been logged out. Please log in and resume.": "Se cerró tu sesión. Inicia sesión y continúa."
 }

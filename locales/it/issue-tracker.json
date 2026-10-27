@@ -11,5 +11,6 @@
   "Open Issue Responder": "Apri risposta ai problemi",
   "{{ count }} comments": "{{ count }} commenti",
   ", planned for {{date}}": ", previsto per il {{date}}",
-  "Milestone: {{title}} ({{state}})": "Traguardo: {{title}} ({{state}})"
+  "Milestone: {{title}} ({{state}})": "Traguardo: {{title}} ({{state}})",
+  "Sent too many github API requests - try again later": "Troppe richieste all'API di GitHub: riprova più tardi"
 }

@@ -145,5 +145,10 @@
   "Auto-download collections at max speed": "Descarga automática de colecciones a máxima velocidad",
   "Did this collection work successfully?": "¿Funcionó bien esta colección?",
   "No Installer Options saved for this mod": "No hay opciones de instalación guardadas para este mod",
-  "Only bundle mods you have the right to do so": "Incluye solo mods que tengas derecho a distribuir"
+  "Only bundle mods you have the right to do so": "Incluye solo mods que tengas derecho a distribuir",
+  "Collection didn't work (in a significant way)": "La colección no funcionó (de forma notable)",
+  "Version choice has no effect on \"Bundled\" mod": "La versión elegida no afecta a un mod «incluido»",
+  "Already queued mod installations will still finish": "Las instalaciones ya en cola terminarán igualmente",
+  "View and manage collections created by other users.": "Consulta y gestiona colecciones creadas por otros usuarios.",
+  "Name must be between {{min}}-{{max}} characters long": "El nombre debe tener entre {{min}} y {{max}} caracteres"
 }

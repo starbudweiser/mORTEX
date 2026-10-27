@@ -21,5 +21,6 @@
   "Plugins not sorted because: {{msg}}": "Plugins sin ordenar porque: {{msg}}",
   "load {{ reference }} after {{ name }}": "cargar {{ reference }} después de {{ name }}",
   "Loaded by the engine, can't be configured": "Cargado por el motor, no se puede configurar",
-  "Drag to another plugin to set userlist rule": "Arrastra a otro plugin para definir una regla de usuario"
+  "Drag to another plugin to set userlist rule": "Arrastra a otro plugin para definir una regla de usuario",
+  "The mod \"{{ modName }}\" contains multiple plugins": "El mod «{{ modName }}» contiene varios plugins"
 }

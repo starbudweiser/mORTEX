@@ -64,5 +64,7 @@
   "Plugin rules have been reset to defaults": "Las reglas de plugins se restablecieron",
   "Loaded by the engine, can't be configured": "Cargado por el motor, no se puede configurar",
   "Some plugins are invalid and were skipped": "Algunos plugins no son válidos y se omitieron",
-  "Drag to another plugin to set userlist rule": "Arrastra a otro plugin para definir una regla de usuario"
+  "Drag to another plugin to set userlist rule": "Arrastra a otro plugin para definir una regla de usuario",
+  "The mod \"{{ modName }}\" contains multiple plugins": "El mod «{{ modName }}» contiene varios plugins",
+  "Enable automatic load order sorting powered by LOOT": "Activar la ordenación automática del orden de carga con LOOT"
 }
