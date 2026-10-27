@@ -220,7 +220,7 @@ export default function DxmtWorkshopPage({ api }: IProps) {
                   data-testid={`dxmt-check-${check.id}`}
                   key={check.id}
                 >
-                  <Typography appearance="moderate" typographyType="body-xs">
+                  <Typography className="!text-[#f59e0b]" typographyType="body-xs">
                     {t(CHECK_LABELS[check.id])}
                   </Typography>
                   <Typography
@@ -313,7 +313,7 @@ export default function DxmtWorkshopPage({ api }: IProps) {
                       name={pitfall.icon as SymbolName}
                       size="md"
                     />
-                    <Typography className="font-semibold" typographyType="body-lg">
+                    <Typography className="font-semibold !text-[#f59e0b]" typographyType="body-lg">
                       {t(pitfall.title)}
                     </Typography>
                     {detected && (
