@@ -14,5 +14,8 @@
   "Verified clean (LOOT)": "Verificado limpio (LOOT)",
   "Requires cleaning (LOOT)": "Necesita limpieza (LOOT)",
   "{{count}} deleted navmesh": "{{count}} navmesh eliminado",
-  "{{count}} deleted navmesh_plural": "{{count}} navmesh eliminado"
+  "{{count}} deleted navmesh_plural": "{{count}} navmesh eliminado",
+  "Failed to parse this plugin": "No se pudo analizar este plugin",
+  "{{count}} deleted reference": "{{count}} referencia eliminada",
+  "{{count}} deleted reference_plural": "{{count}} referencia eliminada"
 }

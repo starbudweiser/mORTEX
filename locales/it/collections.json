@@ -18,5 +18,6 @@
   "Downvote Success Rating": "Vota negativamente il successo",
   "Collection export failed": "Esportazione della collezione non riuscita",
   "Collection was successful": "La collezione ha funzionato",
-  "Unlock max download speeds": "Sblocca la velocità massima di download"
+  "Unlock max download speeds": "Sblocca la velocità massima di download",
+  "Failed to read collection info": "Lettura delle informazioni della collezione non riuscita"
 }

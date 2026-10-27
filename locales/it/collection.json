@@ -132,5 +132,9 @@
   "Collection worked (mostly)": "La collezione ha funzionato (quasi)",
   "Prefer exact ({{version}})": "Preferisci esatta ({{version}})",
   "Failed to remove collection": "Rimozione della collezione non riuscita",
-  "No additional instructions.": "Nessuna istruzione aggiuntiva."
+  "No additional instructions.": "Nessuna istruzione aggiuntiva.",
+  "Remove Collection (Workshop)": "Rimuovi collezione (Workshop)",
+  "Create & Add to Phase {{num}}": "Crea e aggiungi alla fase {{num}}",
+  "Failed to install dependencies": "Installazione delle dipendenze non riuscita",
+  "This mod has installer options": "Questa mod ha opzioni di installazione"
 }

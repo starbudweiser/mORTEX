@@ -52,5 +52,8 @@
   "Invalid plugins skipped": "Plugins no válidos omitidos",
   "LOOT sorting successful": "Ordenación con LOOT correcta",
   "Requires cleaning (LOOT)": "Necesita limpieza (LOOT)",
-  "{{tool}} found {{things}}.": "{{tool}} encontró {{things}}."
+  "{{tool}} found {{things}}.": "{{tool}} encontró {{things}}.",
+  "Failed to parse this plugin": "No se pudo analizar este plugin",
+  "Designed for a different game": "Diseñado para otro juego",
+  "nothing! This plugin is clean": "¡nada! Este plugin está limpio"
 }

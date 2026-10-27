@@ -2,5 +2,7 @@
   "Save": "Salva",
   "LO Rule": "Regola d'ordine",
   "Conflict": "Conflitto",
-  "Unresolved": "Irrisolto"
+  "Unresolved": "Irrisolto",
+  "{{ count }} conflicting file": "{{ count }} file in conflitto",
+  "{{ count }} conflicting file_plural": "{{ count }} file in conflitto"
 }
