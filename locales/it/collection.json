@@ -153,5 +153,11 @@
   "Name must be between {{min}}-{{max}} characters long": "Il nome deve avere tra {{min}} e {{max}} caratteri",
   "Here you can configure which mods to install and how.": "Qui puoi configurare quali mod installare e come.",
   "Set up your mod collection's rules and site preferences.": "Configura le regole della collezione e le preferenze del sito.",
-  "Rules you remove here are also removed from your actual setup.": "Le regole rimosse qui vengono rimosse anche dalla configurazione reale."
+  "Rules you remove here are also removed from your actual setup.": "Le regole rimosse qui vengono rimosse anche dalla configurazione reale.",
+  "You have to be logged in with Nexus Mods to install collections.": "Devi accedere a Nexus Mods per installare collezioni.",
+  "\"Same Installer Options\" should not be used with \"Latest\" version": "«Stesse opzioni di installazione» non va usato con la versione «Più recente»",
+  "Enter instructions here (Markdown supported - Links, Bold, Italics)": "Scrivi qui le istruzioni (Markdown: link, grassetto, corsivo)",
+  "Your collection must be installed first and then cloned to make edits.": "La collezione va prima installata e poi clonata per modificarla.",
+  "I have tried the above steps and confirm this collection does not work.": "Ho provato i passaggi sopra e confermo che questa collezione non funziona.",
+  "The below settings can optionally be changed to customize this collection": "Puoi modificare le impostazioni seguenti per personalizzare questa collezione"
 }

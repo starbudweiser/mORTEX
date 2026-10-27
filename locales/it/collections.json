@@ -28,5 +28,6 @@
   "Auto-download collections at max speed": "Download automatico delle collezioni alla massima velocità",
   "{{numOptionals}} optional mods available": "{{numOptionals}} mod facoltative disponibili",
   "Clone the collection to the workshop for editing": "Clona la collezione nel workshop per modificarla",
-  "You have been logged out. Please log in and resume.": "Sei stato disconnesso. Accedi e riprendi."
+  "You have been logged out. Please log in and resume.": "Sei stato disconnesso. Accedi e riprendi.",
+  "The option to \"bundle\" already bundles the edited files, storing ": "L'opzione «includi» include già i file modificati, salvando "
 }

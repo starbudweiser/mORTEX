@@ -68,5 +68,6 @@
   "The mod \"{{ modName }}\" contains multiple plugins": "La mod «{{ modName }}» contiene più plugin",
   "Enable automatic load order sorting powered by LOOT": "Attiva l'ordinamento automatico dell'ordine di caricamento con LOOT",
   "Disable automatic load order sorting powered by LOOT": "Disattiva l'ordinamento automatico dell'ordine di caricamento con LOOT",
-  "Please activate \"{{ gameId }}\" to enable plugins manually": "Attiva «{{ gameId }}» per attivare i plugin manualmente"
+  "Please activate \"{{ gameId }}\" to enable plugins manually": "Attiva «{{ gameId }}» per attivare i plugin manualmente",
+  "Your userlist refers to groups that don't exist: {{missing}}[br][/br]": "La lista utente fa riferimento a gruppi inesistenti: {{missing}}[br][/br]"
 }
