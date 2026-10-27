@@ -1,0 +1,1010 @@
+<title>Audit stress mORTEX</title>
+<meta name="claude:viewport-fit-sides" content="cover" />
+<style>
+    /* Mise en page : une colonne de lecture (~72 car.), tableaux de mesures, cartes de bugs à liseré de gravité. Jetons Socle (sombre par défaut). */
+    :root {
+        --bg: #1e1e1e;
+        --surface: #222222;
+        --surface-raised: #262626;
+        --border: #333333;
+        --border-strong: #444444;
+        --text-strong: #ffffff;
+        --text: #dddddd;
+        --text-muted: #aaaaaa;
+        --text-subtle: #8f8f8f;
+        --accent: #0ea5e9;
+        --accent-text: #38bdf8;
+        --action: #fbbf24;
+        --on-action: #1a1a1a;
+        --success: #4ade80;
+        --success-bg: #14391f;
+        --warning: #fbbf24;
+        --warning-bg: #3f2a0c;
+        --danger: #f87171;
+        --danger-bg: #4a1c1c;
+        --info-bg: #0c3a52;
+        --font-sans:
+            ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial,
+            sans-serif;
+        --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        color-scheme: dark;
+    }
+    @media (prefers-color-scheme: light) {
+        :root:not([data-theme="dark"]) {
+            --bg: #f2f2f2;
+            --surface: #ffffff;
+            --surface-raised: #fafafa;
+            --border: #d4d4d4;
+            --border-strong: #bdbdbd;
+            --text-strong: #111111;
+            --text: #222222;
+            --text-muted: #555555;
+            --text-subtle: #666666;
+            --accent: #0284c7;
+            --accent-text: #0369a1;
+            --action: #d97706;
+            --on-action: #1a1a1a;
+            --success: #15803d;
+            --success-bg: #dcfce7;
+            --warning: #b45309;
+            --warning-bg: #fef3c7;
+            --danger: #b91c1c;
+            --danger-bg: #fee2e2;
+            --info-bg: #e0f2fe;
+            color-scheme: light;
+        }
+    }
+    :root[data-theme="light"] {
+        --bg: #f2f2f2;
+        --surface: #ffffff;
+        --surface-raised: #fafafa;
+        --border: #d4d4d4;
+        --border-strong: #bdbdbd;
+        --text-strong: #111111;
+        --text: #222222;
+        --text-muted: #555555;
+        --text-subtle: #666666;
+        --accent: #0284c7;
+        --accent-text: #0369a1;
+        --action: #d97706;
+        --on-action: #1a1a1a;
+        --success: #15803d;
+        --success-bg: #dcfce7;
+        --warning: #b45309;
+        --warning-bg: #fef3c7;
+        --danger: #b91c1c;
+        --danger-bg: #fee2e2;
+        --info-bg: #e0f2fe;
+        color-scheme: light;
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-sans);
+        font-size: 15px;
+        line-height: 1.6;
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        padding-block: 40px 72px;
+    }
+    main {
+        max-width: 860px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 44px;
+    }
+    section {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        min-width: 0;
+    }
+    h1,
+    h2,
+    h3 {
+        color: var(--text-strong);
+        text-wrap: balance;
+        margin: 0;
+        line-height: 1.25;
+    }
+    h1 {
+        font-size: 32px;
+        font-weight: 750;
+        letter-spacing: -0.01em;
+    }
+    h1 b {
+        color: var(--action);
+        font-weight: 750;
+    }
+    h2 {
+        font-size: 21px;
+        font-weight: 700;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+    }
+    h3 {
+        font-size: 16px;
+        font-weight: 650;
+    }
+    p {
+        margin: 0;
+        max-width: 72ch;
+    }
+    .eyebrow {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--text-subtle);
+        font-weight: 600;
+    }
+    .lede {
+        color: var(--text-muted);
+        font-size: 16px;
+    }
+    code,
+    .mono {
+        font-family: var(--font-mono);
+        font-size: 0.86em;
+    }
+    code {
+        background: var(--surface-raised);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 1px 5px;
+        overflow-wrap: anywhere;
+    }
+    a {
+        color: var(--accent-text);
+    }
+
+    .verdict {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 12px;
+    }
+    .stat {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .stat .n {
+        font-size: 26px;
+        font-weight: 750;
+        color: var(--text-strong);
+        font-variant-numeric: tabular-nums;
+    }
+    .stat .l {
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+    .stat.bad .n {
+        color: var(--danger);
+    }
+    .stat.warn .n {
+        color: var(--warning);
+    }
+    .stat.good .n {
+        color: var(--success);
+    }
+
+    .tablewrap {
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        min-width: 560px;
+    }
+    th,
+    td {
+        text-align: left;
+        padding: 9px 12px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+    }
+    th {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-subtle);
+        background: var(--surface);
+        font-weight: 600;
+    }
+    tr:last-child td {
+        border-bottom: 0;
+    }
+    td.num {
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+        color: var(--text-strong);
+    }
+    td.ok {
+        color: var(--success);
+        white-space: nowrap;
+    }
+    td.ko {
+        color: var(--danger);
+        white-space: nowrap;
+    }
+    td.mid {
+        color: var(--warning);
+        white-space: nowrap;
+    }
+
+    .bugs {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .bug {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--sev, var(--border-strong));
+        border-radius: 8px;
+        padding: 14px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+    }
+    .bug.s1 {
+        --sev: var(--danger);
+    }
+    .bug.s2 {
+        --sev: var(--warning);
+    }
+    .bug.s3 {
+        --sev: var(--accent);
+    }
+    .bug.s4 {
+        --sev: var(--border-strong);
+    }
+    .bug header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 8px 12px;
+    }
+    .pill {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 2px 8px;
+        border-radius: 999px;
+        white-space: nowrap;
+    }
+    .s1 .pill {
+        background: var(--danger-bg);
+        color: var(--danger);
+    }
+    .s2 .pill {
+        background: var(--warning-bg);
+        color: var(--warning);
+    }
+    .s3 .pill {
+        background: var(--info-bg);
+        color: var(--accent-text);
+    }
+    .s4 .pill {
+        background: var(--surface-raised);
+        color: var(--text-muted);
+    }
+    .bug dl {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 4px 14px;
+        margin: 0;
+        font-size: 14px;
+    }
+    .bug dt {
+        color: var(--text-subtle);
+    }
+    .bug dd {
+        margin: 0;
+        min-width: 0;
+    }
+    .tag {
+        font-size: 12px;
+        color: var(--text-subtle);
+    }
+
+    ul.plain {
+        margin: 0;
+        padding-left: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        max-width: 76ch;
+    }
+    .ideas {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 12px;
+    }
+    .idea {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 0;
+    }
+    .idea h3 {
+        font-size: 15px;
+    }
+    .idea p {
+        font-size: 14px;
+        color: var(--text-muted);
+    }
+    .idea .why {
+        font-size: 12px;
+        color: var(--accent-text);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    .note {
+        background: var(--surface-raised);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 14px;
+    }
+    ol.plan {
+        margin: 0;
+        padding-left: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-width: 78ch;
+    }
+    ol.plan li::marker {
+        color: var(--action);
+        font-weight: 700;
+    }
+    footer {
+        color: var(--text-subtle);
+        font-size: 13px;
+        border-top: 1px solid var(--border);
+        padding-top: 14px;
+    }
+</style>
+
+<main>
+    <header style="display: flex; flex-direction: column; gap: 10px">
+        <span class="eyebrow">mORTEX 1.0.0 · Apple Silicon · nuit du 25 au 26 octobre 2026</span>
+        <h1>Stress test de <b>m</b>ORTEX</h1>
+        <p class="lede">
+            Six heures de tests en autonomie sur la bouteille CrossOver mORTEX-Test (Skyrim AE
+            1.6.1170) et ton vrai dossier de téléchargements (20 506 archives) : suite de tests,
+            démarrages, 300 mods factices, coupures brutales, deux méthodes de déploiement, une
+            vraie collection Nexus et un vrai lancement SKSE.
+        </p>
+    </header>
+
+    <section aria-labelledby="verdict">
+        <h2 id="verdict">Verdict</h2>
+        <p>
+            Le socle tient : déploiement, purge, reprise après coupure et performances sont bons.
+            Mais un bug bloque l'usage réel. Les plugins activés dans mORTEX n'arrivent jamais au
+            jeu, car <code>plugins.txt</code> est écrit au mauvais endroit. Deux autres bugs
+            critiques demandent à passer avant toute diffusion.
+        </p>
+        <div class="verdict">
+            <div class="stat bad">
+                <span class="n">3</span><span class="l">bugs bloquants ou critiques</span>
+            </div>
+            <div class="stat warn"><span class="n">4</span><span class="l">bugs majeurs</span></div>
+            <div class="stat">
+                <span class="n">9</span><span class="l">défauts mineurs et finitions</span>
+            </div>
+            <div class="stat good">
+                <span class="n">3,0 s</span
+                ><span class="l">démarrage jusqu'à l'interface prête</span>
+            </div>
+        </div>
+    </section>
+
+    <section aria-labelledby="protocole">
+        <h2 id="protocole">Ce qui a été testé</h2>
+        <div class="tablewrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Essai</th>
+                        <th>Mesure</th>
+                        <th>Résultat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Suite de tests complète (nx, 24 projets)</td>
+                        <td class="num">428 / 429 fichiers</td>
+                        <td class="mid">18 tests en échec</td>
+                    </tr>
+                    <tr>
+                        <td>5 démarrages à froid</td>
+                        <td class="num">fenêtre 1,6 s · prête 3,0 s</td>
+                        <td class="ok">stable</td>
+                    </tr>
+                    <tr>
+                        <td>Mémoire au repos (tous processus)</td>
+                        <td class="num">1 386 Mo</td>
+                        <td class="mid">processus principal 481 Mo</td>
+                    </tr>
+                    <tr>
+                        <td>Changement de page (13 pages)</td>
+                        <td class="num">62 à 168 ms</td>
+                        <td class="ok">fluide</td>
+                    </tr>
+                    <tr>
+                        <td>Page Téléchargements (20 506 lignes)</td>
+                        <td class="num">ouverture 1,8 s · 160 ms/image au défilement</td>
+                        <td class="mid">saccadé</td>
+                    </tr>
+                    <tr>
+                        <td>299 installations lancées ensemble</td>
+                        <td class="num">5 réussies sur 299</td>
+                        <td class="ko">bug B2</td>
+                    </tr>
+                    <tr>
+                        <td>294 installations l'une après l'autre (.zip et .7z)</td>
+                        <td class="num">74 s · 251 ms/mod · 0 erreur</td>
+                        <td class="ok">aucune dérive</td>
+                    </tr>
+                    <tr>
+                        <td>Activation des 300 mods une par une</td>
+                        <td class="num">5,1 s</td>
+                        <td class="mid">à grouper</td>
+                    </tr>
+                    <tr>
+                        <td>Déploiement par liens physiques (4 359 fichiers)</td>
+                        <td class="num">1,2 à 1,5 s</td>
+                        <td class="ok">correct</td>
+                    </tr>
+                    <tr>
+                        <td>Déploiement par clones APFS (4 359 fichiers)</td>
+                        <td class="num">1,7 s</td>
+                        <td class="mid">3 faux positifs, bug B5</td>
+                    </tr>
+                    <tr>
+                        <td>Purge</td>
+                        <td class="num">1,8 à 3,5 s</td>
+                        <td class="ok">dossier Data rendu à l'identique</td>
+                    </tr>
+                    <tr>
+                        <td>Arrêt brutal (kill -9) en plein déploiement</td>
+                        <td class="num">545 fichiers posés sur 4 359</td>
+                        <td class="ok">reprise propre</td>
+                    </tr>
+                    <tr>
+                        <td>Modification et suppression d'un fichier dans Data</td>
+                        <td class="num">2 changements</td>
+                        <td class="ok">détectés</td>
+                    </tr>
+                    <tr>
+                        <td>Accents, espaces, casse dans les chemins</td>
+                        <td class="num">Éàç dossier / éàç dossier</td>
+                        <td class="ok">fusionnés sans perte</td>
+                    </tr>
+                    <tr>
+                        <td>Conflit de fichiers entre 50 mods</td>
+                        <td class="num">1 fichier commun</td>
+                        <td class="ok">signalé</td>
+                    </tr>
+                    <tr>
+                        <td>Collection « Engine Bugfixes &amp; Tweaks » (9 mods)</td>
+                        <td class="num">≈ 3 min · 3 interventions</td>
+                        <td class="mid">installée, 6 défauts</td>
+                    </tr>
+                    <tr>
+                        <td>Lancement réel via CrossOver + SKSE 2.2.8</td>
+                        <td class="num">6 DLL vues par SKSE</td>
+                        <td class="ok">la chaîne fonctionne</td>
+                    </tr>
+                    <tr>
+                        <td>Tri LOOT</td>
+                        <td class="num">52 ms</td>
+                        <td class="ko">résultat jamais écrit pour le jeu (B1)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section aria-labelledby="bugs">
+        <h2 id="bugs">Bugs à corriger, par ordre de gravité</h2>
+        <div class="bugs">
+            <article class="bug s1">
+                <header>
+                    <span class="pill">Bloquant</span>
+                    <h3>B1 · Les plugins activés n'arrivent jamais au jeu</h3>
+                </header>
+                <p>
+                    mORTEX écrit <code>plugins.txt</code> et <code>loadorder.txt</code> dans
+                    <code>~/Library/Local/Skyrim Special Edition/</code>. Le jeu lit ceux de la
+                    bouteille,
+                    <code>drive_c/users/crossover/AppData/Local/Skyrim Special Edition/</code>.
+                    Celui de la bouteille ne contient que son en-tête, inchangé depuis le 25/10,
+                    alors que mORTEX affiche 90 plugins activés. Tout ESP ajouté par un mod reste
+                    donc désactivé en jeu, et l'ordre LOOT ne sert à rien.
+                </p>
+                <dl>
+                    <dt>Cause</dt>
+                    <dd>
+                        <code>gameSupport.ts:376</code> <code>appDataPath()</code> : sans
+                        <code>LOCALAPPDATA</code> (absent sur Mac), repli sur
+                        <code>appData/../Local</code>.
+                    </dd>
+                    <dt>Correctif</dt>
+                    <dd>
+                        Utiliser <code>getVortexPath("localAppData")</code>, qui connaît déjà la
+                        bouteille (<code>getVortexPath.ts:157</code>), et ajouter un test. Le même
+                        motif existe dans
+                        <code>extensions/open-directory/src/gameSupport.ts:16</code>,
+                        <code>nexus_integration/util/chromePath.ts:18</code> et
+                        <code>game-codevein</code>.
+                    </dd>
+                </dl>
+            </article>
+
+            <article class="bug s1">
+                <header>
+                    <span class="pill">Critique</span>
+                    <h3>B2 · Plusieurs installations simultanées s'annulent entre elles</h3>
+                </header>
+                <p>
+                    299 archives lancées ensemble : 5 installées, 588 erreurs « Installation
+                    tracking lost », et chaque rappel est appelé deux fois. Le cas réel : déposer
+                    plusieurs fichiers d'un coup, ou installer plusieurs fichiers depuis le disque.
+                    Le défaut vient de Vortex d'origine.
+                </p>
+                <dl>
+                    <dt>Cause</dt>
+                    <dd>
+                        <code>InstallManager.ts:1205</code> : la clé de suivi vaut
+                        <code>"undefined:undefined"</code> pour toute installation sans
+                        téléchargement. La première installation terminée efface l'entrée partagée.
+                    </dd>
+                    <dt>Correctif</dt>
+                    <dd>
+                        Construire la clé avec <code>dummyArchiveId</code>, déjà unique à la ligne
+                        1206, et protéger le rappel contre un second appel.
+                    </dd>
+                </dl>
+            </article>
+
+            <article class="bug s1">
+                <header>
+                    <span class="pill">Critique</span>
+                    <h3>B3 · Démarrage bloqué après un arrêt brutal</h3>
+                </header>
+                <p>
+                    Après un plantage ou un arrêt forcé, trois lancements de suite sont restés figés
+                    : processus vivant, aucune fenêtre, <code>app.whenReady()</code> jamais résolu.
+                    La cause est la restauration de fenêtres de macOS (Saved Application State) ;
+                    avec <code>ApplePersistenceIgnoreState</code>, le démarrage passe aussitôt.
+                    Constaté écran verrouillé ; écran déverrouillé, macOS affiche peut-être sa
+                    question « Rouvrir les fenêtres ? », ce qui reste à vérifier.
+                </p>
+                <dl>
+                    <dt>Correctif</dt>
+                    <dd>
+                        Enregistrer ce réglage par défaut au démarrage
+                        (<code>systemPreferences.registerDefaults</code>) ou dans l'Info.plist.
+                        Ajouter un délai de garde qui journalise et prévient si
+                        <code>ready</code> n'arrive pas en 15 s.
+                    </dd>
+                </dl>
+            </article>
+
+            <article class="bug s2">
+                <header>
+                    <span class="pill">Majeur</span>
+                    <h3>B4 · Archives RAR au format WinRAR 7 illisibles</h3>
+                </header>
+                <p>
+                    7-Zip 26.03 (embarqué) répond « Unsupported Method » sur la méthode « v6 ».
+                    L'installation échoue et le mod est retiré. C'est arrivé sur deux de tes
+                    archives : <code>.1130 _ResourcePack Fixes</code> et
+                    <code>_Fuse00_ArmorHelga_CBBE</code>. <code>unar</code> (The Unarchiver, LGPL)
+                    extrait les 37 fichiers sans erreur. Ce format se répand sur Nexus.
+                </p>
+                <dl>
+                    <dt>Correctif</dt>
+                    <dd>
+                        Embarquer <code>unar</code>/<code>lsar</code> et y basculer automatiquement
+                        quand 7-Zip renvoie « Unsupported Method ».
+                    </dd>
+                </dl>
+            </article>
+
+            <article class="bug s2">
+                <header>
+                    <span class="pill">Majeur</span>
+                    <h3>B5 · Clones APFS : faux « fichiers modifiés hors mORTEX »</h3>
+                </header>
+                <p>
+                    3 fichiers sur 4 359 sont signalés comme modifiés alors qu'ils sont intacts.
+                    <code>utimes</code> arrondit la date à la milliseconde (886,9996 s devient
+                    887,000 s), puis la comparaison « à la seconde » tronque (886 ≠ 887).
+                    L'utilisateur voit une fenêtre d'avertissement sans raison. Ce défaut est dans
+                    le code mORTEX.
+                </p>
+                <dl>
+                    <dt>Correctif</dt>
+                    <dd>
+                        <code>clone_activator/index.ts</code> <code>sameAsSource</code> : tolérer un
+                        écart de moins d'une seconde au lieu de tronquer, et ajouter un test sur une
+                        date en ,9996.
+                    </dd>
+                </dl>
+            </article>
+
+            <article class="bug s2">
+                <header>
+                    <span class="pill">Majeur · Mac</span>
+                    <h3>B6 · Toutes les bouteilles partagent INI et sauvegardes</h3>
+                </header>
+                <p>
+                    CrossOver relie <code>drive_c/users/crossover/Documents</code> au
+                    <code>~/Documents</code> du Mac. Le dossier
+                    <code>My Games/Skyrim Special Edition</code> (INI, sauvegardes, journaux SKSE)
+                    est donc commun à toutes tes bouteilles, Skyrim-MetalFX compris. Chaque
+                    déploiement réécrit <code>Skyrim.ini</code>, <code>SkyrimPrefs.ini</code> et
+                    <code>SkyrimCustom.ini</code>. Vérifié cette nuit : le contenu est identique
+                    octet pour octet aux copies <code>.base</code> du 24/10, rien n'a été abîmé.
+                    Mais un réglage INI fait par un mod dans une bouteille s'appliquerait aux
+                    autres.
+                </p>
+                <dl>
+                    <dt>Correctif</dt>
+                    <dd>
+                        Détecter le lien et prévenir, puis proposer l'isolation par bouteille (idée
+                        n° 1 plus bas).
+                    </dd>
+                </dl>
+            </article>
+
+            <article class="bug s2">
+                <header>
+                    <span class="pill">Majeur</span>
+                    <h3>B7 · Installation de collection : interventions inutiles</h3>
+                </header>
+                <ul class="plain">
+                    <li>
+                        Les choix FOMOD du curateur ne sont pas appliqués : la fenêtre FOMOD de «
+                        NPC AI Process Position Fix » attend une réponse.
+                    </li>
+                    <li>
+                        La fenêtre « Game version mismatch » s'affiche deux fois pour la même
+                        collection.
+                    </li>
+                    <li>
+                        Le navigateur intégré demande SKSE sur skse.silverlock.org alors que SKSE
+                        est déjà installé.
+                    </li>
+                    <li>
+                        La fenêtre FOMOD s'empile sur celle du téléchargement SKSE, et son image
+                        d'aperçu est cassée.
+                    </li>
+                    <li>
+                        Textes non traduits : « Collection instructions », « Instructions can be
+                        reviewed during installation », « No additional instructions ».
+                    </li>
+                </ul>
+            </article>
+
+            <article class="bug s3">
+                <header>
+                    <span class="pill">Mineur</span>
+                    <h3>B8 · Demande de consentement aux statistiques toujours affichée</h3>
+                </header>
+                <p>
+                    La télémétrie est bien coupée sur Mac (<code>telemetry/state.ts</code>), aucun
+                    envoi vers Nexus. Pourtant la notification « Aidez-nous à améliorer votre
+                    expérience de modding » revient à chaque session. Elle est à retirer sur Mac.
+                </p>
+            </article>
+
+            <article class="bug s3">
+                <header>
+                    <span class="pill">Mineur</span>
+                    <h3>B9 · Dette de tests : 18 échecs</h3>
+                </header>
+                <p>
+                    <code>updater.test.ts</code> (4) et <code>MixpanelAnalytics.test.ts</code> (14)
+                    attendent la mise à jour automatique et les statistiques, que mORTEX a
+                    désactivées. Il faut adapter les tests à ces choix, sinon
+                    <code>verify</code> reste rouge et masque les vraies régressions.
+                </p>
+            </article>
+
+            <article class="bug s3">
+                <header>
+                    <span class="pill">Mineur</span>
+                    <h3>B10 · Journal noyé et démarrage alourdi</h3>
+                </header>
+                <p>
+                    Sur 5 journaux : 6 325 erreurs et 1 875 avertissements, presque tous inutiles.
+                    Environ 80 extensions de jeux cherchent leur jeu à chaque démarrage (« Game
+                    entry not found » ×77 chacune, « only discovered on windows »). S'y ajoutent
+                    <code>[modtype-gedosato] RegGetValue is not a function</code> ×75, le raccourci
+                    « P » en double (Profils) ×144 et « migration sequence failed: Invalid Version »
+                    ×2.
+                </p>
+                <dl>
+                    <dt>Correctif</dt>
+                    <dd>
+                        Sur Mac, ne charger que les extensions des jeux jouables en bouteille,
+                        garder <code>modtype-gedosato</code> derrière <code>win32</code> et libérer
+                        la touche P.
+                    </dd>
+                </dl>
+            </article>
+
+            <article class="bug s4">
+                <header>
+                    <span class="pill">À vérifier</span>
+                    <h3>B11 · Fenêtre « Modifications externes »</h3>
+                </header>
+                <p>
+                    « Annuler tout changement » a bien restauré le fichier supprimé. Pour le fichier
+                    modifié, la version externe a été gardée et copiée dans le dossier intermédiaire
+                    : mon clic piloté n'a peut-être pas été pris en compte, donc à refaire à la
+                    main. La fenêtre garde aussi un grand vide entre ses deux listes.
+                </p>
+            </article>
+        </div>
+    </section>
+
+    <section aria-labelledby="optim">
+        <h2 id="optim">Optimisations</h2>
+        <ul class="plain">
+            <li>
+                <b>Page Téléchargements :</b> 1,8 s à l'ouverture et 160 ms par image au défilement
+                sur 20 506 lignes, avec 46 555 éléments dans la page alors que la liste est
+                virtualisée. Il faut mémoriser les lignes, calculer tri et filtres hors du rendu et
+                alléger les cellules. C'est la page la plus lente de l'appli, et ta collection de
+                1,4 To la rend critique.
+            </li>
+            <li>
+                <b>Activations groupées :</b> activer 300 mods un par un prend 5,1 s, avec un
+                déploiement automatique relancé à chaque fois. Il faut une seule action groupée
+                (<code>batchDispatch</code>) et un déploiement unique à la fin.
+            </li>
+            <li>
+                <b>Mémoire :</b> 1,4 Go au repos, dont 481 Mo pour le processus principal (DuckDB et
+                état). Ouvrir l'état en lecture seule, plafonner le cache DuckDB et libérer les
+                extensions de jeux inutiles.
+            </li>
+            <li>
+                <b>Démarrage :</b> l'interface est prête en 3 s ; le splash animé en impose 4.
+                Supprimer la découverte des jeux inutiles (B10) ferait gagner en plus du temps CPU à
+                chaque lancement.
+            </li>
+            <li>
+                <b>Installation :</b> 251 ms par mod en série, sans dérive sur 294 mods. Une fois B2
+                corrigé, 2 à 4 installations en parallèle diviseraient le temps d'une grosse
+                collection.
+            </li>
+        </ul>
+    </section>
+
+    <section aria-labelledby="solide">
+        <h2 id="solide">Ce qui tient bien</h2>
+        <ul class="plain">
+            <li>
+                Reprise après un kill -9 en plein déploiement : redémarrage propre et redéploiement
+                complet, sans doublon ni fichier orphelin.
+            </li>
+            <li>
+                Purge exacte : le dossier Data revient à l'identique de l'état d'avant les tests,
+                fichier par fichier, et les <code>.DS_Store</code> du Finder sont nettoyés.
+            </li>
+            <li>
+                Liens physiques et clones APFS fonctionnent à 4 359 fichiers. Les chemins accentués
+                et la casse sont gérés correctement sur APFS.
+            </li>
+            <li>
+                Chaîne complète validée en vrai : collection Nexus, déploiement par clones,
+                lancement CrossOver, puis SKSE 2.2.8 qui charge son runtime et voit les 6 DLL.
+            </li>
+            <li>
+                Aucune donnée n'est envoyée à Nexus : télémétrie et rapports de plantage sont coupés
+                sur Mac.
+            </li>
+        </ul>
+    </section>
+
+    <section aria-labelledby="mac">
+        <h2 id="mac">Think Different : ce que seul mORTEX peut faire</h2>
+        <p>
+            Vortex sous Windows et les gestionnaires sous Linux ne peuvent pas proposer ces idées,
+            parce qu'elles reposent sur APFS, la barre des menus, Quick Look, Raccourcis et la
+            gestion des bouteilles.
+        </p>
+        <div class="ideas">
+            <div class="idea">
+                <span class="why">Isolation</span>
+                <h3>1 · Un « My Games » par bouteille</h3>
+                <p>
+                    mORTEX remplace le lien <code>Documents → ~/Documents</code> par un dossier
+                    propre à chaque bouteille, avec import de l'existant. INI et sauvegardes cessent
+                    de passer d'une bouteille à l'autre (corrige B6).
+                </p>
+            </div>
+            <div class="idea">
+                <span class="why">APFS</span>
+                <h3>2 · Machine à remonter le temps du modding</h3>
+                <p>
+                    Avant chaque déploiement, mORTEX prend un instantané par clones du dossier Data,
+                    des INI et de <code>plugins.txt</code> : coût quasi nul en place et en temps. «
+                    Revenir à hier soir » prend une seconde. Windows n'a pas de clonage de fichiers
+                    grand public.
+                </p>
+            </div>
+            <div class="idea">
+                <span class="why">Wine</span>
+                <h3>3 · Overrides DLL automatiques</h3>
+                <p>
+                    mORTEX repère les DLL de substitution déposées par les mods (<code
+                        >d3dx9_42</code
+                    >
+                    d'Engine Fixes, <code>dxgi</code>/<code>d3d11</code> d'ENB,
+                    <code>dinput8</code>, <code>version</code>). Il écrit l'override « native » dans
+                    le registre de la bouteille au déploiement et le retire à la purge. Aujourd'hui,
+                    c'est une manipulation manuelle que presque personne ne connaît.
+                </p>
+            </div>
+            <div class="idea">
+                <span class="why">Diagnostic</span>
+                <h3>4 · Lecture des journaux SKSE après lancement</h3>
+                <p>
+                    À la fermeture du jeu, mORTEX lit <code>skse64.log</code> et signale en
+                    notification macOS les plugins refusés et pourquoi. Cette nuit, les 6 DLL
+                    étaient refusées : « address library needs to be updated ». Le lien avec
+                    sKYCRASH est naturel.
+                </p>
+            </div>
+            <div class="idea">
+                <span class="why">Finder</span>
+                <h3>5 · Quick Look pour les fichiers de mods</h3>
+                <p>
+                    Une extension Quick Look : barre d'espace sur un <code>.dds</code> pour voir la
+                    texture, sur un <code>.esp</code>/<code>.esm</code> pour ses maîtres et ses
+                    enregistrements, sur une archive pour son arborescence FOMOD. Utile aussi en
+                    dehors de mORTEX.
+                </p>
+            </div>
+            <div class="idea">
+                <span class="why">Raccourcis</span>
+                <h3>6 · Actions Siri et Raccourcis</h3>
+                <p>
+                    « Lancer Skyrim avec SKSE », « Déployer », « Changer de profil », « Trier avec
+                    LOOT » exposés en App Intents : utilisables par Spotlight, Siri, l'app
+                    Raccourcis ou une touche du Stream Deck.
+                </p>
+            </div>
+            <div class="idea">
+                <span class="why">Barre des menus</span>
+                <h3>7 · Activité dans la barre des menus et le Dock</h3>
+                <p>
+                    L'icône de la barre des menus montre la progression des téléchargements, de
+                    l'installation et du déploiement ; le Dock affiche un badge. Un clic lance le
+                    jeu sans ouvrir la fenêtre principale.
+                </p>
+            </div>
+            <div class="idea">
+                <span class="why">Bouteille</span>
+                <h3>8 · Bilan de santé de la bouteille</h3>
+                <p>
+                    Version de CrossOver ou Whisky, moteur graphique de la bouteille, MSync,
+                    Rosetta, système de fichiers (APFS pour les clones, exFAT sans liens), place
+                    libre, overrides manquants. Le tout dans une carte claire, avec un bouton qui
+                    corrige.
+                </p>
+            </div>
+            <div class="idea">
+                <span class="why">APFS</span>
+                <h3>9 · Dédoublonnage par clones</h3>
+                <p>
+                    Les textures identiques entre versions d'un même mod ou entre packs deviennent
+                    des clones dans le dossier intermédiaire. Des dizaines de Go regagnés sur une
+                    grosse collection, sans risque, puisqu'une modification sépare les copies.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section aria-labelledby="plan">
+        <h2 id="plan">Ordre de correction proposé</h2>
+        <ol class="plan">
+            <li>
+                <b>B1</b> plugins.txt dans la bouteille : une ligne et un test, impact immédiat sur
+                le jeu.
+            </li>
+            <li>
+                <b>B2</b> clé de suivi des installations : une ligne, plus la garde du double
+                rappel.
+            </li>
+            <li><b>B5</b> tolérance des dates des clones : une ligne et un test.</li>
+            <li>
+                <b>B3</b> démarrage après plantage : réglage par défaut et délai de garde. Session
+                Opus conseillée pour reproduire écran déverrouillé.
+            </li>
+            <li>
+                <b>B4</b> repli <code>unar</code> pour les RAR 7 : script de compilation et module
+                d'extraction.
+            </li>
+            <li>
+                <b>B9 et B10</b> tests à jour et journal assaini : travail mécanique, Sonnet suffit.
+            </li>
+            <li>
+                <b>B7 et B8</b> finitions des collections et de la notification de consentement.
+            </li>
+            <li>
+                Optimisation de la page Téléchargements, puis les idées Mac, en commençant par 1, 2
+                et 3, qui corrigent aussi des risques réels.
+            </li>
+        </ol>
+    </section>
+
+    <section aria-labelledby="etat">
+        <h2 id="etat">Ce que j'ai laissé sur ta machine</h2>
+        <div class="note">
+            <ul class="plain">
+                <li>
+                    Bouteille mORTEX-Test remise dans son état d'avant : SKSE seul, méthode liens
+                    physiques, déployé. Les 300 mods factices et les 9 mods de la collection sont
+                    retirés.
+                </li>
+                <li>
+                    Sauvegarde complète de ton état mORTEX d'avant les tests :
+                    <code>~/Library/Application Support/Vortex.bak-stress-20261026</code>.
+                </li>
+                <li>
+                    Réglage <code>ApplePersistenceIgnoreState</code> activé pour mORTEX
+                    (contournement de B3). Pour l'annuler :
+                    <code>defaults delete fr.stephan.mortex ApplePersistenceIgnoreState</code>.
+                </li>
+                <li>
+                    5 nouvelles archives dans <code>/Volumes/LaCie 6To/VORTEX/skyrimse</code>,
+                    venues de la collection : Engine Bugfixes &amp; Tweaks, powerofthree's Tweaks,
+                    NPC AI Process Position Fix, Scrambled Bugs AE, SSE Display Tweaks.
+                </li>
+                <li>
+                    <code>skse64.log</code> et <code>skse64_loader.log</code> réécrits dans
+                    <code>~/Documents/My Games/Skyrim Special Edition/SKSE</code>. Aucun INI ni
+                    aucune sauvegarde n'a été modifié.
+                </li>
+                <li>
+                    <code>caffeinate</code> empêche la veille jusqu'à environ 10 h ce matin, puis
+                    s'arrête seul.
+                </li>
+                <li>
+                    Aucune ligne du code de mORTEX n'a été modifiée cette nuit ; les correctifs
+                    attendent ton accord.
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        Audit rédigé par Claude à partir des mesures de la nuit. Notes brutes et journaux : dossier
+        <span class="mono">logs/</span> du projet (<span class="mono">stress_tests.log</span>) et
+        journal <span class="mono">vortex.log</span> de l'appli.
+    </footer>
+</main>
