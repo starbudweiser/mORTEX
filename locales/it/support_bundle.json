@@ -1,0 +1,20 @@
+{
+  "dialog": {
+    "title": "Crea pacchetto di assistenza",
+    "intro": "Vortex sta raccogliendo i registri, lo stato attuale dell'app e i rapporti sugli arresti anomali recenti in un unico archivio. Non sono inclusi dati di accesso.",
+    "sendTo": "Invia l'archivio al team di Vortex, con una breve descrizione del problema, sui forum di Vortex o su Discord:",
+    "links": {
+      "forums": "Forum di assistenza di Vortex",
+      "discord": "Discord di Nexus Mods"
+    },
+    "building": "Creazione del pacchetto di assistenza…",
+    "archiveReady": "Il tuo pacchetto di assistenza è pronto.",
+    "failed": "Vortex non è riuscito a creare il pacchetto di assistenza.",
+    "buttons": {
+      "open": "Mostra nel Finder",
+      "cancel": "Annulla",
+      "close": "Chiudi",
+      "tryAgain": "Riprova"
+    }
+  }
+}

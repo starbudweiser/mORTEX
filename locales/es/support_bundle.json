@@ -1,0 +1,20 @@
+{
+  "dialog": {
+    "title": "Crear paquete de soporte",
+    "intro": "Vortex está reuniendo sus registros, el estado actual de la aplicación y los informes de fallos recientes en un único archivo. No incluye datos de inicio de sesión.",
+    "sendTo": "Envía el archivo al equipo de Vortex, con una breve descripción del problema, en los foros de Vortex o en Discord:",
+    "links": {
+      "forums": "Foro de soporte de Vortex",
+      "discord": "Discord de Nexus Mods"
+    },
+    "building": "Creando el paquete de soporte…",
+    "archiveReady": "Tu paquete de soporte está listo.",
+    "failed": "Vortex no pudo crear el paquete de soporte.",
+    "buttons": {
+      "open": "Mostrar en el Finder",
+      "cancel": "Cancelar",
+      "close": "Cerrar",
+      "tryAgain": "Reintentar"
+    }
+  }
+}

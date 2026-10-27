@@ -1,0 +1,29 @@
+{
+  "browse": {
+    "title": "Parcourir les collections ({{total}})",
+    "selectGame": "Choisissez un jeu pour parcourir les collections.",
+    "noCollections": {
+      "title": "Aucune collection trouvée pour ce jeu",
+      "message": "Parcourez les mods sur le site pour composer votre propre configuration."
+    },
+    "searchPlaceholder": "Rechercher des collections…",
+    "searchTooShort": "La recherche demande au moins 2 caractères. Tapez davantage de texte ou effacez la recherche.",
+    "resultsCount": "{{total}} résultats",
+    "sortBy": "Trier par",
+    "refresh": "Actualiser",
+    "tabs": {
+      "collections": "Collections",
+      "mods": "Mods"
+    },
+    "modsComingSoon": {
+      "title": "La recherche de mods arrive bientôt",
+      "description": "Vous pourrez bientôt parcourir les mods directement dans Vortex. En attendant, rendez-vous sur Nexus Mods pour découvrir et télécharger des mods.",
+      "openWebsite": "Ouvrir le site Nexus Mods"
+    }
+  },
+  "pagination": {
+    "goTo": "Aller à :",
+    "pageNumber": "Numéro de page",
+    "go": "OK"
+  }
+}

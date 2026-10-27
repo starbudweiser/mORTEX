@@ -1,0 +1,167 @@
+{
+  "actions": {
+    "install_all": "Installa tutto con 1 clic ({{count}})"
+  },
+  "divider": {
+    "and": "E",
+    "or": "O"
+  },
+  "shared": {
+    "mod_may_be_required_for": "La mod mancante potrebbe essere necessaria per: {{modName}}",
+    "requires_files": "Richiede l'installazione di {{ count }} file di mod aggiuntivo per funzionare correttamente:",
+    "requires_files_plural": "Richiede l'installazione di {{ count }} file di mod aggiuntivi per funzionare correttamente:",
+    "requires_pick": "Richiede di scegliere {{ count }} file di mod aggiuntivo per funzionare correttamente:",
+    "requires_pick_plural": "Richiede di scegliere {{ count }} file di mod aggiuntivi per funzionare correttamente:",
+    "wrong_version_installed": "Richiede l'installazione di un'altra versione di questo file di mod per funzionare correttamente:",
+    "wrong_version_installed_plural": "Richiede l'installazione di un'altra versione di {{ count }} file di mod esistenti per funzionare correttamente:",
+    "wrong_version_enabled": "Richiede l'attivazione di un'altra versione di questo file di mod installato per funzionare correttamente:",
+    "wrong_version_enabled_plural": "Richiede l'attivazione di un'altra versione di {{ count }} file di mod installati per funzionare correttamente:",
+    "correct_version_uninstalled": "Richiede l'installazione di questo file di mod già scaricato per funzionare correttamente:",
+    "correct_version_uninstalled_plural": "Richiede l'installazione di {{ count }} file di mod già scaricati per funzionare correttamente:"
+  },
+  "listing": {
+    "title": "Diagnostica",
+    "subtitle": "Controlla la tua configurazione per individuare problemi e scopri come risolverli se necessario.",
+    "last_updated": "Ultimo aggiornamento: {{time}}",
+    "section": {
+      "warning": {
+        "title": "Avvisi",
+        "description": "Problemi che possono impedire ad alcune parti della configurazione di funzionare."
+      },
+      "suggestion": {
+        "title": "Suggerimenti",
+        "description": "Modifiche che possono migliorare la configurazione o aggiungere extra facoltativi."
+      },
+      "collapse": "Comprimi sezione",
+      "expand": "Espandi sezione"
+    },
+    "item": {
+      "description": "Mod mancante: {{dependencyModName}}",
+      "more_count": "+{{ count }} altre",
+      "missing_for": "Mod richiesta mancante per: {{modName}}",
+      "missing_for_plural": "Mod richieste mancanti per: {{modName}}",
+      "or_join": "o"
+    },
+    "no_results_active": {
+      "title": "Diagnostica superata",
+      "message": "Pronto per giocare"
+    },
+    "no_results_hidden": {
+      "title": "Nessun elemento nascosto"
+    },
+    "no_results_logged_out": {
+      "title": "Controlli aggiuntivi disponibili",
+      "message": "La diagnostica non ha trovato problemi nei controlli che ha potuto eseguire. Accedi per verificare anche i requisiti di Nexus Mods mancanti.",
+      "action": "Accedi per completare la diagnostica"
+    },
+    "external_mod_install": "Installazione di mod esterna",
+    "install_one_click": "Installa con 1 clic ({{count}})",
+    "install_uninstalled": "Installa (scaricata)",
+    "pick_mod_install": "Scegli la mod da installare",
+    "premium_banner": {
+      "description": "Scarica i requisiti con 1 clic, senza visitare pagine né aspettare. <premiumLink>Passa a Premium</premiumLink>"
+    }
+  },
+  "detail": {
+    "title": {
+      "suggestion": "Suggerimento",
+      "warning": "Avviso",
+      "error": "Errore"
+    },
+    "subtitle": {
+      "suggestion": "Modifiche che potrebbero migliorare la configurazione.",
+      "warning": "Problemi che possono impedire ad alcune parti della configurazione di funzionare.",
+      "error": "Problemi che impediranno al gioco di funzionare. Da correggere prima di giocare."
+    },
+    "was_this_helpful": {
+      "suggestion": "Questo suggerimento ti è stato utile?",
+      "warning": "Questo avviso ti è stato utile?",
+      "error": "Questo errore ti è stato utile?"
+    },
+    "item": {
+      "may_require_file": "Potrebbe richiedere l'installazione di questo file di mod aggiuntivo per funzionare correttamente:",
+      "author_note": "Nota dell'autore: {{note}}",
+      "mod_page_source_note": "Questo requisito proviene dalla pagina della mod e non dal sistema dei requisiti per file, quindi potrebbe non essere necessario per la tua configurazione. <modLink>Vedi la pagina della mod per tutti i dettagli</modLink>.",
+      "open_external_mod_page": "Apri la pagina esterna della mod",
+      "external_hosted_note": "Questa mod è ospitata fuori da Nexus Mods. Leggi la descrizione prima di installarla.",
+      "after_installing": "Dopo l'installazione, fai clic su Conferma installazione. Non possiamo rilevare automaticamente le installazioni di mod esterne.",
+      "confirm_install": "Conferma installazione",
+      "missing_for": "Mod richiesta mancante per: <modLink>{{modName}}</modLink>",
+      "missing_for_plural": "Mod richieste mancanti per: <modLink>{{modName}}</modLink>",
+      "install_via_mod_page": "Installa dalla pagina della mod",
+      "view_mod_page": "Vedi la pagina della mod",
+      "install_one_click": "Installa con 1 clic",
+      "downloading": "Download in corso…",
+      "installing": "Installazione in corso…",
+      "pick_one": "Scegline una",
+      "install_required": "Installazione richiesta",
+      "different_version_required": "Richiesta l'installazione di un'altra versione",
+      "current_version": "Versione attuale",
+      "required_version": "Versione richiesta:",
+      "enable_required": "Attiva la versione richiesta",
+      "view_in_mods": "Vedi in Mod",
+      "enable_this_version": "Attiva questa versione",
+      "install_uninstalled": "Installa (scaricata)",
+      "adult": "Per adulti",
+      "installed": "Installata",
+      "enabled": "Attivata",
+      "disabled": "Disattivata"
+    },
+    "feedback_modal": {
+      "title": "Grazie per avercelo segnalato",
+      "description": "Aiutaci a migliorare questo messaggio dicendoci cosa non andava.",
+      "options": {
+        "incorrect_requirement": "Requisito errato",
+        "requirement_already_installed": "Requisito già installato",
+        "explanation_was_unclear": "Spiegazione poco chiara",
+        "other": "Altro"
+      },
+      "buttons": {
+        "cancel": "Salta",
+        "confirm": "Invia feedback"
+      }
+    }
+  },
+  "author_notes_modal": {
+    "title": "Leggi le note degli autori",
+    "description": "Alcune mod suggerite hanno indicazioni dei loro autori e non sono sempre necessarie.",
+    "prompt": "Leggi le note qui sotto e scegli quali mod installare.",
+    "required_for": "Per le mod:",
+    "buttons": {
+      "cancel": "Annulla",
+      "install": "Installa selezionate ({{count}})"
+    }
+  },
+  "settings": {
+    "title": "Diagnostica (beta)",
+    "description": "Rileva i problemi nell'elenco delle mod e suggerisce correzioni. Altri controlli arriveranno presto.",
+    "mod_requirements": "Suggerimenti sui requisiti di mod mancanti",
+    "file_requirements": "Avvisi sui requisiti di file mancanti"
+  },
+  "premium": {
+    "modal": {
+      "title": {
+        "single": "Salta il sito e installa subito.",
+        "all": "Salta il sito e installa subito tutti i requisiti."
+      },
+      "description": {
+        "single": "L'installazione con 1 clic nell'app è una funzione Premium.\n\nGli utenti gratuiti scaricano dalle pagine delle mod sul sito, dove la pubblicità aiuta a mantenere la piattaforma.",
+        "all": "L'installazione con 1 clic nell'app è una funzione Premium.\n\nGli utenti gratuiti scaricano dalle pagine delle mod sul sito, dove la pubblicità aiuta a mantenere la piattaforma."
+      },
+      "benefits_title": "Con Premium ottieni:",
+      "benefits": {
+        "downloads": "Download e aggiornamenti delle mod con 1 clic nell'app",
+        "collections": "Installazione delle collezioni con 1 clic",
+        "speed": "Velocità di download illimitata",
+        "ad_free": "Senza pubblicità per sempre, anche se poi annulli"
+      },
+      "buttons": {
+        "primary": "Sblocca l'installazione con 1 clic",
+        "secondary": {
+          "single": "Installa dalla pagina della mod (gratis)",
+          "all": "Torna indietro e apri le pagine delle mod"
+        }
+      }
+    }
+  }
+}

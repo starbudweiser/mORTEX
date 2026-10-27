@@ -166,7 +166,7 @@ export function renameBrand(strings: Record<string, unknown>): Record<string, un
 }
 
 /**
- * mORTEX : ses textes intégrés (locales/<langue>/common.json) complètent la traduction active
+ * mORTEX : ses textes intégrés (locales/<langue>/*.json) complètent la traduction active
  * sans la masquer (un pack communautaire garde la priorité), et les traductions écrites pour
  * « Vortex » servent aussi aux mêmes textes renommés en « mORTEX ».
  */
@@ -181,6 +181,18 @@ function mergeMortexStrings(i18nObj: i18n, bundled: string, lng: string) {
   }
 
   const data = i18nObj.store?.data?.[lng] ?? {};
+  // les autres fichiers (collection, health_check…) comblent les trous d'un pack communautaire,
+  // seulement dans les sections déjà chargées : en créer une empêcherait le pack de la charger
+  for (const ns of Object.keys(data)) {
+    if (ns === "common") continue;
+    try {
+      const file = path.join(bundled, lng.split("-")[0], `${ns}.json`);
+      i18nObj.addResourceBundle(lng, ns, JSON.parse(fs.readFileSync(file, "utf8")), true, false);
+    } catch {
+      // pas de fichier intégré pour cette section
+    }
+  }
+
   for (const ns of Object.keys(data)) {
     const strings = data[ns] as Record<string, unknown>;
     const alias: Record<string, string> = {};

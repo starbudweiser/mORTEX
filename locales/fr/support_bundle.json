@@ -1,0 +1,20 @@
+{
+  "dialog": {
+    "title": "Créer un dossier d'assistance",
+    "intro": "Vortex rassemble ses journaux, l'état actuel de l'appli et les rapports de plantage récents dans une seule archive. Aucun identifiant de connexion n'y figure.",
+    "sendTo": "Envoyez l'archive à l'équipe Vortex, avec une courte description du problème, sur les forums Vortex ou sur Discord :",
+    "links": {
+      "forums": "Forum d'assistance Vortex",
+      "discord": "Discord de Nexus Mods"
+    },
+    "building": "Création du dossier d'assistance…",
+    "archiveReady": "Votre dossier d'assistance est prêt.",
+    "failed": "Vortex n'a pas pu créer le dossier d'assistance.",
+    "buttons": {
+      "open": "Afficher dans le Finder",
+      "cancel": "Annuler",
+      "close": "Fermer",
+      "tryAgain": "Réessayer"
+    }
+  }
+}
