@@ -705,6 +705,26 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     color: #cfe8f7;
 }
 
+/* Pages exclusives au Mac (Atelier DXMT, Time Machine) : en orange mORTEX pour ressortir */
+.mortex-menu-accent {
+    color: #f59e0b;
+}
+
+.mortex-menu-accent:hover {
+    color: #fbb13c !important;
+}
+
+/* Option enfoncée : les entrées de la barre latérale se déplacent par glisser-déposer */
+.mortex-menu-reorderable {
+    cursor: grab;
+    outline: 1px dashed var(--color-stroke-moderate);
+    outline-offset: -2px;
+}
+
+.mortex-menu-drop {
+    box-shadow: inset 0 2px 0 #f59e0b;
+}
+
 /* Cloche des notifications dans la barre de titre : 32 px, sans bordure */
 .mortex-header-bell > button {
     width: 32px;

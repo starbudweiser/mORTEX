@@ -1,9 +1,10 @@
-import React, { useState, type FC, useRef, useEffect, useMemo } from "react";
+import React, { useState, type FC, useRef, useEffect, useMemo, type ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
 import { setOpenMainPage } from "@/actions";
 import { usePagesContext, useWindowContext } from "@/contexts";
+import { moveBefore, setMenuOrder, sortByOrder } from "@/extensions/mortex_dashlet/menuOrder";
 import type { IMainPage } from "@/types/IMainPage";
 import type { IState } from "@/types/IState";
 import { TooltipDelayGroup } from "@/ui/components/tooltip/TooltipDelayGroup";
@@ -27,6 +28,32 @@ const toolPadding = {
 
 /** mORTEX : pages rangées sous « Outils » ; les autres pages du jeu vont sous « Jeu » */
 const TOOL_PAGE_IDS = new Set(["Browse Nexus Mods", "Tools", "Health check"]);
+
+/** mORTEX : pages exclusives au Mac, en couleur dans la barre latérale */
+const MAC_PAGE_IDS = new Set(["DXMT workshop", "Time Machine"]);
+
+/** l'entrée Téléchargements, qui n'est pas une page, dans l'ordre de la barre latérale */
+const DOWNLOADS_ID = "__downloads";
+
+const NO_ORDER: Record<string, string[]> = {};
+
+/** mORTEX : la touche Option est-elle enfoncée ? (fenêtre active seulement) */
+const useOptionKey = () => {
+  const [held, setHeld] = useState(false);
+  useEffect(() => {
+    const track = (event: KeyboardEvent) => setHeld(event.altKey);
+    const release = () => setHeld(false);
+    window.addEventListener("keydown", track);
+    window.addEventListener("keyup", track);
+    window.addEventListener("blur", release);
+    return () => {
+      window.removeEventListener("keydown", track);
+      window.removeEventListener("keyup", track);
+      window.removeEventListener("blur", release);
+    };
+  }, []);
+  return held;
+};
 
 /** Mods installés et archives téléchargées du jeu actif, pour les compteurs de la barre latérale */
 const useMenuCounts = () => {
@@ -58,6 +85,13 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
   const toolCount = visibleTools.length;
   const [canScrollUp, setCanScrollUp] = useState(false);
 
+  const optionHeld = useOptionKey();
+  const menuOrder = useSelector(
+    (state: IState) => (state.settings as any).mortex?.menuOrder ?? NO_ORDER,
+  );
+  const [dragged, setDragged] = useState<{ section: string; id: string } | undefined>(undefined);
+  const [dropTarget, setDropTarget] = useState<string | undefined>(undefined);
+
   const onScroll = (event: Event) => setCanScrollUp((event.target as HTMLDivElement).scrollTop > 0);
 
   useEffect(() => {
@@ -70,8 +104,40 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
     return () => element.removeEventListener("scroll", onScroll);
   }, [scrollRef]);
 
-  const renderPage = (page: IMainPage) => (
+  /** propriétés de glisser-déposer d'une entrée, quand Option est enfoncée */
+  const reorderProps = (section: string, ids: string[], id: string) => ({
+    reorderable: optionHeld || dragged !== undefined,
+    dropHint: dragged?.section === section && dropTarget === id && dragged.id !== id,
+    onDragStart: (event: React.DragEvent) => {
+      if (!event.altKey && !optionHeld) {
+        event.preventDefault();
+        return;
+      }
+      event.dataTransfer.effectAllowed = "move";
+      setDragged({ section, id });
+    },
+    onDragOver: (event: React.DragEvent) => {
+      if (dragged?.section !== section) return;
+      event.preventDefault();
+      setDropTarget(id);
+    },
+    onDrop: (event: React.DragEvent) => {
+      event.preventDefault();
+      if (dragged?.section === section && dragged.id !== id) {
+        dispatch(setMenuOrder(section, moveBefore(ids, dragged.id, id)));
+      }
+      setDragged(undefined);
+      setDropTarget(undefined);
+    },
+    onDragEnd: () => {
+      setDragged(undefined);
+      setDropTarget(undefined);
+    },
+  });
+
+  const renderPage = (page: IMainPage, extra = {}) => (
     <MenuButton
+      accent={MAC_PAGE_IDS.has(page.id)}
       icon={page.menuIcon ?? getIcon(page.icon)}
       Badge={page.menuBadge}
       count={page.id === "Mods" ? counts.installed : undefined}
@@ -84,6 +150,7 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
           dispatch(setOpenMainPage(page.id, false));
         }
       }}
+      {...extra}
     >
       {t(page.title, { ns: page.namespace })}
     </MenuButton>
@@ -95,6 +162,32 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
     { title: "Tools", pages: gamePages.filter((page) => TOOL_PAGE_IDS.has(page.id)) },
     { title: "Application", pages: homePages },
   ];
+
+  // les entrées d'un groupe dans l'ordre choisi par l'utilisateur
+  const renderSection = (section: { title: string; pages: IMainPage[] }) => {
+    const entries: Array<{ id: string; render: (extra: object) => ReactElement }> =
+      section.pages.map((page) => ({ id: page.id, render: (extra) => renderPage(page, extra) }));
+    if (section.title === "Game") {
+      entries.push({
+        id: DOWNLOADS_ID,
+        render: (extra) => (
+          <MenuButton
+            count={counts.archives}
+            icon={getIcon("download")}
+            isActive={selection.type === "downloads"}
+            key={DOWNLOADS_ID}
+            onClick={() => selectDownloads(counts.gameId)}
+            {...extra}
+          >
+            {t("Downloads")}
+          </MenuButton>
+        ),
+      });
+    }
+    const sorted = sortByOrder(entries, (entry) => entry.id, menuOrder[section.title]);
+    const ids = sorted.map((entry) => entry.id);
+    return sorted.map((entry) => entry.render(reorderProps(section.title, ids, entry.id)));
+  };
 
   return (
     <TooltipDelayGroup
@@ -119,18 +212,7 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
             (section) =>
               section.pages.length > 0 && (
                 <MenuSection key={section.title} title={t(section.title)}>
-                  {section.pages.map(renderPage)}
-
-                  {section.title === "Game" && (
-                    <MenuButton
-                      count={counts.archives}
-                      icon={getIcon("download")}
-                      isActive={selection.type === "downloads"}
-                      onClick={() => selectDownloads(counts.gameId)}
-                    >
-                      {t("Downloads")}
-                    </MenuButton>
-                  )}
+                  {renderSection(section)}
                 </MenuSection>
               ),
           )}

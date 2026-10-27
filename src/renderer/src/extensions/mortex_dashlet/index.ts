@@ -3,6 +3,7 @@ import type { IExtensionContext, IReducerSpec } from "../../types/IExtensionCont
 import { setSafe } from "../../util/storeHelper";
 import { setDashletEnabled, setLayout } from "../dashboard/actions";
 import { activeGameId } from "../profile_management/selectors";
+import { menuOrderReducers } from "./menuOrder";
 import MortexStatusDashlet from "./MortexStatusDashlet";
 
 const DASHLET_ID = "mORTEX";
@@ -16,6 +17,7 @@ const reducer: IReducerSpec = {
   reducers: {
     [markDashboardArranged as any]: (state, payload) =>
       setSafe(state, ["dashboardArranged"], payload),
+    ...menuOrderReducers,
   },
   defaults: { dashboardArranged: false },
 };
