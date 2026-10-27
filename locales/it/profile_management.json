@@ -2,5 +2,7 @@
   "Save Games": "Salvataggi",
   "Profiles": "Profili",
   "Game Settings": "Impostazioni del gioco",
-  "Stop Managing": "Smetti di gestire"
+  "Stop Managing": "Smetti di gestire",
+  "This profile has its own save games": "Questo profilo ha i propri salvataggi",
+  "This profile has its own game settings": "Questo profilo ha le proprie impostazioni del gioco"
 }

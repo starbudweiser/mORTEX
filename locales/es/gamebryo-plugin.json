@@ -17,5 +17,7 @@
   "{{count}} deleted navmesh_plural": "{{count}} navmesh eliminado",
   "Failed to parse this plugin": "No se pudo analizar este plugin",
   "{{count}} deleted reference": "{{count}} referencia eliminada",
-  "{{count}} deleted reference_plural": "{{count}} referencia eliminada"
+  "{{count}} deleted reference_plural": "{{count}} referencia eliminada",
+  "Plugins not sorted because: {{msg}}": "Plugins sin ordenar porque: {{msg}}",
+  "load {{ reference }} after {{ name }}": "cargar {{ reference }} después de {{ name }}"
 }

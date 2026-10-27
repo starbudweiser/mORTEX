@@ -1,5 +1,7 @@
 {
   "Save Games": "Partidas guardadas",
   "Game Settings": "Ajustes del juego",
-  "Stop Managing": "Dejar de gestionar"
+  "Stop Managing": "Dejar de gestionar",
+  "This profile has its own save games": "Este perfil tiene sus propias partidas",
+  "This profile has its own game settings": "Este perfil tiene sus propios ajustes del juego"
 }

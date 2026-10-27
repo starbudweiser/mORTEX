@@ -140,5 +140,9 @@
   "Can't upload an empty collection": "Impossibile caricare una collezione vuota",
   "Collection isn't fully installed": "La collezione non è installata completamente",
   "contains {{count}} file override": "contiene {{count}} file con priorità",
-  "Start/Pause automatic advancement": "Avvia/metti in pausa l'avanzamento automatico"
+  "Start/Pause automatic advancement": "Avvia/metti in pausa l'avanzamento automatico",
+  "Revision {{number}}{{forceRevision}}": "Revisione {{number}}{{forceRevision}}",
+  "Auto-download collections at max speed": "Download automatico delle collezioni alla massima velocità",
+  "Did this collection work successfully?": "Questa collezione ha funzionato correttamente?",
+  "No Installer Options saved for this mod": "Nessuna opzione di installazione salvata per questa mod"
 }

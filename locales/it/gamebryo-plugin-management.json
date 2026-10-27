@@ -57,5 +57,8 @@
   "Designed for a different game": "Progettato per un altro gioco",
   "nothing! This plugin is clean": "niente! Questo plugin è pulito",
   "Blueprint plugin used as master": "Plugin Blueprint usato come master",
-  "Sort your load order using LOOT": "Ordina l'ordine di caricamento con LOOT"
+  "Sort your load order using LOOT": "Ordina l'ordine di caricamento con LOOT",
+  "Plugins not sorted because: {{msg}}": "Plugin non ordinati perché: {{msg}}",
+  "Plugin not compatible with this game": "Plugin non compatibile con questo gioco",
+  "load {{ reference }} after {{ name }}": "carica {{ reference }} dopo {{ name }}"
 }

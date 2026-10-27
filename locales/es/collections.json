@@ -23,5 +23,7 @@
   "Collection installation complete": "Instalación de la colección completada",
   "Failed to apply collection rules": "No se pudo aplicar las reglas de la colección",
   "Failed to create quick collection": "No se pudo crear la colección rápida",
-  "Resolve conflicts before uploading": "Resuelve los conflictos antes de subir"
+  "Resolve conflicts before uploading": "Resuelve los conflictos antes de subir",
+  "You have been blocked by the curator.": "El curador te ha bloqueado.",
+  "Auto-download collections at max speed": "Descarga automática de colecciones a máxima velocidad"
 }
