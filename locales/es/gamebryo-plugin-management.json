@@ -48,5 +48,9 @@
   "Reset Plugin Rules": "Restablecer reglas de plugins",
   "Medium: {{ count }}": "Medianos: {{ count }}",
   "has Blueprint master": "tiene un master Blueprint",
-  "Verified clean (LOOT)": "Verificado limpio (LOOT)"
+  "Verified clean (LOOT)": "Verificado limpio (LOOT)",
+  "Invalid plugins skipped": "Plugins no válidos omitidos",
+  "LOOT sorting successful": "Ordenación con LOOT correcta",
+  "Requires cleaning (LOOT)": "Necesita limpieza (LOOT)",
+  "{{tool}} found {{things}}.": "{{tool}} encontró {{things}}."
 }

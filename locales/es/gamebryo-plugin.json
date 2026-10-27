@@ -11,5 +11,8 @@
   "Incompatible plugin": "Plugin incompatible",
   "{{count}} ITM record": "{{count}} registro ITM",
   "{{count}} ITM record_plural": "{{count}} registro ITM",
-  "Verified clean (LOOT)": "Verificado limpio (LOOT)"
+  "Verified clean (LOOT)": "Verificado limpio (LOOT)",
+  "Requires cleaning (LOOT)": "Necesita limpieza (LOOT)",
+  "{{count}} deleted navmesh": "{{count}} navmesh eliminado",
+  "{{count}} deleted navmesh_plural": "{{count}} navmesh eliminado"
 }

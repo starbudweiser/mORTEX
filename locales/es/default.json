@@ -1,5 +1,6 @@
 {
   "Scan": "Analizar",
   "Cancel": "Cancelar",
-  "Description": "Descripción"
+  "Description": "Descripción",
+  "Select directories to scan": "Selecciona las carpetas que analizar"
 }

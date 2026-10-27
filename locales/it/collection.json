@@ -123,5 +123,14 @@
   "Same Installer Options": "Stesse opzioni di installazione",
   "Collection Instructions": "Istruzioni della collezione",
   "Downvote Success Rating": "Vota negativamente il successo",
-  "Failed to upload to API": "Caricamento sull'API non riuscito"
+  "Failed to upload to API": "Caricamento sull'API non riuscito",
+  "Exact only ({{version}})": "Solo esatta ({{version}})",
+  "Missing file identifiers": "Identificatori di file mancanti",
+  "Open My Collections Page": "Apri la mia pagina delle collezioni",
+  "Discover more collections": "Scopri altre collezioni",
+  "This mod isn't installed.": "Questa mod non è installata.",
+  "Collection worked (mostly)": "La collezione ha funzionato (quasi)",
+  "Prefer exact ({{version}})": "Preferisci esatta ({{version}})",
+  "Failed to remove collection": "Rimozione della collezione non riuscita",
+  "No additional instructions.": "Nessuna istruzione aggiuntiva."
 }

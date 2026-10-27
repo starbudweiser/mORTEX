@@ -15,5 +15,8 @@
   "Collection is empty": "La collezione è vuota",
   "Exclude plugin rules": "Escludi regole dei plugin",
   "Install optional mods": "Installa mod facoltative",
-  "Downvote Success Rating": "Vota negativamente il successo"
+  "Downvote Success Rating": "Vota negativamente il successo",
+  "Collection export failed": "Esportazione della collezione non riuscita",
+  "Collection was successful": "La collezione ha funzionato",
+  "Unlock max download speeds": "Sblocca la velocità massima di download"
 }
