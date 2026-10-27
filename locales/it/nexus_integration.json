@@ -1,4 +1,8 @@
 {
   "Track": "Segui",
-  "Untrack": "Non seguire più"
+  "Untrack": "Non seguire più",
+  "Fix missing IDs": "Correggi ID mancanti",
+  "Open Nexus Page": "Apri pagina Nexus",
+  "Refresh User Info": "Aggiorna informazioni utente",
+  "Retrieve categories": "Recupera categorie"
 }

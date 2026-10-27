@@ -164,5 +164,7 @@
       }
     }
   },
-  "Health check": "Diagnóstico"
+  "Health check": "Diagnóstico",
+  "{{ count }} minute ago": "hace {{ count }} minuto",
+  "{{ count }} minute ago_plural": "hace {{ count }} minuto"
 }

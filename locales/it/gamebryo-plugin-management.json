@@ -37,5 +37,16 @@
   "Manage Groups": "Gestisci gruppi",
   "Mods deployed": "Mod distribuite",
   "Could be light": "Potrebbe essere leggero",
-  "file not found": "file non trovato"
+  "file not found": "file non trovato",
+  "Autosort Enabled": "Ordinamento automatico attivo",
+  "Loaded by engine": "Caricato dal motore",
+  "Loads an archive": "Carica un archivio",
+  "Reset Masterlist": "Ripristina masterlist",
+  "Autosort Disabled": "Ordinamento automatico disattivato",
+  "Light: {{ count }}": "Leggeri: {{ count }}",
+  "Light: {{ count }}_plural": "Leggeri: {{ count }}",
+  "Reset Plugin Rules": "Ripristina regole dei plugin",
+  "Medium: {{ count }}": "Medi: {{ count }}",
+  "has Blueprint master": "ha un master Blueprint",
+  "Verified clean (LOOT)": "Verificato pulito (LOOT)"
 }

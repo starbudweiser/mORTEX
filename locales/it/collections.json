@@ -7,5 +7,13 @@
   "Contribute": "Contribuisci",
   "Collections": "Collezioni",
   "No description": "Nessuna descrizione",
-  "Binary Patching": "Patch binaria"
+  "Binary Patching": "Patch binaria",
+  "Clone Collection": "Clona collezione",
+  "Quick Collection": "Collezione rapida",
+  "Collection paused": "Collezione in pausa",
+  "View optional mods": "Vedi mod facoltative",
+  "Collection is empty": "La collezione è vuota",
+  "Exclude plugin rules": "Escludi regole dei plugin",
+  "Install optional mods": "Installa mod facoltative",
+  "Downvote Success Rating": "Vota negativamente il successo"
 }

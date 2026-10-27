@@ -5,5 +5,10 @@
   "Closed": "Chiuso",
   "Your issues": "I tuoi problemi",
   "Lucky you...": "Che fortuna...",
-  "Refresh Issues": "Aggiorna problemi"
+  "Refresh Issues": "Aggiorna problemi",
+  "Feedback required": "Feedback richiesto",
+  "No reported issues": "Nessun problema segnalato",
+  "Open Issue Responder": "Apri risposta ai problemi",
+  "{{ count }} comments": "{{ count }} commenti",
+  ", planned for {{date}}": ", previsto per il {{date}}"
 }

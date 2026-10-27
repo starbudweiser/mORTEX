@@ -5,5 +5,11 @@
   "Loads after:": "Se carga después de:",
   "Not deployed": "Sin desplegar",
   "Incompatible:": "Incompatible:",
-  "Mods deployed": "Mods desplegados"
+  "Mods deployed": "Mods desplegados",
+  "Autosort Enabled": "Ordenación automática activada",
+  "Autosort Disabled": "Ordenación automática desactivada",
+  "Incompatible plugin": "Plugin incompatible",
+  "{{count}} ITM record": "{{count}} registro ITM",
+  "{{count}} ITM record_plural": "{{count}} registro ITM",
+  "Verified clean (LOOT)": "Verificado limpio (LOOT)"
 }
