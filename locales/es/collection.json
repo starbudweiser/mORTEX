@@ -136,5 +136,9 @@
   "Remove Collection (Workshop)": "Quitar colección (Workshop)",
   "Create & Add to Phase {{num}}": "Crear y añadir a la fase {{num}}",
   "Failed to install dependencies": "No se pudieron instalar las dependencias",
-  "This mod has installer options": "Este mod tiene opciones de instalación"
+  "This mod has installer options": "Este mod tiene opciones de instalación",
+  "Can't upload an empty collection": "No se puede subir una colección vacía",
+  "Collection isn't fully installed": "La colección no está instalada por completo",
+  "contains {{count}} file override": "contiene {{count}} archivo prioritario",
+  "Start/Pause automatic advancement": "Iniciar/pausar el avance automático"
 }

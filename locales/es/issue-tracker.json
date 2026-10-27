@@ -10,5 +10,6 @@
   "No reported issues": "Sin problemas informados",
   "Open Issue Responder": "Abrir respuesta a problemas",
   "{{ count }} comments": "{{ count }} comentarios",
-  ", planned for {{date}}": ", previsto para el {{date}}"
+  ", planned for {{date}}": ", previsto para el {{date}}",
+  "Milestone: {{title}} ({{state}})": "Hito: {{title}} ({{state}})"
 }

@@ -19,5 +19,9 @@
   "Collection export failed": "Exportación de la colección fallida",
   "Collection was successful": "La colección funcionó",
   "Unlock max download speeds": "Desbloquea la velocidad máxima de descarga",
-  "Failed to read collection info": "No se pudo leer la información de la colección"
+  "Failed to read collection info": "No se pudo leer la información de la colección",
+  "Collection installation complete": "Instalación de la colección completada",
+  "Failed to apply collection rules": "No se pudo aplicar las reglas de la colección",
+  "Failed to create quick collection": "No se pudo crear la colección rápida",
+  "Resolve conflicts before uploading": "Resuelve los conflictos antes de subir"
 }

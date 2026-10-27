@@ -55,5 +55,7 @@
   "{{tool}} found {{things}}.": "{{tool}} encontró {{things}}.",
   "Failed to parse this plugin": "No se pudo analizar este plugin",
   "Designed for a different game": "Diseñado para otro juego",
-  "nothing! This plugin is clean": "¡nada! Este plugin está limpio"
+  "nothing! This plugin is clean": "¡nada! Este plugin está limpio",
+  "Blueprint plugin used as master": "Plugin Blueprint usado como master",
+  "Sort your load order using LOOT": "Ordena tu orden de carga con LOOT"
 }
