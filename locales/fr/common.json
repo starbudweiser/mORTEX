@@ -408,5 +408,6 @@
   "{{size}} to reclaim ({{count}} files)": "{{size}} à récupérer ({{count}} fichier)",
   "Analyze": "Analyser",
   "{{size}} to reclaim ({{count}} files)_plural": "{{size}} à récupérer ({{count}} fichiers)",
-  "{{count}} identical files become APFS clones of a single copy: same content, stored once. Your mods are removed from the game during the operation, then deployed again._plural": "{{count}} fichiers identiques deviennent des clones APFS d'une seule copie : même contenu, stocké une seule fois. Vos mods sont retirés du jeu pendant l'opération, puis redéployés."
+  "{{count}} identical files become APFS clones of a single copy: same content, stored once. Your mods are removed from the game during the operation, then deployed again._plural": "{{count}} fichiers identiques deviennent des clones APFS d'une seule copie : même contenu, stocké une seule fois. Vos mods sont retirés du jeu pendant l'opération, puis redéployés.",
+  "No profile named {{name}}": "Aucun profil nommé {{name}}"
 }

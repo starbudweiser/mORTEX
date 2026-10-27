@@ -1,0 +1,5 @@
+"Launch the game with ${applicationName}" = "Lancer le jeu avec ${applicationName}";
+"Play with ${applicationName}" = "Jouer avec ${applicationName}";
+"Deploy mods with ${applicationName}" = "Déployer les mods avec ${applicationName}";
+"Sort plugins with ${applicationName}" = "Trier les plugins avec ${applicationName}";
+"Take a snapshot with ${applicationName}" = "Prendre un instantané avec ${applicationName}";

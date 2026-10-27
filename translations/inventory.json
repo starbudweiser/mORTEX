@@ -4032,7 +4032,8 @@
     "Duplicate files": "Duplicate files",
     "Not analyzed": "Not analyzed",
     "{{size}} to reclaim ({{count}} files)": "{{size}} to reclaim ({{count}} files)",
-    "Analyze": "Analyze"
+    "Analyze": "Analyze",
+    "No profile named {{name}}": "No profile named {{name}}"
   },
   "dashboard": {
     "Dashboard": "Dashboard"

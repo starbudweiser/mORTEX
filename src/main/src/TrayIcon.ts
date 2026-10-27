@@ -24,6 +24,8 @@ export const setTrayIcon = (tray: TrayIcon | undefined) => {
 class TrayIcon {
   private mWindow: BrowserWindow | undefined;
   private mLastActivity: string | undefined;
+  /** actions des Raccourcis reçues avant que l'affichage soit prêt (premier setActivity) */
+  private mPendingActions: string[] = [];
   private mTrayIcon: Tray | undefined;
   private mImagePath: string;
   private mInitialized: boolean = false;
@@ -86,7 +88,28 @@ class TrayIcon {
     });
   }
 
+  /** action venue des Raccourcis (mortex://) : exécutée par l'affichage, sans montrer la fenêtre */
+  public runAction(action: string) {
+    if (action === "show") {
+      this.mWindow?.show();
+      this.mWindow?.focus();
+    } else if (this.mLastActivity === undefined || this.mWindow === undefined) {
+      this.mPendingActions.push(action);
+    } else {
+      this.mWindow.webContents.send("activity:action", action);
+    }
+  }
+
   public setActivity(activity: MacActivity) {
+    if (this.mPendingActions.length > 0 && this.mWindow !== undefined) {
+      const window = this.mWindow;
+      // l'affichage vient de publier son activité : ses écouteurs sont en place
+      setTimeout(() => {
+        for (const action of this.mPendingActions.splice(0)) {
+          window.webContents.send("activity:action", action);
+        }
+      }, 0);
+    }
     const key = JSON.stringify(activity);
     if (key === this.mLastActivity) return;
     this.mLastActivity = key;

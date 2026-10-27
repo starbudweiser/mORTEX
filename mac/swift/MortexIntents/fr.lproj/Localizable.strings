@@ -1,0 +1,14 @@
+"Launch the game" = "Lancer le jeu";
+"Launches the game managed by mORTEX, as its Launch button does." = "Lance le jeu géré par mORTEX, comme son bouton Lancer.";
+"Deploy mods" = "Déployer les mods";
+"Deploys the enabled mods into the game." = "Déploie les mods activés dans le jeu.";
+"Sort plugins with LOOT" = "Trier les plugins avec LOOT";
+"Sorts the load order with LOOT." = "Trie l'ordre de chargement avec LOOT.";
+"Take a Time Machine snapshot" = "Prendre un instantané Time Machine";
+"Takes a Time Machine snapshot of Data, the mods, the load order and the INI files." = "Prend un instantané Time Machine de Data, des mods, de l'ordre de chargement et des fichiers INI.";
+"Switch profile" = "Changer de profil";
+"Switches to the mORTEX profile with this name." = "Passe au profil mORTEX portant ce nom.";
+"Profile" = "Profil";
+"Switch to profile ${profile}" = "Passer au profil ${profile}";
+"Take a snapshot" = "Prendre un instantané";
+"Sort plugins" = "Trier les plugins";
