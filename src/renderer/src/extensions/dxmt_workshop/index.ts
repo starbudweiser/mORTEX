@@ -12,7 +12,6 @@ function init(context: IExtensionContext): boolean {
   context.registerMainPage("memory", "DXMT workshop", DxmtWorkshopPage, {
     priority: 65,
     group: "per-game",
-    newLayout: true,
     visible: () =>
       process.platform === "darwin" && GAMES.includes(activeGameId(context.api.getState())),
     props: () => ({ api: context.api }),

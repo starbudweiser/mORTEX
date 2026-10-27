@@ -21,7 +21,6 @@ function init(context: IExtensionContext): boolean {
   context.registerMainPage("history", "Time Machine", TimeMachinePage, {
     priority: 66,
     group: "per-game",
-    newLayout: true,
     visible: () => timeMachineContext(api) !== undefined,
     props: () => ({ api }),
   });
