@@ -57,7 +57,7 @@ export const Header: FC<React.PropsWithChildren<unknown>> = () => {
       data-testid="window-titlebar"
     >
       <div className="flex min-w-0 flex-1 items-center gap-x-1">
-        <Tooltip content={menuIsCollapsed ? t("Open menu") : t("Collapse menu")} placement="right">
+        <Tooltip content={menuIsCollapsed ? t("Open menu") : t("Collapse menu")} placement="bottom">
           <Button
             appearance="weak"
             aria-label={menuIsCollapsed ? t("Open menu") : t("Collapse menu")}

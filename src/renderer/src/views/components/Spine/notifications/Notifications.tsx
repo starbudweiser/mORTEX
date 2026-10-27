@@ -161,6 +161,7 @@ const NotificationsContent = ({ close, popoverOpen, placement }: INotificationsC
         ref={buttonRef}
         title="Notifications"
         tooltipDisabled={popoverOpen}
+        tooltipPlacement="bottom"
         onClick={() => {
           api.events.emit(
             "analytics-track-click-event",

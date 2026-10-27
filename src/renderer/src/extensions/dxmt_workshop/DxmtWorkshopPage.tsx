@@ -220,7 +220,7 @@ export default function DxmtWorkshopPage({ api }: IProps) {
                   data-testid={`dxmt-check-${check.id}`}
                   key={check.id}
                 >
-                  <Typography className="!text-[#f59e0b]" typographyType="body-xs">
+                  <Typography className="font-semibold !text-[#f59e0b]" typographyType="body-md">
                     {t(CHECK_LABELS[check.id])}
                   </Typography>
                   <Typography

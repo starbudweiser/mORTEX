@@ -26,6 +26,8 @@ interface ISpineButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isCircular?: boolean;
   title: string;
   tooltipDisabled?: boolean;
+  /** mORTEX : « bottom » pour les boutons de la barre de titre (bulle sous l'élément, Socle) */
+  tooltipPlacement?: "right" | "bottom";
 }
 
 /**
@@ -45,11 +47,12 @@ export const SpineButton = forwardRef<HTMLButtonElement, PropsWithChildren<ISpin
       isCircular,
       title,
       tooltipDisabled,
+      tooltipPlacement = "right",
       ...props
     },
     ref,
   ) => (
-    <Tooltip content={title} disabled={tooltipDisabled} placement="right">
+    <Tooltip content={title} disabled={tooltipDisabled} placement={tooltipPlacement}>
       <button
         aria-label={title}
         className={joinClasses([

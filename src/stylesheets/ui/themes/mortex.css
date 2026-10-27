@@ -1433,3 +1433,51 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
 ::highlight(mortex-m) {
     color: #f59e0b;
 }
+
+/* Bulles d'aide au survol : style Socle « bubble-help », celui des notifications de la cloche
+   (fond bleu plein, texte foncé, rayon 6px, sans bordure ni ombre, 340px au plus). Les cartes
+   riches au survol (hover cards) gardent leur propre style. */
+.nxm-tooltip:not(.nxm-hover-card-tooltip) {
+    background-color: #0ea5e9;
+    color: #1a1a1a;
+    border: none;
+    border-radius: 6px;
+    box-shadow: none;
+    max-width: 340px;
+}
+
+.nxm-tooltip:not(.nxm-hover-card-tooltip) .nxm-tooltip-content {
+    display: flex;
+    /* texte aligné sur l'icône, première ligne comprise */
+    align-items: baseline;
+    gap: 8px;
+    padding: 8px 10px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
+/* icône « aide » en tête, dans le carré bubble-icon de Socle */
+.nxm-tooltip:not(.nxm-hover-card-tooltip) .nxm-tooltip-content::before {
+    content: "i";
+    flex: none;
+    width: 14px;
+    height: 14px;
+    padding: 5px;
+    box-sizing: content-box;
+    border-radius: 4px;
+    background: #262626;
+    color: #fff;
+    font:
+        700 12px/14px Georgia,
+        serif;
+    text-align: center;
+}
+
+.nxm-tooltip:not(.nxm-hover-card-tooltip) .nxm-overlay-arrow {
+    fill: #0ea5e9;
+
+    path[clip-path],
+    path:not([clip-path]) {
+        stroke: #0ea5e9;
+    }
+}
