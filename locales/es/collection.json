@@ -167,5 +167,9 @@
   "By default the collection will replicate all your custom rules that dictate the deployment order of mods.": "Por defecto, la colección replicará todas tus reglas personalizadas de orden de despliegue.",
   "Sorry to hear that the collection \"undefined\" isn't working for you. Here are some steps that could help:": "Lamentamos que la colección «undefined» no te funcione. Estos pasos podrían ayudar:",
   "If you disable rules here your collection may produce unresolved file conflicts that the user has to resolve.": "Si desactivas reglas aquí, tu colección puede generar conflictos de archivos que el usuario tendrá que resolver.",
-  "The collection will include your custom load order rules so that users of your collection will get the same load order.": "La colección incluirá tus reglas de orden de carga para que sus usuarios tengan el mismo orden."
+  "The collection will include your custom load order rules so that users of your collection will get the same load order.": "La colección incluirá tus reglas de orden de carga para que sus usuarios tengan el mismo orden.",
+  "Users can toggle these ini tweaks individually so you may want to set up multiple tweaks to give users granular control.": "Los usuarios pueden activar cada ajuste INI por separado, así que conviene crear varios para darles más control.",
+  "This screen lets you set up tweaks for the game ini file that will be applied to a user's setup when they use your collection.": "Aquí puedes definir ajustes del INI del juego que se aplicarán a quien use tu colección.",
+  "Version: Choose whether the collection will install exactly the version you have yourself or whatever is current on Nexus Mods.": "Versión: elige si la colección instalará exactamente tu versión o la actual en Nexus Mods.",
+  "Success ratings help others know if a collection installs and runs correctly. They are not a vote on whether you liked the collection or not.": "Las valoraciones de éxito indican si una colección se instala y funciona bien. No son un voto sobre si te gustó."
 }

@@ -167,5 +167,9 @@
   "By default the collection will replicate all your custom rules that dictate the deployment order of mods.": "Per impostazione predefinita, la collezione replicherà tutte le tue regole personalizzate sull'ordine di distribuzione.",
   "Sorry to hear that the collection \"undefined\" isn't working for you. Here are some steps that could help:": "Ci dispiace che la collezione «undefined» non funzioni. Ecco alcuni passaggi che potrebbero aiutare:",
   "If you disable rules here your collection may produce unresolved file conflicts that the user has to resolve.": "Se disattivi qui delle regole, la collezione potrebbe generare conflitti di file che l'utente dovrà risolvere.",
-  "The collection will include your custom load order rules so that users of your collection will get the same load order.": "La collezione includerà le tue regole dell'ordine di caricamento, così i suoi utenti avranno lo stesso ordine."
+  "The collection will include your custom load order rules so that users of your collection will get the same load order.": "La collezione includerà le tue regole dell'ordine di caricamento, così i suoi utenti avranno lo stesso ordine.",
+  "Users can toggle these ini tweaks individually so you may want to set up multiple tweaks to give users granular control.": "Gli utenti possono attivare ogni modifica INI separatamente: conviene crearne più di una per dare più controllo.",
+  "This screen lets you set up tweaks for the game ini file that will be applied to a user's setup when they use your collection.": "Qui puoi definire modifiche al file INI del gioco che verranno applicate a chi usa la tua collezione.",
+  "Version: Choose whether the collection will install exactly the version you have yourself or whatever is current on Nexus Mods.": "Versione: scegli se la collezione installerà esattamente la tua versione o quella attuale su Nexus Mods.",
+  "Success ratings help others know if a collection installs and runs correctly. They are not a vote on whether you liked the collection or not.": "Le valutazioni di successo indicano se una collezione si installa e funziona bene. Non sono un voto sul fatto che ti sia piaciuta."
 }
