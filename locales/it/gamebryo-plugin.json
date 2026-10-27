@@ -22,5 +22,6 @@
   "load {{ reference }} after {{ name }}": "carica {{ reference }} dopo {{ name }}",
   "Loaded by the engine, can't be configured": "Caricato dal motore, non configurabile",
   "Drag to another plugin to set userlist rule": "Trascina su un altro plugin per impostare una regola utente",
-  "The mod \"{{ modName }}\" contains multiple plugins": "La mod «{{ modName }}» contiene più plugin"
+  "The mod \"{{ modName }}\" contains multiple plugins": "La mod «{{ modName }}» contiene più plugin",
+  "LOOT reported a cyclic interaction between rules.<br />In the simplest case this is something like [i]\"A needs to load after B\"[/i] and [i]\"B needs to load after A\"[/i] but it can be more complicated, involving multiple plugins and groups and [i]their[/i] order.<br />": "LOOT ha segnalato un'interazione ciclica tra regole.<br />Nel caso più semplice è qualcosa come [i]«A deve caricarsi dopo B»[/i] e [i]«B deve caricarsi dopo A»[/i], ma può essere più complesso e coinvolgere più plugin, gruppi e il [i]loro[/i] ordine.<br />"
 }
