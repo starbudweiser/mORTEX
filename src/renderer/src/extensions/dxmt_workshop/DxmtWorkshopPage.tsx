@@ -324,13 +324,14 @@ export default function DxmtWorkshopPage({ api }: IProps) {
                   </div>
                   {(
                     [
-                      ["Symptom", pitfall.symptom],
-                      ["Cause", pitfall.cause],
-                      ["Solution", pitfall.fix],
+                      // symptôme en rouge, cause en orange, solution en vert
+                      ["Symptom", pitfall.symptom, "!text-danger-strong"],
+                      ["Cause", pitfall.cause, "!text-[#f59e0b]"],
+                      ["Solution", pitfall.fix, "!text-success-strong"],
                     ] as const
-                  ).map(([label, text]) => (
+                  ).map(([label, text, color]) => (
                     <div key={label}>
-                      <Typography appearance="moderate" typographyType="body-xs">
+                      <Typography className={`font-semibold ${color}`} typographyType="body-md">
                         {t(label)}
                       </Typography>
                       <Typography typographyType="body-sm">{t(text)}</Typography>
