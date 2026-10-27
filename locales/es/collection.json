@@ -150,5 +150,8 @@
   "Version choice has no effect on \"Bundled\" mod": "La versión elegida no afecta a un mod «incluido»",
   "Already queued mod installations will still finish": "Las instalaciones ya en cola terminarán igualmente",
   "View and manage collections created by other users.": "Consulta y gestiona colecciones creadas por otros usuarios.",
-  "Name must be between {{min}}-{{max}} characters long": "El nombre debe tener entre {{min}} y {{max}} caracteres"
+  "Name must be between {{min}}-{{max}} characters long": "El nombre debe tener entre {{min}} y {{max}} caracteres",
+  "Here you can configure which mods to install and how.": "Aquí puedes configurar qué mods instalar y cómo.",
+  "Set up your mod collection's rules and site preferences.": "Configura las reglas de tu colección y las preferencias del sitio.",
+  "Rules you remove here are also removed from your actual setup.": "Las reglas que quites aquí también se quitan de tu configuración real."
 }

@@ -66,5 +66,7 @@
   "Some plugins are invalid and were skipped": "Algunos plugins no son válidos y se omitieron",
   "Drag to another plugin to set userlist rule": "Arrastra a otro plugin para definir una regla de usuario",
   "The mod \"{{ modName }}\" contains multiple plugins": "El mod «{{ modName }}» contiene varios plugins",
-  "Enable automatic load order sorting powered by LOOT": "Activar la ordenación automática del orden de carga con LOOT"
+  "Enable automatic load order sorting powered by LOOT": "Activar la ordenación automática del orden de carga con LOOT",
+  "Disable automatic load order sorting powered by LOOT": "Desactivar la ordenación automática del orden de carga con LOOT",
+  "Please activate \"{{ gameId }}\" to enable plugins manually": "Activa «{{ gameId }}» para activar plugins manualmente"
 }
