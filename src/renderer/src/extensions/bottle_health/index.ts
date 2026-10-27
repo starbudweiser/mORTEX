@@ -13,7 +13,7 @@ function init(context: IExtensionContext): boolean {
   context.registerDashlet(
     "mORTEX bottle health",
     1,
-    2,
+    3,
     15,
     BottleHealthDashlet,
     (state) => {

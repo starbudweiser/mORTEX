@@ -24,6 +24,7 @@ import { syncDllOverrides } from "@/util/macos/dllOverrides";
 
 import { discoveryByGame } from "../gamemode_management/selectors";
 import { activeGameId } from "../profile_management/selectors";
+import { DuplicatesRow } from "./DuplicatesRow";
 
 const LABELS: Record<HealthCheckId, string> = {
   runtime: "Wine layer",
@@ -135,6 +136,7 @@ function BottleHealthDashlet({ api }: { api: IExtensionApi }) {
               </div>
             );
           })}
+          <DuplicatesRow api={api} />
         </div>
       </div>
     </Dashlet>

@@ -3767,5 +3767,18 @@
   "No activity": "Sin actividad",
   "Launch {{game}}": "Iniciar {{game}}",
   "Show mORTEX": "Mostrar mORTEX",
-  "Quit mORTEX": "Salir de mORTEX"
+  "Quit mORTEX": "Salir de mORTEX",
+  "{{size}} MB": "{{size}} MB",
+  "Failed to look for duplicates": "No se pudieron buscar duplicados",
+  "Turn duplicates into clones?": "¿Convertir los duplicados en clones?",
+  "{{count}} identical files become APFS clones of a single copy: same content, stored once. Your mods are removed from the game during the operation, then deployed again.": "{{count}} archivo idéntico pasa a ser un clon APFS de una sola copia: mismo contenido, guardado una vez. Tus mods se retiran del juego durante la operación y luego se vuelven a desplegar.",
+  "Reclaim": "Recuperar",
+  "Reclaimed {{size}} with APFS clones": "{{size}} recuperados con clones APFS",
+  "Failed to turn duplicates into clones": "No se pudieron convertir los duplicados en clones",
+  "Duplicate files": "Duplicados",
+  "Not analyzed": "Sin analizar",
+  "{{size}} to reclaim ({{count}} files)": "{{size}} por recuperar ({{count}} archivo)",
+  "Analyze": "Analizar",
+  "{{size}} to reclaim ({{count}} files)_plural": "{{size}} por recuperar ({{count}} archivos)",
+  "{{count}} identical files become APFS clones of a single copy: same content, stored once. Your mods are removed from the game during the operation, then deployed again._plural": "{{count}} archivos idénticos pasan a ser clones APFS de una sola copia: mismo contenido, guardado una vez. Tus mods se retiran del juego durante la operación y luego se vuelven a desplegar."
 }
