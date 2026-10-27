@@ -3036,6 +3036,7 @@ class ExtensionManager {
       dxmt_workshop: () => require("./extensions/dxmt_workshop/index.ts"),
       dll_overrides: () => require("./extensions/dll_overrides/index.ts"),
       time_machine: () => require("./extensions/time_machine/index.ts"),
+      script_extender_log: () => require("./extensions/script_extender_log/index.ts"),
       browser: () => require("./extensions/browser/index.ts"),
       category_management: () => require("./extensions/category_management/index.ts"),
       dashboard: () => require("./extensions/dashboard/index.ts"),

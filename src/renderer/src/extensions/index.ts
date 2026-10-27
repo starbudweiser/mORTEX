@@ -42,6 +42,7 @@ import {} from "./null_activator";
 import {} from "./onboarding_dashlet";
 import {} from "./profile_management";
 import {} from "./recovery";
+import {} from "./script_extender_log";
 import {} from "./settings_application";
 import {} from "./settings_interface";
 import {} from "./settings_metaserver";

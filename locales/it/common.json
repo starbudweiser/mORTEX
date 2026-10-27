@@ -3735,5 +3735,16 @@
   "{{count}} mods changed since_plural": "{{count}} mod cambiate da allora",
   "Switch to the snapshot's profile first": "Passa prima al profilo dell'istantanea",
   "Time Machine": "Time Machine",
-  "Mods enabled: {{enabled}} of {{count}}": "Mod attive: {{enabled}} su {{count}}"
+  "Mods enabled: {{enabled}} of {{count}}": "Mod attive: {{enabled}} su {{count}}",
+  "Address Library for SKSE Plugins is missing or doesn't match your game version.": "Address Library for SKSE Plugins manca o non corrisponde alla tua versione del gioco.",
+  "Built for another version of the game.": "Creato per un'altra versione del gioco.",
+  "Needs a newer version of the script extender.": "Richiede una versione più recente dello script extender.",
+  "A DLL it needs is missing, often a Visual C++ runtime that the bottle doesn't have.": "Manca una DLL di cui ha bisogno, spesso un runtime Visual C++ assente dalla bottiglia.",
+  "Not a script extender plugin, or not a 64-bit DLL.": "Non è un plugin dello script extender, o non è una DLL a 64 bit.",
+  "The script extender says: {{reason}}": "Lo script extender indica: {{reason}}",
+  "Enable Address Library": "Attiva Address Library",
+  "Get Address Library": "Scarica Address Library",
+  "Plugins refused by the script extender": "Plugin rifiutati dallo script extender",
+  "These plugins didn't load, so their mods don't work in game:": "Questi plugin non sono stati caricati, quindi le loro mod non funzionano in gioco:",
+  "Plugins not loaded: {{count}}": "Plugin non caricati: {{count}}"
 }
