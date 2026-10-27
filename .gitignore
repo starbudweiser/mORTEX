@@ -124,3 +124,6 @@ PASSATION_*.md
 /logs/
 /mORTEX.app/
 /mac/native/
+
+# mORTEX : lots de traduction en cours (scripts/translations.mjs)
+translations/work/*.json

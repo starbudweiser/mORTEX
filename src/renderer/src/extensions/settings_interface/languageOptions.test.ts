@@ -68,6 +68,20 @@ describe("buildLanguageOptions", () => {
     ]);
   });
 
+  it("shows how far mORTEX's own translation has got until it's complete", () => {
+    const tr = (input: string, options?: Record<string, unknown>) =>
+      input.replace("{{percent}}", String((options?.replace as { percent: number }).percent));
+    const languages: ILanguage[] = [
+      { key: "es", displayName: "Español", ext: [], progress: 38 },
+      { key: "it", displayName: "Italiano", ext: [], progress: 100 },
+    ];
+
+    expect(buildLanguageOptions(languages, tr).map((option) => option.label)).toEqual([
+      "Español — translation in progress, 38%",
+      "Italiano",
+    ]);
+  });
+
   it("falls back to 'unknown author' when an extension with a modId has no author", () => {
     const languages: ILanguage[] = [
       { key: "es", displayName: "Spanish", ext: [{ name: "es-ext", modId: 7 }] },

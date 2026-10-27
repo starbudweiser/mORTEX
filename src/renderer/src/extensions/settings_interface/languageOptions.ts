@@ -4,6 +4,8 @@ export interface ILanguage {
   key: string;
   displayName: string;
   ext: Array<Partial<IExtensionDownloadInfo>>;
+  /** mORTEX : avancement de sa propre traduction, en %, tant qu'elle n'est pas finie */
+  progress?: number;
 }
 
 /**
@@ -29,8 +31,13 @@ export interface ILanguageOption {
  */
 export function buildLanguageOptions(
   languages: ILanguage[],
-  t: (input: string) => string,
+  t: (input: string, options?: Record<string, unknown>) => string,
 ): ILanguageOption[] {
+  const nameOf = (language: ILanguage) =>
+    language.progress !== undefined && language.progress < 100
+      ? `${language.displayName} — ${t("translation in progress, {{percent}}%", { replace: { percent: language.progress } })}`
+      : language.displayName;
+
   const optionFor = (
     language: ILanguage,
     ext: Partial<IExtensionDownloadInfo>,
@@ -41,7 +48,7 @@ export function buildLanguageOptions(
     label:
       ext.modId !== undefined
         ? `${language.displayName} (${t("Extension")} by ${ext["author"] || "unknown author"})`
-        : language.displayName,
+        : nameOf(language),
   });
 
   return languages.reduce<ILanguageOption[]>((prev, language) => {

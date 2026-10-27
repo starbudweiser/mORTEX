@@ -1,4 +1,4 @@
-import { readdir } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import * as path from "path";
 
 import { getErrorCode } from "@vortex/shared";
@@ -484,11 +484,19 @@ async function readLocales(
       extsByLanguage.set(ext.language, [...(extsByLanguage.get(ext.language) ?? []), ext]);
     }
 
+    // mORTEX : avancement de ses propres traductions (scripts/translations.mjs)
+    let progress: Record<string, number> = {};
+    try {
+      progress = JSON.parse(await readFile(path.join(bundledLanguages, "progress.json"), "utf8"));
+    } catch {
+      // pas d'avancement publié
+    }
+
     return keys.map((key) => {
       const ext: Array<Partial<IAvailableExtension>> = loc.has(key)
         ? []
         : (extsByLanguage.get(key) ?? []);
-      return { key, displayName: displayBcp47(key, uiLocale), ext };
+      return { key, displayName: displayBcp47(key, uiLocale), ext, progress: progress[key] };
     });
   } catch (err) {
     log("warn", "failed to read locales", err);

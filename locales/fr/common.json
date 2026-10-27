@@ -263,5 +263,6 @@
   "Failed to read the files of this mod": "Impossible de lire les fichiers de ce mod",
   "This mod has no file to download": "Ce mod n'a aucun fichier à télécharger",
   "{{total}} mod": "{{total}} mod",
-  "{{total}} mod_plural": "{{total}} mods"
+  "{{total}} mod_plural": "{{total}} mods",
+  "translation in progress, {{percent}}%": "traduction en cours, {{percent}} %"
 }

@@ -304,5 +304,6 @@
   "Failed to read the files of this mod": "Failed to read the files of this mod",
   "This mod has no file to download": "This mod has no file to download",
   "{{total}} mod": "{{total}} mod",
-  "{{total}} mod_plural": "{{total}} mods"
+  "{{total}} mod_plural": "{{total}} mods",
+  "translation in progress, {{percent}}%": "translation in progress, {{percent}}%"
 }
