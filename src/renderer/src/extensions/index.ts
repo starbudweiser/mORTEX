@@ -35,6 +35,7 @@ import {} from "./mac_activity";
 import {} from "./mod_load_order";
 import {} from "./mod_management";
 import {} from "./mortex_assistant";
+import {} from "./mortex_brand";
 import {} from "./mortex_crashes";
 import {} from "./mortex_dashlet";
 import {} from "./move_activator";

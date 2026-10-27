@@ -1428,3 +1428,8 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     stroke-linejoin: round;
     stroke-width: 1.5;
 }
+
+/* « m » de mORTEX en orange Vortex dans tous les textes (util/brandHighlight.ts) */
+::highlight(mortex-m) {
+    color: #f59e0b;
+}
