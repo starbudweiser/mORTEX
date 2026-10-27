@@ -38,7 +38,7 @@ export const GameActions = () => {
   // mORTEX (macOS) : « Lancer » depuis l'icône de la barre des menus, comme le bouton LANCER
   useEffect(
     () =>
-      window.api.menu.onActivityAction?.((action) => {
+      window.api?.menu?.onActivityAction?.((action) => {
         if (action === "launch") handlePlay();
       }),
     [handlePlay],
