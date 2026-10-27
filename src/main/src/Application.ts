@@ -52,7 +52,7 @@ import {
 } from "./store/mainPersistence";
 import SubPersistor from "./store/SubPersistor";
 import { isTelemetryEnabled, setTelemetryEnabled, setTelemetryInstanceId } from "./telemetry/state";
-import TrayIcon, { setTrayIcon } from "./TrayIcon";
+import TrayIcon, { getTrayIcon, setTrayIcon } from "./TrayIcon";
 import { UnleashClient } from "./unleash/client";
 import { synchronizeFeatureFlags } from "./unleash/ipc";
 
@@ -133,9 +133,15 @@ class Application {
   private mFirstStart: boolean = false;
   private mStartupLogPath: string;
   private mProcessGoneReports = new Map<string, ReloadBudget>();
+  private mSplash: SplashScreen | undefined;
+  private mMainWindowShown: Promise<void>;
+  private mResolveMainWindowShown: () => void = () => undefined;
 
   constructor(args: IParameters) {
     this.mArgs = args;
+    this.mMainWindowShown = new Promise<void>((resolve) => {
+      this.mResolveMainWindowShown = resolve;
+    });
 
     // Set up main process extensions IPC handlers
     setupMainExtensions();
@@ -243,11 +249,14 @@ class Application {
     });
 
     // macOS : les liens nxm:// arrivent par open-url, pas par la ligne de commande
-    listenOpenUrl((url) => {
-      this.applyArguments({ download: url }).catch((err: unknown) =>
-        log("error", "error applying arguments", unknownToError(err)),
-      );
-    });
+    listenOpenUrl(
+      (url) => {
+        this.applyArguments({ download: url }).catch((err: unknown) =>
+          log("error", "error applying arguments", unknownToError(err)),
+        );
+      },
+      (action) => getTrayIcon()?.runAction(action),
+    );
 
     app.on("second-instance", (_event, secondaryArgv) => {
       log("debug", "getting arguments from second instance", secondaryArgv);
@@ -482,6 +491,7 @@ class Application {
     if (!args.startMinimized) {
       log("debug", "showing splash screen");
       splash = await this.startSplash();
+      this.mSplash = splash;
     } else {
       log("debug", "starting without splash screen");
     }
@@ -576,7 +586,8 @@ class Application {
 
     if (splash) {
       log("debug", "removing splash screen");
-      await splash.fadeOut();
+      await splash.fadeOut(this.mMainWindowShown);
+      this.mSplash = undefined;
     }
 
     const windowHandle = this.mMainWindow?.getHandle();
@@ -1144,8 +1155,11 @@ class Application {
       app.exit();
       return;
     }
+    // la fenêtre principale s'ouvre 2 s après l'apparition du splash (règle Socle « Splash animé »)
+    const hold = this.mSplash?.holdMainWindow() ?? Promise.resolve();
     // Read maximized setting from persistence since store is in renderer
-    readPersistedValue<boolean>("settings", ["window", "maximized"])
+    hold
+      .then(() => readPersistedValue<boolean>("settings", ["window", "maximized"]))
       .then((maximized) => {
         try {
           this.mMainWindow?.show(maximized ?? false, startMinimized);
@@ -1166,7 +1180,8 @@ class Application {
         log("error", "failed to read window settings", getErrorMessageOrDefault(err));
         // Fall back to non-maximized
         this.mMainWindow?.show(false, startMinimized);
-      });
+      })
+      .finally(() => this.mResolveMainWindowShown());
   }
 
   /**

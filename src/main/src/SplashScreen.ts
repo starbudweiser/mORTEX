@@ -1,18 +1,38 @@
 import * as path from "path";
 import { pathToFileURL } from "url";
 
-import { BrowserWindow } from "electron";
+import { BrowserWindow, screen } from "electron";
 
 import { getVortexPath } from "./getVortexPath";
 import { log } from "./logging";
 
+// Règle Socle « Splash animé » : fenêtre principale à t = 2 s, sortie du splash à t = 4 s (600 ms)
 const MIN_SHOWN_MS = 4000;
+const MAIN_WINDOW_AT_MS = 2000;
+const WIDTH = 500;
+const HEIGHT = 190;
+
+const delay = (ms: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(() => resolve(), ms);
+  });
 
 class SplashScreen {
   private mWindow: Electron.BrowserWindow | null = null;
   private mShownAt = 0;
 
-  public async fadeOut(): Promise<void> {
+  /**
+   * Retient l'ouverture de la fenêtre principale jusqu'à 2 s après l'apparition du splash
+   */
+  public async holdMainWindow(): Promise<void> {
+    if (this.mWindow === null || this.mWindow.isDestroyed() || this.mShownAt === 0) return;
+    await delay(MAIN_WINDOW_AT_MS - (Date.now() - this.mShownAt));
+  }
+
+  /**
+   * @param mainShown se résout quand la fenêtre principale est affichée : le splash l'attend avant de sortir
+   */
+  public async fadeOut(mainShown?: Promise<void>): Promise<void> {
     // apparently we can't prevent the user from closing the splash with alt-f4...
     if (this.mWindow === null || this.mWindow.isDestroyed()) return;
 
@@ -22,13 +42,11 @@ class SplashScreen {
     // don't fade out immediately, otherwise the it looks odd
     // as the main window appears at the same time
 
-    const delay = (ms: number) =>
-      new Promise<void>((resolve) => {
-        setTimeout(() => resolve(), ms);
-      });
-
     // l'animation reste au moins 4 s à l'écran, même si le démarrage est plus rapide
-    await delay(Math.max(200, MIN_SHOWN_MS - (Date.now() - this.mShownAt)));
+    await Promise.all([
+      delay(Math.max(200, MIN_SHOWN_MS - (Date.now() - this.mShownAt))),
+      mainShown,
+    ]);
 
     if (!this.mWindow?.isDestroyed()) {
       try {
@@ -57,21 +75,25 @@ class SplashScreen {
 
       const onReady = () => {
         clearTimeout(timeout);
-        this.mShownAt = Date.now();
         if (process.env.VORTEX_E2E_HEADLESS !== "1") {
           this.mWindow?.show();
+          // macOS peut remonter la fenêtre à l'affichage : on la recentre une fois visible
+          this.center();
         }
+        this.mShownAt = Date.now();
         resolve();
       };
 
+      const { x, y } = this.centeredPosition();
       this.mWindow = new BrowserWindow({
         frame: false,
-        // carte de 476 × 166 et marge de 12 px pour son ombre
-        width: 500,
-        height: 190,
+        // Socle size-splash-* : carte de 476 × 166 et marge de 12 px
+        width: WIDTH,
+        height: HEIGHT,
+        x,
+        y,
         transparent: !disableGPU,
-        // pas d'ombre native : sur une fenêtre transparente, macOS la dessine autour du cadre
-        // entier et non autour de la carte, qui a déjà la sienne
+        // pas d'ombre native : sur une fenêtre transparente, macOS la dessine autour du cadre entier
         hasShadow: false,
         backgroundColor: "#00000000",
         show: false,
@@ -102,6 +124,28 @@ class SplashScreen {
         )
         .catch((err: unknown) => log("error", "failed to load splash screen URL", err));
     });
+  }
+
+  /**
+   * Position qui centre exactement le splash sur l'écran complet (et non sur la zone utile,
+   * qui exclut la barre des menus et le Dock)
+   */
+  private centeredPosition(): { x: number; y: number } {
+    const { bounds } = screen.getPrimaryDisplay();
+    return {
+      x: Math.round(bounds.x + (bounds.width - WIDTH) / 2),
+      y: Math.round(bounds.y + (bounds.height - HEIGHT) / 2),
+    };
+  }
+
+  private center(): void {
+    if (this.mWindow === null || this.mWindow.isDestroyed()) return;
+    const { x, y } = this.centeredPosition();
+    this.mWindow.setBounds({ x, y, width: WIDTH, height: HEIGHT });
+    const bounds = this.mWindow.getBounds();
+    if (bounds.x !== x || bounds.y !== y) {
+      log("warn", "splash screen not centered", { expected: { x, y }, actual: bounds });
+    }
   }
 
   public getHandle(): Electron.BrowserWindow | null {
