@@ -40,11 +40,28 @@ PL="$APP_DIR/mORTEX.app/Contents/Info.plist"
 EXT_DIR="$APP_DIR/mORTEX.app/Contents/Extensions"
 mkdir -p "$EXT_DIR"
 "$APP_DIR/mac/swift/build_intents.sh" "$EXT_DIR"
+# Quick Look (aperçu des .dds et .esp/.esm/.esl) : extension NSExtension, dans Contents/PlugIns
+PLUGIN_DIR="$APP_DIR/mORTEX.app/Contents/PlugIns"
+mkdir -p "$PLUGIN_DIR"
+"$APP_DIR/mac/swift/build_quicklook.sh" "$PLUGIN_DIR"
+# type des plugins Bethesda, au cas où aucune autre appli ne le déclare
+/usr/libexec/PlistBuddy -c "Delete :UTImportedTypeDeclarations" "$PL" 2>/dev/null || true
+/usr/libexec/PlistBuddy -c "Add :UTImportedTypeDeclarations array" \
+  -c "Add :UTImportedTypeDeclarations:0 dict" \
+  -c "Add :UTImportedTypeDeclarations:0:UTTypeIdentifier string com.nexusmods.bethesda-plugin" \
+  -c "Add :UTImportedTypeDeclarations:0:UTTypeDescription string Bethesda plugin" \
+  -c "Add :UTImportedTypeDeclarations:0:UTTypeConformsTo array" \
+  -c "Add :UTImportedTypeDeclarations:0:UTTypeConformsTo:0 string public.data" \
+  -c "Add :UTImportedTypeDeclarations:0:UTTypeTagSpecification dict" \
+  -c "Add :UTImportedTypeDeclarations:0:UTTypeTagSpecification:public.filename-extension array" \
+  -c "Add :UTImportedTypeDeclarations:0:UTTypeTagSpecification:public.filename-extension:0 string esp" \
+  -c "Add :UTImportedTypeDeclarations:0:UTTypeTagSpecification:public.filename-extension:1 string esm" \
+  -c "Add :UTImportedTypeDeclarations:0:UTTypeTagSpecification:public.filename-extension:2 string esl" "$PL"
 /Volumes/SKYRIM/TOOLS/MAC/_tools/sign_app.sh "$APP_DIR/mORTEX.app"
 # sign_app.sh signe en profondeur avec l'identifiant de l'appli : chaque extension reprend le sien
 # et ses droits (bac à sable obligatoire), puis l'appli est rescellée sans --deep.
 SIGN_HASH="$(security find-identity -v -p codesigning | grep '"sKYCRASH Local Signing"' | awk '{print $2}' | head -1)"
-for APPEX in "$EXT_DIR"/*.appex; do
+for APPEX in "$EXT_DIR"/*.appex "$PLUGIN_DIR"/*.appex; do
   NAME="$(basename "$APPEX" .appex)"
   codesign --force --sign "${SIGN_HASH:--}" \
     --identifier "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APPEX/Contents/Info.plist")" \
