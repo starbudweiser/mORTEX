@@ -3,7 +3,6 @@ import * as path from "path";
 import { parseError, unknownToError } from "@vortex/shared";
 import type PromiseBB from "bluebird";
 import type { TFunction } from "i18next";
-import _ from "lodash";
 import * as React from "react";
 import { Button, Panel } from "react-bootstrap";
 import type { WithTranslation } from "react-i18next";
@@ -254,13 +253,18 @@ class DownloadView extends ComponentEx<IDownloadViewProps, IComponentState> {
       if (!viewAll) {
         filteredIds = filteredIds.filter((dlId) => downloads[dlId].installed === undefined);
       }
-      const filtered = filteredIds.reduce((prev, dlId) => {
-        prev[dlId] = downloads[dlId];
-        return prev;
-      }, {});
-
-      if (!_.isEqual(filtered, this.mLastFiltered)) {
-        this.mLastFiltered = filtered;
+      // downloads are replaced, never changed in place: comparing references is enough and
+      // spares a deep comparison of 20 000 entries on each render
+      const last = this.mLastFiltered;
+      const unchanged =
+        last !== undefined &&
+        Object.keys(last).length === filteredIds.length &&
+        filteredIds.every((dlId) => last[dlId] === downloads[dlId]);
+      if (!unchanged) {
+        this.mLastFiltered = filteredIds.reduce((prev, dlId) => {
+          prev[dlId] = downloads[dlId];
+          return prev;
+        }, {});
       }
 
       content = (

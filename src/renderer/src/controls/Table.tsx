@@ -132,6 +132,8 @@ interface IComponentState {
   detailsOpen: boolean;
   rowIdsDelayed: string[];
   rowVisibility: { [id: string]: boolean };
+  // how many rows are rendered, the rest is a spacer of the same height (see renderSpacer)
+  renderLimit: number;
   singleRowActions: ITableRowAction[];
   multiRowActions: ITableRowAction[];
   columnToggles: ITableRowAction[];
@@ -151,6 +153,10 @@ class SuperTable extends ComponentEx<IProps, IComponentState> {
   // delay certain actions (like hiding offscreen items) until after scrolling ends.
   // this improves scroll smoothness at the expense of memory
   private static SCROLL_DEBOUNCE = 5000;
+
+  // mORTEX : rows are rendered in batches as they come near the view, so a list of 20 000
+  // downloads opens and scrolls like a short one
+  private static RENDER_BATCH = 200;
 
   // How long the set of columns has to hold still before it's reported. Attributes come
   // from extensions and can be gated on state, so what a table shows in its first frame
@@ -197,6 +203,8 @@ class SuperTable extends ComponentEx<IProps, IComponentState> {
   private mDefaultFilterRef: HTMLElement = null;
   private mLastScrollLeft: number = 0;
   private mLastOnTop: boolean = true;
+  private mSpacerRef: HTMLElement = null;
+  private mRowHeight: number = 32;
 
   constructor(props: IProps) {
     super(props);
@@ -209,6 +217,7 @@ class SuperTable extends ComponentEx<IProps, IComponentState> {
       detailsOpen: false,
       rowIdsDelayed: [],
       rowVisibility: {},
+      renderLimit: SuperTable.RENDER_BATCH,
       singleRowActions: this.singleRowActions(props),
       multiRowActions: this.multiRowActions(props),
       columnToggles: this.columnToggles(props),
@@ -361,6 +370,7 @@ class SuperTable extends ComponentEx<IProps, IComponentState> {
 
   public componentDidUpdate() {
     this.mHeaderUpdateDebouncer.schedule();
+    this.extendRenderLimit();
   }
 
   public shouldComponentUpdate(newProps: IProps, newState: IComponentState) {
@@ -562,7 +572,7 @@ class SuperTable extends ComponentEx<IProps, IComponentState> {
 
   private renderBody = () => {
     const { t, attributeState, data } = this.props;
-    const { calculatedValues, groupedRows, sortedRows } = this.state;
+    const { calculatedValues, groupedRows, renderLimit, sortedRows } = this.state;
 
     if (data === undefined || calculatedValues === undefined || sortedRows === undefined) {
       return <TBody />;
@@ -573,11 +583,20 @@ class SuperTable extends ComponentEx<IProps, IComponentState> {
     );
 
     if (groupedRows !== undefined) {
+      let budget = renderLimit;
+      let hidden = 0;
       return (
         <TBody>
           {groupedRows.map((group) => {
             const expanded = group.rows !== null;
-            const rows = group.rows || [];
+            const allRows = group.rows || [];
+            if (budget <= 0) {
+              hidden += allRows.length + 1;
+              return null;
+            }
+            const rows = allRows.slice(0, budget);
+            budget -= rows.length;
+            hidden += allRows.length - rows.length;
             return [
               <GroupingRow
                 count={group.count}
@@ -594,12 +613,83 @@ class SuperTable extends ComponentEx<IProps, IComponentState> {
               ...rows.map((rowId) => this.renderRow(rowId, sortAttribute, group.id)),
             ];
           })}
+          {this.renderSpacer(hidden)}
         </TBody>
       );
     } else {
-      return <TBody>{sortedRows.map((row, idx) => this.renderRow(row, sortAttribute))}</TBody>;
+      return (
+        <TBody>
+          {sortedRows.slice(0, renderLimit).map((row) => this.renderRow(row, sortAttribute))}
+          {this.renderSpacer(sortedRows.length - renderLimit)}
+        </TBody>
+      );
     }
   };
+
+  // stands in for the rows not rendered yet, so the scrollbar covers the whole list
+  private renderSpacer(hidden: number): JSX.Element {
+    if (hidden <= 0) {
+      return null;
+    }
+    return (
+      <TR className="table-rows-spacer" domRef={this.setSpacerRef} key="__spacer">
+        <TD
+          colSpan={this.mVisibleAttributes.length + 1}
+          style={{ height: hidden * this.mRowHeight, padding: 0, border: "none" }}
+        />
+      </TR>
+    );
+  }
+
+  private setSpacerRef = (ref: HTMLElement) => {
+    this.mSpacerRef = ref;
+  };
+
+  // renders more rows once the spacer comes within a screen of the view
+  private extendRenderLimit = () => {
+    const spacer = this.mSpacerRef;
+    if (!this.mMounted || spacer === null || !spacer.isConnected) {
+      return;
+    }
+    const viewBottom = this.mScrollContainer?.getBoundingClientRect().bottom ?? window.innerHeight;
+    const ahead = viewBottom + window.innerHeight - spacer.getBoundingClientRect().top;
+    if (ahead <= 0) {
+      return;
+    }
+    const lastRow = spacer.previousElementSibling as HTMLElement | null;
+    if (lastRow !== null && lastRow.offsetHeight > 0) {
+      this.mRowHeight = lastRow.offsetHeight;
+    }
+    this.setRenderLimit(
+      this.mNextState.renderLimit + Math.ceil(ahead / this.mRowHeight) + SuperTable.RENDER_BATCH,
+    );
+  };
+
+  private setRenderLimit(limit: number, callback?: () => void) {
+    if (limit <= this.mNextState.renderLimit) {
+      callback?.();
+      return;
+    }
+    this.updateState(update(this.mNextState, { renderLimit: { $set: limit } }), callback);
+  }
+
+  // position of a row in the rendered order, -1 if it isn't listed
+  private rowPosition(id: string): number {
+    const { groupedRows, sortedRows } = this.mNextState;
+    if (groupedRows === undefined) {
+      return sortedRows?.indexOf(id) ?? -1;
+    }
+    let position = 0;
+    for (const group of groupedRows) {
+      const rows = group.rows ?? [];
+      const idx = rows.indexOf(id);
+      if (idx !== -1) {
+        return position + idx;
+      }
+      position += rows.length;
+    }
+    return -1;
+  }
 
   private toggleGroup = (groupName: string, expand: boolean) => {
     const { onCollapseGroup, tableId } = this.props;
@@ -621,6 +711,11 @@ class SuperTable extends ComponentEx<IProps, IComponentState> {
   };
 
   private scrollTo = (id: string, mayRetry?: boolean) => {
+    const position = this.rowPosition(id);
+    if (position >= this.mNextState.renderLimit) {
+      this.setRenderLimit(position + SuperTable.RENDER_BATCH, () => this.scrollTo(id, mayRetry));
+      return;
+    }
     try {
       const node = ReactDOM.findDOMNode(this.mRowRefs[id]) as HTMLElement;
       if (node !== null) {
@@ -1056,6 +1151,9 @@ class SuperTable extends ComponentEx<IProps, IComponentState> {
             ReactDOM.findDOMNode(this.mRowRefs[newItem]) as HTMLElement,
             Math.abs(offset) > 1,
           );
+        } else if (newItem !== undefined && this.mMounted) {
+          // not rendered yet: past the spacer
+          this.scrollTo(newItem);
         }
       } else {
         const action = this.props.actions.find((iter) =>
@@ -1297,6 +1395,7 @@ class SuperTable extends ComponentEx<IProps, IComponentState> {
   // width they have reached, so they don't narrow as the rows that set it unmount.
   private onRowsScroll = () => {
     this.mLastScroll = Date.now();
+    this.extendRenderLimit();
     if (this.mDelayedVisibilityTimer === undefined) {
       this.mDelayedVisibilityTimer = setTimeout(
         () => this.postScroll(),

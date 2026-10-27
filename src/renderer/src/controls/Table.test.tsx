@@ -75,7 +75,7 @@ const data = { a: { name: "a" }, b: { name: "b" }, c: { name: "c" } };
 
 const Table = SuperTable as React.ComponentType<any>;
 
-function renderTable(stickyHeader: boolean) {
+function renderTable(stickyHeader: boolean, rows: object = data) {
   // stands in for the page scroll around a sticky-header table
   const page = document.createElement("div");
   page.style.overflowY = "auto";
@@ -88,7 +88,7 @@ function renderTable(stickyHeader: boolean) {
       <Table
         t={(key: string) => key}
         tableId="test"
-        data={data}
+        data={rows}
         objects={attributes}
         actions={[]}
         attributeState={{}}
@@ -156,5 +156,32 @@ describe("SuperTable row virtualisation", () => {
     updateWidth.mockClear();
     page.dispatchEvent(new Event("scroll"));
     expect(updateWidth).not.toHaveBeenCalled();
+  });
+
+  it("renders a long list in batches, the rest standing in as a spacer", async () => {
+    // the spacer stays far below the view until it is scrolled to
+    let spacerTop = 100_000;
+    const rect = Element.prototype.getBoundingClientRect;
+    vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(
+      function (this: Element) {
+        return this.classList.contains("table-rows-spacer")
+          ? ({ top: spacerTop, bottom: spacerTop } as DOMRect)
+          : rect.call(this);
+      },
+    );
+    const many = Object.fromEntries(
+      Array.from({ length: 1000 }, (_v, idx) => [`m${idx}`, { name: `m${idx}` }]),
+    );
+    const { container, pane, unmount } = renderTable(false, many);
+
+    await waitFor(() => expect(container.querySelectorAll("tr[data-rowid]")).toHaveLength(200));
+    expect(container.querySelector(".table-rows-spacer")).not.toBeNull();
+
+    spacerTop = 0;
+    pane.dispatchEvent(new Event("scroll"));
+    await waitFor(() =>
+      expect(container.querySelectorAll("tr[data-rowid]").length).toBeGreaterThan(200),
+    );
+    unmount();
   });
 });

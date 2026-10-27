@@ -51,6 +51,10 @@ class DuckDBSingleton {
       this.#mDuckDB = await DuckDBInstance.create(":memory:", {
         allow_unsigned_extensions: "true",
         extension_directory: extensionDir,
+        // mORTEX : by default DuckDB keeps up to 80 % of the memory as cache and starts a
+        // thread per core; the state it mirrors needs a fraction of that
+        memory_limit: "512MB",
+        threads: "4",
       });
 
       const connection = await this.#mDuckDB.connect();
