@@ -33,5 +33,10 @@
   "Mod not found on nexusmods.com: {{modName}} (modId: {{modId}}), it may have been removed.": "Mod non trovata su nexusmods.com: {{modName}} (modId: {{modId}}), potrebbe essere stata rimossa.",
   "You can also add mods to a collection from the mods screen: Right-click > Add to Collection": "Puoi anche aggiungere mod a una collezione dalla schermata delle mod: clic destro > Aggiungi alla collezione",
   "You now have the whole collection installed, you can start editing your collection by cloning it.": "Ora hai l'intera collezione installata: puoi modificarla clonandola.",
-  "The sources \"Browse a website\" and \"Direct download\" require that you provide a URL to download from.": "Le origini «Sfoglia un sito» e «Download diretto» richiedono un URL da cui scaricare."
+  "The sources \"Browse a website\" and \"Direct download\" require that you provide a URL to download from.": "Le origini «Sfoglia un sito» e «Download diretto» richiedono un URL da cui scaricare.",
+  "By default the collection will replicate all your custom rules that dictate the deployment order of mods.": "Per impostazione predefinita, la collezione replicherà tutte le tue regole personalizzate sull'ordine di distribuzione.",
+  "If you disable rules here your collection may produce unresolved file conflicts that the user has to resolve.": "Se disattivi qui delle regole, la collezione potrebbe generare conflitti di file che l'utente dovrà risolvere.",
+  "You have unresolved mod conflicts in your current mods setup. Please resolve them before uploading a collection.": "La configurazione attuale ha conflitti tra mod irrisolti. Risolvili prima di caricare una collezione.",
+  "Most websites don't allow direct downloads. Please make sure you are allowed to use direct links to the specified page.": "La maggior parte dei siti non consente download diretti. Assicurati di poter usare link diretti a quella pagina.",
+  "The collection will include your custom load order rules so that users of your collection will get the same load order.": "La collezione includerà le tue regole dell'ordine di caricamento, così i suoi utenti avranno lo stesso ordine."
 }

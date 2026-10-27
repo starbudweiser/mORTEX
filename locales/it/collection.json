@@ -164,5 +164,8 @@
   "Select (click, shift-click, ...) installed mods you want to add to your collection below:": "Seleziona (clic, Maiusc+clic…) le mod installate da aggiungere alla collezione:",
   "You can also add mods to a collection from the mods screen: Right-click > Add to Collection": "Puoi anche aggiungere mod a una collezione dalla schermata delle mod: clic destro > Aggiungi alla collezione",
   "The sources \"Browse a website\" and \"Direct download\" require that you provide a URL to download from.": "Le origini «Sfoglia un sito» e «Download diretto» richiedono un URL da cui scaricare.",
-  "By default the collection will replicate all your custom rules that dictate the deployment order of mods.": "Per impostazione predefinita, la collezione replicherà tutte le tue regole personalizzate sull'ordine di distribuzione."
+  "By default the collection will replicate all your custom rules that dictate the deployment order of mods.": "Per impostazione predefinita, la collezione replicherà tutte le tue regole personalizzate sull'ordine di distribuzione.",
+  "Sorry to hear that the collection \"undefined\" isn't working for you. Here are some steps that could help:": "Ci dispiace che la collezione «undefined» non funzioni. Ecco alcuni passaggi che potrebbero aiutare:",
+  "If you disable rules here your collection may produce unresolved file conflicts that the user has to resolve.": "Se disattivi qui delle regole, la collezione potrebbe generare conflitti di file che l'utente dovrà risolvere.",
+  "The collection will include your custom load order rules so that users of your collection will get the same load order.": "La collezione includerà le tue regole dell'ordine di caricamento, così i suoi utenti avranno lo stesso ordine."
 }

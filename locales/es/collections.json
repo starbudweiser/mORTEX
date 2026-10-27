@@ -33,5 +33,10 @@
   "Mod not found on nexusmods.com: {{modName}} (modId: {{modId}}), it may have been removed.": "Mod no encontrado en nexusmods.com: {{modName}} (modId: {{modId}}), puede que se haya eliminado.",
   "You can also add mods to a collection from the mods screen: Right-click > Add to Collection": "También puedes añadir mods a una colección desde la pantalla de mods: clic derecho > Añadir a la colección",
   "You now have the whole collection installed, you can start editing your collection by cloning it.": "Ya tienes toda la colección instalada; puedes editarla clonándola.",
-  "The sources \"Browse a website\" and \"Direct download\" require that you provide a URL to download from.": "Los orígenes «Explorar un sitio web» y «Descarga directa» requieren una URL de descarga."
+  "The sources \"Browse a website\" and \"Direct download\" require that you provide a URL to download from.": "Los orígenes «Explorar un sitio web» y «Descarga directa» requieren una URL de descarga.",
+  "By default the collection will replicate all your custom rules that dictate the deployment order of mods.": "Por defecto, la colección replicará todas tus reglas personalizadas de orden de despliegue.",
+  "If you disable rules here your collection may produce unresolved file conflicts that the user has to resolve.": "Si desactivas reglas aquí, tu colección puede generar conflictos de archivos que el usuario tendrá que resolver.",
+  "You have unresolved mod conflicts in your current mods setup. Please resolve them before uploading a collection.": "Tu configuración tiene conflictos de mods sin resolver. Resuélvelos antes de subir una colección.",
+  "Most websites don't allow direct downloads. Please make sure you are allowed to use direct links to the specified page.": "La mayoría de los sitios no permiten descargas directas. Asegúrate de poder usar enlaces directos a esa página.",
+  "The collection will include your custom load order rules so that users of your collection will get the same load order.": "La colección incluirá tus reglas de orden de carga para que sus usuarios tengan el mismo orden."
 }

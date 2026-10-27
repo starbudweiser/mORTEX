@@ -73,5 +73,8 @@
   "In addition you can have up to 256 medium plugins, and 4096 light plugins.": "Inoltre, puoi avere fino a 256 plugin medi e 4096 leggeri.",
   "Your userlist contains multiple identical \"{{plugin}} after {{reference}}\"": "La lista utente contiene più regole identiche «{{plugin}} dopo {{reference}}»",
   "This plugin can't be an esl since it contains form-ids outside the valid range": "Questo plugin non può essere ESL perché contiene form-id fuori dall'intervallo valido",
-  "Reset customized groups between \"{{first}}@{{firstGroup}}\" and \"{{second}}@{{secondGroup}}\"": "Ripristina i gruppi personalizzati tra «{{first}}@{{firstGroup}}» e «{{second}}@{{secondGroup}}»"
+  "Reset customized groups between \"{{first}}@{{firstGroup}}\" and \"{{second}}@{{secondGroup}}\"": "Ripristina i gruppi personalizzati tra «{{first}}@{{firstGroup}}» e «{{second}}@{{secondGroup}}»",
+  "Some of the enabled plugins have dependencies or incompatibilities that are not obeyed in your current setup": "Alcuni plugin attivi hanno dipendenze o incompatibilità non rispettate dalla configurazione attuale",
+  "Plugins shouldn't exceed mod index {{maxIndex}} for a total of {{count}} plugins (including base game and DLCs).": "I plugin non devono superare l'indice {{maxIndex}}, cioè {{count}} plugin in totale (gioco base e DLC inclusi).",
+  "Blueprint plugin - force-loaded by the game and pinned to the end of the load order. Managed by the game, not Vortex.": "Plugin Blueprint: caricato forzatamente dal gioco e fissato alla fine dell'ordine di caricamento. Gestito dal gioco, non da Vortex."
 }
