@@ -52,7 +52,7 @@ import {
 } from "./store/mainPersistence";
 import SubPersistor from "./store/SubPersistor";
 import { isTelemetryEnabled, setTelemetryEnabled, setTelemetryInstanceId } from "./telemetry/state";
-import TrayIcon from "./TrayIcon";
+import TrayIcon, { setTrayIcon } from "./TrayIcon";
 import { UnleashClient } from "./unleash/client";
 import { synchronizeFeatureFlags } from "./unleash/ipc";
 
@@ -572,6 +572,7 @@ class Application {
 
     log("debug", "setting up tray icon");
     this.mTray = new TrayIcon();
+    setTrayIcon(this.mTray);
 
     if (splash) {
       log("debug", "removing splash screen");

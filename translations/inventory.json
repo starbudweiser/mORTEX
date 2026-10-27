@@ -4015,7 +4015,13 @@
     "{{fs}}: no links, deployment will copy files": "{{fs}}: no links, deployment will copy files",
     "{{size}} GB": "{{size}} GB",
     "Missing for {{dlls}}": "Missing for {{dlls}}",
-    "Failed to fix the bottle": "Failed to fix the bottle"
+    "Failed to fix the bottle": "Failed to fix the bottle",
+    "Downloads: {{count}} in progress ({{percent}} %)": "Downloads: {{count}} in progress ({{percent}} %)",
+    "Downloads: {{count}} in progress": "Downloads: {{count}} in progress",
+    "No activity": "No activity",
+    "Launch {{game}}": "Launch {{game}}",
+    "Show mORTEX": "Show mORTEX",
+    "Quit mORTEX": "Quit mORTEX"
   },
   "dashboard": {
     "Dashboard": "Dashboard"

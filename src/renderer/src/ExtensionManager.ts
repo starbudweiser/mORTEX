@@ -3038,6 +3038,7 @@ class ExtensionManager {
       time_machine: () => require("./extensions/time_machine/index.ts"),
       script_extender_log: () => require("./extensions/script_extender_log/index.ts"),
       bottle_health: () => require("./extensions/bottle_health/index.ts"),
+      mac_activity: () => require("./extensions/mac_activity/index.ts"),
       browser: () => require("./extensions/browser/index.ts"),
       category_management: () => require("./extensions/category_management/index.ts"),
       dashboard: () => require("./extensions/dashboard/index.ts"),

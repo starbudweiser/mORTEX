@@ -31,6 +31,7 @@ import {} from "./installer_fomod_native";
 import {} from "./installer_fomod_shared";
 import {} from "./installer_nested_fomod";
 import {} from "./instructions_overlay";
+import {} from "./mac_activity";
 import {} from "./mod_load_order";
 import {} from "./mod_management";
 import {} from "./mortex_assistant";

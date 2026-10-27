@@ -18,7 +18,7 @@ import type {
   TraceCategoriesAndOptions,
 } from "./electron";
 import type { FeatureFlag } from "./flags";
-import type { CrashReadResult, FlagContext, FlagMetricsBucket } from "./ipc";
+import type { CrashReadResult, FlagContext, FlagMetricsBucket, MacActivity } from "./ipc";
 import type {
   DiffOperation,
   AppInitMetadata,
@@ -339,6 +339,12 @@ export interface Menu {
 
   /** Shows a native menu at (x, y) in the window; resolves with the chosen item's id, if any */
   popup(items: SerializableMenuItem[], x: number, y: number): Promise<string | undefined>;
+
+  /** mORTEX (macOS): activity shown by the menu bar icon and the Dock */
+  setActivity(activity: MacActivity): void;
+
+  /** mORTEX (macOS): an action chosen from the menu bar icon. Returns unsubscribe function. */
+  onActivityAction(callback: (action: string) => void): () => void;
 }
 
 export interface ContentTracing {

@@ -3761,5 +3761,11 @@
   "{{fs}}: no links, deployment will copy files": "{{fs}}: niente collegamenti, il deploy copierà i file",
   "{{size}} GB": "{{size}} GB",
   "Missing for {{dlls}}": "Mancanti per {{dlls}}",
-  "Failed to fix the bottle": "Impossibile correggere la bottiglia"
+  "Failed to fix the bottle": "Impossibile correggere la bottiglia",
+  "Downloads: {{count}} in progress ({{percent}} %)": "Download: {{count}} in corso ({{percent}} %)",
+  "Downloads: {{count}} in progress": "Download: {{count}} in corso",
+  "No activity": "Nessuna attività",
+  "Launch {{game}}": "Avvia {{game}}",
+  "Show mORTEX": "Mostra mORTEX",
+  "Quit mORTEX": "Esci da mORTEX"
 }

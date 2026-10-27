@@ -283,6 +283,25 @@ export interface CrashReadResult {
   skipped: number;
 }
 
+/**
+ * mORTEX (macOS) : activité montrée dans la barre des menus et le Dock. Les libellés arrivent
+ * traduits par l'affichage.
+ */
+export interface MacActivity {
+  /** pastille du Dock, "" pour aucune */
+  badge: string;
+  /** 0 à 1 dans le Dock, -1 pour aucune barre */
+  progress: number;
+  /** texte à côté de l'icône de la barre des menus, "" pour aucun */
+  title: string;
+  /** lignes d'état en tête du menu */
+  lines: string[];
+  /** « Lancer <jeu> », absent si aucun jeu ne peut être lancé */
+  launchLabel?: string;
+  showLabel: string;
+  quitLabel: string;
+}
+
 /** Type containing all known channels used by renderer processes to send messages to the main process */
 export interface RendererChannels extends RendererCallbackChannels {
   // NOTE(erri120): Parameters must be serializable and return values must be void.
@@ -342,6 +361,9 @@ export interface RendererChannels extends RendererCallbackChannels {
 
   // Feature flags: renderer updates context (e.g. userId after login)
   "flags:setContext": (context: FlagContext) => void;
+
+  // mORTEX (macOS): activity for the menu bar icon and the Dock
+  "activity:update": (activity: MacActivity) => void;
 }
 
 /** Type containing all known channels used by the main process to send messages to a renderer process */
@@ -382,6 +404,9 @@ export interface MainChannels extends MainCallbackChannels {
 
   // Menu click events (main -> renderer)
   "menu:click": (menuItemId: string) => void;
+
+  // mORTEX (macOS): an item of the menu bar icon's menu was chosen ("launch")
+  "activity:action": (action: string) => void;
 
   // Feature flags: main pushes updated flags after each successful poll
   "flags:synchronize": (flags: FeatureFlag[]) => void;

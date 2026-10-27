@@ -211,6 +211,12 @@ try {
       setApplicationMenu: (template) =>
         betterIpcRenderer.invoke("menu:setApplicationMenu", template),
       popup: (items, x, y) => betterIpcRenderer.invoke("menu:popup", items, x, y),
+      setActivity: (activity) => betterIpcRenderer.send("activity:update", activity),
+      onActivityAction: (callback: (action: string) => void) => {
+        const listener = (_event: Electron.IpcRendererEvent, action: string) => callback(action);
+        ipcRenderer.on("activity:action", listener);
+        return () => ipcRenderer.removeListener("activity:action", listener);
+      },
     },
     contentTracing: {
       startRecording: (options) =>

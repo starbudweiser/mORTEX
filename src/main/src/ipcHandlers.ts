@@ -52,6 +52,7 @@ import { betterIpcMain } from "./ipc";
 import { popupMenu } from "./macos/popupMenu";
 import { CrashLog } from "./mortex/crashes/CrashLog";
 import { openUrl, openFile, showItemInFolder } from "./open";
+import { getTrayIcon } from "./TrayIcon";
 import { extraWebViews } from "./webview";
 
 // Type-safe interface for global Redux state accessors
@@ -218,6 +219,10 @@ export function init(fs: FileSystem) {
   });
 
   // Shell
+  betterIpcMain.on("activity:update", (_event, activity) => {
+    getTrayIcon()?.setActivity(activity);
+  });
+
   betterIpcMain.on("shell:openUrl", (_event, url) => {
     openUrl(new URL(url));
   });

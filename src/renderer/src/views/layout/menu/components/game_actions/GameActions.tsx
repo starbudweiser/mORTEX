@@ -1,5 +1,5 @@
 import { Transition } from "@headlessui/react";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { useMainContext, useWindowContext } from "@/contexts";
 import { useDeployMods } from "@/extensions/mod_management/hooks/useDeployMods.hook";
@@ -34,6 +34,15 @@ export const GameActions = () => {
   // With auto deploy on, changes deploy on their own, so Apply only shows its progress, or
   // after a purge, which auto deploy leaves alone.
   const showApply = isDeploying || isPurged || (needToDeploy && !autoDeploy);
+
+  // mORTEX (macOS) : « Lancer » depuis l'icône de la barre des menus, comme le bouton LANCER
+  useEffect(
+    () =>
+      window.api.menu.onActivityAction?.((action) => {
+        if (action === "launch") handlePlay();
+      }),
+    [handlePlay],
+  );
 
   if (gameId === undefined || selection.type !== "game") {
     return null;
