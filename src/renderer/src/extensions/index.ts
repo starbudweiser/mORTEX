@@ -12,6 +12,7 @@ import {} from "./collections";
 import {} from "./dashboard";
 import {} from "./design_system_dev";
 import {} from "./diagnostics_files";
+import {} from "./dll_overrides";
 import {} from "./download_management";
 import {} from "./dxmt_workshop";
 import {} from "./extension_manager";

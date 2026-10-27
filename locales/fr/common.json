@@ -338,5 +338,7 @@
   "Follow the Community Shaders recipe first: Bottled Shaders does the rendering.": "Suivez d'abord la recette Community Shaders : Bottled Shaders assure le rendu.",
   "Install the mDLSS ENB bridge (d3d11.dll) next to SkyrimSE.exe, in place of ENBSeries.": "Installez le pont ENB mDLSS (d3d11.dll) à côté de SkyrimSE.exe, à la place d'ENBSeries.",
   "Install the plugins the preset relies on: KiLoader, ENB Extender (Legacy variant for game version 1.6.1170) and AELAS.": "Installez les plugins dont le preset a besoin : KiLoader, ENB Extender (variante Legacy pour la version 1.6.1170 du jeu) et AELAS.",
-  "Bottled Shaders not installed": "Bottled Shaders non installé"
+  "Bottled Shaders not installed": "Bottled Shaders non installé",
+  "The bottle now loads the game's own {{dlls}}": "La bouteille charge maintenant les {{dlls}} du jeu",
+  "mORTEX couldn't update the bottle's DLL overrides": "mORTEX n'a pas pu mettre à jour les overrides DLL de la bouteille"
 }

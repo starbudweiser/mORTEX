@@ -10,6 +10,7 @@
  *  - scanSteamGames(bottle)                         appmanifests des bibliothèques Steam de la bouteille
  *  - WineBottlesStore (id "wine")                   IGameStore branché dans GameModeManager
  *  - runInBottle(exe, args, env?)                   {executable, args, env} pour lancer un .exe dans sa bouteille
+ *  - wineCommand(bottle, args)                      {executable, args, env} pour un outil Wine (reg, regedit…)
  *
  * État : <userData>/bottles.json  { roots?: string[], activeBottle?: string, exclusive?: boolean, userDir?: string }
  * `exclusive` + `activeBottle` : ne voir que cette bouteille (essais de dev)
@@ -413,6 +414,31 @@ export function runInBottle(
         args: ["start", "/unix", exe, ...args],
         env: { WINEPREFIX: bottle.path },
       };
+  }
+}
+
+/** Commande pour lancer un outil de Wine (`regedit`, `reg`…) dans la bouteille, en attendant sa fin. */
+export function wineCommand(bottle: IBottle, args: string[]): IBottleLaunch {
+  switch (bottle.kind) {
+    case "crossover":
+      return {
+        executable: path.join(cxBin(bottle), "wine"),
+        args: ["--bottle", bottle.name, ...args],
+        env: { CX_BOTTLE_PATH: path.dirname(bottle.path) },
+      };
+    case "whisky":
+      return {
+        executable: path.join(
+          os.homedir(),
+          "Library/Application Support",
+          WHISKY_ID,
+          "Libraries/Wine/bin/wine64",
+        ),
+        args,
+        env: { WINEPREFIX: bottle.path },
+      };
+    default:
+      return { executable: "wine64", args, env: { WINEPREFIX: bottle.path } };
   }
 }
 
