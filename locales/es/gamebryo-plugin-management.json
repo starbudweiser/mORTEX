@@ -76,5 +76,7 @@
   "Reset customized groups between \"{{first}}@{{firstGroup}}\" and \"{{second}}@{{secondGroup}}\"": "Restablecer los grupos personalizados entre «{{first}}@{{firstGroup}}» y «{{second}}@{{secondGroup}}»",
   "Some of the enabled plugins have dependencies or incompatibilities that are not obeyed in your current setup": "Algunos plugins activados tienen dependencias o incompatibilidades que tu configuración no respeta",
   "Plugins shouldn't exceed mod index {{maxIndex}} for a total of {{count}} plugins (including base game and DLCs).": "Los plugins no deben superar el índice {{maxIndex}}, es decir {{count}} plugins en total (juego base y DLC incluidos).",
-  "Blueprint plugin - force-loaded by the game and pinned to the end of the load order. Managed by the game, not Vortex.": "Plugin Blueprint: el juego lo carga a la fuerza y lo fija al final del orden de carga. Lo gestiona el juego, no Vortex."
+  "Blueprint plugin - force-loaded by the game and pinned to the end of the load order. Managed by the game, not Vortex.": "Plugin Blueprint: el juego lo carga a la fuerza y lo fija al final del orden de carga. Lo gestiona el juego, no Vortex.",
+  "These plugins could not be parsed by LOOT and were skipped so the rest of your load order could still sort. Reinstall or remove them to fix it:": "LOOT no pudo analizar estos plugins y los omitió para poder ordenar el resto. Reinstálalos o quítalos para corregirlo:",
+  "This plugin was created for the original Skyrim and may be incompatible with Skyrim Special Edition. This can cause unforseen problems during gameplay.": "Este plugin se creó para el Skyrim original y puede ser incompatible con Skyrim Special Edition, lo que puede causar problemas inesperados."
 }
