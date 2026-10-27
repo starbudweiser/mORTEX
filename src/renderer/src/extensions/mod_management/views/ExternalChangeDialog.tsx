@@ -294,7 +294,8 @@ class ExternalChangeDialog extends ComponentEx<IProps, IComponentState> {
     const actions = possibleActions[type];
 
     return (
-      <div style={{ flex: "1 1 0", display: "flex", flexDirection: "column" }}>
+      // mORTEX : chaque section épouse son contenu (plus de grand vide entre deux listes courtes)
+      <div style={{ flex: "0 1 auto", minHeight: 0, display: "flex", flexDirection: "column" }}>
         {text}
         <p>
           {actions.map((action) => (
@@ -306,7 +307,7 @@ class ExternalChangeDialog extends ComponentEx<IProps, IComponentState> {
             </React.Fragment>
           ))}
         </p>
-        <div style={{ overflowY: "auto", flex: "1 1 0" }}>
+        <div style={{ overflowY: "auto", flex: "0 1 auto", minHeight: 0, maxHeight: "40vh" }}>
           <Table
             tableId={`external-change-${type}`}
             data={entries}
@@ -331,7 +332,8 @@ class ExternalChangeDialog extends ComponentEx<IProps, IComponentState> {
     const actions = possibleActions[type];
 
     return (
-      <div style={{ flex: "1 1 0", display: "flex", flexDirection: "column" }}>
+      // mORTEX : chaque section épouse son contenu (plus de grand vide entre deux listes courtes)
+      <div style={{ flex: "0 1 auto", minHeight: 0, display: "flex", flexDirection: "column" }}>
         {text}
         <p>
           {actions.map((action) => (
@@ -345,7 +347,7 @@ class ExternalChangeDialog extends ComponentEx<IProps, IComponentState> {
             </a>
           ))}
         </p>
-        <div style={{ overflowY: "auto", flex: "1 1 0" }}>
+        <div style={{ overflowY: "auto", flex: "0 1 auto", minHeight: 0, maxHeight: "40vh" }}>
           <Table
             tableId={`external-change-${type}`}
             data={entries}

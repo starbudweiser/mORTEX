@@ -28,6 +28,11 @@ export class DialogQueue {
   private constructor(api: IExtensionApi) {
     this.api = api;
     this.startPeriodicChecker(api);
+    // mORTEX : une fenêtre retenue pendant que le navigateur intégré était ouvert s'affiche
+    // dès qu'il se ferme
+    api.onStateChange?.(["session", "browser", "url"], (_prev, url) => {
+      if (url === undefined) this.processNext();
+    });
   }
 
   private startPeriodicChecker = (api: IExtensionApi): void => {
@@ -90,6 +95,12 @@ export class DialogQueue {
     try {
       // Double-check no dialog became active while we were waiting
       if (hasActiveFomodDialog(this.api)) {
+        return;
+      }
+
+      // mORTEX : pas de fenêtre d'installation par-dessus le navigateur intégré (ex. SKSE à
+      // télécharger pendant une collection) ; elle attend qu'il se ferme
+      if (this.api.getState()?.session?.browser?.url !== undefined) {
         return;
       }
 
