@@ -5,7 +5,7 @@ import type {
   SortDirection,
 } from "@nexusmods/nexus-api";
 import { VortexGameId } from "@vortex/shared";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { CollectionsDownloadClickedEvent } from "@/extensions/analytics/mixpanel/MixpanelEvents";
@@ -20,7 +20,6 @@ import { CollectionTile } from "@/ui/components/collection_tile/CollectionTile";
 import { CollectionTileSkeleton } from "@/ui/components/collection_tile/CollectionTile.skeleton";
 import { TextField } from "@/ui/components/form/text_field/TextField";
 import { Listing } from "@/ui/components/listing/Listing";
-import { NoResults } from "@/ui/components/no_results/NoResults";
 import { Pagination } from "@/ui/components/pagination/Pagination";
 import { Picker } from "@/ui/components/picker/Picker";
 import { TabBar } from "@/ui/components/tabs/TabBar";
@@ -32,6 +31,8 @@ import { UserCanceled } from "@/util/api";
 import { getCurrentLanguage } from "@/util/i18n";
 import { activeGameId } from "@/util/selectors";
 import MainPage from "@/views/MainPage";
+
+import { BrowseModsPanel } from "./BrowseModsPanel";
 
 interface IBrowseNexusPageProps {
   api: IExtensionApi;
@@ -82,6 +83,13 @@ function BrowseNexusPage(props: IBrowseNexusPageProps) {
       ns: ["collection", "common"],
       ...options,
     });
+
+  // mORTEX : l'onglet Mods écrit ses textes en clair, traduits dans « common » (4 langues)
+  const tCommon = useCallback(
+    (input: string, options?: Record<string, unknown>) =>
+      api.translate(input, { ns: "common", ...options }),
+    [api],
+  );
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -393,23 +401,14 @@ function BrowseNexusPage(props: IBrowseNexusPageProps) {
           )}
 
           <TabPanel id="mods">
-            <NoResults
-              className="py-16"
-              icon="schedule"
-              message={t("collection:browse.modsComingSoon.description")}
-              title={t("collection:browse.modsComingSoon.title")}
-            >
-              <Button
-                appearance="moderate"
-                brand="neutral"
-                leftIcon="open_in_new"
-                onClick={() =>
-                  window.api.shell.openUrl(`https://www.nexusmods.com/games/${gameDomainName}/mods`)
-                }
-              >
-                {t("collection:browse.modsComingSoon.openWebsite")}
-              </Button>
-            </NoResults>
+            <BrowseModsPanel
+              api={api}
+              gameDomain={gameDomainName}
+              gameId={gameId}
+              isLoggedIn={isLoggedIn}
+              scrollRef={scrollRef}
+              t={tCommon}
+            />
           </TabPanel>
         </TabProvider>
       </MainPage.Body>
