@@ -132,10 +132,13 @@ export function ModTile({ mod, t, status, isLoggedIn, onDownload, onViewPage }: 
       </div>
 
       <div className="flex shrink-0 items-center gap-x-2 rounded-b bg-surface-translucent-low px-3 py-2">
+        {/* fond selon l'action : télécharger (bleu), retélécharger un mod déjà là (vert, comme la
+            mention « Téléchargé »), voir la page (navigation, gris) */}
         <Button
+          brand={status === undefined ? "primary" : "success"}
           disabled={!isLoggedIn}
           isLoading={pending}
-          leftIcon="download"
+          leftIcon={status === undefined ? "download" : "refresh"}
           size="sm"
           title={isLoggedIn ? undefined : t("Log in to Nexus Mods to download mods")}
           onClick={download}
@@ -144,7 +147,7 @@ export function ModTile({ mod, t, status, isLoggedIn, onDownload, onViewPage }: 
         </Button>
 
         <Button
-          appearance="weak"
+          appearance="moderate"
           brand="neutral"
           leftIcon="open_in_new"
           size="sm"
