@@ -4000,7 +4000,22 @@
     "Get Address Library": "Get Address Library",
     "Plugins refused by the script extender": "Plugins refused by the script extender",
     "These plugins didn't load, so their mods don't work in game:": "These plugins didn't load, so their mods don't work in game:",
-    "Plugins not loaded: {{count}}": "Plugins not loaded: {{count}}"
+    "Plugins not loaded: {{count}}": "Plugins not loaded: {{count}}",
+    "Wine layer": "Wine layer",
+    "MSync": "MSync",
+    "Rosetta 2": "Rosetta 2",
+    "Game disk": "Game disk",
+    "Free space": "Free space",
+    "DLL overrides": "DLL overrides",
+    "On": "On",
+    "Off: slower game in CrossOver": "Off: slower game in CrossOver",
+    "Missing: CrossOver needs it": "Missing: CrossOver needs it",
+    "APFS: links and clones": "APFS: links and clones",
+    "{{fs}}: links, no clones": "{{fs}}: links, no clones",
+    "{{fs}}: no links, deployment will copy files": "{{fs}}: no links, deployment will copy files",
+    "{{size}} GB": "{{size}} GB",
+    "Missing for {{dlls}}": "Missing for {{dlls}}",
+    "Failed to fix the bottle": "Failed to fix the bottle"
   },
   "dashboard": {
     "Dashboard": "Dashboard"

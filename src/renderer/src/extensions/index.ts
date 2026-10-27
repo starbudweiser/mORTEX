@@ -4,6 +4,7 @@
 import {} from "./about_dialog";
 import {} from "./analytics";
 import {} from "./bottle_documents";
+import {} from "./bottle_health";
 import {} from "./browse_nexus";
 import {} from "./browser";
 import {} from "./category_management";

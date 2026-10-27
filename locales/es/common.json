@@ -3746,5 +3746,20 @@
   "Get Address Library": "Conseguir Address Library",
   "Plugins refused by the script extender": "Plugins rechazados por el script extender",
   "These plugins didn't load, so their mods don't work in game:": "Estos plugins no se cargaron, así que sus mods no funcionan en el juego:",
-  "Plugins not loaded: {{count}}": "Plugins no cargados: {{count}}"
+  "Plugins not loaded: {{count}}": "Plugins no cargados: {{count}}",
+  "Wine layer": "Capa Wine",
+  "MSync": "MSync",
+  "Rosetta 2": "Rosetta 2",
+  "Game disk": "Disco del juego",
+  "Free space": "Espacio libre",
+  "DLL overrides": "Overrides de DLL",
+  "On": "Activado",
+  "Off: slower game in CrossOver": "Desactivado: juego más lento en CrossOver",
+  "Missing: CrossOver needs it": "Falta: CrossOver lo necesita",
+  "APFS: links and clones": "APFS: enlaces y clones",
+  "{{fs}}: links, no clones": "{{fs}}: enlaces, sin clones",
+  "{{fs}}: no links, deployment will copy files": "{{fs}}: sin enlaces, el despliegue copiará los archivos",
+  "{{size}} GB": "{{size}} GB",
+  "Missing for {{dlls}}": "Faltan para {{dlls}}",
+  "Failed to fix the bottle": "No se pudo corregir la botella"
 }
