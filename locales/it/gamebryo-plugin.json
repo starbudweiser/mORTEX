@@ -19,5 +19,7 @@
   "{{count}} deleted reference": "{{count}} riferimento eliminato",
   "{{count}} deleted reference_plural": "{{count}} riferimento eliminato",
   "Plugins not sorted because: {{msg}}": "Plugin non ordinati perché: {{msg}}",
-  "load {{ reference }} after {{ name }}": "carica {{ reference }} dopo {{ name }}"
+  "load {{ reference }} after {{ name }}": "carica {{ reference }} dopo {{ name }}",
+  "Loaded by the engine, can't be configured": "Caricato dal motore, non configurabile",
+  "Drag to another plugin to set userlist rule": "Trascina su un altro plugin per impostare una regola utente"
 }

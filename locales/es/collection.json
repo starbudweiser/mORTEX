@@ -144,5 +144,6 @@
   "Revision {{number}}{{forceRevision}}": "Revisión {{number}}{{forceRevision}}",
   "Auto-download collections at max speed": "Descarga automática de colecciones a máxima velocidad",
   "Did this collection work successfully?": "¿Funcionó bien esta colección?",
-  "No Installer Options saved for this mod": "No hay opciones de instalación guardadas para este mod"
+  "No Installer Options saved for this mod": "No hay opciones de instalación guardadas para este mod",
+  "Only bundle mods you have the right to do so": "Incluye solo mods que tengas derecho a distribuir"
 }

@@ -25,5 +25,6 @@
   "Failed to create quick collection": "Impossibile creare la collezione rapida",
   "Resolve conflicts before uploading": "Risolvi i conflitti prima del caricamento",
   "You have been blocked by the curator.": "Sei stato bloccato dal curatore.",
-  "Auto-download collections at max speed": "Download automatico delle collezioni alla massima velocità"
+  "Auto-download collections at max speed": "Download automatico delle collezioni alla massima velocità",
+  "{{numOptionals}} optional mods available": "{{numOptionals}} mod facoltative disponibili"
 }

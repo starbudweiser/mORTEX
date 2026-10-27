@@ -60,5 +60,9 @@
   "Sort your load order using LOOT": "Ordina l'ordine di caricamento con LOOT",
   "Plugins not sorted because: {{msg}}": "Plugin non ordinati perché: {{msg}}",
   "Plugin not compatible with this game": "Plugin non compatibile con questo gioco",
-  "load {{ reference }} after {{ name }}": "carica {{ reference }} dopo {{ name }}"
+  "load {{ reference }} after {{ name }}": "carica {{ reference }} dopo {{ name }}",
+  "Plugin rules have been reset to defaults": "Le regole dei plugin sono state ripristinate",
+  "Loaded by the engine, can't be configured": "Caricato dal motore, non configurabile",
+  "Some plugins are invalid and were skipped": "Alcuni plugin non sono validi e sono stati saltati",
+  "Drag to another plugin to set userlist rule": "Trascina su un altro plugin per impostare una regola utente"
 }
