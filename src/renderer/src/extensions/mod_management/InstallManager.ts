@@ -7799,7 +7799,7 @@ class InstallManager {
         title,
         details,
         dependencyRef,
-        { allowReport },
+        { allowReport, replace: options.replace },
       );
     } else {
       api.showErrorNotification(title, details, {

@@ -1707,3 +1707,23 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
 .mortex-tour-primary:hover {
     background: #333;
 }
+
+/* Dialogues (ModalLayer) : jamais plus hauts que la fenêtre ; le contenu défile entre le titre
+   et les boutons, qui restent toujours visibles. */
+.nxm-modal.mortex-modal-fit .nxm-modal-panel {
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    overflow: hidden;
+}
+.nxm-modal.mortex-modal-fit .mortex-modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+/* tableaux des dialogues : le nom reste en haut de sa ligne, face au début de sa liste */
+.nxm-modal .nxm-prose td {
+    vertical-align: top;
+    padding-right: 0.75em;
+}

@@ -97,10 +97,31 @@ function isSameTool(discovery: IDiscoveryResult, lhs: IDiscoveredTool, rhs: ICol
   return sameName;
 }
 
+/**
+ * mORTEX : chemin local d'un outil de collection. Un auteur sous Windows peut l'avoir enregistré
+ * avec ses barres obliques inverses, voire en absolu sur son propre disque
+ * (« E:\Game\Skyrim Anniversary Edition\Data\Nemesis_Engine\… ») : on le replace dans le jeu
+ * de cette bouteille à partir de son dossier Data. Sans Data dans le chemin, il reste tel quel et
+ * le dialogue « Outil non trouvé » le signale.
+ */
+export function localToolPath(toolPath: string, gamePath: string): string {
+  const windowsAbsolute = /^[a-z]:[\\/]/i.test(toolPath);
+  if (!windowsAbsolute && !toolPath.includes("\\")) {
+    return path.isAbsolute(toolPath) ? toolPath : path.join(gamePath, toolPath);
+  }
+  const parts = toolPath.split(/[\\/]+/).filter((part) => part !== "");
+  if (!windowsAbsolute) {
+    return path.join(gamePath, ...parts);
+  }
+  const data = parts.findIndex((part) => part.toLowerCase() === "data");
+  return data > 0 ? path.join(gamePath, ...parts.slice(data)) : toolPath;
+}
+
 function updatePaths(tool: ICollectionToolEx, gamePath: string) {
   return {
     ...tool,
-    exe: path.isAbsolute(tool.exe) ? tool.exe : path.join(gamePath, tool.exe),
+    exe: localToolPath(tool.exe, gamePath),
+    cwd: tool.cwd ? localToolPath(tool.cwd, gamePath) : tool.cwd,
   };
 }
 

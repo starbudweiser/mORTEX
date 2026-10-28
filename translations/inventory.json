@@ -4078,7 +4078,12 @@
     "SSE Display Tweaks enabled: it is deployed with your mods": "SSE Display Tweaks enabled: it is deployed with your mods",
     "These DLLs don't come from a mod: remove them from Data/SKSE/Plugins": "These DLLs don't come from a mod: remove them from Data/SKSE/Plugins",
     "Disabled: {{mods}}": "Disabled: {{mods}}",
-    "Failed to undo": "Failed to undo"
+    "Failed to undo": "Failed to undo",
+    "Mods concerned: {{mods}}": "Mods concerned: {{mods}}",
+    "{{list}} and {{count}} more": "{{list}} and {{count}} more",
+    "{{list}} and {{count}} more_plural": "{{list}} and {{count}} more_plural",
+    "{{title}} ({{count}} dependencies)": "{{title}} ({{count}} dependencies)",
+    "{{title}} ({{count}} dependencies)_plural": "{{title}} ({{count}} dependencies)_plural"
   },
   "dashboard": {
     "Dashboard": "Dashboard"

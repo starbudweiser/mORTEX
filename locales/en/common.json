@@ -401,7 +401,7 @@
   "Profile {{name}}": "Profile {{name}}",
   "Same mods as now": "Same mods as now",
   "{{count}} mods changed since": "{{count}} mod changed since",
-  "{{count}} mods changed since_plural": "{{count}} mods changed since_plural",
+  "{{count}} mods changed since_plural": "{{count}} mods changed since",
   "Switch to the snapshot's profile first": "Switch to the snapshot's profile first",
   "Time Machine": "Time Machine",
   "Mods enabled: {{enabled}} of {{count}}": "Mods enabled: {{enabled}} of {{count}}",
@@ -500,5 +500,11 @@
   "SSE Display Tweaks enabled: it is deployed with your mods": "SSE Display Tweaks enabled: it is deployed with your mods",
   "These DLLs don't come from a mod: remove them from Data/SKSE/Plugins": "These DLLs don't come from a mod: remove them from Data/SKSE/Plugins",
   "Disabled: {{mods}}": "Disabled: {{mods}}",
-  "Failed to undo": "Failed to undo"
+  "Failed to undo": "Failed to undo",
+  "Mods concerned: {{mods}}": "Mods concerned: {{mods}}",
+  "{{list}} and {{count}} more": "{{list}} and {{count}} more",
+  "{{list}} and {{count}} more_plural": "{{list}} and {{count}} more",
+  "{{title}} ({{count}} dependencies)": "{{title}} ({{count}} dependency)",
+  "{{title}} ({{count}} dependencies)_plural": "{{title}} ({{count}} dependencies)",
+  "{{id}} failed to install": "{{id}} failed to install"
 }

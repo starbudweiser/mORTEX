@@ -24,6 +24,7 @@ export interface IAggregatedNotification {
   count: number;
   allowReport?: boolean;
   actions?: INotificationAction[];
+  replace?: Record<string, string>;
 }
 
 export interface IPendingNotification {
@@ -33,6 +34,7 @@ export interface IPendingNotification {
   item: string;
   allowReport?: boolean;
   actions?: INotificationAction[];
+  replace?: Record<string, string>;
 }
 
 /**
@@ -88,7 +90,11 @@ export class NotificationAggregator {
     title: string,
     details: string | Error,
     item: string,
-    options: { allowReport?: boolean; actions?: INotificationAction[] } = {},
+    options: {
+      allowReport?: boolean;
+      actions?: INotificationAction[];
+      replace?: Record<string, string>;
+    } = {},
   ): void {
     if (!this.mActiveAggregations.has(aggregationId)) {
       setImmediatePolyfill(() => {
@@ -96,6 +102,7 @@ export class NotificationAggregator {
           message: item,
           allowReport: options.allowReport,
           actions: options.actions,
+          replace: options.replace,
         });
       });
       return;
@@ -109,6 +116,7 @@ export class NotificationAggregator {
       item,
       allowReport: options.allowReport,
       actions: options.actions,
+      replace: options.replace,
     });
   }
 
@@ -363,6 +371,13 @@ export class NotificationAggregator {
         count: group.length,
         allowReport: first.allowReport,
         actions: first.actions,
+        // mORTEX : un titre qui nomme le mod ({{id}}) nomme tous ceux du groupe
+        replace:
+          first.replace !== undefined && uniqueItems.length > 1
+            ? Object.fromEntries(
+                Object.keys(first.replace).map((key) => [key, this.itemList(uniqueItems)]),
+              )
+            : first.replace,
       };
     });
   }
@@ -427,17 +442,23 @@ export class NotificationAggregator {
     const baseMessage =
       notification.details instanceof Error ? notification.details.message : notification.details;
 
-    let result = baseMessage;
-
-    if (items.length > 1) {
-      const itemList =
-        items.length <= 5
-          ? items.join(", ")
-          : `${items.slice(0, 5).join(", ")} and ${items.length - 5} more`;
-      result += `\n\nAffected dependencies: ${itemList}`;
+    // mORTEX : le détail nomme toujours le ou les mods concernés, même seul
+    if (items.length === 0) {
+      return baseMessage;
     }
+    return `${baseMessage}\n\n${this.mApi.translate("Mods concerned: {{mods}}", {
+      ns: "common",
+      replace: { mods: this.itemList(items) },
+    })}`;
+  }
 
-    return result;
+  private itemList(items: string[]): string {
+    return items.length <= 5
+      ? items.join(", ")
+      : this.mApi.translate("{{list}} and {{count}} more", {
+          ns: "common",
+          replace: { list: items.slice(0, 5).join(", "), count: items.length - 5 },
+        });
   }
 
   private showAggregatedNotification(notification: IAggregatedNotification): void {
@@ -446,12 +467,22 @@ export class NotificationAggregator {
         id: notification.id,
         allowReport: notification.allowReport,
         actions: notification.actions,
+        replace: notification.replace,
       };
 
       // Add count information to the title if multiple items
       const displayTitle =
         notification.count > 1
-          ? `${notification.title} (${notification.count} dependencies)`
+          ? this.mApi.translate("{{title}} ({{count}} dependencies)", {
+              ns: "common",
+              replace: {
+                title: this.mApi.translate(notification.title, {
+                  ns: "common",
+                  replace: notification.replace,
+                }),
+                count: notification.count,
+              },
+            })
           : notification.title;
 
       switch (notification.type) {
@@ -466,6 +497,7 @@ export class NotificationAggregator {
             message: notification.text,
             actions: notification.actions,
             allowSuppress: options.allowReport,
+            replace: notification.replace,
           });
           break;
         case "info":
@@ -476,6 +508,7 @@ export class NotificationAggregator {
             message: notification.text,
             actions: notification.actions,
             allowSuppress: options.allowReport,
+            replace: notification.replace,
           });
           break;
       }

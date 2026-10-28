@@ -224,6 +224,7 @@ class InstallContext implements IInstallContext {
                 {
                   allowReport: this.mFailError?.allowReport ?? true,
                   actions: noti.actions,
+                  replace: noti.replace as Record<string, string> | undefined,
                 },
               );
               return;
@@ -371,7 +372,7 @@ class InstallContext implements IInstallContext {
           message,
           details || message,
           this.mAddedId || this.mIndicatorId || "unknown",
-          { allowReport },
+          { allowReport, replace },
         );
         return;
       }

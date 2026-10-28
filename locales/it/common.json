@@ -3826,5 +3826,10 @@
   "SSE Display Tweaks enabled: it is deployed with your mods": "SSE Display Tweaks attivato: viene distribuito con le tue mod",
   "These DLLs don't come from a mod: remove them from Data/SKSE/Plugins": "Queste DLL non provengono da nessuna mod: rimuovile da Data/SKSE/Plugins",
   "Disabled: {{mods}}": "Disattivate: {{mods}}",
-  "Failed to undo": "Impossibile annullare"
+  "Failed to undo": "Impossibile annullare",
+  "Mods concerned: {{mods}}": "Mod interessate: {{mods}}",
+  "{{list}} and {{count}} more": "{{list}} e {{count}} altra",
+  "{{list}} and {{count}} more_plural": "{{list}} e altre {{count}}",
+  "{{title}} ({{count}} dependencies)": "{{title}} ({{count}} dipendenza)",
+  "{{title}} ({{count}} dependencies)_plural": "{{title}} ({{count}} dipendenze)"
 }

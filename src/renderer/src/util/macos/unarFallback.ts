@@ -45,8 +45,9 @@ export async function extractWithUnar(archivePath: string, destPath: string): Pr
   if (bin === undefined) {
     throw new Error("unar is not available to extract this archive");
   }
-  // ce que 7-Zip a pu extraire avant d'échouer est incomplet
-  await rm(destPath, { recursive: true, force: true });
+  // ce que 7-Zip a pu extraire avant d'échouer est incomplet ; il peut encore finir d'écrire
+  // quand il signale l'erreur, d'où les nouvelles tentatives (ENOTEMPTY pendant une collection)
+  await rm(destPath, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
   await mkdir(destPath, { recursive: true });
   await new Promise<void>((resolve, reject) => {
     // -q silencieux, -f écrase, -D sans dossier englobant, -o dossier de sortie

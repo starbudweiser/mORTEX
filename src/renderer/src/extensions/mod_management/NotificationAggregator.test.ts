@@ -7,6 +7,11 @@ import { NotificationAggregator } from "./NotificationAggregator";
 const mockApi = {
   showErrorNotification: vi.fn(),
   sendNotification: vi.fn(),
+  // fills in {{variables}} like i18next does with the English keys
+  translate: (text: string, options?: { replace?: Record<string, string | number> }) =>
+    text.replace(/\{\{(\w+)\}\}/g, (match, key: string) =>
+      String(options?.replace?.[key] ?? match),
+    ),
 };
 
 describe("NotificationAggregator", () => {
@@ -34,6 +39,7 @@ describe("NotificationAggregator", () => {
       message: "TestMod",
       allowReport: false,
       actions: undefined,
+      replace: undefined,
     });
   });
 
@@ -73,7 +79,7 @@ describe("NotificationAggregator", () => {
       { allowReport: unknown; id: string },
     ];
     expect(title).toBe("Failed to install dependency (3 dependencies)");
-    expect(message).toContain("Affected dependencies: Mod1, Mod2, Mod3");
+    expect(message).toContain("Mods concerned: Mod1, Mod2, Mod3");
     expect(options.allowReport).toBeUndefined();
     expect(options.id).toContain("aggregated-");
   });
@@ -152,5 +158,29 @@ describe("NotificationAggregator", () => {
 
     expect(mockApi.showErrorNotification).toHaveBeenCalledTimes(1);
     expect(aggregator.isAggregating("test-session")).toBe(false);
+  });
+
+  test("names the mod of a lone failure and keeps the title's variables", async () => {
+    aggregator.startAggregation("test-session");
+    aggregator.addNotification(
+      "test-session",
+      "error",
+      "{{id}} failed to install",
+      "HTTP (403) - Request Failed",
+      "Queen Bikini Textures",
+      { replace: { id: "Queen Bikini Textures" } },
+    );
+    aggregator.stopAggregation("test-session");
+    await vi.runAllTimersAsync();
+
+    expect(mockApi.showErrorNotification).toHaveBeenCalledTimes(1);
+    const [title, message, options] = mockApi.showErrorNotification.mock.calls[0] as [
+      string,
+      string,
+      { replace?: Record<string, string> },
+    ];
+    expect(title).toBe("{{id}} failed to install");
+    expect(options.replace).toEqual({ id: "Queen Bikini Textures" });
+    expect(String(message)).toContain("Mods concerned: Queen Bikini Textures");
   });
 });

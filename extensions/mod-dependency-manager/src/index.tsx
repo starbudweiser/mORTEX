@@ -407,9 +407,9 @@ async function updateConflictInfo(
             {
               replace: {
                 modName: util.renderModName(mods[modId]),
-                conflicts: unsolved[modId].map(
-                  (conflict) => "[*] " + renderModLookup(conflict.otherMod),
-                ),
+                conflicts: unsolved[modId]
+                  .map((conflict) => "[*] " + renderModLookup(conflict.otherMod))
+                  .join("\n"),
               },
             },
           ),

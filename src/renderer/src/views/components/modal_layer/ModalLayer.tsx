@@ -187,6 +187,9 @@ export const ModalLayer = () => {
     inputs.some((input) => input.type === "multiline") ||
     actions.length > MAX_BUTTONS_IN_SMALL;
 
+  // mORTEX : un tableau (liste de conflits, de fichiers…) a besoin de largeur
+  const isWide = /\[table\]/i.test(content.bbcode ?? "");
+
   const hasDangerAction = actions.some((action) => DANGER_ACTIONS.has(action));
 
   // The default action is the primary one, unless the dialog has a danger button, which then stands
@@ -444,17 +447,21 @@ export const ModalLayer = () => {
 
   return (
     <Modal
+      className="mortex-modal-fit"
       initialFocusRef={inputs.length > 0 ? firstInputRef : defaultButtonRef}
       isOpen
       key={id}
       showCloseButton={false}
-      size={needsRoom || text.length > SMALL_MAX_TEXT_LENGTH ? "md" : "sm"}
+      size={isWide ? "lg" : needsRoom || text.length > SMALL_MAX_TEXT_LENGTH ? "md" : "sm"}
       title={translate(title)}
       onClose={ignoreClose}
     >
-      {orderedSections(sections, content.options?.order).map((section) => (
-        <React.Fragment key={section.id}>{section.node}</React.Fragment>
-      ))}
+      {/* mORTEX : seul le contenu défile, le titre et les boutons restent à l'écran */}
+      <div className="mortex-modal-body">
+        {orderedSections(sections, content.options?.order).map((section) => (
+          <React.Fragment key={section.id}>{section.node}</React.Fragment>
+        ))}
+      </div>
 
       <div className="mt-4 flex flex-wrap justify-end gap-2">
         {actions.map((action) => (
