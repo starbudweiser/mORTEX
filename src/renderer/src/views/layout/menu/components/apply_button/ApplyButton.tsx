@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/ui/components/button/Button";
@@ -54,8 +54,31 @@ const Content = ({
  * While it deploys, the whole button becomes a progress bar: not a button at all, so it has
  * no hover or press state and can't start a second deployment.
  */
+/**
+ * mORTEX : le bouton est fixé en haut à droite, hors du flux de la barre de titre ; sa largeur
+ * réelle, publiée dans --mortex-apply-width, règle la place que la barre lui réserve (mortex.css).
+ */
+function usePublishedWidth() {
+  const ref = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!element || typeof ResizeObserver === "undefined") return undefined;
+    const root = document.documentElement;
+    const observer = new ResizeObserver(() =>
+      root.style.setProperty("--mortex-apply-width", `${Math.ceil(element.offsetWidth)}px`),
+    );
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty("--mortex-apply-width");
+    };
+  }, []);
+  return ref;
+}
+
 export const ApplyButton = ({ isCollapsed, progress, step, onClick }: IApplyButtonProps) => {
   const { t } = useTranslation();
+  const wrapRef = usePublishedWidth();
   const isApplying = progress !== undefined;
   const label = isApplying ? t("Applying") : t("Apply");
   const showStep = isApplying && !!step;
@@ -69,6 +92,7 @@ export const ApplyButton = ({ isCollapsed, progress, step, onClick }: IApplyButt
 
   return (
     <div
+      ref={wrapRef}
       className={joinClasses([
         "mortex-apply-wrap relative",
         isCollapsed ? "w-full" : "min-w-0 flex-1",
