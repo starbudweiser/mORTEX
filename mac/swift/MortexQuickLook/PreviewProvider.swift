@@ -11,12 +11,16 @@ final class PreviewProvider: QLPreviewProvider, QLPreviewingController {
     func providePreview(for request: QLFilePreviewRequest) async throws -> QLPreviewReply {
         let url = request.fileURL
         let html: String
+        let size: CGSize
         if url.pathExtension.lowercased() == "dds" {
             html = try DDSPreview.html(for: url)
+            size = CGSize(width: 820, height: 640)
         } else {
             html = try PluginPreview.html(for: url)
+            // fiche en colonne : taille fixe, haute et étroite, au lieu d'une fenêtre large à moitié vide
+            size = CGSize(width: 400, height: 580)
         }
-        return QLPreviewReply(dataOfContentType: .html, contentSize: CGSize(width: 820, height: 640)) { _ in
+        return QLPreviewReply(dataOfContentType: .html, contentSize: size) { _ in
             Data(html.utf8)
         }
     }
@@ -43,8 +47,9 @@ func page(title: String, badge: String, rows: [(String, String)], body: String) 
     h1 { font-size: 18px; margin: 0 0 4px; color: #fff; word-break: break-all; }
     .badge { display: inline-block; margin-bottom: 16px; padding: 1px 8px; border-radius: 4px;
              background: #3a2a08; color: #f59e0b; font-size: 11px; font-weight: 600; }
-    .brand { color: #aaa; font-size: 11px; float: right; }
-    .brand b { color: #f59e0b; font-weight: 600; }
+    .brand { color: #fff; font-size: 17px; font-weight: 700; letter-spacing: 0.02em;
+             float: right; margin-left: 12px; line-height: 24px; }
+    .brand b { color: #f59e0b; font-weight: 700; }
     table { border-collapse: collapse; margin-bottom: 16px; }
     th { text-align: left; color: #aaa; font-weight: 400; padding: 2px 16px 2px 0; vertical-align: top; }
     td { color: #fff; padding: 2px 0; }
