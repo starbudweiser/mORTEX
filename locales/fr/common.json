@@ -412,7 +412,7 @@
   "No profile named {{name}}": "Aucun profil nommé {{name}}",
   "Welcome to mORTEX": "Bienvenue dans mORTEX",
   "Your game and its bottle": "Votre jeu et sa bouteille",
-  "mORTEX finds Skyrim in your CrossOver, Whisky or Wine bottles. Switch game or profile here.": "mORTEX trouve Skyrim dans vos bouteilles CrossOver, Whisky ou Wine. Changez de jeu ou de profil ici.",
+  "mORTEX finds Skyrim in your CrossOver or Wine bottles. Switch game or profile here.": "mORTEX trouve Skyrim dans vos bouteilles CrossOver ou Wine. Changez de jeu ou de profil ici.",
   "Your mods": "Vos mods",
   "Install, enable and update your mods. Drop an archive on the window, or use a download button on Nexus Mods: mORTEX does the rest.": "Installez, activez et mettez à jour vos mods. Déposez une archive sur la fenêtre, ou utilisez un bouton de téléchargement sur Nexus Mods : mORTEX fait le reste.",
   "Load order": "L'ordre de chargement",

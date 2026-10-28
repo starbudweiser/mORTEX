@@ -12,10 +12,10 @@ export default {
     "Tu juego y su botella",
     "Il tuo gioco e la sua bottiglia",
   ],
-  "mORTEX finds Skyrim in your CrossOver, Whisky or Wine bottles. Switch game or profile here.": [
-    "mORTEX trouve Skyrim dans vos bouteilles CrossOver, Whisky ou Wine. Changez de jeu ou de profil ici.",
-    "mORTEX encuentra Skyrim en tus botellas de CrossOver, Whisky o Wine. Cambia de juego o de perfil aquí.",
-    "mORTEX trova Skyrim nelle tue bottiglie CrossOver, Whisky o Wine. Cambia gioco o profilo qui.",
+  "mORTEX finds Skyrim in your CrossOver or Wine bottles. Switch game or profile here.": [
+    "mORTEX trouve Skyrim dans vos bouteilles CrossOver ou Wine. Changez de jeu ou de profil ici.",
+    "mORTEX encuentra Skyrim en tus botellas de CrossOver o Wine. Cambia de juego o de perfil aquí.",
+    "mORTEX trova Skyrim nelle tue bottiglie CrossOver o Wine. Cambia gioco o profilo qui.",
   ],
   "Your mods": ["Vos mods", "Tus mods", "Le tue mod"],
   "Install, enable and update your mods. Drop an archive on the window, or use a download button on Nexus Mods: mORTEX does the rest.":

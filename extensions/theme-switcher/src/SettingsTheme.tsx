@@ -130,7 +130,8 @@ class SettingsTheme extends ComponentEx<IProps, IComponentState> {
               <FormControl componentClass="select" onChange={this.selectTheme} value={currentTheme}>
                 {themes.map((iter) => {
                   const theme = this.props.locationToName(iter);
-                  return this.renderTheme(theme, theme);
+                  // mORTEX : le thème « socle » (identifiant interne) s'affiche sous le nom de l'appli.
+                  return this.renderTheme(theme, theme === "socle" ? "mORTEX" : theme);
                 })}
               </FormControl>
               <InputGroup.Button>

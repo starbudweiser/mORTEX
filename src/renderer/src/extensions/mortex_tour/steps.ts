@@ -24,7 +24,7 @@ export const STEPS: ITourStep[] = [
     id: "game",
     anchor: '[data-tour="game"]',
     title: "Your game and its bottle",
-    text: "mORTEX finds Skyrim in your CrossOver, Whisky or Wine bottles. Switch game or profile here.",
+    text: "mORTEX finds Skyrim in your CrossOver or Wine bottles. Switch game or profile here.",
   },
   {
     id: "mods",
