@@ -35,7 +35,7 @@ export const DownloadFlyout = ({ download, eta, otherCount }: IDownloadFlyoutPro
   const { t } = useTranslation(["common"]);
   const name = download === undefined ? undefined : friendlyDownloadName(download);
 
-  // The on-disk name is a __vortex_tmp_* placeholder until the download completes, so a
+  // The on-disk name is a __mortex_tmp_* placeholder until the download completes, so a
   // temp name means the metadata hasn't landed.
   const hasName = !!name && !isTempDownloadName(name);
   const nexusMod = download?.modInfo?.nexus?.modInfo as INexusModImagery | undefined;

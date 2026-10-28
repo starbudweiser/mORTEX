@@ -28,6 +28,11 @@ describe("isTempDownloadName", () => {
     expect(isTempDownloadName(tempName)).toBe(true);
   });
 
+  it("still recognises the placeholder name of a download started before the rename", () => {
+    expect(isTempDownloadName("__vortex_tmp_00000001")).toBe(true);
+    expect(tempName.startsWith("__mortex_tmp_")).toBe(true);
+  });
+
   it("treats a real file name as non-temporary", () => {
     expect(isTempDownloadName("My File.zip")).toBe(false);
   });
