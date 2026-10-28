@@ -31,6 +31,7 @@ interface PersistentState {
   collections: Record<string, ICacheEntry>;
   revisions: Record<string, ICacheEntry>;
   pendingVotes: Record<string, IPendingVoteEntry>;
+  installFailures?: Record<string, Record<string, { status: string }>>;
 }
 
 function reduce(
@@ -286,7 +287,52 @@ describe("persistent reducer", () => {
         collections: {},
         revisions: {},
         pendingVotes: {},
+        installFailures: {},
       });
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // setCollectionFailures
+  // ---------------------------------------------------------------------------
+
+  describe("setCollectionFailures", () => {
+    const failed = { "rule-1": { status: "failed" } };
+
+    it("keeps the failures of a collection's last install", () => {
+      const result = reduce(makeState(), actions.setCollectionFailures, {
+        collectionId: "coll-1",
+        failures: failed,
+      });
+      expect(result.installFailures).toEqual({ "coll-1": failed });
+    });
+
+    it("replaces earlier failures and leaves other collections alone", () => {
+      const state = makeState({
+        installFailures: { "coll-1": failed, "coll-2": failed },
+      });
+      const later = { "rule-2": { status: "failed" } };
+      const result = reduce(state, actions.setCollectionFailures, {
+        collectionId: "coll-1",
+        failures: later,
+      });
+      expect(result.installFailures).toEqual({ "coll-1": later, "coll-2": failed });
+    });
+
+    it("clears them once an install ends without failure", () => {
+      const state = makeState({ installFailures: { "coll-1": failed } });
+      const result = reduce(state, actions.setCollectionFailures, {
+        collectionId: "coll-1",
+        failures: {},
+      });
+      expect(result.installFailures).toEqual({});
+    });
+
+    it("returns the same state when there is nothing to clear", () => {
+      const state = makeState();
+      expect(
+        reduce(state, actions.setCollectionFailures, { collectionId: "coll-1", failures: {} }),
+      ).toBe(state);
     });
   });
 });

@@ -1,6 +1,8 @@
 import type { ICollection, IRevision } from "@nexusmods/nexus-api";
 import { createAction } from "redux-act";
 
+import type { ICollectionModInstallInfo } from "../../../types/collections/ICollectionInstallSession";
+
 export const updateCollectionInfo = createAction(
   "UPDATE_COLLECTION_INFO",
   (collectionId: string, collectionInfo: Partial<ICollection>, timestamp: number) => ({
@@ -51,4 +53,14 @@ export const setPendingVote = createAction(
 export const clearPendingVote = createAction(
   "CLEAR_REVISION_PENDING_VOTE",
   (revisionId: number) => ({ revisionId }),
+);
+
+// mORTEX : échecs de la dernière installation d'une collection, gardés d'un lancement à l'autre
+// (statut et filtre « Failed » de la page de la collection) ; un objet vide les efface
+export const setCollectionFailures = createAction(
+  "SET_COLLECTION_INSTALL_FAILURES",
+  (collectionId: string, failures: { [ruleId: string]: ICollectionModInstallInfo }) => ({
+    collectionId,
+    failures,
+  }),
 );

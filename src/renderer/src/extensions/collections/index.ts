@@ -21,6 +21,7 @@ import { installIconSet } from "../../controls/Icon";
 import OptionsFilter from "../../controls/table/OptionsFilter";
 import { log } from "../../logging";
 import trackingReducer from "../../reducers/collectionInstallTracking";
+import type { ICollectionInstallSession } from "../../types/collections/ICollectionInstallSession";
 import type { IDialogResult } from "../../types/IDialog";
 import type { IExtensionApi, IExtensionContext } from "../../types/IExtensionContext";
 import type { INotification } from "../../types/INotification";
@@ -48,7 +49,7 @@ import testModReference, {
 } from "../mod_management/util/testModReference";
 import { convertGameIdReverse } from "../nexus_integration/util/convertGameId";
 import type { IProfile } from "../profile_management/types/IProfile";
-import { clearPendingVote, updateSuccessRate } from "./actions/persistent";
+import { clearPendingVote, setCollectionFailures, updateSuccessRate } from "./actions/persistent";
 import {
   addCollectionAction,
   addCollectionCondition,
@@ -1617,6 +1618,25 @@ function once(api: IExtensionApi, collectionsCB: () => ICallbackMap) {
           error: getErrorMessageOrDefault(err),
         });
       });
+    },
+  );
+
+  // mORTEX : les échecs de l'installation en cours sont enregistrés sur le disque dès qu'ils
+  // changent, pour rester visibles sur la page de la collection après un redémarrage, même si
+  // mORTEX est quitté avant d'avoir refermé le bilan de l'installation
+  api.onStateChange(
+    ["session", "collections", "activeSession"],
+    (prev: ICollectionInstallSession | undefined, cur: ICollectionInstallSession | undefined) => {
+      if (
+        cur === undefined ||
+        (prev?.sessionId === cur.sessionId && prev.failedCount === cur.failedCount)
+      ) {
+        return;
+      }
+      const failures = Object.fromEntries(
+        Object.entries(cur.mods).filter(([, info]) => info.status === "failed"),
+      );
+      api.store.dispatch(setCollectionFailures(cur.collectionId, failures));
     },
   );
 

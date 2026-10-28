@@ -78,11 +78,25 @@ const persistentReducer: IReducerSpec = {
       }
       return update(state, { pendingVotes: { $unset: [revisionId] } });
     },
+    [actions.setCollectionFailures as any]: (state, payload) => {
+      const { collectionId, failures } = payload;
+
+      if (Object.keys(failures).length === 0) {
+        if (state.installFailures?.[collectionId] === undefined) {
+          return state;
+        }
+        return update(state, { installFailures: { $unset: [collectionId] } });
+      }
+      return update(state, {
+        installFailures: { $apply: (failed) => ({ ...(failed ?? {}), [collectionId]: failures }) },
+      });
+    },
   },
   defaults: {
     collections: {},
     revisions: {},
     pendingVotes: {},
+    installFailures: {},
   },
 };
 

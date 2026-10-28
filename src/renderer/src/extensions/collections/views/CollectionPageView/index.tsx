@@ -31,10 +31,7 @@ import type { IDialogResult } from "../../../../types/IDialog";
 import type { INotification } from "../../../../types/INotification";
 import type { IOverlay, IState } from "../../../../types/IState";
 import type { ITableAttribute } from "../../../../types/ITableAttribute";
-import {
-  getCollectionActiveSession,
-  getCollectionLastCompletedSession,
-} from "../../../../util/collectionInstallSessionSelectors";
+import { getCollectionActiveSession } from "../../../../util/collectionInstallSessionSelectors";
 import {
   // resyncCollectionSessionFromReality, // re-enable with the commented-out resync action
   resyncCollectionSessionRules,
@@ -1053,9 +1050,6 @@ const EMPTY_MODS: Record<string, IMod> = {};
 const EMPTY_MOD_STATE: Record<string, IProfileMod> = {};
 const EMPTY_SESSION_MODS: Record<string, ICollectionModInstallInfo> = {};
 
-// mORTEX : échecs de la dernière installation, gardés une fois la session close
-const lastFailures = new WeakMap<object, Record<string, ICollectionModInstallInfo>>();
-
 function sessionModsForCollection(
   state: IState,
   collectionId: string,
@@ -1064,20 +1058,9 @@ function sessionModsForCollection(
   if (session?.collectionId === collectionId) {
     return session.mods;
   }
-  // une fois l'installation terminée, ses échecs restent visibles (statut et filtre « Failed ») ;
-  // seuls les échecs sont repris, le reste se lit sur l'état réel
-  const last = getCollectionLastCompletedSession(state);
-  if (last?.collectionId !== collectionId || last.mods === undefined) {
-    return EMPTY_SESSION_MODS;
-  }
-  let failures = lastFailures.get(last.mods);
-  if (failures === undefined) {
-    failures = Object.fromEntries(
-      Object.entries(last.mods).filter(([, info]) => info.status === "failed"),
-    );
-    lastFailures.set(last.mods, failures);
-  }
-  return failures;
+  // mORTEX : une fois l'installation terminée, ses échecs restent visibles (statut et filtre
+  // « Failed »), même après un redémarrage ; le reste se lit sur l'état réel
+  return state.persistent.collections.installFailures?.[collectionId] ?? EMPTY_SESSION_MODS;
 }
 
 // per-instance factory so the item-row selector memoizes against this collection's
