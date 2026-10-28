@@ -23,6 +23,19 @@ cd dist
   -c.mac.identity=null -c.directories.output="$APP_DIR/dist"
 OUT="$APP_DIR/dist/mac-arm64/mORTEX.app"
 rm -rf "$APP_DIR/mORTEX.app" && cp -R "$OUT" "$APP_DIR/mORTEX.app"
+# Binaires d'autres plateformes hérités de Vortex, jamais chargés sur un Mac Apple Silicon :
+# installeur Windows (NSIS), modules précompilés Windows/Linux/Android/Intel, extensions DuckDB
+# Windows/Linux, 7-Zip Linux, tranche Intel de libduckdb. Les outils Windows de Baldur's Gate 3
+# restent : sans eux, l'extension du jeu propose de les retélécharger.
+RES="$APP_DIR/mORTEX.app/Contents/Resources"
+UNPACKED="$RES/app.asar.unpacked"
+rm -rf "$RES/nsis" "$UNPACKED/node_modules/7z-bin/linux"
+find "$UNPACKED/node_modules" -type d -path '*/prebuilds/*' -prune ! -name darwin-arm64 -exec rm -rf {} +
+find "$UNPACKED/duckdb-extensions" -mindepth 2 -maxdepth 2 -type d ! -name osx_arm64 -exec rm -rf {} +
+LIBDUCKDB="$UNPACKED/node_modules/@duckdb/node-bindings-darwin-arm64/libduckdb.dylib"
+if lipo -info "$LIBDUCKDB" | grep -q x86_64; then
+  lipo -thin arm64 "$LIBDUCKDB" -output "$LIBDUCKDB.arm64" && mv "$LIBDUCKDB.arm64" "$LIBDUCKDB"
+fi
 # Schéma nxm:// (« Mod Manager Download » de Nexus) : déclaré dans l'Info.plist
 PL="$APP_DIR/mORTEX.app/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Delete :CFBundleURLTypes" "$PL" 2>/dev/null || true
