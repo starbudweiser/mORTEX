@@ -3833,5 +3833,7 @@
   "{{title}} ({{count}} dependencies)": "{{title}} ({{count}} dipendenza)",
   "{{title}} ({{count}} dependencies)_plural": "{{title}} ({{count}} dipendenze)",
   "This file is no longer available on Nexus Mods: its author has removed it or replaced it with a newer version. Only the curator of the collection can update it.": "Questo file non è più disponibile su Nexus Mods: il suo autore l'ha rimosso o sostituito con una versione più recente. Solo il curatore della collezione può aggiornarla.",
-  "Install failed": "Installazione non riuscita"
+  "Install failed": "Installazione non riuscita",
+  "{{count}} mod could not be installed_plural": "{{count}} mod non sono state installate",
+  "{{count}} optional mod could not be installed_plural": "{{count}} mod facoltative non sono state installate"
 }

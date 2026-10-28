@@ -8,5 +8,7 @@
       "later": "Plus tard",
       "update": "Mettre à jour la sélection"
     }
-  }
+  },
+  "Extensions": "Extensions",
+  "Failed to install the extension \"{{extensionName}}\", please check the notifications.": "Impossible d'installer l'extension « {{extensionName}} », consultez les notifications."
 }

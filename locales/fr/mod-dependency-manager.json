@@ -1,0 +1,8 @@
+{
+  "Save": "Enregistrer",
+  "LO Rule": "Règle d'ordre",
+  "Conflict": "Conflit",
+  "Unresolved": "Non résolu",
+  "{{ count }} conflicting file": "{{ count }} fichier en conflit",
+  "{{ count }} conflicting file_plural": "{{ count }} fichiers en conflit"
+}

@@ -163,5 +163,8 @@
         }
       }
     }
-  }
+  },
+  "Health check": "Diagnostic",
+  "{{ count }} minute ago": "il y a {{ count }} minute",
+  "{{ count }} minute ago_plural": "il y a {{ count }} minutes"
 }

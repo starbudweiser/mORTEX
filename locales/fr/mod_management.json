@@ -18,5 +18,10 @@
       "update_all": "Tout mettre à jour",
       "update_non_collection": "Mettre à jour les mods hors collection"
     }
-  }
+  },
+  "Mods": "Mods",
+  "History": "Historique",
+  "Mod removed": "Mod retiré",
+  "Mods deployed": "Mods déployés",
+  "Mod(s) removed": "Mod(s) retiré(s)"
 }

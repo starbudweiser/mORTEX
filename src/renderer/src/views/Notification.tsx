@@ -163,7 +163,7 @@ export const Notification: FC<React.PropsWithChildren<IProps>> = (props) => {
 
   const lines = (message || "")
     // improve chance the message can be line-broken on hover
-    .replace(/[^\p{L}\p{N}_]/gu, (_) => `${_}\u200b`)
+    .replace(/[^\p{L}\p{N}_\s([{«"'’]/gu, (_) => `${_}\u200b`)
     .split("\n");
 
   const styleName = typeToStyle(type);

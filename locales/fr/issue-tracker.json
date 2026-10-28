@@ -1,0 +1,16 @@
+{
+  "More": "Plus",
+  "Open": "Ouvrir",
+  "Close": "Fermer",
+  "Closed": "Fermé",
+  "Your issues": "Vos signalements",
+  "Lucky you...": "Quelle chance…",
+  "Refresh Issues": "Actualiser les problèmes",
+  "Feedback required": "Avis requis",
+  "No reported issues": "Aucun problème signalé",
+  "Open Issue Responder": "Ouvrir le répondeur de signalements",
+  "{{ count }} comments": "{{ count }} commentaires",
+  ", planned for {{date}}": ", prévu le {{date}}",
+  "Milestone: {{title}} ({{state}})": "Étape : {{title}} ({{state}})",
+  "Sent too many github API requests - try again later": "Trop de requêtes envoyées à l'API GitHub, réessayez plus tard"
+}

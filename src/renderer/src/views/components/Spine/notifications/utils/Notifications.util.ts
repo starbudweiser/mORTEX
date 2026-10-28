@@ -5,7 +5,7 @@ import type { MouseEvent } from "react";
  * at punctuation and special characters in notification messages.
  */
 export const addWordBreakOpportunities = (text: string): string[] => {
-  return text.replace(/[^\p{L}\p{N}_]/gu, (_) => `${_}\u200b`).split("\n");
+  return text.replace(/[^\p{L}\p{N}_\s([{«"'’]/gu, (_) => `${_}\u200b`).split("\n");
 };
 
 /**

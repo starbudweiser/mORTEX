@@ -1074,7 +1074,8 @@ class SuperTable extends ComponentEx<IProps, IComponentState> {
         return;
       }
 
-      if (evt.key === "f" && evt.ctrlKey) {
+      // mORTEX : ⌘ sur Mac, Ctrl ailleurs (Ctrl-clic ouvre le menu contextuel sur macOS)
+      if (evt.key === "f" && (evt.ctrlKey || evt.metaKey)) {
         if (this.mDefaultFilterRef !== null) {
           this.mDefaultFilterRef.focus();
         }
@@ -1082,7 +1083,7 @@ class SuperTable extends ComponentEx<IProps, IComponentState> {
       }
 
       if (this.useMultiSelect()) {
-        if (evt.key === "a" && evt.ctrlKey) {
+        if (evt.key === "a" && (evt.ctrlKey || evt.metaKey)) {
           this.selectAll();
           return;
         }
@@ -1878,8 +1879,8 @@ class SuperTable extends ComponentEx<IProps, IComponentState> {
     const rowId = row.getAttribute("data-rowid");
     const groupId = row.getAttribute("data-group");
 
-    if (this.useMultiSelect() && evt.ctrlKey) {
-      // ctrl-click -> toggle the selected row, leave remaining selection intact
+    if (this.useMultiSelect() && (evt.ctrlKey || evt.metaKey)) {
+      // ctrl-click (⌘-clic sur Mac) -> toggle the selected row, leave remaining selection intact
       this.selectToggle(rowId, groupId);
     } else if (this.useMultiSelect() && evt.shiftKey) {
       // shift-click -> select everything between this row and the last one clicked,

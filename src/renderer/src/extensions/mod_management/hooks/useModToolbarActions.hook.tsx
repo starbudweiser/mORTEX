@@ -529,7 +529,7 @@ const useCheckVersionsAction = (t: TFunction): IPositionedAction => {
  * returns a string, ordered by `position`, plus whatever each has to say for itself
  * in brackets after its title — see {@link IActionOptions.notice}.
  */
-const useRegisteredActions = (group: string): IPositionedAction[] => {
+const useRegisteredActions = (group: string, t: TFunction): IPositionedAction[] => {
   const objects = useExtensionObjects<IActionDefinition>(registerAction, undefined, group, true);
 
   // Read through the store, so a notice and a brand can follow state rather than be
@@ -584,7 +584,10 @@ const useRegisteredActions = (group: string): IPositionedAction[] => {
         // translation, so a decision to pin survives a language change. It is also
         // what IconBar built its DOM ids from.
         id: definition.title,
-        label: !notice ? definition.title : `${definition.title} (${notice})`,
+        // mORTEX : le libellé affiché est traduit (la nouvelle barre l'affichait tel quel)
+        label: !notice
+          ? t(definition.title, { ns: definition.options?.namespace })
+          : `${t(definition.title, { ns: definition.options?.namespace })} (${notice})`,
         brand: brands[index],
         icon: getIcon(definition.icon, "extension"),
         pinned: definition.options?.pinned ?? false,
@@ -616,7 +619,7 @@ const useActionMenu = (
   adopted: IPositionedAction[],
   onActionClick: IToolbarAnalytics["onActionClick"] | undefined,
 ): IPositionedAction | undefined => {
-  const registered = useRegisteredActions(menu.group);
+  const registered = useRegisteredActions(menu.group, t);
 
   return useMemo(() => {
     const entries = [...registered, ...adopted].sort((lhs, rhs) => lhs.position - rhs.position);
@@ -669,7 +672,7 @@ export const useModToolbarActions = (
   const purge = usePurgeAction(t);
   const autoApply = useAutoApplyAction(t);
   const betaTable = useBetaTableAction(t);
-  const registered = useRegisteredActions("mod-icons");
+  const registered = useRegisteredActions("mod-icons", t);
 
   const byIcon = useMemo(() => _.groupBy(registered, (entry) => entry.icon), [registered]);
   const ownRow = useMemo(

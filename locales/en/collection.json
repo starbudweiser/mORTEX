@@ -25,5 +25,9 @@
     "goTo": "Go to:",
     "pageNumber": "Page number",
     "go": "Go"
-  }
+  },
+  "{{count}} mod could not be installed": "{{count}} mod could not be installed",
+  "{{count}} mod could not be installed_plural": "{{count}} mods could not be installed",
+  "{{count}} optional mod could not be installed": "{{count}} optional mod could not be installed",
+  "{{count}} optional mod could not be installed_plural": "{{count}} optional mods could not be installed"
 }
