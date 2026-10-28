@@ -1,5 +1,6 @@
 /**
- * mORTEX : onglet Mods du navigateur Nexus. Recherche par nom, tri, catégorie, pages de 20 mods,
+ * mORTEX : onglet Mods du navigateur Nexus. Recherche par nom, tri, filtres de la colonne de gauche
+ * (comme sur nexusmods.com), pages de 20 mods,
  * puis téléchargement et installation d'un fichier choisi (util/downloadMod).
  */
 import React, { type RefObject, useEffect, useMemo, useState } from "react";
@@ -19,8 +20,15 @@ import { Picker } from "@/ui/components/picker/Picker";
 import { Typography } from "@/ui/components/typography/Typography";
 import { getCurrentLanguage } from "@/util/i18n";
 
+import { activeFilterCount, EMPTY_FILTERS, type IBrowseFilters } from "../util/browseFilters";
 import { downloadMod, filePageUrl } from "../util/downloadMod";
-import { type INexusModSummary, type ModSortField, searchMods } from "../util/nexusMods";
+import {
+  type IFacets,
+  type INexusModSummary,
+  type ModSortField,
+  searchMods,
+} from "../util/nexusMods";
+import { FilterSidebar } from "./FilterSidebar";
 import { ModTile, type ModTileStatus } from "./ModTile";
 
 const PAGE_SIZE = 20;
@@ -66,22 +74,12 @@ const nexusModIds = createSelector(
   },
 );
 
-/** les catégories Nexus connues pour le jeu, triées */
-const categoryNames = createSelector(
-  (state: IState, gameId: string) => state.persistent.categories?.[gameId],
-  (categories) =>
-    [...new Set(Object.values(categories ?? {}).map((category) => category.name))]
-      .filter((name) => !!name)
-      .sort((lhs, rhs) => lhs.localeCompare(rhs)),
-);
-
 export function BrowseModsPanel({ api, gameId, gameDomain, isLoggedIn, scrollRef, t }: IProps) {
   const premium = useSelector(isPremium);
   const showAdult = useSelector(
     (state: IState) => state.persistent["nexus"]?.userInfo?.adult === true,
   );
   const ids = useSelector((state: IState) => nexusModIds(state, gameId));
-  const categories = useSelector((state: IState) => categoryNames(state, gameId));
 
   const [mods, setMods] = useState<INexusModSummary[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -90,7 +88,9 @@ export function BrowseModsPanel({ api, gameId, gameDomain, isLoggedIn, scrollRef
   const [query, setQuery] = useState("");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<ModSortField>("endorsements");
-  const [category, setCategory] = useState("");
+  const [filters, setFilters] = useState<IBrowseFilters>(EMPTY_FILTERS);
+  const [facets, setFacets] = useState<IFacets>({});
+  const [showFilters, setShowFilters] = useState(true);
   const [page, setPage] = useState(1);
   const [refresh, setRefresh] = useState(0);
   const [queryError, setQueryError] = useState("");
@@ -102,7 +102,7 @@ export function BrowseModsPanel({ api, gameId, gameDomain, isLoggedIn, scrollRef
     searchMods({
       gameDomain,
       search,
-      category: category || undefined,
+      filters,
       sort,
       showAdult,
       offset: (page - 1) * PAGE_SIZE,
@@ -112,6 +112,7 @@ export function BrowseModsPanel({ api, gameId, gameDomain, isLoggedIn, scrollRef
         if (!current) return;
         setMods(result.nodes);
         setTotalCount(result.totalCount);
+        setFacets(result.facets);
       })
       .catch((err: Error) => {
         if (current) setError(err);
@@ -122,19 +123,13 @@ export function BrowseModsPanel({ api, gameId, gameDomain, isLoggedIn, scrollRef
     return () => {
       current = false;
     };
-  }, [gameDomain, search, category, sort, showAdult, page, refresh]);
+  }, [gameDomain, search, filters, sort, showAdult, page, refresh]);
 
   const sortOptions = useMemo(
     () => SORT_OPTIONS.map((option) => ({ value: option.value, label: t(option.label) })),
     [t],
   );
-  const categoryOptions = useMemo(
-    () => [
-      { value: "", label: t("All categories") },
-      ...categories.map((name) => ({ value: name, label: name })),
-    ],
-    [categories, t],
-  );
+  const filterCount = activeFilterCount(filters);
 
   const submitSearch = () => {
     // Nexus refuse une recherche d'un seul caractère
@@ -191,6 +186,19 @@ export function BrowseModsPanel({ api, gameId, gameDomain, isLoggedIn, scrollRef
           <Button
             appearance="moderate"
             brand="neutral"
+            leftIcon="filter_list"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            {showFilters
+              ? t("Hide filters")
+              : filterCount > 0
+                ? t("Show filters ({{count}})", { replace: { count: filterCount } })
+                : t("Show filters")}
+          </Button>
+
+          <Button
+            appearance="moderate"
+            brand="neutral"
             leftIcon="refresh"
             title={t("Refresh")}
             onClick={() => setRefresh((value) => value + 1)}
@@ -205,17 +213,6 @@ export function BrowseModsPanel({ api, gameId, gameDomain, isLoggedIn, scrollRef
         </div>
 
         <div className="flex items-center gap-x-2">
-          {categories.length > 0 && (
-            <Picker
-              options={categoryOptions}
-              value={category}
-              onChange={(value) => {
-                setCategory(value);
-                setPage(1);
-              }}
-            />
-          )}
-
           <Picker
             options={sortOptions}
             value={sort}
@@ -227,38 +224,57 @@ export function BrowseModsPanel({ api, gameId, gameDomain, isLoggedIn, scrollRef
         </div>
       </div>
 
-      <Listing
-        className="grid grid-cols-[repeat(auto-fit,minmax(26rem,1fr))] gap-4"
-        entityCount={mods.length}
-        errorMessage={error?.message}
-        errorTitle={t("Couldn't reach Nexus Mods")}
-        isError={!!error}
-        isLoading={loading}
-        noResultsMessage={t("Try another search or category.")}
-        noResultsTitle={t("No mods found")}
-        skeletonCount={12}
-        SkeletonTile={CollectionTileSkeleton}
-      >
-        {mods.map((mod) => (
-          <ModTile
-            isLoggedIn={isLoggedIn}
-            key={mod.modId}
-            mod={mod}
-            status={statusOf(mod)}
+      <div className="flex items-start gap-x-6">
+        {showFilters && (
+          <FilterSidebar
+            facets={facets}
+            filters={filters}
+            kind="mods"
             t={t}
-            onDownload={() => downloadMod(api, mod, premium)}
-            onViewPage={() => window.api.shell.openUrl(filePageUrl(mod).replace("?tab=files", ""))}
+            onChange={(value) => {
+              setFilters(value);
+              setPage(1);
+            }}
           />
-        ))}
-      </Listing>
+        )}
 
-      <Pagination
-        currentPage={page}
-        recordsPerPage={PAGE_SIZE}
-        scrollRef={scrollRef}
-        totalRecords={totalCount}
-        onPaginationUpdate={setPage}
-      />
+        <div className="min-w-0 flex-1 space-y-3">
+          <Listing
+            className="grid grid-cols-[repeat(auto-fit,minmax(26rem,1fr))] gap-4"
+            entityCount={mods.length}
+            errorMessage={error?.message}
+            errorTitle={t("Couldn't reach Nexus Mods")}
+            isError={!!error}
+            isLoading={loading}
+            noResultsMessage={t("Try another search or fewer filters.")}
+            noResultsTitle={t("No mods found")}
+            skeletonCount={12}
+            SkeletonTile={CollectionTileSkeleton}
+          >
+            {mods.map((mod) => (
+              <ModTile
+                isLoggedIn={isLoggedIn}
+                key={mod.modId}
+                mod={mod}
+                status={statusOf(mod)}
+                t={t}
+                onDownload={() => downloadMod(api, mod, premium)}
+                onViewPage={() =>
+                  window.api.shell.openUrl(filePageUrl(mod).replace("?tab=files", ""))
+                }
+              />
+            ))}
+          </Listing>
+
+          <Pagination
+            currentPage={page}
+            recordsPerPage={PAGE_SIZE}
+            scrollRef={scrollRef}
+            totalRecords={totalCount}
+            onPaginationUpdate={setPage}
+          />
+        </div>
+      </div>
     </div>
   );
 }

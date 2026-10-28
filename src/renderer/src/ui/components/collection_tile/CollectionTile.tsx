@@ -68,6 +68,8 @@ export const CollectionTile: ComponentType<React.PropsWithChildren<ICollectionTi
   className,
 }) => {
   const revision = collection.latestPublishedRevision;
+  // mORTEX : textes de la carte traduits (4 langues)
+  const t = (text: string) => api.translate(text, { ns: "common" });
 
   const [isHovered, setIsHovered] = useState(false);
   const [canBeAdded, setCanBeAdded] = useState(true);
@@ -177,7 +179,7 @@ export const CollectionTile: ComponentType<React.PropsWithChildren<ICollectionTi
                 <Bullet />
 
                 <Typography brand="danger" typographyType="body-sm">
-                  Adult
+                  {t("Adult")}
                 </Typography>
               </>
             )}
@@ -213,13 +215,13 @@ export const CollectionTile: ComponentType<React.PropsWithChildren<ICollectionTi
             disabled={true}
             leftIcon={!isLoggedIn ? undefined : "check"}
             size="sm"
-            title={!isLoggedIn ? "Log in to add collections" : undefined}
+            title={!isLoggedIn ? t("Log in to add collections") : undefined}
           >
-            {!isLoggedIn ? "Log in to add" : "Added"}
+            {!isLoggedIn ? t("Log in to add") : t("Added")}
           </Button>
         ) : (
           <Button size="sm" onClick={addCollection}>
-            Add collection
+            {t("Add collection")}
           </Button>
         )}
 
@@ -230,7 +232,7 @@ export const CollectionTile: ComponentType<React.PropsWithChildren<ICollectionTi
           size="sm"
           onClick={onViewPage}
         >
-          View page
+          {t("View page")}
         </Button>
       </div>
     </div>

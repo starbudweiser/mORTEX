@@ -1,9 +1,4 @@
-import type {
-  ICollection,
-  ICollectionSearchOptions,
-  CollectionSortField,
-  SortDirection,
-} from "@nexusmods/nexus-api";
+import type { ICollection, CollectionSortField, SortDirection } from "@nexusmods/nexus-api";
 import { VortexGameId } from "@vortex/shared";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -32,7 +27,11 @@ import { getCurrentLanguage } from "@/util/i18n";
 import { activeGameId } from "@/util/selectors";
 import MainPage from "@/views/MainPage";
 
+import { activeFilterCount, EMPTY_FILTERS, type IBrowseFilters } from "../util/browseFilters";
+import { searchCollections } from "../util/nexusCollections";
+import type { IFacets } from "../util/nexusMods";
 import { BrowseModsPanel } from "./BrowseModsPanel";
+import { FilterSidebar } from "./FilterSidebar";
 
 interface IBrowseNexusPageProps {
   api: IExtensionApi;
@@ -113,6 +112,11 @@ function BrowseNexusPage(props: IBrowseNexusPageProps) {
   const [activeSearch, setActiveSearch] = useState<string>(""); // The search term actually being used
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedTab, setSelectedTab] = useState<string>("collections");
+  // mORTEX : filtres de la colonne de gauche, comme sur nexusmods.com
+  const [filters, setFilters] = useState<IBrowseFilters>(EMPTY_FILTERS);
+  const [facets, setFacets] = useState<IFacets>({});
+  const [showFilters, setShowFilters] = useState(true);
+  const filterCount = activeFilterCount(filters);
 
   // games managed without an extension get no collection support on this page
   const collectionsTabHidden = useSelector((state: IState) =>
@@ -209,31 +213,33 @@ function BrowseNexusPage(props: IBrowseNexusPageProps) {
     setLoading(true);
     setError(null);
 
-    const options: ICollectionSearchOptions = {
-      gameId: gameDomainName,
-      count: 20,
+    let current = true;
+    // mORTEX : recherche avec les filtres et leurs compteurs (util/nexusCollections)
+    searchCollections({
+      gameDomain: gameDomainName,
+      count: itemsPerPage,
       offset: (currentPage - 1) * itemsPerPage,
       sort: {
         field: sortBy.field,
         direction: sortBy.direction,
       },
       search: activeSearch || undefined,
-      categoryName: [{ op: "NOT_EQUALS", value: "Wabbajack Mod List" }],
-      collectionStatuses: ["listed"],
-    };
-
-    // Fetch collections using the new search API with sorting and search
-    Promise.resolve(api.ext.nexusSearchCollections(options))
-      .then((result: { nodes: ICollection[]; totalCount: number }) => {
+      showAdult: adultContentFilter !== false,
+      filters,
+    })
+      .then((result) => {
+        if (!current) return;
         setCollections(result.nodes || []);
         setTotalCount(result.totalCount || 0);
+        setFacets(result.facets);
         // Store unfiltered total when no search is active
-        if (!activeSearch) {
+        if (!activeSearch && filterCount === 0) {
           setAllCollectionsTotal(result.totalCount || 0);
         }
         setLoading(false);
       })
       .catch((err: Error) => {
+        if (!current) return;
         // Provide user-friendly error message for wildcard search requirement
         if (err.message && err.message.includes("Wildcard value must have 2 or more characters")) {
           const friendlyError = new Error(t("collection:browse.searchTooShort"));
@@ -245,7 +251,10 @@ function BrowseNexusPage(props: IBrowseNexusPageProps) {
         }
         setLoading(false);
       });
-  }, [gameId, sortBy, activeSearch, currentPage, api, refreshTrigger]);
+    return () => {
+      current = false;
+    };
+  }, [gameId, sortBy, activeSearch, currentPage, refreshTrigger, filters, adultContentFilter]);
 
   if (!gameId) {
     return (
@@ -320,6 +329,19 @@ function BrowseNexusPage(props: IBrowseNexusPageProps) {
                     <Button
                       appearance="moderate"
                       brand="neutral"
+                      leftIcon="filter_list"
+                      onClick={() => setShowFilters(!showFilters)}
+                    >
+                      {showFilters
+                        ? tCommon("Hide filters")
+                        : filterCount > 0
+                          ? tCommon("Show filters ({{count}})", { replace: { count: filterCount } })
+                          : tCommon("Show filters")}
+                    </Button>
+
+                    <Button
+                      appearance="moderate"
+                      brand="neutral"
                       leftIcon="refresh"
                       title={t("collection:browse.refresh")}
                       onClick={handleRefresh}
@@ -338,7 +360,7 @@ function BrowseNexusPage(props: IBrowseNexusPageProps) {
 
                   <Picker
                     options={SORT_OPTIONS.map((option) => ({
-                      label: option.label,
+                      label: tCommon(option.label),
                       value: option,
                     }))}
                     value={sortBy}
@@ -349,53 +371,70 @@ function BrowseNexusPage(props: IBrowseNexusPageProps) {
                   />
                 </div>
 
-                <Listing
-                  className="grid grid-cols-[repeat(auto-fit,minmax(26rem,1fr))] gap-4"
-                  entityCount={collections?.length}
-                  isError={!!error}
-                  isLoading={loading}
-                  noResultsChildren={
-                    <Button
-                      appearance="moderate"
-                      brand="neutral"
-                      leftIcon="open_in_new"
-                      onClick={() =>
-                        window.api.shell.openUrl(
-                          `https://www.nexusmods.com/games/${gameDomainName}/mods`,
-                        )
-                      }
-                    >
-                      {t("collection:browse.modsComingSoon.openWebsite")}
-                    </Button>
-                  }
-                  noResultsMessage={t("collection:browse.noCollections.message")}
-                  noResultsTitle={t("collection:browse.noCollections.title")}
-                  skeletonCount={12}
-                  SkeletonTile={CollectionTileSkeleton}
-                >
-                  {collections?.map((collection) => (
-                    <CollectionTile
-                      api={api}
-                      collection={collection}
-                      isLoggedIn={isLoggedIn}
-                      key={collection.id}
-                      onAddCollection={() => handleAddCollection(collection)}
-                      onViewPage={() =>
-                        window.api.shell.openUrl(
-                          `https://www.nexusmods.com/games/${collection.game.domainName}/collections/${collection.slug}`,
-                        )
-                      }
+                <div className="flex items-start gap-x-6">
+                  {showFilters && (
+                    <FilterSidebar
+                      facets={facets}
+                      filters={filters}
+                      kind="collections"
+                      t={tCommon}
+                      onChange={(value) => {
+                        setFilters(value);
+                        setCurrentPage(1);
+                      }}
                     />
-                  ))}
-                </Listing>
+                  )}
 
-                <Pagination
-                  currentPage={currentPage}
-                  recordsPerPage={itemsPerPage}
-                  scrollRef={scrollRef}
-                  totalRecords={totalCount}
-                  onPaginationUpdate={(newPage) => setCurrentPage(newPage)}
-                />
+                  <div className="min-w-0 flex-1 space-y-3">
+                    <Listing
+                      className="grid grid-cols-[repeat(auto-fit,minmax(26rem,1fr))] gap-4"
+                      entityCount={collections?.length}
+                      isError={!!error}
+                      isLoading={loading}
+                      noResultsChildren={
+                        <Button
+                          appearance="moderate"
+                          brand="neutral"
+                          leftIcon="open_in_new"
+                          onClick={() =>
+                            window.api.shell.openUrl(
+                              `https://www.nexusmods.com/games/${gameDomainName}/mods`,
+                            )
+                          }
+                        >
+                          {t("collection:browse.modsComingSoon.openWebsite")}
+                        </Button>
+                      }
+                      noResultsMessage={t("collection:browse.noCollections.message")}
+                      noResultsTitle={t("collection:browse.noCollections.title")}
+                      skeletonCount={12}
+                      SkeletonTile={CollectionTileSkeleton}
+                    >
+                      {collections?.map((collection) => (
+                        <CollectionTile
+                          api={api}
+                          collection={collection}
+                          isLoggedIn={isLoggedIn}
+                          key={collection.id}
+                          onAddCollection={() => handleAddCollection(collection)}
+                          onViewPage={() =>
+                            window.api.shell.openUrl(
+                              `https://www.nexusmods.com/games/${collection.game.domainName}/collections/${collection.slug}`,
+                            )
+                          }
+                        />
+                      ))}
+                    </Listing>
+
+                    <Pagination
+                      currentPage={currentPage}
+                      recordsPerPage={itemsPerPage}
+                      scrollRef={scrollRef}
+                      totalRecords={totalCount}
+                      onPaginationUpdate={(newPage) => setCurrentPage(newPage)}
+                    />
+                  </div>
+                </div>
               </div>
             </TabPanel>
           )}

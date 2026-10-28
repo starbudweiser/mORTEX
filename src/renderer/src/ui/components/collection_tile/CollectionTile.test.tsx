@@ -61,7 +61,11 @@ const makeCollection = (overrides: Partial<TestCollection> = {}): TestCollection
 // state present so the canBeAdded/login logic runs
 const makeApi = () => {
   const emit = vi.fn();
-  const api = { events: { emit }, getState: () => ({}) } as unknown as IExtensionApi;
+  const api = {
+    events: { emit },
+    getState: () => ({}),
+    translate: (text: string) => text,
+  } as unknown as IExtensionApi;
   return { api, emit };
 };
 

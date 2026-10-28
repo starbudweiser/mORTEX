@@ -3,10 +3,14 @@
  * (la bibliothèque @nexusmods/nexus-api ne sait chercher que des collections).
  *
  * Interface :
- *  - searchMods(options): Promise<IModSearchResult>    une page de mods d'un jeu
+ *  - searchMods(options): Promise<IModSearchResult>    une page de mods d'un jeu, avec les compteurs
+ *    des filtres (catégories, tags, langues)
+ *  - nexusGraphQuery(text, variables)                  une requête à l'API, sans compte
  *  - modFiles(modId, gameNumId): Promise<INexusModFile[]>  les fichiers téléchargeables d'un mod,
  *    principaux d'abord, puis du plus récent au plus ancien
  */
+
+import { categoryClause, EMPTY_FILTERS, type IBrowseFilters, modClauses } from "./browseFilters";
 
 const ENDPOINT = "https://api.nexusmods.com/v2/graphql";
 
@@ -37,13 +41,18 @@ export interface IModSearchOptions {
   category?: string;
   sort: ModSortField;
   showAdult: boolean;
+  filters?: IBrowseFilters;
   offset: number;
   count: number;
 }
 
+/** pour chaque filtre, le nombre de résultats de chaque valeur */
+export type IFacets = Record<string, Record<string, number>>;
+
 export interface IModSearchResult {
   totalCount: number;
   nodes: INexusModSummary[];
+  facets: IFacets;
 }
 
 export type ModFileCategory = "MAIN" | "OPTIONAL" | "UPDATE" | "MISCELLANEOUS";
@@ -61,7 +70,10 @@ export interface INexusModFile {
 
 const FILE_CATEGORIES: ModFileCategory[] = ["MAIN", "OPTIONAL", "UPDATE", "MISCELLANEOUS"];
 
-async function query<T>(text: string, variables: Record<string, unknown>): Promise<T> {
+export async function nexusGraphQuery<T>(
+  text: string,
+  variables: Record<string, unknown>,
+): Promise<T> {
   const response = await fetch(ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -86,14 +98,20 @@ export function decodeEntities(text: string): string {
   return decoder.value;
 }
 
-const SEARCH_QUERY = `query mortexMods($filter: ModsFilter, $sort: [ModsSort!], $offset: Int, $count: Int) {
-  mods(filter: $filter, sort: $sort, offset: $offset, count: $count) {
+// deux recherches en une : les résultats, et les compteurs de catégories calculés sans les
+// catégories cochées (sinon toutes les autres tomberaient à 0)
+const SEARCH_QUERY = `query mortexMods($filter: ModsFilter, $categoryFilter: ModsFilter, $sort: [ModsSort!], $offset: Int, $count: Int) {
+  mods(filter: $filter, sort: $sort, offset: $offset, count: $count, facets: { tag: [], languageName: [] }) {
     totalCount
+    facetsData
     nodes {
       modId name summary version author uploader { name } thumbnailUrl
       endorsements downloads fileSize adultContent updatedAt
       modCategory { name } game { id domainName }
     }
+  }
+  categories: mods(filter: $categoryFilter, count: 0, facets: { categoryName: [] }) {
+    facetsData
   }
 }`;
 
@@ -114,7 +132,13 @@ interface IRawMod {
   game: { id: number; domainName: string };
 }
 
-export function searchFilter(options: IModSearchOptions): Record<string, unknown> {
+/** le filtre complet ; `withCategories: false` pour les compteurs de catégories */
+export function searchFilter(
+  options: IModSearchOptions,
+  withCategories = true,
+  now: number = Date.now(),
+): Record<string, unknown> {
+  const filters = options.filters ?? EMPTY_FILTERS;
   const filter: Record<string, unknown> = {
     gameDomainName: [{ value: options.gameDomain, op: "EQUALS" }],
   };
@@ -122,6 +146,11 @@ export function searchFilter(options: IModSearchOptions): Record<string, unknown
   if (search) filter.name = [{ value: search, op: "WILDCARD" }];
   if (options.category) filter.categoryName = [{ value: options.category, op: "EQUALS" }];
   if (!options.showAdult) filter.adultContent = [{ value: false, op: "EQUALS" }];
+  const clauses = [
+    ...modClauses(filters, now),
+    ...(withCategories ? categoryClause("categoryName", filters.categories) : []),
+  ];
+  if (clauses.length > 0) filter.filter = clauses;
   return filter;
 }
 
@@ -133,14 +162,19 @@ export function searchSort(options: IModSearchOptions): Array<Record<string, unk
 }
 
 export async function searchMods(options: IModSearchOptions): Promise<IModSearchResult> {
-  const data = await query<{ mods: { totalCount: number; nodes: IRawMod[] } }>(SEARCH_QUERY, {
+  const data = await nexusGraphQuery<{
+    mods: { totalCount: number; facetsData: IFacets | null; nodes: IRawMod[] };
+    categories: { facetsData: IFacets | null };
+  }>(SEARCH_QUERY, {
     filter: searchFilter(options),
+    categoryFilter: searchFilter(options, false),
     sort: searchSort(options),
     offset: options.offset,
     count: options.count,
   });
   return {
     totalCount: data.mods.totalCount,
+    facets: { ...data.mods.facetsData, ...data.categories.facetsData },
     nodes: data.mods.nodes.map((mod) => ({
       modId: mod.modId,
       name: decodeEntities(mod.name),
@@ -197,7 +231,7 @@ export function downloadableFiles(files: IRawFile[]): INexusModFile[] {
 }
 
 export async function modFiles(modId: number, gameNumId: number): Promise<INexusModFile[]> {
-  const data = await query<{ modFiles: IRawFile[] }>(FILES_QUERY, {
+  const data = await nexusGraphQuery<{ modFiles: IRawFile[] }>(FILES_QUERY, {
     modId: String(modId),
     gameId: String(gameNumId),
   });
