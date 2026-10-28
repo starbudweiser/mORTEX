@@ -276,7 +276,9 @@ body[data-platform="darwin"] [data-testid="window-titlebar"] {
     position: fixed !important;
     top: 7px;
     right: 132px;
-    width: auto !important;
+    /* largeur fixe, celle du libellé le plus long (« Déploiement… ») : le bouton ne change pas de
+       taille en passant d'APPLIQUER à DÉPLOIEMENT…, et la place réservée plus bas suffit dans les 4 langues */
+    width: 160px !important;
     z-index: 60;
     -webkit-app-region: no-drag;
 }
@@ -284,7 +286,7 @@ body[data-platform="darwin"] [data-testid="window-titlebar"] {
 .mortex-apply-wrap button,
 .mortex-apply-wrap [data-testid="menu-apply"] {
     height: 30px !important;
-    min-width: 100px;
+    width: 100% !important;
     padding-inline: 14px;
     background-color: var(--color-primary-700) !important;
     color: #ffffff !important;
@@ -299,8 +301,9 @@ body[data-platform="darwin"] [data-testid="window-titlebar"] {
     color: #ffffff !important;
 }
 
+/* 132 (LANCER) + 160 (DÉPLOYER) + 12 d'écart : l'avatar ne passe plus sous le bouton */
 body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titlebar"] {
-    padding-right: 256px;
+    padding-right: 304px;
 }
 
 /* En-tête étroit : la marque cède d'abord, puis le nom du jeu se tronque ; version, badge Premium et
