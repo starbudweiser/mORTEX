@@ -85,7 +85,8 @@ export const GameActions = () => {
         <PlayButton
           disabled={exclusiveRunning || isPrimaryRunning || isDeploying || !primaryStarter}
           gameName={gameName}
-          hideLabel={showApply}
+          // mORTEX : JOUER et DÉPLOYER ont chacun leur place dans la barre de titre, JOUER garde son mot
+          hideLabel={false}
           isCollapsed={menuIsCollapsed}
           isPrimaryRunning={isPrimaryRunning}
           isWaitingForApply={isDeploying}

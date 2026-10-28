@@ -281,7 +281,8 @@ body[data-platform="darwin"] [data-testid="window-titlebar"] {
     -webkit-app-region: no-drag;
 }
 
-.mortex-apply-wrap button {
+.mortex-apply-wrap button,
+.mortex-apply-wrap [data-testid="menu-apply"] {
     height: 30px !important;
     min-width: 100px;
     padding-inline: 14px;
@@ -289,7 +290,8 @@ body[data-platform="darwin"] [data-testid="window-titlebar"] {
     color: #ffffff !important;
 }
 
-.mortex-apply-wrap button span {
+.mortex-apply-wrap button span,
+.mortex-apply-wrap [data-testid="menu-apply"] span {
     font-size: 12px !important;
     font-weight: 700 !important;
     letter-spacing: 0.04em;
@@ -1259,6 +1261,15 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+}
+
+/* Fenêtre étroite : la liste des jeux quitte le centre et se range avant la version, tronquée,
+   pour ne plus passer sous la version, le badge Premium et la cloche */
+@media (max-width: 1180px) {
+    [data-testid="window-titlebar"] > div:last-child > :first-child {
+        position: static;
+        transform: none;
+    }
 }
 
 /* Mod sélectionné : surbrillance au jaune Socle (--action) */

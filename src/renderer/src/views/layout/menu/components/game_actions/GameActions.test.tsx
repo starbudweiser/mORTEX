@@ -159,7 +159,7 @@ describe("GameActions", () => {
     await settleTransitions();
   });
 
-  it("puts Play before Apply and drops Play's label while Apply is showing", async () => {
+  it("puts Play before Apply and keeps Play's label while Apply is showing", async () => {
     context.needToDeploy = true;
 
     render(<GameActions />);
@@ -167,7 +167,7 @@ describe("GameActions", () => {
     const play = screen.getByRole("button", { name: /^Play/ });
     const apply = screen.getByTestId("menu-apply");
 
-    expect(screen.queryByText("Play")).toBeNull();
+    expect(play).toHaveTextContent("Play");
     expect(apply).toHaveTextContent("Apply");
     expect(play.compareDocumentPosition(apply) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 
