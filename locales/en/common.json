@@ -506,5 +506,8 @@
   "{{list}} and {{count}} more_plural": "{{list}} and {{count}} more",
   "{{title}} ({{count}} dependencies)": "{{title}} ({{count}} dependency)",
   "{{title}} ({{count}} dependencies)_plural": "{{title}} ({{count}} dependencies)",
-  "{{id}} failed to install": "{{id}} failed to install"
+  "{{id}} failed to install": "{{id}} failed to install",
+  "This file is no longer available on Nexus Mods: its author has removed it or replaced it with a newer version. Only the curator of the collection can update it.": "This file is no longer available on Nexus Mods: its author has removed it or replaced it with a newer version. Only the curator of the collection can update it.",
+  "Install failed": "Install failed",
+  "Download failed": "Download failed"
 }

@@ -6071,7 +6071,11 @@ class InstallManager {
             } else if (
               [403, 404, 410].includes((innerErr as { statusCode?: number })?.statusCode)
             ) {
-              const message = `${err.message}\n\nThis error is usually caused by an invalid request, maybe you followed a link that has expired or you lack permission to access it.`;
+              // mORTEX : sur Nexus, ces codes veulent dire que le fichier n'est plus proposé
+              const message = `${err.message}\n\n${api.translate(
+                "This file is no longer available on Nexus Mods: its author has removed it or replaced it with a newer version. Only the curator of the collection can update it.",
+                { ns: "common" },
+              )}`;
               this.showDependencyError(
                 api,
                 sourceModId,

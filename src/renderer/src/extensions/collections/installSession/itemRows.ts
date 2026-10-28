@@ -185,7 +185,13 @@ export function buildCollectionItemRows(
     // "Download failed" label. persistentStatus is "failed" only when no installed mod exists and
     // the download failed, so it cannot shadow a real install/installing state.
     const sessionStatus = sessionMods?.[id]?.status;
-    const status = persistentStatus === "failed" ? "failed" : (sessionStatus ?? persistentStatus);
+    // mORTEX : un échec passé ne masque pas un mod installé depuis (à la main, ou en reprenant)
+    const status =
+      persistentStatus === "failed"
+        ? "failed"
+        : sessionStatus === "failed" && persistentStatus === "installed"
+          ? persistentStatus
+          : (sessionStatus ?? persistentStatus);
 
     const row = { ...data, status };
     // a row is `{ ...mod, ...modState, collectionRule, status }`; the immutable reducers reuse

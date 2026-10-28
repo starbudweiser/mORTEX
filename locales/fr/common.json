@@ -465,5 +465,8 @@
   "{{list}} and {{count}} more_plural": "{{list}} et {{count}} autres",
   "{{title}} ({{count}} dependencies)": "{{title}} ({{count}} dépendance)",
   "{{title}} ({{count}} dependencies)_plural": "{{title}} ({{count}} dépendances)",
-  "{{id}} failed to install": "Échec de l'installation de {{id}}"
+  "{{id}} failed to install": "Échec de l'installation de {{id}}",
+  "This file is no longer available on Nexus Mods: its author has removed it or replaced it with a newer version. Only the curator of the collection can update it.": "Ce fichier n'est plus proposé sur Nexus Mods : son auteur l'a retiré ou remplacé par une version plus récente. Seul le curateur de la collection peut la mettre à jour.",
+  "Install failed": "Échec de l'installation",
+  "Download failed": "Échec du téléchargement"
 }

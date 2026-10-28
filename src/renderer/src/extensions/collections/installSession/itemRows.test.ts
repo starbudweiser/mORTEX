@@ -39,6 +39,32 @@ const installedMod = (id: string, attributes: IModAttributes = {}): IMod =>
   makeMod({ id, installationPath: `mods/${id}`, attributes: { name: id, ...attributes } });
 
 describe("buildCollectionItemRows", () => {
+  it("keeps a past failure for a mod that is still missing, not for one installed since", () => {
+    const missing = requiresRule({ reference: { id: "mod-1", description: "Missing" } });
+    const installed = requiresRule({ reference: { id: "mod-2", description: "Installed" } });
+    const failed = (rule: IModRule) =>
+      ({
+        rule,
+        status: "failed",
+        type: "requires",
+        phase: 0,
+      }) as unknown as ICollectionModInstallInfo;
+
+    const rows = buildCollectionItemRows({
+      rules: [missing, installed],
+      mods: { "mod-2": installedMod("mod-2") },
+      downloads: {},
+      modState: {},
+      sessionMods: {
+        [modRuleId(missing)]: failed(missing),
+        [modRuleId(installed)]: failed(installed),
+      },
+    });
+
+    expect(rows[modRuleId(missing)].status).toBe("failed");
+    expect(rows[modRuleId(installed)].status).toBe("installed");
+  });
+
   it("filters out rules that are not requires/recommends", () => {
     const rows = buildCollectionItemRows({
       rules: [

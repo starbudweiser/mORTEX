@@ -4083,7 +4083,9 @@
     "{{list}} and {{count}} more": "{{list}} and {{count}} more",
     "{{list}} and {{count}} more_plural": "{{list}} and {{count}} more_plural",
     "{{title}} ({{count}} dependencies)": "{{title}} ({{count}} dependencies)",
-    "{{title}} ({{count}} dependencies)_plural": "{{title}} ({{count}} dependencies)_plural"
+    "{{title}} ({{count}} dependencies)_plural": "{{title}} ({{count}} dependencies)_plural",
+    "This file is no longer available on Nexus Mods: its author has removed it or replaced it with a newer version. Only the curator of the collection can update it.": "This file is no longer available on Nexus Mods: its author has removed it or replaced it with a newer version. Only the curator of the collection can update it.",
+    "Install failed": "Install failed"
   },
   "dashboard": {
     "Dashboard": "Dashboard"

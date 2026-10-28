@@ -457,6 +457,7 @@ export class NotificationAggregator {
       ? items.join(", ")
       : this.mApi.translate("{{list}} and {{count}} more", {
           ns: "common",
+          count: items.length - 5,
           replace: { list: items.slice(0, 5).join(", "), count: items.length - 5 },
         });
   }
@@ -475,6 +476,7 @@ export class NotificationAggregator {
         notification.count > 1
           ? this.mApi.translate("{{title}} ({{count}} dependencies)", {
               ns: "common",
+              count: notification.count,
               replace: {
                 title: this.mApi.translate(notification.title, {
                   ns: "common",
