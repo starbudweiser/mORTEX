@@ -17,7 +17,7 @@ const INVALID_CHARS = /[:/\\*?"<>|]/g;
 const INPUT_SETTINGS_FILENAME = "input.settings";
 const DX_11_USER_SETTINGS_FILENAME = "user.settings";
 const DX_12_USER_SETTINGS_FILENAME = "dx12user.settings";
-const BACKUP_TAG = ".vortex_backup";
+const BACKUP_TAG = ".mortex_backup";
 
 // The remaster keeps the master switches for local mods here. Mods must never
 // supply it, and it has to survive regeneration of the settings file.
@@ -457,7 +457,7 @@ const getInitialDoc = (filePath: string) => {
 };
 
 /**
- * The generated settings file is rebuilt from a `.vortex_backup` snapshot,
+ * The generated settings file is rebuilt from a `.mortex_backup` snapshot,
  * which on an install that was upgraded in place predates the remaster and so
  * has no mod switches in it. Deploying that copy would turn every deployed mod
  * off with no error anywhere, so the live values always win - including over

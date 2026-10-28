@@ -12,7 +12,7 @@ async function isFile(fileName: string): Promise<boolean> {
   } catch (err) {
     const code = getErrorCode(err);
     if (code === "ENOENT" || code === "UNKNOWN") {
-      // Vortex's own 'vortex.deployment.json.XXXXXX.tmp' files can vanish between readdir and
+      // mORTEX's own 'mortex.deployment.json.XXXXXX.tmp' files can vanish between readdir and
       // stat; a missing path counts as a file since a .tmp name fails the plugin check anyway
       return true;
     }

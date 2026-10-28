@@ -6,8 +6,14 @@ import PromiseBB from "bluebird";
 import type { IEntry } from "turbowalk";
 import turbowalk from "turbowalk";
 
-import { DOWNLOADS_DIR_TAG } from "../extensions/download_management/util/downloadDirectory";
-import { STAGING_DIR_TAG } from "../extensions/mod_management/stagingDirectory";
+import {
+  DOWNLOADS_DIR_TAG,
+  LEGACY_DOWNLOADS_DIR_TAG,
+} from "../extensions/download_management/util/downloadDirectory";
+import {
+  LEGACY_STAGING_DIR_TAG,
+  STAGING_DIR_TAG,
+} from "../extensions/mod_management/stagingDirectory";
 import {
   CleanupFailedException,
   InsufficientDiskSpace,
@@ -337,9 +343,13 @@ function removeFolderTags(sourceDir: string) {
     );
   };
 
-  const stagingFolderTag = path.join(sourceDir, STAGING_DIR_TAG);
-  const downloadsTag = path.join(sourceDir, DOWNLOADS_DIR_TAG);
-  return PromiseBB.all([removeTag(stagingFolderTag), removeTag(downloadsTag)]);
+  const tags = [
+    STAGING_DIR_TAG,
+    DOWNLOADS_DIR_TAG,
+    LEGACY_STAGING_DIR_TAG,
+    LEGACY_DOWNLOADS_DIR_TAG,
+  ].map((tag) => path.join(sourceDir, tag));
+  return PromiseBB.all(tags.map(removeTag));
 }
 
 function removeOldDirectories(directories: string[]): PromiseBB<void> {

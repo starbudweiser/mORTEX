@@ -87,7 +87,7 @@ export const INPUT_XML_FILENAME = "input.xml";
 
 // The original file is backed up on deployment - we will use the backup
 //  during merges if it exists.
-export const VORTEX_BACKUP_TAG = ".vortex_backup";
+export const VORTEX_BACKUP_TAG = ".mortex_backup";
 
 // The W3MM menu mod pattern seems to enforce a modding pattern
 //  where {filename}.part.txt holds a diff of what needs to be

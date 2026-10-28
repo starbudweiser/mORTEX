@@ -47,6 +47,7 @@ import { withTrackedActivity } from "../../../util/errorHandling";
 import * as fs from "../../../util/fs";
 import getNormalizeFunc from "../../../util/getNormalizeFunc";
 import getVortexPath from "../../../util/getVortexPath";
+import { adoptLegacyDirTag } from "../../../util/legacyDirTag";
 import { log } from "../../../util/log";
 import { showError } from "../../../util/message";
 import opn from "../../../util/opn";
@@ -74,7 +75,11 @@ import {
 } from "../actions/settings";
 import { setTransferDownloads } from "../actions/transactions";
 import getText from "../texts";
-import { DOWNLOADS_DIR_TAG, writeDownloadsTag } from "../util/downloadDirectory";
+import {
+  DOWNLOADS_DIR_TAG,
+  LEGACY_DOWNLOADS_DIR_TAG,
+  writeDownloadsTag,
+} from "../util/downloadDirectory";
 import getDownloadPath, { getDownloadPathPattern } from "../util/getDownloadPath";
 
 const MB = 1024 * 1024;
@@ -691,6 +696,7 @@ class Settings extends ComponentEx<IProps, IComponentState> {
     let tagInstance: string;
     if (oldDownloadPath !== newDownloadPath) {
       queue = queue
+        .then(() => adoptLegacyDirTag(newDownloadPath, DOWNLOADS_DIR_TAG, LEGACY_DOWNLOADS_DIR_TAG))
         .then(() => fs.readdirAsync(newDownloadPath))
         .then((files) => {
           fileCount += files.length;

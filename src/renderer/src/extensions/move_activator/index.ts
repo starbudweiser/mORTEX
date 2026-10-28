@@ -24,7 +24,11 @@ import type {
   IUnavailableReason,
 } from "../mod_management/types/IDeploymentMethod";
 
-const LNK_EXT = ".vortex_lnk";
+const LNK_EXT = ".mortex_lnk";
+// mORTEX : extension des liens posés avant le renommage, encore reconnus et restaurés à la purge
+const LEGACY_LNK_EXT = ".vortex_lnk";
+
+const isLnkExt = (ext: string) => ext === LNK_EXT || ext === LEGACY_LNK_EXT;
 
 interface ILinkData {
   target: string;
@@ -40,7 +44,7 @@ export class FileFound extends Error {
 class DeploymentMethod extends LinkingDeployment {
   public priority: number = 50;
 
-  private mLnkExpression = new RegExp(LNK_EXT + "$");
+  private mLnkExpression = new RegExp(`(${LNK_EXT}|${LEGACY_LNK_EXT})$`);
 
   constructor(api: IExtensionApi) {
     super(
@@ -215,10 +219,13 @@ class DeploymentMethod extends LinkingDeployment {
         return;
       }
       entries.forEach((entry) => {
-        if (!entry.isDirectory && path.extname(entry.filePath) === LNK_EXT) {
+        if (!entry.isDirectory && isLnkExt(path.extname(entry.filePath))) {
           const relPath: string = path.relative(
             sourcePath,
-            entry.filePath.substring(0, entry.filePath.length - LNK_EXT.length),
+            entry.filePath.substring(
+              0,
+              entry.filePath.length - path.extname(entry.filePath).length,
+            ),
           );
           const normPath = this.normalize(path.join(dataPath, relPath));
           if (
@@ -233,8 +240,8 @@ class DeploymentMethod extends LinkingDeployment {
   }
 
   public getDeployedPath(input: string): string {
-    if (path.extname(input) === LNK_EXT) {
-      return input.substring(0, input.length - LNK_EXT.length);
+    if (isLnkExt(path.extname(input))) {
+      return input.substring(0, input.length - path.extname(input).length);
     }
     return input;
   }
@@ -246,7 +253,7 @@ class DeploymentMethod extends LinkingDeployment {
     return turbowalk(
       installationPath,
       (entries) => {
-        links = links.concat(entries.filter((entry) => path.extname(entry.filePath) === LNK_EXT));
+        links = links.concat(entries.filter((entry) => isLnkExt(path.extname(entry.filePath))));
       },
       {
         details: true,
@@ -255,7 +262,7 @@ class DeploymentMethod extends LinkingDeployment {
   }
 
   protected linkFile(linkPath: string, sourcePath: string, dirTags?: boolean): Promise<void> {
-    if (path.extname(sourcePath) === LNK_EXT) {
+    if (isLnkExt(path.extname(sourcePath))) {
       // sanity check, don't link the links
       return Promise.resolve();
     }

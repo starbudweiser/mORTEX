@@ -64,7 +64,7 @@ class ARCWrapper {
         .then(() => fs.moveAsync(tempPath + ext, archivePath))
         .then(() => fs.moveAsync(tempPath, outputPath, { overwrite: true }))
         // extracting generates a file order file we need to repackage correctly (in Dragon's Dogma at least).
-        // Note that _ext_ may contain .vortex_backup if we're not deploying clean, the file list should not
+        // Note that _ext_ may contain .mortex_backup if we're not deploying clean, the file list should not
         // contain that extension though
         .then(() =>
           fs

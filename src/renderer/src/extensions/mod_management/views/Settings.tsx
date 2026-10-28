@@ -49,6 +49,7 @@ import * as fs from "../../../util/fs";
 import getNormalizeFunc from "../../../util/getNormalizeFunc";
 import { getVolumePath } from "../../../util/getVolumePath";
 import getVortexPath from "../../../util/getVortexPath";
+import { adoptLegacyDirTag } from "../../../util/legacyDirTag";
 import { log } from "../../../util/log";
 import { showError } from "../../../util/message";
 import opn from "../../../util/opn";
@@ -63,7 +64,7 @@ import { setDeploymentNecessary } from "../actions/deployment";
 import { setActivator, setInstallPath, setInstallPathMode } from "../actions/settings";
 import { setTransferMods } from "../actions/transactions";
 import { modPathsForGame } from "../selectors";
-import { STAGING_DIR_TAG } from "../stagingDirectory";
+import { LEGACY_STAGING_DIR_TAG, STAGING_DIR_TAG } from "../stagingDirectory";
 import getText from "../texts";
 import type { IDeploymentMethod } from "../types/IDeploymentMethod";
 import { getSupportedActivators } from "../util/deploymentMethods";
@@ -707,6 +708,7 @@ class Settings extends ComponentEx<IProps, IComponentState> {
     let tagInstance: string;
     if (oldInstallPath !== newInstallPath) {
       queue = queue
+        .then(() => adoptLegacyDirTag(newInstallPath, STAGING_DIR_TAG, LEGACY_STAGING_DIR_TAG))
         .then(() => fs.readdirAsync(newInstallPath))
         .then((files) => {
           fileCount += files.length;

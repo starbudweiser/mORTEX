@@ -51,7 +51,7 @@ test("purging one mod type's folder keeps the files the purge left in its manife
 
 test("purging one mod type's folder goes ahead over a damaged manifest", async () => {
   const game = await makeHalfPurgedGame(leavingMethod.id);
-  await writeFile(path.join(game.dataPath, "vortex.deployment.json"), '{"damaged');
+  await writeFile(path.join(game.dataPath, "mortex.deployment.json"), '{"damaged');
 
   await purgeModsInPath(game.api, game.gameId, "", game.dataPath);
 

@@ -132,7 +132,7 @@ function main(context) {
     name: "Skyrim Special Edition",
     shortName: "Skyrim SE",
     mergeMods: true,
-    // mORTEX : pas de marqueur .__folder_managed_by_vortex dans chaque dossier de Data ; les dossiers vides sont supprimés au retrait
+    // mORTEX : pas de marqueur .__folder_managed_by_mortex dans chaque dossier de Data ; les dossiers vides sont supprimés au retrait
     directoryCleaning: "all",
     queryArgs: {
       // prefer steam because it was released first and users may have pre-1.6.12 installs with store not saved in state

@@ -1,5 +1,5 @@
 import type { Stats } from "node:fs";
-import { lstat, readFile } from "node:fs/promises";
+import { lstat } from "node:fs/promises";
 import * as path from "path";
 
 import type msgpackT from "@msgpack/msgpack";
@@ -37,11 +37,18 @@ const formats: { [version: number]: ManifestFormat } = {
 /** A mod type's manifest in the deployment target and its two backups in the staging folder. */
 function manifestPaths(deployPath: string, stagingPath: string, modType: string) {
   const typeTag = modType !== undefined && modType.length > 0 ? modType + "." : "";
-  const fileName = `vortex.deployment.${typeTag}json`;
+  const fileName = `mortex.deployment.${typeTag}json`;
+  // mORTEX : noms d'avant le renommage, encore lus tant que le prochain déploiement ne les a pas remplacés
+  const legacyFileName = `vortex.deployment.${typeTag}json`;
   return {
     manifestPath: path.join(deployPath, fileName),
     backupPath: path.join(stagingPath, fileName),
-    binaryBackupPath: path.join(stagingPath, `vortex.deployment.${typeTag}msgpack`),
+    binaryBackupPath: path.join(stagingPath, `mortex.deployment.${typeTag}msgpack`),
+    legacyManifestPath: path.join(deployPath, legacyFileName),
+    legacyBackupPaths: [
+      path.join(stagingPath, legacyFileName),
+      path.join(stagingPath, `vortex.deployment.${typeTag}msgpack`),
+    ],
   };
 }
 
@@ -254,6 +261,15 @@ function readManifestFile(filePath: string): Promise<any> {
   return Promise.resolve(fs.readFileAsync(filePath, "utf8")).then((data) => readManifest(data));
 }
 
+/** Reads the manifest, falling back to its pre-rename vortex.deployment name when it has none yet. */
+function readManifestFileOrLegacy(paths: ReturnType<typeof manifestPaths>): Promise<any> {
+  return readManifestFile(paths.manifestPath).catch((err: unknown) =>
+    getErrorCode(err) === "ENOENT"
+      ? readManifestFile(paths.legacyManifestPath)
+      : Promise.reject(err),
+  );
+}
+
 function readManifestFileBinary(filePath: string): Promise<any> {
   return Promise.resolve(fs.readFileAsync(filePath)).then((data) => readManifest(data));
 }
@@ -264,7 +280,7 @@ function getManifestImpl(
   paths: ReturnType<typeof manifestPaths>,
 ): Promise<IDeploymentManifest> {
   const { manifestPath, backupPath, binaryBackupPath } = paths;
-  return readManifestFile(manifestPath)
+  return readManifestFileOrLegacy(paths)
     .catch((err: unknown) => {
       if (err instanceof UserCanceled) {
         return Promise.reject(err);
@@ -430,8 +446,7 @@ export async function ownDeployedFiles(
   // a damaged manifest lists nothing, so the purge still runs
   let manifest: IDeploymentManifest | undefined;
   try {
-    const { manifestPath } = manifestPaths(deployPath, stagingPath, modType);
-    manifest = readManifest(await readFile(manifestPath, "utf8"));
+    manifest = await readManifestFileOrLegacy(manifestPaths(deployPath, stagingPath, modType));
   } catch {
     manifest = undefined;
   }
@@ -562,11 +577,12 @@ export function saveActivation(
     repErr["attachFilesOnReport"] = [failedPath];
     return Promise.reject(repErr);
   }
-  const { manifestPath, backupPath, binaryBackupPath } = manifestPaths(
-    gamePath,
-    stagingPath,
-    modType,
-  );
+  const { manifestPath, backupPath, binaryBackupPath, legacyManifestPath, legacyBackupPaths } =
+    manifestPaths(gamePath, stagingPath, modType);
+  // the manifest now lives under its mORTEX name: drop the pre-rename copies so they can't go stale
+  for (const legacyPath of [legacyManifestPath, ...legacyBackupPaths]) {
+    fs.removeAsync(legacyPath).catch(() => undefined);
+  }
 
   if (activation.length > 0) {
     // write backup synchronously

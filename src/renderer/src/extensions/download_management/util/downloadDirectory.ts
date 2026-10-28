@@ -9,12 +9,15 @@ import type { IDownload, IState } from "../../../types/IState";
 import { getApplication } from "../../../util/application";
 import { ProcessCanceled, UserCanceled } from "../../../util/CustomErrors";
 import * as fs from "../../../util/fs";
+import { adoptLegacyDirTag } from "../../../util/legacyDirTag";
 import { truthy } from "../../../util/util";
 import { setDownloadPath } from "../actions/settings";
 import { removeDownload } from "../actions/state";
 import getDownloadPath from "./getDownloadPath";
 
-export const DOWNLOADS_DIR_TAG = "__vortex_downloads_folder";
+export const DOWNLOADS_DIR_TAG = "__mortex_downloads_folder";
+// mORTEX : nom du marqueur avant le renommage, repris automatiquement quand il est trouvé
+export const LEGACY_DOWNLOADS_DIR_TAG = "__vortex_downloads_folder";
 
 export function writeDownloadsTag(api: IExtensionApi, tagPath: string): PromiseBB<void> {
   const state: IState = api.store.getState();
@@ -28,7 +31,7 @@ export function writeDownloadsTag(api: IExtensionApi, tagPath: string): PromiseB
     });
 
   return writeTag().catch({ code: "EISDIR" }, (err) => {
-    // __vortex_downloads_folder exists inside the tag path. (as a folder!)
+    // __mortex_downloads_folder exists inside the tag path. (as a folder!)
     //  It's possible the user tried to create it manually in an attempt
     //  to fix some other error, but it's also possible that this is actually
     //  a bug somewhere in the application. We're going to try to re-create the
@@ -168,7 +171,9 @@ export function ensureDownloadsDirectory(api: IExtensionApi): PromiseBB<void> {
     .then(() => {
       dirExists = true;
       // download dir exists, does the tag exist?
-      return fs.statAsync(path.join(currentDownloadPath, DOWNLOADS_DIR_TAG));
+      return PromiseBB.resolve(
+        adoptLegacyDirTag(currentDownloadPath, DOWNLOADS_DIR_TAG, LEGACY_DOWNLOADS_DIR_TAG),
+      ).then(() => fs.statAsync(path.join(currentDownloadPath, DOWNLOADS_DIR_TAG)));
     })
     .catch((err) => {
       if (!dirExists && Object.keys(state.persistent.downloads.files ?? {}).length === 0) {
@@ -237,13 +242,15 @@ export function ensureDownloadsDirectory(api: IExtensionApi): PromiseBB<void> {
               if (!truthy(selectedPath)) {
                 return PromiseBB.reject(new UserCanceled());
               }
-              return validateDownloadsTag(api, path.join(selectedPath, DOWNLOADS_DIR_TAG)).then(
-                () => {
+              return PromiseBB.resolve(
+                adoptLegacyDirTag(selectedPath, DOWNLOADS_DIR_TAG, LEGACY_DOWNLOADS_DIR_TAG),
+              )
+                .then(() => validateDownloadsTag(api, path.join(selectedPath, DOWNLOADS_DIR_TAG)))
+                .then(() => {
                   currentDownloadPath = selectedPath;
                   api.store.dispatch(setDownloadPath(currentDownloadPath));
                   return PromiseBB.resolve();
-                },
-              );
+                });
             })
             .catch(() => ensureDownloadsDirectory(api));
         }

@@ -1,4 +1,4 @@
-import { mkdir, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdir, rename, rm, symlink, writeFile } from "node:fs/promises";
 import * as path from "node:path";
 
 import { UserCanceled } from "@vortex/shared/errors";
@@ -26,8 +26,22 @@ test("the fallback purge restores a damaged manifest from its staging backup", a
   const game = await makeDeployedGame();
   const file = await game.deployFile("plugin.esp");
   await game.saveManifest([file], HARDLINK_METHOD);
-  await writeFile(path.join(game.dataPath, "vortex.deployment.json"), '{"damaged');
+  await writeFile(path.join(game.dataPath, "mortex.deployment.json"), '{"damaged');
   game.setNextDialog({ action: "Restore from backup", input: {} });
+
+  await fallbackPurge(game.api, game.gameId);
+
+  expect(game.isDeployed(file)).toBe(false);
+});
+
+test("a deployment recorded under the pre-rename vortex.deployment name is still purged", async () => {
+  const game = await makeDeployedGame();
+  const file = await game.deployFile("plugin.esp");
+  await game.saveManifest([file], HARDLINK_METHOD);
+  await rename(
+    path.join(game.dataPath, "mortex.deployment.json"),
+    path.join(game.dataPath, "vortex.deployment.json"),
+  );
 
   await fallbackPurge(game.api, game.gameId);
 
@@ -38,7 +52,7 @@ test("declining the staging backup reports the damaged manifest and how to recov
   const game = await makeDeployedGame();
   const file = await game.deployFile("plugin.esp");
   await game.saveManifest([file], HARDLINK_METHOD);
-  await writeFile(path.join(game.dataPath, "vortex.deployment.json"), '{"damaged');
+  await writeFile(path.join(game.dataPath, "mortex.deployment.json"), '{"damaged');
   game.setNextDialog({ action: "Cancel", input: {} });
 
   const purge = fallbackPurge(game.api, game.gameId);

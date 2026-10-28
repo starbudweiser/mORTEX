@@ -34,7 +34,9 @@ export interface IDeployment {
 
 // TODO: guess I need to pull this out of the linking activator as the deployment
 //   code needs to know about these files when merging archives
-export const BACKUP_TAG = ".vortex_backup";
+export const BACKUP_TAG = ".mortex_backup";
+// mORTEX : extension des copies faites avant le renommage, encore restaurées à la purge
+export const LEGACY_BACKUP_TAG = ".vortex_backup";
 
 async function isAbsent(filePath: string): Promise<boolean> {
   try {
@@ -91,12 +93,16 @@ async function mapWithConcurrency<T, R>(
 abstract class LinkingActivator implements IDeploymentMethod {
   public static OLD_TAG_NAME = "__delete_if_empty";
   public static NEW_TAG_NAME =
+    process.platform === "win32" ? "__folder_managed_by_mortex" : ".__folder_managed_by_mortex";
+  // mORTEX : marqueur posé avant le renommage, encore reconnu et retiré à la purge
+  public static LEGACY_TAG_NAME =
     process.platform === "win32" ? "__folder_managed_by_vortex" : ".__folder_managed_by_vortex";
 
   private static isTagName(name: string) {
     return (
       path.basename(name) === LinkingActivator.OLD_TAG_NAME ||
-      path.basename(name) === LinkingActivator.NEW_TAG_NAME
+      path.basename(name) === LinkingActivator.NEW_TAG_NAME ||
+      path.basename(name) === LinkingActivator.LEGACY_TAG_NAME
     );
   }
 
@@ -776,7 +782,10 @@ abstract class LinkingActivator implements IDeploymentMethod {
       )
       .then(() =>
         restoreBackup
-          ? fs.renameAsync(outputPath + BACKUP_TAG, outputPath).catch(() => undefined)
+          ? fs
+              .renameAsync(outputPath + BACKUP_TAG, outputPath)
+              .catch(() => fs.renameAsync(outputPath + LEGACY_BACKUP_TAG, outputPath))
+              .catch(() => undefined)
           : Promise.resolve(),
       )
       .then(() => {
@@ -920,7 +929,9 @@ abstract class LinkingActivator implements IDeploymentMethod {
               try {
                 await Promise.all(
                   files
-                    .filter((entry) => path.extname(entry.filePath) === BACKUP_TAG)
+                    .filter((entry) =>
+                      [BACKUP_TAG, LEGACY_BACKUP_TAG].includes(path.extname(entry.filePath)),
+                    )
                     .map((entry) => this.restoreBackup(entry.filePath)),
                 );
               } catch (err) {
@@ -954,6 +965,7 @@ abstract class LinkingActivator implements IDeploymentMethod {
           ? fs
               .statAsync(path.join(baseDir, LinkingActivator.NEW_TAG_NAME))
               .then(() => fs.unlinkAsync(path.join(baseDir, LinkingActivator.NEW_TAG_NAME)))
+              .catch(() => fs.unlinkAsync(path.join(baseDir, LinkingActivator.LEGACY_TAG_NAME)))
               .catch(() => fs.unlinkAsync(path.join(baseDir, LinkingActivator.OLD_TAG_NAME)))
               .catch((err: unknown) => {
                 const code = getErrorCode(err);
@@ -983,7 +995,7 @@ abstract class LinkingActivator implements IDeploymentMethod {
   }
 
   private restoreBackup(backupPath: string): Promise<void> {
-    const targetPath = backupPath.substr(0, backupPath.length - BACKUP_TAG.length);
+    const targetPath = backupPath.substr(0, backupPath.length - path.extname(backupPath).length);
     return Promise.resolve(
       fs
         .renameAsync(backupPath, targetPath)

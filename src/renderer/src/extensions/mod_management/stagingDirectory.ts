@@ -12,6 +12,7 @@ import { getApplication } from "../../util/application";
 import { ProcessCanceled, UserCanceled } from "../../util/CustomErrors";
 import * as fs from "../../util/fs";
 import lazyRequire from "../../util/lazyRequire";
+import { adoptLegacyDirTag } from "../../util/legacyDirTag";
 import { activeGameId, installPathForGame } from "../../util/selectors";
 import { getSafe } from "../../util/storeHelper";
 import { truthy } from "../../util/util";
@@ -22,7 +23,9 @@ import { resolveInstallPath } from "./util/getInstallPath";
 
 const winapi: typeof winapiT = lazyRequire(() => require("winapi-bindings"));
 
-export const STAGING_DIR_TAG = "__vortex_staging_folder";
+export const STAGING_DIR_TAG = "__mortex_staging_folder";
+// mORTEX : nom du marqueur avant le renommage, repris automatiquement quand il est trouvé
+export const LEGACY_STAGING_DIR_TAG = "__vortex_staging_folder";
 
 function writeStagingTag(api: IExtensionApi, tagPath: string, gameId: string) {
   const state: IState = api.store.getState();
@@ -160,6 +163,7 @@ async function ensureStagingDirectoryImpl(
     await fs.statAsync(instPath);
     dirExists = true;
     // staging dir exists, does the tag exist?
+    await adoptLegacyDirTag(instPath, STAGING_DIR_TAG, LEGACY_STAGING_DIR_TAG);
     await fs.statAsync(path.join(instPath, STAGING_DIR_TAG));
   } catch (unknownError) {
     const mods = getSafe(state, ["persistent", "mods", gameId], undefined);
@@ -234,6 +238,7 @@ async function ensureStagingDirectoryImpl(
         }
 
         try {
+          await adoptLegacyDirTag(selectedPath, STAGING_DIR_TAG, LEGACY_STAGING_DIR_TAG);
           await validateStagingTag(api, path.join(selectedPath, STAGING_DIR_TAG));
           instPath = selectedPath;
           api.store.dispatch(setInstallPath(gameId, instPath));
