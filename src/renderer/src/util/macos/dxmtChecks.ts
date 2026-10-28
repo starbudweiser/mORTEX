@@ -5,6 +5,7 @@
  * Interface :
  *  - runDxmtChecks(bottlePath, gamePath): Promise<IDxmtCheck[]>   les quatre contrôles
  *  - fixDisplayTweaks(gamePath): Promise<void>                     SSE Display Tweaks optimisé pour DXMT
+ *  - useDxmt(bottlePath): Promise<void>                             moteur graphique de la bouteille sur DXMT
  *
  * Contrôles :
  *  - engine : moteur graphique de la bouteille (CX_GRAPHICS_BACKEND de cxbottle.conf) ; seul
@@ -19,6 +20,8 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+
+import { setBottleEnv } from "./bottleHealth";
 
 export type DxmtCheckId = "engine" | "bridge" | "displayTweaks" | "bottledDuplicates";
 export type DxmtCheckStatus = "ok" | "warning" | "error" | "na";
@@ -124,4 +127,14 @@ export async function fixDisplayTweaks(gamePath: string): Promise<void> {
   }
   // l'écriture traverse le lien : la copie du dossier de préparation suit
   await writeFile(file, ini);
+}
+
+/**
+ * Passe la bouteille sur DXMT (CX_GRAPHICS_BACKEND de cxbottle.conf). CrossOver relit ce réglage
+ * au démarrage de la bouteille : il vaut dès le prochain lancement du jeu.
+ */
+export async function useDxmt(bottlePath: string): Promise<void> {
+  const file = path.join(bottlePath, "cxbottle.conf");
+  const conf = await readFile(file, "utf8").catch(() => "");
+  await writeFile(file, setBottleEnv(conf, "CX_GRAPHICS_BACKEND", "dxmt"));
 }

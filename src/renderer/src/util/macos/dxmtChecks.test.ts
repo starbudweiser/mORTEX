@@ -4,7 +4,13 @@ import * as path from "path";
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { displayTweaksTargets, fixDisplayTweaks, runDxmtChecks } from "./dxmtChecks";
+import {
+  displayTweaksTargets,
+  fixDisplayTweaks,
+  graphicsBackend,
+  runDxmtChecks,
+  useDxmt,
+} from "./dxmtChecks";
 
 describe("DXMT checks", () => {
   let tmp: string;
@@ -85,5 +91,18 @@ describe("DXMT checks", () => {
       `[Render]\nVideoMemorySizeMb = ${video}\nSwapBufferCount = 3\nSwapEffect = flip_discard ; comment\nOther = 1\n`,
     );
     expect((await byId()).displayTweaks.status).toBe("ok");
+  });
+
+  it("switches the bottle to DXMT, keeping the rest of cxbottle.conf", async () => {
+    const conf = path.join(bottle, "cxbottle.conf");
+    fs.writeFileSync(
+      conf,
+      '[Bottle]\n"Preview" = "0"\n\n[EnvironmentVariables]\n"CX_GRAPHICS_BACKEND" = "dxvk"\n"WINEMSYNC" = "1"\n',
+    );
+    await useDxmt(bottle);
+    expect(await graphicsBackend(bottle)).toBe("dxmt");
+    const text = fs.readFileSync(conf, "utf8");
+    expect(text).toContain('"WINEMSYNC" = "1"');
+    expect(text).toContain('"Preview" = "0"');
   });
 });

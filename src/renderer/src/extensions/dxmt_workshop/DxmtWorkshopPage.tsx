@@ -13,15 +13,11 @@ import { Icon, type SymbolName } from "@/ui/components/icon/Icon";
 import { Typography } from "@/ui/components/typography/Typography";
 import { log } from "@/util/log";
 import { bottleForPath } from "@/util/macos/bottles";
-import {
-  type DxmtCheckId,
-  type IDxmtCheck,
-  fixDisplayTweaks,
-  runDxmtChecks,
-} from "@/util/macos/dxmtChecks";
+import { type DxmtCheckId, type IDxmtCheck, runDxmtChecks } from "@/util/macos/dxmtChecks";
 import { activeGameId } from "@/util/selectors";
 import MainPage from "@/views/MainPage";
 
+import { fixFor, type IDxmtFix } from "./fixes";
 import { PITFALLS } from "./pitfalls";
 import { RECIPES, RENDER_PATH, type IRenderStage } from "./renderPath";
 
@@ -144,7 +140,7 @@ export default function DxmtWorkshopPage({ api }: IProps) {
   );
   const bottle = gamePath !== undefined ? bottleForPath(gamePath) : undefined;
   const [checks, setChecks] = useState<IDxmtCheck[]>([]);
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState<DxmtCheckId | undefined>(undefined);
 
   const refresh = useCallback(() => {
     if (bottle === undefined || gamePath === undefined) return;
@@ -155,25 +151,79 @@ export default function DxmtWorkshopPage({ api }: IProps) {
 
   useEffect(refresh, [refresh]);
 
-  const fixTweaks = () => {
-    if (gamePath === undefined) return;
-    setBusy(true);
-    fixDisplayTweaks(gamePath)
-      .then(() =>
+  const gameId = useSelector((state: IState) => activeGameId(state));
+  const fixOf = (check?: IDxmtCheck) =>
+    check === undefined || bottle === undefined || gamePath === undefined
+      ? undefined
+      : fixFor(check, { api, gameId, bottlePath: bottle.path, gamePath });
+
+  // explicite avant d'agir, annulable après
+  const runFix = async (check: IDxmtCheck, fix: IDxmtFix) => {
+    if (fix.confirm !== undefined) {
+      const answer = await api.showDialog?.(
+        "question",
+        fix.label,
+        { text: t(fix.confirm.text, { replace: fix.confirm.replace }) },
+        [{ label: "Cancel" }, { label: fix.label, default: true }],
+      );
+      if (answer?.action !== fix.label) return;
+    }
+    setBusy(check.id);
+    try {
+      const done = await fix.run();
+      if (done !== undefined) {
+        const { undo } = done;
         api.sendNotification?.({
           type: "success",
-          message: "SSE Display Tweaks optimized for DXMT",
-          displayMS: 4000,
-        }),
-      )
-      .catch((err) => api.showErrorNotification?.("Failed to change SSE Display Tweaks", err))
-      .finally(() => {
-        setBusy(false);
-        refresh();
-      });
+          message: done.text,
+          replace: done.replace,
+          // annulable : la notification reste jusqu'à ce qu'on la ferme
+          displayMS: undo === undefined ? 6000 : undefined,
+          actions:
+            undo === undefined
+              ? undefined
+              : [
+                  {
+                    title: "Undo",
+                    action: (dismiss) => {
+                      undo()
+                        .catch((err) => api.showErrorNotification?.("Failed to undo", err))
+                        .finally(() => {
+                          dismiss();
+                          refresh();
+                        });
+                    },
+                  },
+                ],
+        });
+      }
+    } catch (err) {
+      api.showErrorNotification?.("Failed to fix the bottle", err);
+    } finally {
+      setBusy(undefined);
+      refresh();
+    }
   };
 
-  const statusOf = (id?: DxmtCheckId) => checks.find((check) => check.id === id)?.status;
+  /** bouton du correctif d'un contrôle, s'il y en a un */
+  const fixButton = (check?: IDxmtCheck) => {
+    const fix = fixOf(check);
+    if (check === undefined || fix === undefined) return null;
+    return (
+      <Button
+        className="mt-2 self-start"
+        isLoading={busy === check.id}
+        leftIcon={fix.icon}
+        size="sm"
+        onClick={() => void runFix(check, fix)}
+      >
+        {t(fix.label)}
+      </Button>
+    );
+  };
+
+  const checkOf = (id?: DxmtCheckId) => checks.find((check) => check.id === id);
+  const statusOf = (id?: DxmtCheckId) => checkOf(id)?.status;
 
   return (
     <MainPage id="dxmt-workshop-page">
@@ -216,7 +266,7 @@ export default function DxmtWorkshopPage({ api }: IProps) {
               const look = STATUS_LOOK[check.status];
               return (
                 <div
-                  className="rounded-md bg-surface-mid px-3 py-2.5"
+                  className="flex flex-col rounded-md bg-surface-mid px-3 py-2.5"
                   data-testid={`dxmt-check-${check.id}`}
                   key={check.id}
                 >
@@ -231,6 +281,7 @@ export default function DxmtWorkshopPage({ api }: IProps) {
                     <Icon name={look.icon} size="sm" />
                     {statusText(check, api.translate)}
                   </Typography>
+                  {fixButton(check)}
                 </div>
               );
             })}
@@ -337,17 +388,7 @@ export default function DxmtWorkshopPage({ api }: IProps) {
                       <Typography typographyType="body-sm">{t(text)}</Typography>
                     </div>
                   ))}
-                  {pitfall.id === "swap-effect" && detected && (
-                    <Button
-                      className="self-start"
-                      isLoading={busy}
-                      leftIcon="build"
-                      size="sm"
-                      onClick={fixTweaks}
-                    >
-                      {t("Fix it")}
-                    </Button>
-                  )}
+                  {detected && fixButton(checkOf(pitfall.check))}
                 </div>
               );
             })}

@@ -3812,5 +3812,19 @@
   "{{n}} of {{count}}": "{{n}} de {{count}}",
   "mORTEX guided tour": "Visita guiada de mORTEX",
   "mORTEX brings the Nexus Mods mod manager to the Mac: your Skyrim mods, in your CrossOver bottle, with tools you won't find anywhere else. This short tour shows you around.": "mORTEX lleva al Mac el gestor de mods de Nexus Mods: tus mods de Skyrim, en tu botella de CrossOver, con herramientas que no encontrarás en ningún otro sitio. Esta breve visita te enseña lo esencial.",
-  "One click to play": "Un clic para jugar"
+  "One click to play": "Un clic para jugar",
+  "Switch to DXMT": "Pasar a DXMT",
+  "Optimize for DXMT": "Optimizar para DXMT",
+  "Enable SSE Display Tweaks": "Activar SSE Display Tweaks",
+  "Get SSE Display Tweaks": "Conseguir SSE Display Tweaks",
+  "Disable the duplicates": "Desactivar los duplicados",
+  "mORTEX sets the graphics backend of the bottle to DXMT in its cxbottle.conf, instead of {{engine}}. It applies at the next launch of the game. Nothing else in the bottle changes.": "mORTEX ajusta el motor gráfico de la botella a DXMT en su cxbottle.conf, en lugar de {{engine}}. El cambio se aplica en el próximo inicio del juego. Nada más cambia en la botella.",
+  "mORTEX changes three lines of SSEDisplayTweaks.ini: SwapEffect = flip_discard, SwapBufferCount = 3 and VideoMemorySizeMb. Your other settings and comments stay as they are.": "mORTEX cambia tres líneas de SSEDisplayTweaks.ini: SwapEffect = flip_discard, SwapBufferCount = 3 y VideoMemorySizeMb. Tus demás ajustes y comentarios se quedan como están.",
+  "mORTEX enables the mod {{mod}} in the profile {{profile}}; it is deployed with your other mods.": "mORTEX activa el mod {{mod}} en el perfil {{profile}}; se despliega con tus demás mods.",
+  "mORTEX disables, in the profile {{profile}}, the mods that install {{dlls}} on their own: Bottled Shaders already includes them. The mods stay installed and can be enabled again.": "mORTEX desactiva, en el perfil {{profile}}, los mods que instalan {{dlls}} por separado: Bottled Shaders ya los incluye. Los mods siguen instalados y se pueden volver a activar.",
+  "The bottle now uses DXMT, from the next launch of the game": "La botella usa ahora DXMT, desde el próximo inicio del juego",
+  "SSE Display Tweaks enabled: it is deployed with your mods": "SSE Display Tweaks activado: se despliega con tus mods",
+  "These DLLs don't come from a mod: remove them from Data/SKSE/Plugins": "Estas DLL no vienen de ningún mod: quítalas de Data/SKSE/Plugins",
+  "Disabled: {{mods}}": "Desactivados: {{mods}}",
+  "Failed to undo": "No se pudo deshacer"
 }
