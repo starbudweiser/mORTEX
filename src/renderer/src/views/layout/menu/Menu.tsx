@@ -31,6 +31,8 @@ const TOOL_PAGE_IDS = new Set(["Browse Nexus Mods", "Tools", "Health check"]);
 
 /** mORTEX : pages exclusives au Mac, en couleur dans la barre latérale */
 const MAC_PAGE_IDS = new Set(["DXMT workshop", "Time Machine"]);
+/** pages tournées vers Nexus Mods, en bleu Socle */
+const NEXUS_PAGE_IDS = new Set(["Browse Nexus Mods"]);
 
 /** l'entrée Téléchargements, qui n'est pas une page, dans l'ordre de la barre latérale */
 const DOWNLOADS_ID = "__downloads";
@@ -137,7 +139,7 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
 
   const renderPage = (page: IMainPage, extra = {}) => (
     <MenuButton
-      accent={MAC_PAGE_IDS.has(page.id)}
+      accent={MAC_PAGE_IDS.has(page.id) ? "mac" : NEXUS_PAGE_IDS.has(page.id) ? "nexus" : undefined}
       data-tour={page.id}
       icon={page.menuIcon ?? getIcon(page.icon)}
       Badge={page.menuBadge}

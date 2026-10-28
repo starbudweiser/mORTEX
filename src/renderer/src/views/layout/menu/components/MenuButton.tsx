@@ -14,8 +14,8 @@ interface MenuButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   Badge?: ComponentType<React.PropsWithChildren<unknown>>;
   /** mORTEX : compteur discret à droite (mods installés, archives) */
   count?: number;
-  /** mORTEX : page exclusive au Mac, en couleur pour ressortir */
-  accent?: boolean;
+  /** mORTEX : en couleur pour ressortir, orange pour une page exclusive au Mac, bleu Socle pour Nexus */
+  accent?: "mac" | "nexus";
   /** mORTEX : Option enfoncée, l'entrée se déplace */
   reorderable?: boolean;
   /** mORTEX : une entrée glissée sera déposée ici */
@@ -43,9 +43,11 @@ export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
           "hover:bg-surface-mid hover:text-neutral-moderate focus-visible:z-1",
           isActive
             ? "mortex-menu-active bg-surface-low text-neutral-moderate"
-            : accent
+            : accent === "mac"
               ? "mortex-menu-accent"
-              : "text-neutral-subdued",
+              : accent === "nexus"
+                ? "mortex-menu-accent-nexus"
+                : "text-neutral-subdued",
           reorderable ? "mortex-menu-reorderable" : "",
           dropHint ? "mortex-menu-drop" : "",
         ])}

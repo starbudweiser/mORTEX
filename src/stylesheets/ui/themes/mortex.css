@@ -721,6 +721,15 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     color: #fbb13c !important;
 }
 
+/* Parcourir Nexus Mods : en bleu Socle (--accent-text) */
+.mortex-menu-accent-nexus {
+    color: #38bdf8;
+}
+
+.mortex-menu-accent-nexus:hover {
+    color: #7dd3fc !important;
+}
+
 /* Option enfoncée : les entrées de la barre latérale se déplacent par glisser-déposer */
 .mortex-menu-reorderable {
     cursor: grab;
