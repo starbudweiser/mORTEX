@@ -22,6 +22,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 
 import { setBottleEnv } from "./bottleHealth";
+import { applyChanges, loadIniFile, planChanges } from "./iniEdit";
 
 export type DxmtCheckId = "engine" | "bridge" | "displayTweaks" | "bottledDuplicates";
 export type DxmtCheckStatus = "ok" | "warning" | "error" | "na";
@@ -116,17 +117,16 @@ function displayTweaksCheck(tweaks: Record<string, string> | undefined): IDxmtCh
 }
 
 export async function fixDisplayTweaks(gamePath: string): Promise<void> {
-  const file = path.join(gamePath, ...PLUGINS_DIR, DISPLAY_TWEAKS_INI);
-  let ini = await readFile(file, "utf8");
-  if (!/^\s*\[Render\]\s*$/im.test(ini)) ini = `${ini.trimEnd()}\n\n[Render]\n`;
-  for (const [key, value] of Object.entries(displayTweaksTargets())) {
-    const line = settingLine(key);
-    ini = line.test(ini)
-      ? ini.replace(line, (_all, start: string, _old, rest: string) => `${start}${value}${rest}`)
-      : ini.replace(/^(\s*\[Render\]\s*)$/im, `$1\n${key} = ${value}`);
-  }
-  // l'écriture traverse le lien : la copie du dossier de préparation suit
-  await writeFile(file, ini);
+  const file = await loadIniFile("ini", path.join(gamePath, ...PLUGINS_DIR, DISPLAY_TWEAKS_INI));
+  if (file.exists === false) throw new Error(`${DISPLAY_TWEAKS_INI} introuvable`);
+  const changes = Object.entries(displayTweaksTargets()).map(([key, value]) => ({
+    section: "Render",
+    key,
+    value,
+  }));
+  // les clés absentes s'ajoutent sous [Render] ; l'écriture traverse le lien : la copie du dossier
+  // de préparation suit
+  await applyChanges(planChanges([file], changes, { insertAt: "start" }));
 }
 
 /**
