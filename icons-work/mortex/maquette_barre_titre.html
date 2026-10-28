@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="fr">
+    <meta charset="utf-8" /><title>Maquette mORTEX — Barre de titre</title>
+    <style>
+        :root {
+            --bg: #1e1e1e;
+            --sunken: #181818;
+            --surface: #232323;
+            --raised: #2a2a2a;
+            --control: #3a3a3a;
+            --control-h: #444;
+            --border: #333;
+            --text: #ddd;
+            --strong: #fff;
+            --muted: #a0a0a0;
+            --accent: #0ea5e9;
+            --accent-fill: #0369a1;
+            --accent-text: #38bdf8;
+            --action: #f59e0b;
+            --ok: #22c55e;
+            --warn: #f59e0b;
+            --danger: #ef4444;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+        }
+        body {
+            background: #111;
+            color: var(--text);
+            font:
+                13px -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Text",
+                sans-serif;
+            padding: 24px;
+        }
+        .win {
+            width: 1180px;
+            margin: 0 auto 18px;
+            background: var(--bg);
+            border-radius: 10px;
+            border: 1px solid #444;
+            overflow: hidden;
+        }
+        .title {
+            height: 44px;
+            background: var(--raised);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px 0 14px;
+        }
+        .dots {
+            display: flex;
+            gap: 8px;
+            margin-right: 16px;
+        }
+        .dots i {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: block;
+            background: #555;
+        }
+        .dots i:nth-child(1) {
+            background: #ff5f57;
+        }
+        .dots i:nth-child(2) {
+            background: #febc2e;
+        }
+        .dots i:nth-child(3) {
+            background: #28c840;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-right: 12px;
+        }
+        .logo {
+            width: 30px;
+            height: 30px;
+        }
+        .logo svg {
+            width: 100%;
+            height: 100%;
+        }
+        .bt {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.15;
+        }
+        .name {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--strong);
+            font-size: 15px;
+        }
+        .name b {
+            color: #f59e0b;
+            font-weight: 800;
+        }
+        .tag {
+            color: var(--muted);
+            font-size: 10.5px;
+            white-space: nowrap;
+        }
+        .page {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--strong);
+            font-weight: 500;
+        }
+        .right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .ver {
+            color: #666;
+        }
+        .login {
+            background: #0ea5e9;
+            color: #fff;
+            border-radius: 6px;
+            padding: 0 12px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+        }
+        .ico {
+            width: 18px;
+            height: 18px;
+            border-radius: 5px;
+            background: #777;
+        }
+        .body {
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        .note {
+            max-width: 1180px;
+            margin: 0 auto 22px;
+            color: #aaa;
+            line-height: 1.6;
+        }
+        .note b {
+            color: #ddd;
+        }
+        .win.narrow {
+            width: 760px;
+        }
+        .narrow .tag {
+            display: none;
+        }
+    </style>
+    <div class="win">
+        <div class="title">
+            <div class="dots"><i></i><i></i><i></i></div>
+            <i class="ico" style="margin-right: 10px"></i>
+            <div class="brand">
+                <div class="logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                        <defs>
+                            <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#34363d" />
+                                <stop offset="1" stop-color="#121317" />
+                            </linearGradient>
+                            <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#ffffff" stop-opacity="0.16" />
+                                <stop offset="0.5" stop-color="#ffffff" stop-opacity="0" />
+                            </linearGradient>
+                            <linearGradient id="arm" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0" stop-color="#ffc15a" />
+                                <stop offset="1" stop-color="#ff5e0a" />
+                            </linearGradient>
+                            <path
+                                id="blade"
+                                d="M128 50 A78 78 0 0 1 206 128 A56 56 0 0 0 128 50 Z"
+                            />
+                        </defs>
+                        <rect x="10" y="10" width="236" height="236" rx="54" fill="url(#bg)" />
+                        <rect x="10" y="10" width="236" height="236" rx="54" fill="url(#gloss)" />
+                        <g fill="url(#arm)">
+                            <use href="#blade" />
+                            <use href="#blade" transform="rotate(120 128 128)" />
+                            <use href="#blade" transform="rotate(240 128 128)" />
+                        </g>
+                        <g transform="translate(128 128) scale(1.35)">
+                            <path d="M0 -30 L26 -15 L0 0 L-26 -15 Z" fill="#ffffff" />
+                            <path d="M-26 -15 L0 0 L0 30 L-26 15 Z" fill="#d6d9df" />
+                            <path d="M26 -15 L26 15 L0 30 L0 0 Z" fill="#9aa0ab" />
+                        </g>
+                    </svg>
+                </div>
+                <div class="bt">
+                    <span class="name"><b>m</b>ORTEX</span
+                    ><span class="tag">Le gestionnaire de mods pour Mac Silicon</span>
+                </div>
+            </div>
+            <div class="right">
+                <span class="page">Accueil</span><span class="ver">v1.0.0</span
+                ><span class="login">Se connecter</span><i class="ico"></i><i class="ico"></i>
+            </div>
+        </div>
+        <div class="body">Fenêtre large</div>
+    </div>
+    <p class="note">
+        <b>Barre de titre — fenêtre large.</b> À gauche, uniquement l'identité : bouton du menu,
+        logo de 30 px, « mORTEX » et l'accroche dessous. Le titre de la page (ou le sélecteur de
+        jeu) passe à droite, avant la version. À droite, tous les éléments sont séparés par le même
+        écart de 16 px, avec la même marge de 16 px au bord ; pas de séparateur sur Mac.
+    </p>
+    <div class="win narrow">
+        <div class="title">
+            <div class="dots"><i></i><i></i><i></i></div>
+            <i class="ico" style="margin-right: 10px"></i>
+            <div class="brand">
+                <div class="logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                        <defs>
+                            <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#34363d" />
+                                <stop offset="1" stop-color="#121317" />
+                            </linearGradient>
+                            <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#ffffff" stop-opacity="0.16" />
+                                <stop offset="0.5" stop-color="#ffffff" stop-opacity="0" />
+                            </linearGradient>
+                            <linearGradient id="arm" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0" stop-color="#ffc15a" />
+                                <stop offset="1" stop-color="#ff5e0a" />
+                            </linearGradient>
+                            <path
+                                id="blade"
+                                d="M128 50 A78 78 0 0 1 206 128 A56 56 0 0 0 128 50 Z"
+                            />
+                        </defs>
+                        <rect x="10" y="10" width="236" height="236" rx="54" fill="url(#bg)" />
+                        <rect x="10" y="10" width="236" height="236" rx="54" fill="url(#gloss)" />
+                        <g fill="url(#arm)">
+                            <use href="#blade" />
+                            <use href="#blade" transform="rotate(120 128 128)" />
+                            <use href="#blade" transform="rotate(240 128 128)" />
+                        </g>
+                        <g transform="translate(128 128) scale(1.35)">
+                            <path d="M0 -30 L26 -15 L0 0 L-26 -15 Z" fill="#ffffff" />
+                            <path d="M-26 -15 L0 0 L0 30 L-26 15 Z" fill="#d6d9df" />
+                            <path d="M26 -15 L26 15 L0 30 L0 0 Z" fill="#9aa0ab" />
+                        </g>
+                    </svg>
+                </div>
+                <div class="bt">
+                    <span class="name"><b>m</b>ORTEX</span
+                    ><span class="tag">Le gestionnaire de mods pour Mac Silicon</span>
+                </div>
+            </div>
+            <div class="right">
+                <span class="page">Accueil</span><span class="ver">v1.0.0</span
+                ><span class="login">Se connecter</span><i class="ico"></i><i class="ico"></i>
+            </div>
+        </div>
+        <div class="body">Fenêtre étroite</div>
+    </div>
+    <p class="note">
+        <b>Fenêtre étroite.</b> L'accroche disparaît avant que quoi que ce soit ne déborde ; le logo
+        et le nom restent.
+    </p>
+</html>

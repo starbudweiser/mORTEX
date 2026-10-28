@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="fr">
+    <meta charset="utf-8" /><title>Maquette mORTEX — Plugins</title>
+    <style>
+        :root {
+            --bg: #1e1e1e;
+            --sunken: #181818;
+            --surface: #232323;
+            --raised: #2a2a2a;
+            --control: #3a3a3a;
+            --control-h: #444;
+            --border: #333;
+            --text: #ddd;
+            --strong: #fff;
+            --muted: #a0a0a0;
+            --accent: #0ea5e9;
+            --accent-fill: #0369a1;
+            --accent-text: #38bdf8;
+            --action: #f59e0b;
+            --ok: #22c55e;
+            --warn: #f59e0b;
+            --danger: #ef4444;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+        }
+        body {
+            background: #111;
+            color: var(--text);
+            font:
+                13px -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Text",
+                sans-serif;
+            padding: 24px;
+        }
+        .win {
+            width: 1180px;
+            height: 690px;
+            margin: auto;
+            background: var(--bg);
+            border-radius: 10px;
+            border: 1px solid #444;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            grid-template-rows: 44px 1fr 26px;
+            overflow: hidden;
+            position: relative;
+        }
+        .title {
+            grid-column: 1/3;
+            background: var(--raised);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            gap: 14px;
+        }
+        .dots {
+            display: flex;
+            gap: 8px;
+        }
+        .dots i {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #555;
+            display: block;
+        }
+        .dots i:nth-child(1) {
+            background: #ff5f57;
+        }
+        .dots i:nth-child(2) {
+            background: #febc2e;
+        }
+        .dots i:nth-child(3) {
+            background: #28c840;
+        }
+        .logo {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--strong);
+        }
+        .logo b {
+            color: var(--action);
+            font-weight: 800;
+        }
+        .game {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn {
+            background: var(--control);
+            color: var(--text);
+            border: 0;
+            border-radius: 6px;
+            padding: 5px 12px;
+            font: inherit;
+            height: 26px;
+        }
+        .btn:hover {
+            background: var(--control-h);
+        }
+        .btn.primary {
+            background: var(--accent-fill);
+            color: #fff;
+        }
+        .btn.action {
+            background: var(--action);
+            color: #1a1200;
+            font-weight: 600;
+        }
+        .side {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 10px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .side h6 {
+            font-size: 11px;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin: 12px 8px 4px;
+            font-weight: 600;
+        }
+        .side a {
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: flex;
+            gap: 9px;
+            align-items: center;
+            color: var(--text);
+        }
+        .side a.on {
+            background: var(--accent-fill);
+            color: #fff;
+        }
+        .side a span {
+            margin-left: auto;
+            font-size: 11px;
+            color: var(--muted);
+        }
+        .side a.on span {
+            color: #cfe8f7;
+        }
+        .ic {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            background: #666;
+            display: inline-block;
+        }
+        .on .ic {
+            background: #fff;
+        }
+        .main {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .tool {
+            display: flex;
+            gap: 10px;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+        }
+        .seg {
+            display: flex;
+            background: var(--sunken);
+            border-radius: 7px;
+            padding: 2px;
+        }
+        .seg span {
+            padding: 3px 12px;
+            border-radius: 5px;
+            color: var(--muted);
+        }
+        .seg .on {
+            background: var(--control);
+            color: var(--strong);
+        }
+        .search {
+            background: var(--sunken);
+            border-radius: 6px;
+            padding: 5px 10px;
+            width: 240px;
+            color: #777;
+            height: 26px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            font-weight: 500;
+            color: var(--muted);
+            text-align: left;
+            padding: 6px 14px;
+            font-size: 11px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+        }
+        td {
+            padding: 0 14px;
+            height: 30px;
+            border-bottom: 1px solid #272727;
+        }
+        tr.sel td {
+            background: #1d3a52;
+        }
+        tr:hover td {
+            background: #262626;
+        }
+        tr.sel:hover td {
+            background: #1d3a52;
+        }
+        .tag {
+            font-size: 11px;
+            padding: 1px 7px;
+            border-radius: 9px;
+        }
+        .t-ok {
+            background: #12301d;
+            color: var(--ok);
+        }
+        .t-w {
+            background: #33260a;
+            color: var(--warn);
+        }
+        .t-d {
+            background: #3a1717;
+            color: var(--danger);
+        }
+        .sw {
+            width: 30px;
+            height: 18px;
+            border-radius: 9px;
+            background: #555;
+            position: relative;
+            display: inline-block;
+        }
+        .sw:after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #fff;
+        }
+        .sw.on {
+            background: var(--accent);
+        }
+        .sw.on:after {
+            left: 14px;
+        }
+        .status {
+            grid-column: 1/3;
+            background: var(--raised);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            gap: 18px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+        .sheet {
+            position: absolute;
+            left: 50%;
+            top: 44px;
+            transform: translateX(-50%);
+            width: 420px;
+            background: var(--raised);
+            border: 1px solid #484848;
+            border-top: 0;
+            border-radius: 0 0 12px 12px;
+            padding: 18px;
+        }
+        .sheet h3 {
+            color: var(--strong);
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        .sheet p {
+            color: var(--muted);
+            margin-bottom: 14px;
+            line-height: 1.45;
+        }
+        .sheet .row {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        .note {
+            max-width: 1180px;
+            margin: 18px auto 0;
+            color: #aaa;
+            line-height: 1.6;
+        }
+    </style>
+    <style>
+        .cols {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            flex: 1;
+            min-height: 0;
+        }
+        .insp {
+            border-left: 1px solid var(--border);
+            background: var(--surface);
+            padding: 16px;
+        }
+        .insp h4 {
+            color: var(--strong);
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+        .insp small {
+            color: var(--muted);
+        }
+        .kv {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            gap: 8px;
+            margin-top: 14px;
+            color: var(--muted);
+        }
+        .kv b {
+            color: var(--text);
+            font-weight: 400;
+        }
+        .grip {
+            color: #666;
+            margin-right: 8px;
+        }
+        .bar {
+            height: 6px;
+            background: var(--sunken);
+            border-radius: 3px;
+            overflow: hidden;
+            width: 200px;
+        }
+        .bar i {
+            display: block;
+            height: 100%;
+            background: var(--accent);
+        }
+        .hero {
+            padding: 26px 28px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px;
+        }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .card h5 {
+            color: var(--strong);
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        .big {
+            font-size: 28px;
+            color: var(--strong);
+            font-weight: 600;
+        }
+        .card p {
+            color: var(--muted);
+            margin-top: 4px;
+        }
+        .welcome {
+            padding: 26px 28px 0;
+        }
+        .welcome h1 {
+            font-size: 22px;
+            color: var(--strong);
+            font-weight: 600;
+        }
+        .welcome p {
+            color: var(--muted);
+            margin-top: 4px;
+        }
+    </style>
+    <div class="win">
+        <div class="title">
+            <div class="dots"><i></i><i></i><i></i></div>
+            <div class="logo"><b>m</b>ORTEX</div>
+            <div class="game">
+                <span style="color: var(--muted)">Skyrim Special Edition · profil Défaut</span
+                ><button class="btn action">JOUER</button>
+            </div>
+        </div>
+        <nav class="side">
+            <h6>Jeu</h6>
+            <a><i class="ic"></i>Accueil</a><a><i class="ic"></i>Mods<span>412</span></a
+            ><a class="on"><i class="ic"></i>Plugins<span>268</span></a
+            ><a><i class="ic"></i>Téléchargements<span>7</span></a>
+            <h6>Outils</h6>
+            <a><i class="ic"></i>LOOT</a><a><i class="ic"></i>Bouteille</a
+            ><a><i class="ic"></i>Collections</a>
+            <h6>Application</h6>
+            <a><i class="ic"></i>Réglages</a><a><i class="ic"></i>Extensions</a>
+        </nav>
+        <div class="main">
+            <div class="tool">
+                <div class="seg">
+                    <span class="on">Ordre de chargement</span><span>Groupes</span>
+                </div>
+                <div class="search">Rechercher un plugin…</div>
+                <button class="btn" style="margin-left: auto">Trier avec LOOT</button
+                ><button class="btn primary">APPLIQUER</button>
+            </div>
+            <div class="cols">
+                <table>
+                    <tr>
+                        <th>Ordre</th>
+                        <th>Plugin</th>
+                        <th>Origine</th>
+                        <th>Groupe</th>
+                        <th>Alertes</th>
+                    </tr>
+                    <tr>
+                        <td><span class="grip">⋮⋮</span>00</td>
+                        <td>Skyrim.esm</td>
+                        <td>Jeu</td>
+                        <td>default</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><span class="grip">⋮⋮</span>01</td>
+                        <td>Update.esm</td>
+                        <td>Jeu</td>
+                        <td>default</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><span class="grip">⋮⋮</span>0E</td>
+                        <td>Unofficial Skyrim Special Edition Patch.esp</td>
+                        <td>USSEP</td>
+                        <td>early loaders</td>
+                        <td><span class="tag t-ok">Trié</span></td>
+                    </tr>
+                    <tr class="sel">
+                        <td><span class="grip">⋮⋮</span>1A</td>
+                        <td style="color: #fff">SkyUI_SE.esp</td>
+                        <td>SkyUI</td>
+                        <td>default</td>
+                        <td><span class="tag t-w">1 remarque</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="grip">⋮⋮</span>1B</td>
+                        <td>Static Mesh Improvement Mod.esp</td>
+                        <td>SMIM</td>
+                        <td>default</td>
+                        <td><span class="tag t-d">Conflit</span></td>
+                    </tr>
+                </table>
+                <aside class="insp">
+                    <h4>SkyUI_SE.esp</h4>
+                    <small>Origine : SkyUI 5.2 SE</small>
+                    <div class="kv">
+                        <span>Groupe</span><b>default</b><span>Maîtres</span><b>Skyrim.esm</b
+                        ><span>Remarque</span
+                        ><b>Installez SKSE64 pour un fonctionnement correct.</b>
+                    </div>
+                </aside>
+            </div>
+        </div>
+        <div class="status">
+            <span>268 plugins · 6 alertes</span><span>Dernier tri LOOT : aujourd'hui 14:02</span>
+        </div>
+    </div>
+    <p class="note">
+        Maquette B — Plugins. Même cadre ; liste centrale dense avec poignées de glisser-déposer,
+        panneau d'inspection à droite (détails du plugin sélectionné) comme un Finder « Informations
+        ». Bouton principal bleu APPLIQUER ; JOUER reste le seul ambre.
+    </p>
+</html>
