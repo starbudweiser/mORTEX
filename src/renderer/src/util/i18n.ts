@@ -55,6 +55,10 @@ class MultiBackend implements BackendModule<BackendOptions> {
 
   read: BackendModule["read"] = (language, namespace, callback) => {
     const { backendType, extPath } = this.#getBackendType(language);
+    if (backendType === "extension" && this.#isBundled(language)) {
+      this.#readMerged(language, namespace, extPath, callback);
+      return;
+    }
     if (
       backendType !== this.#backendType ||
       (backendType === "extension" && language !== this.#lastReadLanguage)
@@ -65,6 +69,48 @@ class MultiBackend implements BackendModule<BackendOptions> {
     this.#lastReadLanguage = language;
     this.#currentBackend.read(language, namespace, callback);
   };
+
+  /**
+   * mORTEX : une extension de traduction (« Traduction FR » de Nexus…) ne remplace plus les textes
+   * de mORTEX dans une langue qu'il traduit déjà : elle ne complète que les clés qui lui manquent.
+   */
+  #readMerged(
+    language: string,
+    namespace: string,
+    extPath: string,
+    callback: Parameters<BackendModule["read"]>[2],
+  ) {
+    const fromPath = (basePath: string) => {
+      const backend = new FSBackend();
+      backend.init(this.#services, {
+        loadPath: path.join(basePath, "{{lng}}", "{{ns}}.json"),
+        ident: 2,
+      });
+      return new Promise<Record<string, unknown> | undefined>((resolve) =>
+        backend.read(language, namespace, (err, data) =>
+          resolve(err ? undefined : (data as Record<string, unknown>)),
+        ),
+      );
+    };
+    void Promise.all([fromPath(extPath), fromPath(this.#backendOptions.bundled)]).then(
+      ([fromExtension, own]) => {
+        if (fromExtension === undefined && own === undefined) {
+          callback(new Error(`no ${language}/${namespace} translation`), false);
+        } else {
+          callback(null, { ...fromExtension, ...own });
+        }
+      },
+    );
+  }
+
+  #isBundled(language: string): boolean {
+    try {
+      fs.statSync(path.join(this.#backendOptions.bundled, language));
+      return true;
+    } catch {
+      return false;
+    }
+  }
 
   private initBackend(type: BackendType, extPath: string) {
     const res = new FSBackend();
