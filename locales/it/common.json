@@ -3874,5 +3874,9 @@
   "Add collection": "Aggiungi collezione",
   "Also delete the profile \"{{name}}\" created for this collection (mORTEX switches back to \"{{fallback}}\")": "Elimina anche il profilo «{{name}}» creato per questa collezione (mORTEX torna a «{{fallback}}»)",
   "Profile \"{{name}}\" removed, back to \"{{fallback}}\"": "Profilo «{{name}}» eliminato, di nuovo su «{{fallback}}»",
-  "Failed to restore the profile": "Impossibile ripristinare il profilo"
+  "Failed to restore the profile": "Impossibile ripristinare il profilo",
+  "{{toolName}} is missing": "{{toolName}} non è stato trovato",
+  "{{toolName}}, the primary tool for {{game}}, could not be found. It may have been moved or uninstalled. Quick launch has reverted to the game's executable.": "{{toolName}}, lo strumento principale di {{game}}, non è stato trovato. Potrebbe essere stato spostato o disinstallato. L'avvio rapido usa di nuovo l'eseguibile del gioco.",
+  "Not enough disk space: this collection needs about {{needed}} ({{archives}} of archives, roughly twice that once installed). {{missing}} more must be freed before installing.": "Spazio su disco insufficiente: questa collezione richiede circa {{needed}} ({{archives}} di archivi, circa il doppio una volta installati). Bisogna liberare ancora {{missing}} prima di installarla.",
+  "Disk space needed: about {{needed}}. Free on the mods disk: {{free}}.": "Spazio necessario: circa {{needed}}. Libero sul disco delle mod: {{free}}."
 }

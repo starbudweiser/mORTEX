@@ -19,10 +19,15 @@ import renderModName from "../../../../extensions/mod_management/util/modName";
 import getTextProfileManagement from "../../../../extensions/profile_management/texts";
 import type { IProfile } from "../../../../extensions/profile_management/types/IProfile";
 import type { IState } from "../../../../types/IState";
+import { Alert } from "../../../../ui/components/alert/Alert";
 import type { TFunction } from "../../../../util/i18n";
 import { getSafe } from "../../../../util/storeHelper";
-import { batchDispatch } from "../../../../util/util";
+import { batchDispatch, bytesToString } from "../../../../util/util";
+import { downloadPathForGame } from "../../../download_management/selectors";
+import type { IDownload } from "../../../download_management/types/IDownload";
+import { installPathForGame } from "../../../mod_management/selectors";
 import { DEFAULT_INSTRUCTIONS, NAMESPACE } from "../../constants";
+import { estimateSpace, type ISpaceEstimate, volumeOf } from "../../util/diskSpace";
 import { isGamebryoGame } from "../../util/gameSupport";
 import type InstallDriver from "../../util/InstallDriver";
 import CollectionThumbnail from "../CollectionTile";
@@ -43,6 +48,9 @@ interface IConnectedProps {
   nextProfileId: string;
   collectionsInstallWhileDownloading: boolean;
   useModernLayout: boolean;
+  downloads: { [id: string]: IDownload };
+  downloadPath: string;
+  modsPath: string;
 }
 
 interface IActionProps {
@@ -148,6 +156,7 @@ function InstallDialogConfirmProfile(props: IInstallDialogConfirmProfileProps) {
 class InstallDialog extends ComponentEx<IProps, IInstallDialogState> {
   private mLastCollection: IMod;
   private mUnsubscribeDriver?: () => void;
+  private mSpace?: { collection: IMod; estimate?: ISpaceEstimate };
   constructor(props: IProps) {
     super(props);
 
@@ -299,6 +308,8 @@ class InstallDialog extends ComponentEx<IProps, IInstallDialogState> {
             />
           )}
 
+          {this.renderSpace()}
+
           <Toggle
             checked={this.props.collectionsInstallWhileDownloading}
             onToggle={this.props.onSetCollectionConcurrency}
@@ -398,6 +409,49 @@ class InstallDialog extends ComponentEx<IProps, IInstallDialogState> {
     this.startInstall();
   };
 
+  // mORTEX : calculé une fois par collection (statfs), pas à chaque rendu
+  private renderSpace(): React.ReactNode {
+    const { t, driver, downloads, downloadPath, modsPath } = this.props;
+    if (this.mSpace?.collection !== driver.collection) {
+      const downloadsVolume = volumeOf(downloadPath);
+      const modsVolume = volumeOf(modsPath);
+      this.mSpace = {
+        collection: driver.collection,
+        estimate:
+          downloadsVolume !== undefined && modsVolume !== undefined
+            ? estimateSpace(driver.collection?.rules ?? [], downloads, {
+                downloads: downloadsVolume,
+                mods: modsVolume,
+              })
+            : undefined,
+      };
+    }
+    const { estimate } = this.mSpace;
+    if (estimate === undefined || estimate.archives === 0) {
+      return null;
+    }
+    const replace = {
+      needed: bytesToString(estimate.toDownload + estimate.installed),
+      archives: bytesToString(estimate.archives),
+      free: bytesToString(estimate.free),
+      missing: bytesToString(estimate.missing),
+    };
+    return estimate.missing > 0 ? (
+      <Alert className="collection-disk-space" severity="warning">
+        {t(
+          "Not enough disk space: this collection needs about {{needed}} ({{archives}} of " +
+            "archives, roughly twice that once installed). {{missing}} more must be freed " +
+            "before installing.",
+          { replace },
+        )}
+      </Alert>
+    ) : (
+      <Alert className="collection-disk-space">
+        {t("Disk space needed: about {{needed}}. Free on the mods disk: {{free}}.", { replace })}
+      </Alert>
+    );
+  }
+
   private startInstall() {
     const { allProfiles, driver } = this.props;
     const { selectedProfile } = this.state;
@@ -433,6 +487,9 @@ function mapStateToProps(state: IState, ownProps: IInstallDialogProps): IConnect
     nextProfileId: state.settings.profiles.nextProfileId,
     collectionsInstallWhileDownloading,
     useModernLayout: state.settings.window.useModernLayout ?? true,
+    downloads: state.persistent.downloads.files,
+    downloadPath: downloadPathForGame(state, gameMode),
+    modsPath: installPathForGame(state, gameMode),
   };
 }
 
