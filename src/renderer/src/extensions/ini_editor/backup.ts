@@ -101,3 +101,18 @@ export async function listBackups(iniDir: string): Promise<IBackup[]> {
   }
   return backups.sort((a, b) => b.name.localeCompare(a.name));
 }
+
+/**
+ * Restaure une sauvegarde après avoir copié l'état actuel de ses fichiers dans une nouvelle
+ * sauvegarde : la restauration elle-même peut ainsi s'annuler. Retourne cette nouvelle sauvegarde.
+ */
+export async function restoreBackupSafely(dir: string): Promise<IBackup> {
+  const manifest = JSON.parse(await readFile(path.join(dir, MANIFEST), "utf8")) as IManifest;
+  const present: string[] = [];
+  const missing: string[] = [];
+  for (const file of manifest.files)
+    ((await exists(file.path)) ? present : missing).push(file.path);
+  const safety = await createBackup(present, missing);
+  await restoreBackup(dir);
+  return safety;
+}

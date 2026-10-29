@@ -31,13 +31,16 @@ import {
   settingId,
 } from "../../util/macos/iniEdit";
 import { iniFiles } from "../ini_prep/gameSupport";
-import { restoreBackup } from "./backup";
+import AdvancedView from "./AdvancedView";
+import { type IBackup, listBackups, restoreBackup, restoreBackupSafely } from "./backup";
+import BackupsView from "./BackupsView";
 import {
   BETHESDA_PRESET_IDS,
   type BethesdaPresetId,
   type IBethesdaValues,
   readBethesdaValues,
 } from "./bethesdaPresets";
+import { EXE_SETTINGS } from "./catalog/exeSettings";
 import { TAB_GROUPS } from "./catalog/groups";
 import { SKYRIMSE_CATALOG, settingsOfTab } from "./catalog/skyrimse";
 import type { TabId } from "./catalog/types";
@@ -47,6 +50,7 @@ import {
   isEnabled,
   pendingChanges,
   pendingFromPreset,
+  withEntryValue,
   withValue,
 } from "./model";
 import { SettingsSaveError, commitSave, formatSummary, previewSave, summarizePlan } from "./save";
@@ -96,6 +100,8 @@ export default function SettingsEditorPage({ api }: IProps) {
   const [revision, setRevision] = useState(0);
   const [tab, setTab] = useState<TabId>("display");
   const [saving, setSaving] = useState(false);
+  const [view, setView] = useState<"main" | "advanced" | "backups">("main");
+  const [backups, setBackups] = useState<IBackup[]>([]);
   // le jeu ou un outil tourne : le jeu réécrit ses INI en quittant, on n'écrit pas par-dessus
   const toolRunning = useSelector(
     (state: IState) => Object.keys(state.session.base.toolsRunning ?? {}).length > 0,
@@ -120,6 +126,15 @@ export default function SettingsEditorPage({ api }: IProps) {
   }, [gameId, gamePath]);
 
   useEffect(load, [load]);
+
+  const iniDir = files?.[0] !== undefined ? files[0].path.replace(/[\\/][^\\/]*$/, "") : undefined;
+  const loadBackups = useCallback(() => {
+    if (iniDir === undefined) return;
+    listBackups(iniDir)
+      .then(setBackups)
+      .catch(() => setBackups([]));
+  }, [iniDir]);
+  useEffect(loadBackups, [loadBackups, view]);
 
   const ctx = useMemo<IValueContext>(() => {
     const defaults = new Map<string, string>();
@@ -180,6 +195,7 @@ export default function SettingsEditorPage({ api }: IProps) {
       const { backup } = await commitSave(plan);
       revert();
       load();
+      loadBackups();
       api.sendNotification?.({
         id: "settings-editor-saved",
         type: "success",
@@ -192,6 +208,7 @@ export default function SettingsEditorPage({ api }: IProps) {
               restoreBackup(backup.dir)
                 .then(() => {
                   load();
+                  loadBackups();
                   api.sendNotification?.({
                     id: "settings-editor-undone",
                     type: "info",
@@ -217,6 +234,61 @@ export default function SettingsEditorPage({ api }: IProps) {
       }
     } finally {
       setSaving(false);
+    }
+  };
+
+  const restore = async (backup: IBackup) => {
+    if (toolRunning) {
+      api.sendNotification?.({
+        id: "settings-editor-game-running",
+        type: "warning",
+        message: tt("ui.gameRunning"),
+        displayMS: 8000,
+      });
+      return;
+    }
+    const answer = await api.showDialog?.(
+      "question",
+      tt("ui.bkRestoreTitle"),
+      {
+        text: tt("ui.bkRestoreBody", { name: backup.name, files: backup.files.join(", ") }),
+        options: { translated: true },
+      },
+      [{ label: tt("ui.back") }, { label: tt("ui.bkRestore"), default: true }],
+    );
+    if (answer?.action !== tt("ui.bkRestore")) return;
+    try {
+      const safety = await restoreBackupSafely(backup.dir);
+      revert();
+      load();
+      loadBackups();
+      api.sendNotification?.({
+        id: "settings-editor-restored",
+        type: "success",
+        message: tt("ui.bkRestored", { name: backup.name }),
+        actions: [
+          {
+            title: tt("ui.undo"),
+            action: (dismiss) => {
+              restoreBackup(safety.dir)
+                .then(() => {
+                  load();
+                  loadBackups();
+                  api.sendNotification?.({
+                    id: "settings-editor-undone",
+                    type: "info",
+                    message: tt("ui.undone"),
+                    displayMS: 5000,
+                  });
+                })
+                .catch((err) => api.showErrorNotification?.(tt("ui.undoFailed"), err))
+                .finally(dismiss);
+            },
+          },
+        ],
+      });
+    } catch (err) {
+      api.showErrorNotification?.(tt("ui.saveFailed"), err);
     }
   };
 
@@ -266,6 +338,20 @@ export default function SettingsEditorPage({ api }: IProps) {
             {tt("ui.intro")}
           </Typography>
 
+          <div className="flex gap-x-2">
+            {(["main", "advanced", "backups"] as const).map((id) => (
+              <Button
+                appearance={view === id ? undefined : "moderate"}
+                brand={view === id ? undefined : "neutral"}
+                key={id}
+                size="sm"
+                onClick={() => setView(id)}
+              >
+                {tt(`ui.view.${id}`)}
+              </Button>
+            ))}
+          </div>
+
           {gamePath === undefined ? (
             <Typography brand="warning" typographyType="body-md">
               {tt("ui.noGame")}
@@ -277,82 +363,107 @@ export default function SettingsEditorPage({ api }: IProps) {
           ) : (
             files !== undefined && (
               <>
-                {presets.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <Tooltip content={tt("ui.presetHint")}>
-                      <Typography className="font-semibold" typographyType="body-md">
-                        {tt("ui.presets")}
-                      </Typography>
-                    </Tooltip>
-                    {presets.map((id) => (
-                      <Button key={id} size="sm" onClick={() => applyPreset(id)}>
-                        {tt(`ui.preset.${id}`)}
-                      </Button>
-                    ))}
-                  </div>
-                )}
-
-                <TabProvider
-                  tab={tab}
-                  tabListId="settings-editor-tabs"
-                  onSetSelectedTab={(id) => setTab(id as TabId)}
-                >
-                  <TabBar>
-                    {TABS.map((id) => (
-                      <TabButton
-                        count={countOfTab(id) || undefined}
-                        key={id}
-                        name={tt(`tab.${id}`)}
-                        panelId={id}
-                      />
-                    ))}
-                  </TabBar>
-                  {TABS.map((id) => (
-                    <TabPanel id={id} key={id}>
-                      <div className="mt-4 columns-[26rem] gap-4">
-                        {TAB_GROUPS[id].map((group) => (
-                          <section
-                            className="mb-4 break-inside-avoid rounded-md bg-surface-mid p-3"
-                            data-testid={`settings-group-${group.id}`}
-                            key={group.id}
-                          >
-                            <Typography
-                              className="mb-1 px-2 font-semibold !text-[#f59e0b]"
-                              typographyType="body-md"
-                            >
-                              {tt(`group.${group.id}`)}
-                            </Typography>
-                            {group.ids.map((settingId) => {
-                              const setting = SKYRIMSE_CATALOG.find((s) => s.id === settingId);
-                              if (setting === undefined) return null;
-                              const dep = SKYRIMSE_CATALOG.find(
-                                (s) => s.id === setting.dependsOn?.on,
-                              );
-                              return (
-                                <SettingRow
-                                  ctx={ctx}
-                                  dependsOnLabel={
-                                    dep !== undefined ? tt(`label.${dep.id}`) : undefined
-                                  }
-                                  enabled={isEnabled(ctx, setting, SKYRIMSE_CATALOG)}
-                                  key={`${setting.id}-${revision}`}
-                                  setting={setting}
-                                  tt={tt}
-                                  onChange={(value) => setPending(withValue(ctx, setting, value))}
-                                  onReset={() => {
-                                    const { [setting.id]: _unused, ...rest } = pending;
-                                    setPending(rest);
-                                    setRevision((r) => r + 1);
-                                  }}
-                                />
-                              );
-                            })}
-                          </section>
+                {view === "main" && (
+                  <>
+                    {presets.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <Tooltip content={tt("ui.presetHint")}>
+                          <Typography className="font-semibold" typographyType="body-md">
+                            {tt("ui.presets")}
+                          </Typography>
+                        </Tooltip>
+                        {presets.map((id) => (
+                          <Button key={id} size="sm" onClick={() => applyPreset(id)}>
+                            {tt(`ui.preset.${id}`)}
+                          </Button>
                         ))}
                       </div>
-                    </TabPanel>
-                  ))}
-                </TabProvider>
+                    )}
+
+                    <TabProvider
+                      tab={tab}
+                      tabListId="settings-editor-tabs"
+                      onSetSelectedTab={(id) => setTab(id as TabId)}
+                    >
+                      <TabBar>
+                        {TABS.map((id) => (
+                          <TabButton
+                            count={countOfTab(id) || undefined}
+                            key={id}
+                            name={tt(`tab.${id}`)}
+                            panelId={id}
+                          />
+                        ))}
+                      </TabBar>
+                      {TABS.map((id) => (
+                        <TabPanel id={id} key={id}>
+                          <div className="mt-4 columns-[26rem] gap-4">
+                            {TAB_GROUPS[id].map((group) => (
+                              <section
+                                className="mb-4 break-inside-avoid rounded-md bg-surface-mid p-3"
+                                data-testid={`settings-group-${group.id}`}
+                                key={group.id}
+                              >
+                                <Typography
+                                  className="mb-1 px-2 font-semibold !text-[#f59e0b]"
+                                  typographyType="body-md"
+                                >
+                                  {tt(`group.${group.id}`)}
+                                </Typography>
+                                {group.ids.map((settingId) => {
+                                  const setting = SKYRIMSE_CATALOG.find((s) => s.id === settingId);
+                                  if (setting === undefined) return null;
+                                  const dep = SKYRIMSE_CATALOG.find(
+                                    (s) => s.id === setting.dependsOn?.on,
+                                  );
+                                  return (
+                                    <SettingRow
+                                      ctx={ctx}
+                                      dependsOnLabel={
+                                        dep !== undefined ? tt(`label.${dep.id}`) : undefined
+                                      }
+                                      enabled={isEnabled(ctx, setting, SKYRIMSE_CATALOG)}
+                                      key={`${setting.id}-${revision}`}
+                                      setting={setting}
+                                      tt={tt}
+                                      onChange={(value) =>
+                                        setPending(withValue(ctx, setting, value))
+                                      }
+                                      onReset={() => {
+                                        const { [setting.id]: _unused, ...rest } = pending;
+                                        setPending(rest);
+                                        setRevision((r) => r + 1);
+                                      }}
+                                    />
+                                  );
+                                })}
+                              </section>
+                            ))}
+                          </div>
+                        </TabPanel>
+                      ))}
+                    </TabProvider>
+                  </>
+                )}
+                {view === "advanced" && (
+                  <AdvancedView
+                    catalog={SKYRIMSE_CATALOG}
+                    ctx={ctx}
+                    exe={EXE_SETTINGS}
+                    tt={tt}
+                    onChange={(section, key, value) =>
+                      setPending(withEntryValue(ctx, SKYRIMSE_CATALOG, section, key, value))
+                    }
+                  />
+                )}
+                {view === "backups" && (
+                  <BackupsView
+                    backups={backups}
+                    tt={tt}
+                    onReveal={(backup) => window.api.shell.showItemInFolder(backup.dir)}
+                    onRestore={(backup) => void restore(backup)}
+                  />
+                )}
               </>
             )
           )}

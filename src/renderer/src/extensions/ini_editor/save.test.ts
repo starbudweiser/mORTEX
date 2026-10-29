@@ -5,7 +5,13 @@ import * as path from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { loadSkyrimIniFiles } from "../../util/macos/iniEdit";
-import { BACKUPS_DIRNAME, backupName, listBackups, restoreBackup } from "./backup";
+import {
+  BACKUPS_DIRNAME,
+  backupName,
+  listBackups,
+  restoreBackup,
+  restoreBackupSafely,
+} from "./backup";
 import { SettingsSaveError, commitSave, formatSummary, previewSave, summarizePlan } from "./save";
 
 describe("enregistrement des réglages", () => {
@@ -119,5 +125,22 @@ describe("enregistrement des réglages", () => {
         "  [Papyrus] bEnableLogging : (absent) → 1 — nouvelle section",
       ].join("\n"),
     );
+  });
+
+  it("restores an older backup after copying the current state, so the restore can be undone", async () => {
+    const original = "[Display]\r\nfGamma=1.0000\r\n";
+    fs.writeFileSync(file("SkyrimPrefs.ini"), original);
+    const first = await commitSave(
+      await plan([{ section: "Display", key: "fGamma", value: "1.2" }]),
+    );
+    const afterFirst = read("SkyrimPrefs.ini");
+
+    const safety = await restoreBackupSafely(first.backup.dir);
+    expect(read("SkyrimPrefs.ini")).toBe(original);
+
+    // annuler la restauration : retour à l'état d'avant
+    await restoreBackup(safety.dir);
+    expect(read("SkyrimPrefs.ini")).toBe(afterFirst);
+    expect(await listBackups(dir)).toHaveLength(2);
   });
 });

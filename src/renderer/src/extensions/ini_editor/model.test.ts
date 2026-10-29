@@ -4,15 +4,20 @@ import { type IIniFile, readEffective, settingId } from "../../util/macos/iniEdi
 import { SKYRIMSE_CATALOG } from "./catalog/skyrimse";
 import {
   type IValueContext,
+  advancedEntries,
   baseValue,
   formatNumber,
   currentValue,
   isEnabled,
+  filterEntries,
   isValid,
+  isValidRaw,
   normalizeNumber,
   pendingChanges,
+  pendingEntryValue,
   pendingFromPreset,
   targetRole,
+  withEntryValue,
   withValue,
   writtenLine,
 } from "./model";
@@ -134,5 +139,70 @@ describe("nombres affichés", () => {
     expect(formatNumber("STRINGS")).toBe("STRINGS");
     expect(formatNumber(undefined)).toBe("");
     expect(normalizeNumber(" 1,5 ")).toBe("1.5");
+  });
+});
+
+describe("réglages libres de la page Avancé", () => {
+  const files = [
+    file("prefs", "[Display]\nfGamma=1.0000\nbFoo=1\n"),
+    file("ini", "[Mine]\nsX=a\n"),
+  ];
+  const ctx = context(files, { "Display:iShadowMapResolution": "2048" });
+
+  it("lists the exe's settings plus the INI ones it doesn't know, sorted", () => {
+    const entries = advancedEntries(
+      [
+        ["Display", "fGamma"],
+        ["Audio", "bEnableAudio"],
+      ],
+      ctx.effective,
+    );
+    expect(entries.map((e) => [e.section, e.key, e.known])).toEqual([
+      ["Audio", "bEnableAudio", true],
+      ["Display", "bFoo", false],
+      ["Display", "fGamma", true],
+      ["Mine", "sX", false],
+    ]);
+  });
+
+  it("filters by words in section, key or value, and by what the INI define", () => {
+    const entries = advancedEntries(
+      [
+        ["Display", "fGamma"],
+        ["Audio", "bEnableAudio"],
+      ],
+      ctx.effective,
+    );
+    const keys = (f: { query: string; onlyDefined: boolean }) =>
+      filterEntries(entries, ctx, SKYRIMSE_CATALOG, f).map((e) => e.key);
+    expect(keys({ query: "", onlyDefined: true })).toEqual(["bFoo", "fGamma", "sX"]);
+    expect(keys({ query: "audio", onlyDefined: false })).toEqual(["bEnableAudio"]);
+    expect(keys({ query: "display gamma", onlyDefined: false })).toEqual(["fGamma"]);
+    expect(keys({ query: "1.0000", onlyDefined: false })).toEqual(["fGamma"]);
+  });
+
+  it("files a catalog setting under its catalog id and any other under a free key", () => {
+    let pending = withEntryValue(ctx, SKYRIMSE_CATALOG, "Display", "fGamma", "1.3");
+    expect(pending).toEqual({ gamma: "1.3" });
+    pending = withEntryValue({ ...ctx, pending }, SKYRIMSE_CATALOG, "Mine", "sX", "b");
+    expect(pendingChanges(SKYRIMSE_CATALOG, pending)).toEqual([
+      { section: "Display", key: "fGamma", value: "1.3" },
+      { section: "Mine", key: "sX", value: "b" },
+    ]);
+    expect(pendingEntryValue({ ...ctx, pending }, SKYRIMSE_CATALOG, "Mine", "sX")).toBe("b");
+    // retour à la valeur d'origine : plus de changement
+    pending = withEntryValue({ ...ctx, pending }, SKYRIMSE_CATALOG, "Mine", "sX", "a");
+    expect(Object.keys(pending)).toEqual(["gamma"]);
+  });
+
+  it("checks a free value against the type its name announces", () => {
+    expect(isValidRaw("bFoo", "1")).toBe(true);
+    expect(isValidRaw("bFoo", "yes")).toBe(false);
+    expect(isValidRaw("iFoo", "-3")).toBe(true);
+    expect(isValidRaw("iFoo", "1.5")).toBe(false);
+    expect(isValidRaw("fFoo", "0.25")).toBe(true);
+    expect(isValidRaw("fFoo", "abc")).toBe(false);
+    expect(isValidRaw("sFoo", "anything")).toBe(true);
+    expect(isValidRaw("sFoo", " ")).toBe(false);
   });
 });

@@ -109,11 +109,156 @@ export function withValue(ctx: IValueContext, setting: ICatalogSetting, value: s
     : { ...others, [setting.id]: value.trim() };
 }
 
-/** les changements à écrire, dans l'ordre du catalogue, au format de iniEdit */
+/** réglage hors catalogue, modifié depuis la page Avancé : section et clé dans la clé d'attente */
+export const RAW_PREFIX = "raw:";
+
+export const rawKey = (section: string, key: string) => `${RAW_PREFIX}${section}\u0000${key}`;
+
+function parseRawKey(pendingKey: string): { section: string; key: string } | undefined {
+  if (!pendingKey.startsWith(RAW_PREFIX)) return undefined;
+  const [section, key] = pendingKey.slice(RAW_PREFIX.length).split("\u0000");
+  return key === undefined ? undefined : { section, key };
+}
+
+/** les changements à écrire : ceux du catalogue dans son ordre, puis ceux de la page Avancé */
 export function pendingChanges(catalog: readonly ICatalogSetting[], pending: Pending): IChange[] {
-  return catalog
+  const fromCatalog = catalog
     .filter((s) => pending[s.id] !== undefined)
     .map((s) => ({ section: s.section, key: s.key, value: pending[s.id] }));
+  const raw = Object.entries(pending).flatMap(([pendingKey, value]) => {
+    const parsed = parseRawKey(pendingKey);
+    return parsed === undefined ? [] : [{ ...parsed, value }];
+  });
+  return [...fromCatalog, ...raw];
+}
+
+/** type d'un réglage libre, d'après le préfixe de son nom (bFoo, iFoo, uFoo, fFoo, sFoo) */
+export function valueKind(key: string): "bool" | "int" | "float" | "text" {
+  switch (key[0]) {
+    case "b":
+      return "bool";
+    case "i":
+    case "u":
+      return "int";
+    case "f":
+      return "float";
+    default:
+      return "text";
+  }
+}
+
+/** valeur acceptable pour un réglage libre : sans bornes, mais du bon type */
+export function isValidRaw(key: string, raw: string): boolean {
+  const value = raw.trim();
+  if (value === "") return false;
+  switch (valueKind(key)) {
+    case "bool":
+      return value === "0" || value === "1";
+    case "int":
+      return /^-?\d+$/.test(value);
+    case "float":
+      return Number.isFinite(Number(value));
+    case "text":
+      return true;
+  }
+}
+
+/** valeur actuelle d'un réglage libre : INI, sinon valeur par défaut de Bethesda */
+export function rawBase(ctx: IValueContext, section: string, key: string): string | undefined {
+  return (
+    ctx.effective.get(settingId(section, key))?.value ?? ctx.defaults.get(settingId(section, key))
+  );
+}
+
+/**
+ * Nouvelle valeur en attente pour un réglage de la page Avancé : sous l'identifiant du catalogue
+ * s'il y est (une seule entrée par réglage), sinon sous une clé libre.
+ */
+export function withEntryValue(
+  ctx: IValueContext,
+  catalog: readonly ICatalogSetting[],
+  section: string,
+  key: string,
+  value: string,
+): Pending {
+  const known = catalog.find((s) => settingId(s.section, s.key) === settingId(section, key));
+  if (known !== undefined) return withValue(ctx, known, value);
+  const pendingKey = rawKey(section, key);
+  const { [pendingKey]: _removed, ...others } = ctx.pending;
+  const base = rawBase(ctx, section, key);
+  const same =
+    base !== undefined &&
+    (base.trim() === value.trim() ||
+      (valueKind(key) !== "text" &&
+        value.trim() !== "" &&
+        Number.isFinite(Number(base)) &&
+        Number(base) === Number(value)));
+  return same ? others : { ...others, [pendingKey]: value.trim() };
+}
+
+/** la valeur en attente d'un réglage de la page Avancé, s'il y en a une */
+export function pendingEntryValue(
+  ctx: IValueContext,
+  catalog: readonly ICatalogSetting[],
+  section: string,
+  key: string,
+): string | undefined {
+  const known = catalog.find((s) => settingId(s.section, s.key) === settingId(section, key));
+  return known !== undefined ? ctx.pending[known.id] : ctx.pending[rawKey(section, key)];
+}
+
+export interface IAdvancedEntry {
+  section: string;
+  key: string;
+  /** le nom figure dans SkyrimSE.exe */
+  known: boolean;
+}
+
+/** tous les réglages à montrer : ceux de l'exécutable, plus ceux des INI qu'il ne connaît pas */
+export function advancedEntries(
+  exe: ReadonlyArray<readonly [string, string]>,
+  effective: ReadonlyMap<string, IEffectiveSetting>,
+): IAdvancedEntry[] {
+  const entries = new Map<string, IAdvancedEntry>();
+  for (const [section, key] of exe)
+    entries.set(settingId(section, key), { section, key, known: true });
+  for (const [id, setting] of effective) {
+    if (!entries.has(id)) {
+      entries.set(id, { section: setting.section, key: setting.key, known: false });
+    }
+  }
+  return [...entries.values()].sort(
+    (a, b) =>
+      a.section.toLowerCase().localeCompare(b.section.toLowerCase()) ||
+      a.key.toLowerCase().localeCompare(b.key.toLowerCase()),
+  );
+}
+
+export interface IAdvancedFilter {
+  query: string;
+  /** seulement les réglages définis dans les INI (ou modifiés en attente) */
+  onlyDefined: boolean;
+}
+
+export function filterEntries(
+  entries: readonly IAdvancedEntry[],
+  ctx: IValueContext,
+  catalog: readonly ICatalogSetting[],
+  filter: IAdvancedFilter,
+): IAdvancedEntry[] {
+  const words = filter.query
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((w) => w !== "");
+  return entries.filter((entry) => {
+    const defined =
+      ctx.effective.has(settingId(entry.section, entry.key)) ||
+      pendingEntryValue(ctx, catalog, entry.section, entry.key) !== undefined;
+    if (filter.onlyDefined && !defined) return false;
+    const haystack =
+      `${entry.section} ${entry.key} ${rawBase(ctx, entry.section, entry.key) ?? ""}`.toLowerCase();
+    return words.every((w) => haystack.includes(w));
+  });
 }
 
 /** applique un préréglage (liste de [section] clé=valeur) aux réglages du catalogue qu'il mentionne */
