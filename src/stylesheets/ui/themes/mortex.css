@@ -1874,3 +1874,13 @@ body.mortex-menu-moving * {
 .mortex-menu-palette-reset:disabled {
     opacity: 0.4;
 }
+
+/* Symbole SF de macOS (controls/macos/MacSymbol), teinté à la couleur du texte */
+.mortex-mac-symbol {
+    display: inline-block;
+    vertical-align: middle;
+    background-color: currentColor;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+}

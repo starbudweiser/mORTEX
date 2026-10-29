@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { hasMacSymbols, MacSymbol } from "./macos/MacSymbol";
 import { IconButton } from "./TooltipControls";
 
 export interface ICollapseIconProps {
@@ -21,6 +22,19 @@ class CollapseIcon extends React.PureComponent<ICollapseIconProps, {}> {
     const classes = ["collapseicon"];
     classes.push(`collapseicon-${visible ? "show" : "hide"}`);
     classes.push(`collapseicon-${position}`);
+
+    // mORTEX (macOS) : le chevron officiel du système
+    if (hasMacSymbols()) {
+      return (
+        <button
+          className={`${classes.join(" ")} icon-button icon-button-horizontal btn btn-ghost`}
+          type="button"
+          onClick={onClick}
+        >
+          <MacSymbol name={iconUp ? "chevron.up" : "chevron.down"} />
+        </button>
+      );
+    }
 
     return (
       <IconButton

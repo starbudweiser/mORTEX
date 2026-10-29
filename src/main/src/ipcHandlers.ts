@@ -40,6 +40,7 @@ import {
   dialog,
   ipcMain,
   Menu,
+  nativeImage,
   powerSaveBlocker,
   WebContentsView,
 } from "electron";
@@ -633,6 +634,17 @@ export function init(fs: FileSystem) {
 
     const menu = Menu.buildFromTemplate(processTemplate(template as SerializableMenuItem[]));
     Menu.setApplicationMenu(menu);
+  });
+
+  // mORTEX : symboles SF officiels de macOS, pour l'interface (chevrons, etc.)
+  betterIpcMain.handle("menu:symbol", (_event, name) => {
+    if (process.platform !== "darwin") return undefined;
+    try {
+      const image = nativeImage.createMenuSymbol(name);
+      return image.isEmpty() ? undefined : image.toDataURL({ scaleFactor: 2 });
+    } catch {
+      return undefined;
+    }
   });
 
   betterIpcMain.handle("menu:popup", async (event, items, x, y) => {

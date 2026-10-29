@@ -340,6 +340,9 @@ export interface Menu {
   /** Shows a native menu at (x, y) in the window; resolves with the chosen item's id, if any */
   popup(items: SerializableMenuItem[], x: number, y: number): Promise<string | undefined>;
 
+  /** mORTEX (macOS): an SF Symbol as a PNG data URL, undefined where there are none */
+  symbol(name: string): Promise<string | undefined>;
+
   /** mORTEX (macOS): activity shown by the menu bar icon and the Dock */
   setActivity(activity: MacActivity): void;
 

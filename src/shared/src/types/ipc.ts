@@ -570,6 +570,8 @@ export interface InvokeChannels {
   // to avoid circular type references - the actual expected type is SerializableMenuItem[]
   "menu:setApplicationMenu": (template: unknown[]) => Promise<void>;
   "menu:popup": (items: unknown[], x: number, y: number) => Promise<string | undefined>;
+  /** mORTEX (macOS): an SF Symbol as a PNG data URL, undefined where there are none */
+  "menu:symbol": (name: string) => Promise<string | undefined>;
 
   // Compile stylesheets
   "styles:compile": (filePaths: string[]) => Promise<string>;
