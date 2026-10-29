@@ -1395,6 +1395,12 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     position: relative;
 }
 
+/* Zone repliée : le panneau garde la hauteur du chevron, sinon il le rognait (2 px de haut,
+   débordement masqué) et plus rien ne permettait de la redéplier */
+#page-Mods .mod-drop-panel:has(> .collapseicon-hide) {
+    min-height: 26px;
+}
+
 /* Mods (interface classique) et plugins : ligne sélectionnée au jaune Socle, liseré sur la 1re cellule */
 .xtbody > .xtr.table-selected,
 .xtbody > .xtr.selected,
