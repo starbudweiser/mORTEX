@@ -333,7 +333,7 @@ export default function ControlsView({ api, tt, gamePath, iniDir, toolRunning, o
                       </Typography>
                     )}
                   </div>
-                  <div className="flex w-40 shrink-0 items-center justify-start">
+                  <div className="flex w-44 shrink-0 items-center justify-start">
                     <Button
                       appearance={capturing ? undefined : "moderate"}
                       brand={capturing ? undefined : "neutral"}
