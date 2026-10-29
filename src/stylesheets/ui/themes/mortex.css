@@ -1752,3 +1752,15 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     vertical-align: top;
     padding-right: 0.75em;
 }
+
+/* Plugins : bouton de règle (à glisser sur un autre plugin), plus petit que la ligne pour que deux
+   boutons voisins ne se touchent pas */
+#table-gamebryo-plugins .btn-dependency {
+    height: 24px !important;
+    min-height: 0 !important;
+    padding: 0 8px !important;
+    margin-block: 4px !important;
+    border-radius: 6px;
+    line-height: 24px;
+    vertical-align: middle;
+}
