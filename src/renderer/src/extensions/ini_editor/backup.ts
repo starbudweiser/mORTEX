@@ -46,10 +46,12 @@ export async function createBackup(
   files: readonly string[],
   toCreate: readonly string[] = [],
   now: Date = new Date(),
+  /** dossier qui contient « mORTEX Backups » ; par défaut celui du premier fichier */
+  rootDir?: string,
 ): Promise<IBackup> {
   const all = [...files, ...toCreate];
   if (all.length === 0) throw new Error("Rien à sauvegarder");
-  const root = path.join(path.dirname(all[0]), BACKUPS_DIRNAME);
+  const root = path.join(rootDir ?? path.dirname(all[0]), BACKUPS_DIRNAME);
   const base = backupName(now);
   let dir = path.join(root, base);
   for (let n = 2; await exists(path.join(dir, MANIFEST)); n++)

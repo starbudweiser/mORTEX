@@ -2,7 +2,7 @@
  * mORTEX (macOS) : la vue « Raccourcis » de l'Éditeur de réglages. Les actions de Skyrim dont la touche
  * clavier peut changer, par groupes ; on clique sur une touche puis on appuie sur la nouvelle. Une touche
  * déjà prise est signalée et bloque l'enregistrement ; « Trouver par touche » dit quelle action utilise
- * une touche. L'enregistrement écrit ControlMap_Custom.txt après une copie de sécurité, comme pour les INI.
+ * une touche. L'enregistrement écrit le fichier ControlMap_Custom.txt du dossier du jeu après une copie de sécurité.
  */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -12,7 +12,7 @@ import { Typography } from "@/ui/components/typography/Typography";
 import { log } from "@/util/log";
 
 import { type IBackup, restoreBackup } from "./backup";
-import { KNOWN_SLUGS, eventSlug, keysText, remappableGroups } from "./controlGroups";
+import { eventSlug, keysText, remappableGroups } from "./controlGroups";
 import {
   type IControlEvent,
   type IControlMap,
@@ -99,14 +99,8 @@ export default function ControlsView({ api, tt, gamePath, iniDir, toolRunning, o
     return () => window.removeEventListener("keydown", onKey, true);
   }, [capture, findMode]);
 
-  const label = (event: IControlEvent) => {
-    const slug = eventSlug(event.name);
-    return KNOWN_SLUGS.has(slug) ? tt(`ui.ctl.${slug}`) : event.name;
-  };
+  const label = (event: IControlEvent) => tt(`ui.ctl.${eventSlug(event.name)}`);
   const none = tt("ui.ctlNoKey");
-  // aucune touche, mais un bouton de souris : l'action n'est pas libre pour autant
-  const mouseOnly = (event: IControlEvent) =>
-    keyCombos(event).length === 0 && !/^0xff$/i.test(event.mouse.trim());
   const fieldText = (field: string) => {
     const slot = parseKeySlot(field);
     return slot.kind === "keys" ? keysText(slot.combos, none) : none;
@@ -352,9 +346,7 @@ export default function ControlsView({ api, tt, gamePath, iniDir, toolRunning, o
                         );
                       }}
                     >
-                      {capturing
-                        ? tt("ui.ctlPress")
-                        : keysText(keyCombos(event), mouseOnly(event) ? tt("ui.ctlMouse") : none)}
+                      {capturing ? tt("ui.ctlPress") : keysText(keyCombos(event), none)}
                     </Button>
                   </div>
                   <div className="w-6 shrink-0">

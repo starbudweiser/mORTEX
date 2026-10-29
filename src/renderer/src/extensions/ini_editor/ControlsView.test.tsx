@@ -17,7 +17,7 @@ const TABLE = [
   `Forward${T}${T}0x11${T}0xff${T}0xff${T}1${T}1${T}0`,
   `Back${T}${T}0x1f${T}0xff${T}0xff${T}1${T}1${T}0`,
   `Sprint${T}${T}0x38${T}0xff${T}0xff${T}1${T}1${T}1`,
-  `Odd Action${T}${T}0x2c${T}0xff${T}0xff${T}1${T}1${T}1`,
+  `Left Attack/Block${T}0xff${T}0x1${T}0x9${T}1${T}1${T}1`,
   `Hotkey1${T}${T}0x02${T}0xff${T}0xff${T}0${T}0${T}0`,
   "",
 ].join("\r\n");
@@ -30,8 +30,10 @@ vi.mock("./controls", async (importOriginal) => ({
       base,
       current: base,
       source: "Skyrim - Interface.bsa",
-      customPath: "/x/ControlMap_Custom.txt",
+      customPath: "/game/ControlMap_Custom.txt",
       customExists: false,
+      file: Buffer.alloc(0),
+      backupDir: "/x",
     };
   }),
 }));
@@ -58,11 +60,10 @@ const renderView = () =>
   );
 
 describe("controlGroups", () => {
-  it("ne garde que les événements remappables, rangés par groupe, les inconnus à part", () => {
+  it("ne garde que les actions modifiables que le fichier sait écrire, rangées par groupe", () => {
     const groups = remappableGroups(parseControlMap(TABLE));
     expect(groups.map((g) => [g.id, g.events.map((e) => e.name)])).toEqual([
       ["movement", ["Forward", "Back", "Sprint"]],
-      ["other", ["Odd Action"]],
     ]);
   });
 
@@ -83,7 +84,7 @@ describe("ControlsView", () => {
     expect(forward).toHaveTextContent("ui.ctl.forward");
     expect(forward).toHaveTextContent("W");
     expect(screen.getByTestId("controls-row-sprint")).toHaveTextContent("⌥ Option");
-    expect(screen.getByTestId("controls-row-odd_action")).toHaveTextContent("Odd Action");
+    expect(screen.queryByTestId("controls-row-left_attack_block")).toBeNull();
     expect(screen.queryByTestId("controls-row-hotkey1")).toBeNull();
   });
 

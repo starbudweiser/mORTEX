@@ -6,7 +6,13 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { restoreBackup } from "./backup";
 import { readFromBsa } from "./bsaRead";
-import { findEvent, parseControlMap, serializeControlMap, withKeyboard } from "./controlMap";
+import {
+  CONTROL_EVENT_IDS,
+  defaultControlFile,
+  readControlKeys,
+  writeControlKeys,
+} from "./controlBinary";
+import { findEvent, serializeControlMap, withKeyboard } from "./controlMap";
 import { CUSTOM_NAME, commitControlsSave, loadControls, planControlsSave } from "./controls";
 
 const T = "\t";
@@ -91,11 +97,13 @@ describe("controls", () => {
   let root: string;
   let game: string;
   let iniDir: string;
+  let custom: string;
 
   beforeEach(async () => {
     root = await mkdtemp(path.join(tmpdir(), "mortex-controls-"));
     game = path.join(root, "game");
     iniDir = path.join(root, "My Games");
+    custom = path.join(game, CUSTOM_NAME);
     await mkdir(path.join(game, "Data"), { recursive: true });
     await mkdir(iniDir, { recursive: true });
     await writeFile(
@@ -107,12 +115,14 @@ describe("controls", () => {
   });
   afterEach(() => rm(root, { recursive: true, force: true }));
 
-  it("charge la table de l'archive quand il n'y a pas de fichier libre ni de fichier personnel", async () => {
+  it("charge la table de l'archive quand il n'y a pas de fichier libre ni de fichier du jeu", async () => {
     const loaded = await loadControls(game, iniDir);
     expect(loaded.source).toBe("Skyrim - Interface.bsa");
     expect(loaded.customExists).toBe(false);
+    expect(loaded.customPath).toBe(custom);
     expect(serializeControlMap(loaded.base)).toBe(BASE);
     expect(loaded.current).toBe(loaded.base);
+    expect(loaded.file.equals(defaultControlFile())).toBe(true);
   });
 
   it("préfère le fichier libre d'un mod à l'archive", async () => {
@@ -124,59 +134,64 @@ describe("controls", () => {
     expect(findEvent(loaded.base, 0, "Forward")?.keyboard).toBe("0x48");
   });
 
-  it("applique le fichier personnel par-dessus la base, complet ou partiel", async () => {
-    const edited = withKeyboard(parseControlMap(BASE), 0, "Jump", [[0x2a]]);
-    await writeFile(path.join(iniDir, CUSTOM_NAME), serializeControlMap(edited));
-    let loaded = await loadControls(game, iniDir);
-    expect(loaded.customExists).toBe(true);
-    expect(findEvent(loaded.current, 0, "Jump")?.keyboard).toBe("0x2a");
-    expect(findEvent(loaded.base, 0, "Jump")?.keyboard).toBe("0x39");
-
-    const partial = ["// Menus", `Console${T}${T}0x3b${T}0xff${T}0xff${T}0${T}0${T}0`, ""].join(
-      "\r\n",
+  it("applique les touches du fichier du jeu par-dessus la table de base", async () => {
+    await writeFile(
+      custom,
+      writeControlKeys(defaultControlFile(), new Map([[CONTROL_EVENT_IDS.jump, 0x22]])),
     );
-    await writeFile(path.join(iniDir, CUSTOM_NAME), partial);
-    loaded = await loadControls(game, iniDir);
-    expect(findEvent(loaded.current, 1, "Console")?.keyboard).toBe("0x3b");
+    const loaded = await loadControls(game, iniDir);
+    expect(loaded.customExists).toBe(true);
+    expect(findEvent(loaded.current, 0, "Jump")?.keyboard).toBe("0x22");
     expect(findEvent(loaded.current, 0, "Forward")?.keyboard).toBe("0x11");
+    expect(findEvent(loaded.base, 0, "Jump")?.keyboard).toBe("0x39");
   });
 
-  it("enregistre une copie complète après une copie de sécurité, et Annuler remet l'état d'avant", async () => {
+  it("enregistre le fichier binaire dans le dossier du jeu, sauvegarde dans « My Games », et Annuler le retire", async () => {
     const loaded = await loadControls(game, iniDir);
-    const edited = withKeyboard(loaded.current, 0, "Forward", [[0x48]]);
-    const plan = planControlsSave(loaded, edited);
+    const plan = planControlsSave(loaded, withKeyboard(loaded.current, 0, "Jump", [[0x22]]));
     expect(plan.created).toBe(true);
-    expect(plan.changes).toEqual([{ context: 0, name: "Forward", before: "0x11", after: "0x48" }]);
+    expect(plan.changes).toEqual([{ context: 0, name: "Jump", before: "0x39", after: "0x22" }]);
 
     const backup = await commitControlsSave(plan);
-    const custom = path.join(iniDir, CUSTOM_NAME);
-    expect(await readFile(custom, "latin1")).toBe(BASE.replace("0x11", "0x48"));
+    expect(path.dirname(path.dirname(backup.dir))).toBe(iniDir);
+    const written = await readFile(custom);
+    expect(readControlKeys(written).get(CONTROL_EVENT_IDS.jump)).toBe(0x22);
+    expect(written.length).toBe(defaultControlFile().length);
 
     await restoreBackup(backup.dir);
-    expect(await readdir(iniDir)).not.toContain(CUSTOM_NAME);
+    expect(await readdir(game)).not.toContain(CUSTOM_NAME);
   });
 
-  it("garde l'ancien fichier personnel dans la copie de sécurité", async () => {
-    const custom = path.join(iniDir, CUSTOM_NAME);
-    await writeFile(custom, BASE);
+  it("garde l'ancien fichier dans la copie de sécurité et le remet à l'annulation", async () => {
+    const before = writeControlKeys(
+      defaultControlFile(),
+      new Map([[CONTROL_EVENT_IDS.jump, 0x23]]),
+    );
+    await writeFile(custom, before);
     const loaded = await loadControls(game, iniDir);
-    const plan = planControlsSave(loaded, withKeyboard(loaded.current, 0, "Jump", []));
+    const plan = planControlsSave(loaded, withKeyboard(loaded.current, 0, "Jump", [[0x22]]));
     expect(plan.created).toBe(false);
+    expect(plan.changes).toEqual([{ context: 0, name: "Jump", before: "0x23", after: "0x22" }]);
     const backup = await commitControlsSave(plan);
-    expect(await readFile(path.join(backup.dir, CUSTOM_NAME), "latin1")).toBe(BASE);
-    expect(await readFile(custom, "latin1")).toBe(BASE.replace("0x39", "0xff"));
+    expect((await readFile(path.join(backup.dir, CUSTOM_NAME))).equals(before)).toBe(true);
+    expect(readControlKeys(await readFile(custom)).get(CONTROL_EVENT_IDS.jump)).toBe(0x22);
     await restoreBackup(backup.dir);
-    expect(await readFile(custom, "latin1")).toBe(BASE);
+    expect((await readFile(custom)).equals(before)).toBe(true);
   });
 
-  it("refuse d'écrire dans un fichier personnel en lecture seule", async () => {
-    const custom = path.join(iniDir, CUSTOM_NAME);
-    await writeFile(custom, BASE);
+  it("refuse deux actions sur la même touche", async () => {
+    const loaded = await loadControls(game, iniDir);
+    const edited = withKeyboard(loaded.current, 0, "Jump", [[0x11]]);
+    expect(() => planControlsSave(loaded, edited)).toThrow();
+  });
+
+  it("refuse d'écrire dans un fichier du jeu en lecture seule", async () => {
+    await writeFile(custom, defaultControlFile());
     await chmod(custom, 0o444);
     const loaded = await loadControls(game, iniDir);
-    const plan = planControlsSave(loaded, withKeyboard(loaded.current, 0, "Jump", []));
+    const plan = planControlsSave(loaded, withKeyboard(loaded.current, 0, "Jump", [[0x22]]));
     await expect(commitControlsSave(plan)).rejects.toMatchObject({ code: "readOnly" });
-    expect(await readFile(custom, "latin1")).toBe(BASE);
+    expect((await readFile(custom)).equals(defaultControlFile())).toBe(true);
   });
 
   it("signale une table introuvable", async () => {

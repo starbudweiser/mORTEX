@@ -1,8 +1,9 @@
 /**
  * mORTEX (macOS) : présentation des raccourcis dans l'Éditeur de réglages. On ne montre que les
  * événements dont le jeu permet de changer la touche clavier (ceux de son propre menu des commandes),
- * rangés en quatre groupes ; un événement inconnu (autre version du jeu, mod) va dans « Autres ».
+ * rangés en quatre groupes. Seules celles que le fichier binaire sait écrire sont montrées.
  */
+import { CONTROL_EVENT_IDS } from "./controlBinary";
 import type { IControlEvent, IControlMap } from "./controlMap";
 import { macKeyName } from "./dikKeys";
 
@@ -49,24 +50,21 @@ export const CONTROL_GROUPS: ReadonlyArray<{ id: string; slugs: readonly string[
 ];
 
 /** événements dont l'écran a un texte (les autres sont affichés avec leur nom du jeu) */
-export const KNOWN_SLUGS: ReadonlySet<string> = new Set(CONTROL_GROUPS.flatMap((g) => g.slugs));
-
 export interface IControlGroup {
   id: string;
   events: IControlEvent[];
 }
 
+/** les actions modifiables que le fichier de commandes de Skyrim sait enregistrer, par groupe */
 export function remappableGroups(map: IControlMap): IControlGroup[] {
   const events = map.contexts.flatMap((c) => c.events).filter((e) => e.remappable);
-  const groups: IControlGroup[] = CONTROL_GROUPS.map((group) => ({
+  return CONTROL_GROUPS.map((group) => ({
     id: group.id,
     events: group.slugs
+      .filter((slug) => CONTROL_EVENT_IDS[slug] !== undefined)
       .map((slug) => events.find((e) => eventSlug(e.name) === slug))
       .filter((e): e is IControlEvent => e !== undefined),
-  }));
-  const other = events.filter((e) => !KNOWN_SLUGS.has(eventSlug(e.name)));
-  if (other.length > 0) groups.push({ id: "other", events: other });
-  return groups.filter((g) => g.events.length > 0);
+  })).filter((g) => g.events.length > 0);
 }
 
 /** « W », « ⌥ Option », « A / B » pour deux touches possibles, « A + B » pour une combinaison */
