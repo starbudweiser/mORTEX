@@ -3871,5 +3871,8 @@
   "Added": "Añadida",
   "Log in to add": "Inicia sesión para añadirla",
   "Log in to add collections": "Inicia sesión en Nexus Mods para añadir colecciones",
-  "Add collection": "Añadir colección"
+  "Add collection": "Añadir colección",
+  "Also delete the profile \"{{name}}\" created for this collection (mORTEX switches back to \"{{fallback}}\")": "Eliminar también el perfil «{{name}}» creado para esta colección (mORTEX vuelve a «{{fallback}}»)",
+  "Profile \"{{name}}\" removed, back to \"{{fallback}}\"": "Perfil «{{name}}» eliminado, de vuelta a «{{fallback}}»",
+  "Failed to restore the profile": "No se pudo restaurar el perfil"
 }

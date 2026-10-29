@@ -14,5 +14,7 @@ export interface IProfile {
   modState: { [id: string]: IProfileMod };
   lastActivated: number;
   pendingRemove?: boolean;
+  /** mORTEX : la collection (id du mod) pour laquelle ce profil a été créé à l'installation */
+  createdForCollection?: string;
   features?: { [featureId: string]: any };
 }

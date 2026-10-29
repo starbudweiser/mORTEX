@@ -550,5 +550,8 @@
   "Added": "Added",
   "Log in to add": "Log in to add",
   "Log in to add collections": "Log in to add collections",
-  "Add collection": "Add collection"
+  "Add collection": "Add collection",
+  "Also delete the profile \"{{name}}\" created for this collection (mORTEX switches back to \"{{fallback}}\")": "Also delete the profile \"{{name}}\" created for this collection (mORTEX switches back to \"{{fallback}}\")",
+  "Profile \"{{name}}\" removed, back to \"{{fallback}}\"": "Profile \"{{name}}\" removed, back to \"{{fallback}}\"",
+  "Failed to restore the profile": "Failed to restore the profile"
 }

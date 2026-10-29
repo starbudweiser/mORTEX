@@ -376,6 +376,8 @@ class InstallDialog extends ComponentEx<IProps, IInstallDialogState> {
           name,
           modState: {},
           lastActivated: 0,
+          // mORTEX : pour proposer de supprimer ce profil quand la collection sera retirée
+          createdForCollection: driver.collection.id,
         };
         onAddProfile(newProfile);
         onShowProfilesPage(useModernLayout);

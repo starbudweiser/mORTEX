@@ -77,6 +77,11 @@ import type { ICollection } from "./types/ICollection";
 import type { IExtendedInterfaceProps } from "./types/IExtendedInterfaceProps";
 import { applyCollectionRules } from "./util/apply_collection_rules/applyCollectionRules";
 import { cloneCollection } from "./util/cloneCollection";
+import {
+  collectionProfile,
+  fallbackProfile,
+  removeCollectionProfile,
+} from "./util/collectionProfile";
 import { collectionsByMod } from "./util/collectionsByMod";
 import { createCollection } from "./util/createCollection";
 import { genDefaultsAction } from "./util/defaults";
@@ -425,6 +430,10 @@ async function removeCollection(
     findModByRef(rule.reference, mods) === undefined;
 
   const incomplete = (collection.rules ?? []).find(filter);
+  // mORTEX : le profil créé pour cette collection, que la boîte propose de supprimer aussi
+  const ownProfile = collectionProfile(state, gameId, collection);
+  const otherProfile =
+    ownProfile !== undefined ? fallbackProfile(state, gameId, ownProfile.id) : undefined;
 
   const message: string =
     cancel && incomplete
@@ -450,6 +459,18 @@ async function removeCollection(
       checkboxes: [
         { id: "delete_mods", text: t("Remove mods"), value: false },
         { id: "delete_archives", text: t("Delete mod archives"), value: false },
+        ...(ownProfile !== undefined && otherProfile !== undefined
+          ? [
+              {
+                id: "delete_profile",
+                text: t(
+                  'Also delete the profile "{{name}}" created for this collection (mORTEX switches back to "{{fallback}}")',
+                  { replace: { name: ownProfile.name, fallback: otherProfile.name } },
+                ),
+                value: true,
+              },
+            ]
+          : []),
       ],
     },
     [{ label: "Close" }, { label: confirmButtonText }],
@@ -462,6 +483,7 @@ async function removeCollection(
 
   const deleteArchives = result.input.delete_archives;
   const deleteMods = result.input.delete_mods;
+  const deleteProfile = result.input.delete_profile === true;
 
   modsBeingRemoved.add(makeModKey(gameId, modId));
 
@@ -552,6 +574,10 @@ async function removeCollection(
           reason: "collection_uninstall",
         }),
       );
+    }
+
+    if (deleteProfile && ownProfile !== undefined && otherProfile !== undefined) {
+      await removeCollectionProfile(api, ownProfile, otherProfile);
     }
   } catch (err) {
     if (!(err instanceof UserCanceled)) {
