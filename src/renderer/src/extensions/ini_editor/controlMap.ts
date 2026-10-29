@@ -207,3 +207,31 @@ export function changedEvents(before: IControlMap, after: IControlMap): IControl
     }
   return result;
 }
+
+/**
+ * Table effective quand un `ControlMap_Custom.txt` existe : la table de base avec les touches du fichier
+ * personnel par-dessus. Marche pour une copie complète (la nôtre) comme pour un fichier partiel (celui que
+ * le jeu écrit) : les événements sont appariés par contexte (titre, sinon numéro) puis par nom.
+ */
+export function mergeCustom(base: IControlMap, custom: IControlMap): IControlMap {
+  let result = base;
+  for (const context of custom.contexts) {
+    const target =
+      base.contexts.find((c) => c.title.toLowerCase() === context.title.toLowerCase()) ??
+      base.contexts[context.index];
+    if (target === undefined) continue;
+    for (const event of context.events) {
+      const original = findEvent(base, target.index, event.name);
+      if (original === undefined || original.keyboard.trim() === event.keyboard.trim()) continue;
+      const slot = parseKeySlot(event.keyboard);
+      if (slot.kind === "alias") continue;
+      result = withKeyboard(
+        result,
+        target.index,
+        event.name,
+        slot.kind === "keys" ? slot.combos : [],
+      );
+    }
+  }
+  return result;
+}
