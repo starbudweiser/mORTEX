@@ -4,16 +4,38 @@
  * Rangé dans settings.mortex.menuOrder[groupe] = ids dans l'ordre voulu.
  */
 import safeCreateAction from "../../actions/safeCreateAction";
-import { setSafe } from "../../util/storeHelper";
+import { deleteOrNop, setSafe } from "../../util/storeHelper";
 
 export const setMenuOrder = safeCreateAction(
   "MORTEX_SET_MENU_ORDER",
   (section: string, ids: string[]) => ({ section, ids }),
 );
 
+/** couleur d'une entrée, choisie par Option + clic droit ; `undefined` rend sa couleur d'origine */
+export const setMenuColor = safeCreateAction(
+  "MORTEX_SET_MENU_COLOR",
+  (id: string, color: string | undefined) => ({ id, color }),
+);
+
+/** les couleurs proposées, celles de Socle et du logo */
+export const MENU_COLORS = [
+  "#f59e0b",
+  "#38bdf8",
+  "#34d399",
+  "#a78bfa",
+  "#f472b6",
+  "#f87171",
+  "#facc15",
+  "#e5e7eb",
+];
+
 export const menuOrderReducers = {
   [setMenuOrder as any]: (state, payload: { section: string; ids: string[] }) =>
     setSafe(state, ["menuOrder", payload.section], payload.ids),
+  [setMenuColor as any]: (state, payload: { id: string; color: string | undefined }) =>
+    payload.color === undefined
+      ? deleteOrNop(state, ["menuColors", payload.id])
+      : setSafe(state, ["menuColors", payload.id], payload.color),
 };
 
 /** les ids rangés selon `order` ; ceux qu'il ne connaît pas gardent leur place relative, à la fin */

@@ -20,6 +20,8 @@ interface MenuButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   lifted?: boolean;
   /** mORTEX : entrée du groupe qui glisse pour faire place à celle qu'on déplace */
   sliding?: boolean;
+  /** mORTEX : couleur choisie par l'utilisateur (Option + clic droit), à la place de l'accent */
+  tint?: string;
 }
 
 export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
@@ -31,6 +33,8 @@ export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
   accent,
   lifted,
   sliding,
+  tint,
+  style,
   ...props
 }) => {
   const { menuIsCollapsed } = useWindowContext();
@@ -43,15 +47,18 @@ export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
           "hover:bg-surface-mid hover:text-neutral-moderate focus-visible:z-1",
           isActive
             ? "mortex-menu-active bg-surface-low text-neutral-moderate"
-            : accent === "mac"
-              ? "mortex-menu-accent"
-              : accent === "nexus"
-                ? "mortex-menu-accent-nexus"
-                : "text-neutral-subdued",
+            : tint !== undefined
+              ? ""
+              : accent === "mac"
+                ? "mortex-menu-accent"
+                : accent === "nexus"
+                  ? "mortex-menu-accent-nexus"
+                  : "text-neutral-subdued",
           lifted ? "mortex-menu-lifted" : "",
           sliding ? "mortex-menu-sliding" : "",
         ])}
         draggable={false}
+        style={tint === undefined ? style : { ...style, color: tint }}
         {...props}
       >
         <Icon {...getIconProps(icon)} className="shrink-0" size="sm" />

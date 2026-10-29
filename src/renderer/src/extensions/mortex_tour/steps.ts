@@ -101,6 +101,6 @@ export const STEPS: ITourStep[] = [
   {
     id: "end",
     title: "Ready to play!",
-    text: "Tip: drag the sidebar entries to reorder them. You can replay this tour from the Help menu. Enjoy your adventure in Skyrim!",
+    text: "Tip: drag the sidebar entries to reorder them, Option + right-click to change their colour. You can replay this tour from the Help menu. Enjoy your adventure in Skyrim!",
   },
 ];

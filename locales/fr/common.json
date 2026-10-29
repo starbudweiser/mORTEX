@@ -435,7 +435,7 @@
   "mORTEX outside its window": "mORTEX hors de sa fenêtre",
   "The menu bar icon shows progress and launches the game. Shortcuts and Siri can deploy or take a snapshot. In the Finder, the space bar previews DDS textures and plugins.": "L'icône de la barre des menus montre la progression et lance le jeu. Raccourcis et Siri savent déployer ou prendre un instantané. Dans le Finder, la barre d'espace affiche l'aperçu des textures DDS et des plugins.",
   "Ready to play!": "Prêt à jouer !",
-  "Tip: drag the sidebar entries to reorder them. You can replay this tour from the Help menu. Enjoy your adventure in Skyrim!": "Astuce : faites glisser les entrées de la barre latérale pour les réordonner. Vous pouvez relancer cette visite depuis le menu Aide. Bonne aventure dans Skyrim !",
+  "Tip: drag the sidebar entries to reorder them, Option + right-click to change their colour. You can replay this tour from the Help menu. Enjoy your adventure in Skyrim!": "Astuce : faites glisser les entrées de la barre latérale pour les réordonner, Option + clic droit pour changer leur couleur. Vous pouvez relancer cette visite depuis le menu Aide. Bonne aventure dans Skyrim !",
   "Next": "Suivant",
   "Previous": "Précédent",
   "Skip the tour": "Passer la visite",
@@ -3889,5 +3889,7 @@
   "{{count}} previous snapshots deleted, the space of the removed mods is freed": "{{count}} instantanés précédents supprimés : l'espace des mods retirés est libéré",
   "Failed to delete the previous snapshots": "Impossible de supprimer les instantanés précédents",
   "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)_plural": "Supprimer aussi les {{count}} instantanés précédents de la Time Machine : ils gardent les fichiers des mods retirés, et l'espace disque ne serait pas libéré (un nouvel instantané de l'état actuel est pris)",
-  "Previous snapshot deleted, the space of the removed mods is freed": "Instantané précédent supprimé : l'espace des mods retirés est libéré"
+  "Previous snapshot deleted, the space of the removed mods is freed": "Instantané précédent supprimé : l'espace des mods retirés est libéré",
+  "Entry colour": "Couleur de l'entrée",
+  "Original colour": "Couleur d'origine"
 }

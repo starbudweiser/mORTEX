@@ -476,7 +476,7 @@
   "mORTEX outside its window": "mORTEX outside its window",
   "The menu bar icon shows progress and launches the game. Shortcuts and Siri can deploy or take a snapshot. In the Finder, the space bar previews DDS textures and plugins.": "The menu bar icon shows progress and launches the game. Shortcuts and Siri can deploy or take a snapshot. In the Finder, the space bar previews DDS textures and plugins.",
   "Ready to play!": "Ready to play!",
-  "Tip: drag the sidebar entries to reorder them. You can replay this tour from the Help menu. Enjoy your adventure in Skyrim!": "Tip: drag the sidebar entries to reorder them. You can replay this tour from the Help menu. Enjoy your adventure in Skyrim!",
+  "Tip: drag the sidebar entries to reorder them, Option + right-click to change their colour. You can replay this tour from the Help menu. Enjoy your adventure in Skyrim!": "Tip: drag the sidebar entries to reorder them, Option + right-click to change their colour. You can replay this tour from the Help menu. Enjoy your adventure in Skyrim!",
   "Next": "Next",
   "Previous": "Previous",
   "Skip the tour": "Skip the tour",
@@ -556,5 +556,7 @@
   "Profile \"{{name}}\" removed, back to \"{{fallback}}\"": "Profile \"{{name}}\" removed, back to \"{{fallback}}\"",
   "Failed to restore the profile": "Failed to restore the profile",
   "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)_plural": "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)",
-  "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)": "Also delete the previous Time Machine snapshot: it keeps the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)"
+  "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)": "Also delete the previous Time Machine snapshot: it keeps the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)",
+  "Entry colour": "Entry colour",
+  "Original colour": "Original colour"
 }

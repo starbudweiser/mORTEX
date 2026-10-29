@@ -1,10 +1,24 @@
-import React, { useState, type FC, useRef, useEffect, useMemo, type ReactElement } from "react";
+import React, {
+  useState,
+  useCallback,
+  type FC,
+  useRef,
+  useEffect,
+  useMemo,
+  type ReactElement,
+} from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
 import { setOpenMainPage } from "@/actions";
 import { usePagesContext, useWindowContext } from "@/contexts";
-import { setMenuOrder, sortByOrder } from "@/extensions/mortex_dashlet/menuOrder";
+import {
+  MENU_COLORS,
+  setMenuColor,
+  setMenuOrder,
+  sortByOrder,
+} from "@/extensions/mortex_dashlet/menuOrder";
 import type { IMainPage } from "@/types/IMainPage";
 import type { IState } from "@/types/IState";
 import { TooltipDelayGroup } from "@/ui/components/tooltip/TooltipDelayGroup";
@@ -38,6 +52,64 @@ const NEXUS_PAGE_IDS = new Set(["Browse Nexus Mods"]);
 const DOWNLOADS_ID = "__downloads";
 
 const NO_ORDER: Record<string, string[]> = {};
+const NO_COLORS: Record<string, string> = {};
+
+/** mORTEX : palette ouverte par Option + clic droit sur une entrée de la barre latérale */
+const ColorPalette: FC<{
+  x: number;
+  y: number;
+  current?: string;
+  onPick: (color: string | undefined) => void;
+  onClose: () => void;
+}> = ({ x, y, current, onPick, onClose }) => {
+  const { t } = useTranslation();
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const onDown = (event: PointerEvent) => {
+      if (!ref.current?.contains(event.target as Node)) onClose();
+    };
+    const onKey = (event: KeyboardEvent) => event.key === "Escape" && onClose();
+    window.addEventListener("pointerdown", onDown, true);
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("blur", onClose);
+    return () => {
+      window.removeEventListener("pointerdown", onDown, true);
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("blur", onClose);
+    };
+  }, [onClose]);
+  return createPortal(
+    <div
+      className="mortex-menu-palette"
+      ref={ref}
+      role="dialog"
+      aria-label={t("Entry colour")}
+      style={{ left: x, top: Math.min(y, window.innerHeight - 96) }}
+    >
+      <div className="mortex-menu-palette-swatches">
+        {MENU_COLORS.map((color) => (
+          <button
+            aria-label={color}
+            className={color === current ? "mortex-menu-swatch is-current" : "mortex-menu-swatch"}
+            key={color}
+            style={{ backgroundColor: color }}
+            type="button"
+            onClick={() => onPick(color)}
+          />
+        ))}
+      </div>
+      <button
+        className="mortex-menu-palette-reset"
+        disabled={current === undefined}
+        type="button"
+        onClick={() => onPick(undefined)}
+      >
+        {t("Original colour")}
+      </button>
+    </div>,
+    document.body,
+  );
+};
 
 /** Mods installés et archives téléchargées du jeu actif, pour les compteurs de la barre latérale */
 const useMenuCounts = () => {
@@ -72,6 +144,14 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
   const menuOrder = useSelector(
     (state: IState) => (state.settings as any).mortex?.menuOrder ?? NO_ORDER,
   );
+  const menuColors: Record<string, string> = useSelector(
+    (state: IState) => (state.settings as any).mortex?.menuColors ?? NO_COLORS,
+  );
+  /** palette de couleur ouverte sur une entrée */
+  const [palette, setPalette] = useState<{ id: string; x: number; y: number } | undefined>(
+    undefined,
+  );
+  const closePalette = useCallback(() => setPalette(undefined), []);
   /** entrée saisie : son groupe, sa place de départ, la place visée et le déplacement du curseur */
   const [drag, setDrag] = useState<
     | { section: string; id: string; from: number; target: number; delta: number; tops: number[] }
@@ -191,6 +271,15 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
       lifted: inGroup && drag.id === id,
       sliding: inGroup && drag.id !== id,
       style: inGroup ? { translate: `0 ${shiftOf(index)}px` } : undefined,
+      tint: menuColors[id],
+      // Option + clic droit : choisir la couleur de l'entrée
+      onContextMenu: (event: React.MouseEvent) => {
+        if (!event.altKey) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const rect = event.currentTarget.getBoundingClientRect();
+        setPalette({ id, x: rect.right + 6, y: rect.top });
+      },
       onPointerDown: (event: React.PointerEvent) => {
         if (event.button !== 0) return;
         const group = event.currentTarget.closest(".mortex-menu-section") ?? document;
@@ -306,6 +395,19 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
       </div>
 
       <GameActions />
+
+      {palette !== undefined && (
+        <ColorPalette
+          current={menuColors[palette.id]}
+          x={palette.x}
+          y={palette.y}
+          onClose={closePalette}
+          onPick={(color) => {
+            dispatch(setMenuColor(palette.id, color));
+            setPalette(undefined);
+          }}
+        />
+      )}
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-1 h-6 bg-linear-to-t from-surface-base to-transparent" />
     </TooltipDelayGroup>

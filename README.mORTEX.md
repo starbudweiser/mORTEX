@@ -15,6 +15,10 @@ mORTEX est un portage macOS (Apple Silicon) non officiel de [Vortex](https://git
 
 Saisissez une entrée de la barre latérale et faites-la monter ou descendre dans son groupe (Jeu, Outils, Application) : elle décolle (contour orange, ombre portée), suit le curseur, et les autres entrées glissent pour lui faire place. L'ordre est retenu d'un lancement à l'autre.
 
+Option + clic droit sur une entrée ouvre une petite palette pour lui donner une couleur ; « Couleur d'origine » la rend comme avant.
+
+<img src="docs/images/mortex-barre-laterale-couleur.png" alt="Palette de couleur d'une entrée de la barre latérale" width="360">
+
 <img src="docs/images/mortex-barre-laterale-deplacer.png" alt="Barre latérale pendant le déplacement d'une entrée" width="215">
 
 ## Installer
@@ -50,6 +54,10 @@ mORTEX is an unofficial macOS (Apple Silicon) port of [Vortex](https://github.co
 ### Sidebar in your order
 
 Grab a sidebar entry and move it up or down within its group (Game, Tools, Application); it lifts off (orange outline, drop shadow), follows the pointer, and the other entries slide aside to make room. The order is kept between launches.
+
+Option + right-click an entry to open a small palette and give it a colour; "Original colour" puts it back.
+
+<img src="docs/images/mortex-barre-laterale-couleur.png" alt="Colour palette of a sidebar entry" width="360">
 
 <img src="docs/images/mortex-barre-laterale-deplacer.png" alt="Sidebar while an entry is being moved" width="215">
 
