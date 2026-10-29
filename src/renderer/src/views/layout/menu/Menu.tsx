@@ -39,24 +39,6 @@ const DOWNLOADS_ID = "__downloads";
 
 const NO_ORDER: Record<string, string[]> = {};
 
-/** mORTEX : la touche Option est-elle enfoncée ? (fenêtre active seulement) */
-const useOptionKey = () => {
-  const [held, setHeld] = useState(false);
-  useEffect(() => {
-    const track = (event: KeyboardEvent) => setHeld(event.altKey);
-    const release = () => setHeld(false);
-    window.addEventListener("keydown", track);
-    window.addEventListener("keyup", track);
-    window.addEventListener("blur", release);
-    return () => {
-      window.removeEventListener("keydown", track);
-      window.removeEventListener("keyup", track);
-      window.removeEventListener("blur", release);
-    };
-  }, []);
-  return held;
-};
-
 /** Mods installés et archives téléchargées du jeu actif, pour les compteurs de la barre latérale */
 const useMenuCounts = () => {
   const gameId = useSelector(activeGameIdSelector);
@@ -87,7 +69,6 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
   const toolCount = visibleTools.length;
   const [canScrollUp, setCanScrollUp] = useState(false);
 
-  const optionHeld = useOptionKey();
   const menuOrder = useSelector(
     (state: IState) => (state.settings as any).mortex?.menuOrder ?? NO_ORDER,
   );
@@ -106,15 +87,12 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
     return () => element.removeEventListener("scroll", onScroll);
   }, [scrollRef]);
 
-  /** propriétés de glisser-déposer d'une entrée, quand Option est enfoncée */
+  /** propriétés de glisser-déposer d'une entrée : on la saisit et on la dépose dans son groupe */
   const reorderProps = (section: string, ids: string[], id: string) => ({
-    reorderable: optionHeld || dragged !== undefined,
+    draggable: true,
+    reorderable: dragged !== undefined,
     dropHint: dragged?.section === section && dropTarget === id && dragged.id !== id,
     onDragStart: (event: React.DragEvent) => {
-      if (!event.altKey && !optionHeld) {
-        event.preventDefault();
-        return;
-      }
       event.dataTransfer.effectAllowed = "move";
       setDragged({ section, id });
     },

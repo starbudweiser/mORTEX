@@ -11,6 +11,12 @@ mORTEX est un portage macOS (Apple Silicon) non officiel de [Vortex](https://git
 - Déploiement par liens physiques (le dossier de staging doit être sur le même volume que le jeu) et retrait propre.
 - Tri automatique des plugins avec LOOT (libloot 0.29).
 
+## Barre latérale à votre ordre
+
+Saisissez une entrée de la barre latérale et déposez-la plus haut ou plus bas dans son groupe (Jeu, Outils, Application) : un trait orange montre où elle ira. L'ordre est retenu d'un lancement à l'autre.
+
+<img src="docs/images/mortex-barre-laterale-deplacer.png" alt="Barre latérale pendant le déplacement d'une entrée" width="215">
+
 ## Installer
 
 ```bash
@@ -40,6 +46,12 @@ mORTEX is an unofficial macOS (Apple Silicon) port of [Vortex](https://github.co
 - `nxm://` links ("Mod Manager Download"), mod installation (`.zip`, `.7z`, `.rar`) and XML FOMODs.
 - Hardlink deployment (the staging folder must be on the same volume as the game) and clean purge.
 - Automatic plugin sorting with LOOT (libloot 0.29).
+
+### Sidebar in your order
+
+Grab a sidebar entry and drop it higher or lower within its group (Game, Tools, Application); an orange line shows where it will land. The order is kept between launches.
+
+<img src="docs/images/mortex-barre-laterale-deplacer.png" alt="Sidebar while an entry is being moved" width="215">
 
 ### Build
 
