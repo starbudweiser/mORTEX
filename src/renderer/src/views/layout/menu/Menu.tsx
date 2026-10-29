@@ -398,9 +398,6 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
               ),
           )}
         </div>
-
-        {/* hack to hide bottom of scrollbar :( */}
-        <div className="pointer-events-none absolute right-0 bottom-0 size-3 bg-surface-base" />
       </div>
 
       <GameActions onHeight={setActionsHeight} />
@@ -417,8 +414,6 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
           }}
         />
       )}
-
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-1 h-6 bg-linear-to-t from-surface-base to-transparent" />
     </TooltipDelayGroup>
   );
 };
