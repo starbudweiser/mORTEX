@@ -538,6 +538,13 @@ function checkRulesFulfilled(api: types.IExtensionApi): Bluebird<void> {
       });
   })
     .then((unfulfilled: Array<{ modId: string; rules: types.IModRule[] }>) => {
+      // mORTEX : la liste complète, pour que ceux qui ont signalé un mod (les collections)
+      // retirent leur avis quand ses règles sont de nouveau satisfaites
+      api.events.emit(
+        "dependency-rules-checked",
+        activeProfile.id,
+        unfulfilled.filter((iter) => iter !== null).map((iter) => iter.modId),
+      );
       // allow anyone else handle this to give more specific notifications, e.g.
       // based on mod type
       return Bluebird.map(

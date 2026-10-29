@@ -164,6 +164,18 @@ function makeDidRemoveMods() {
 function makeOnUnfulfilledRules(api: IExtensionApi) {
   const reported = new Set<string>();
 
+  // mORTEX : une collection de nouveau complète (mod réinstallé…) perd son avis, et pourra être
+  // signalée de nouveau plus tard
+  api.events.on("dependency-rules-checked", (_profileId: string, unfulfilled: string[]) => {
+    const pending = new Set(unfulfilled);
+    for (const collectionId of [...reported]) {
+      if (!pending.has(collectionId)) {
+        reported.delete(collectionId);
+        api.dismissNotification(getUnfulfilledNotificationId(collectionId));
+      }
+    }
+  });
+
   return (profileId: string, modId: string, rules: IModRule[]): Bluebird<boolean> => {
     const state: IState = api.store.getState();
 
