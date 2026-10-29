@@ -52,11 +52,6 @@ describe("SettingRow", () => {
     expect(onChange).toHaveBeenCalledWith("0");
   });
 
-  it("shows where the value comes from", () => {
-    row("taa");
-    expect(screen.getByText(/ui\.usedFile/)).toHaveTextContent("SkyrimPrefs.ini");
-  });
-
   it("offers the catalog's choices with their translated names", async () => {
     const { onChange } = row("shadowResolution");
     const select = screen.getByRole("combobox", { name: "label.shadowResolution" });
@@ -67,14 +62,14 @@ describe("SettingRow", () => {
 
   it("only reports valid numbers and explains the bounds otherwise", async () => {
     const { onChange } = row("gamma");
-    const input = screen.getByRole("spinbutton", { name: "label.gamma" });
-    expect(input).toHaveValue(1);
+    const input = screen.getByRole("textbox", { name: "label.gamma" });
+    expect(input).toHaveValue("1");
     await userEvent.clear(input);
     await userEvent.type(input, "9");
     expect(onChange).not.toHaveBeenCalledWith("9");
     expect(screen.getByText(/ui\.invalidRange/)).toBeInTheDocument();
     await userEvent.clear(input);
-    await userEvent.type(input, "1.5");
+    await userEvent.type(input, "1,5");
     expect(onChange).toHaveBeenLastCalledWith("1.5");
   });
 
@@ -88,6 +83,48 @@ describe("SettingRow", () => {
   it("greys out and locks a setting whose dependency is off", () => {
     row("taaSharpen", { enabled: false });
     expect(screen.getByTestId("settings-row-taaSharpen").className).toContain("opacity-50");
-    expect(screen.getByRole("spinbutton", { name: "label.taaSharpen" })).toBeDisabled();
+    expect(screen.getByRole("textbox", { name: "label.taaSharpen" })).toBeDisabled();
+  });
+});
+
+describe("SettingRow, valeur existante hors bornes", () => {
+  it("does not flag a value already in the INI, only a value the user types", async () => {
+    const out: IIniFile[] = [
+      { role: "prefs", path: "/x/SkyrimPrefs.ini", text: "[Display]\nfGamma=9.0000\n" },
+    ];
+    render(
+      <SettingRow
+        ctx={{ effective: readEffective(out), defaults: new Map(), pending: {} }}
+        enabled={true}
+        setting={setting("gamma")}
+        tt={tt}
+        onChange={() => undefined}
+        onReset={() => undefined}
+      />,
+    );
+    expect(screen.queryByText(/ui\.invalidRange/)).toBeNull();
+    const input = screen.getByRole("textbox", { name: "label.gamma" });
+    await userEvent.type(input, "5");
+    expect(screen.getByText(/ui\.invalidRange/)).toBeInTheDocument();
+  });
+});
+
+describe("SettingRow, booléen sans valeur", () => {
+  it("shows a switch with no value in the INI as undecided, and turns it on when clicked", async () => {
+    const onChange = vi.fn();
+    render(
+      <SettingRow
+        ctx={{ effective: new Map(), defaults: new Map(), pending: {} }}
+        enabled={true}
+        setting={setting("audioEnabled")}
+        tt={tt}
+        onChange={onChange}
+        onReset={() => undefined}
+      />,
+    );
+    const toggle = screen.getByRole("checkbox", { name: "label.audioEnabled" });
+    expect(toggle).toHaveAttribute("aria-checked", "mixed");
+    await userEvent.click(toggle);
+    expect(onChange).toHaveBeenCalledWith("1");
   });
 });

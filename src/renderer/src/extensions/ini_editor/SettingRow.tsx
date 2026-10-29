@@ -17,9 +17,11 @@ import type { ICatalogSetting } from "./catalog/types";
 import {
   type IValueContext,
   baseValue,
+  formatNumber,
   currentValue,
   isTruthy,
   isValid,
+  normalizeNumber,
   sameValue,
   targetRole,
   writtenLine,
@@ -53,7 +55,8 @@ function Control({
   tt: SettingsTranslate;
   onChange: (value: string) => void;
 }) {
-  const [draft, setDraft] = useState(value ?? "");
+  const numeric = setting.type === "int" || setting.type === "float";
+  const [draft, setDraft] = useState(numeric ? formatNumber(value) : (value ?? ""));
 
   switch (setting.type) {
     case "bool":
@@ -61,6 +64,8 @@ function Control({
         <Switch
           aria-label={label}
           checked={isTruthy(value)}
+          // aucune valeur dans l'INI : le jeu garde la sienne, ni activée ni désactivée
+          indeterminate={value === undefined}
           disabled={!enabled}
           onChange={(checked) => onChange(checked ? "1" : "0")}
         />
@@ -69,48 +74,51 @@ function Control({
       const options = setting.options ?? [];
       const known = options.some((o) => sameValue(setting, o.value, value));
       return (
-        <Select
-          aria-label={label}
-          disabled={!enabled}
-          value={options.find((o) => sameValue(setting, o.value, value))?.value ?? value ?? ""}
-          onChange={(event) => onChange(event.target.value)}
-        >
-          {value === undefined && <option value="" />}
-          {!known && value !== undefined && <option value={value}>{value}</option>}
-          {options.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label ?? tt(`options.${setting.id}.${o.value}`)}
-            </option>
-          ))}
-        </Select>
+        <div className="w-full">
+          <Select
+            aria-label={label}
+            className="h-7 py-0 pr-9 pl-3 text-body-sm"
+            disabled={!enabled}
+            value={options.find((o) => sameValue(setting, o.value, value))?.value ?? value ?? ""}
+            onChange={(event) => onChange(event.target.value)}
+          >
+            {value === undefined && <option value="">—</option>}
+            {!known && value !== undefined && <option value={value}>{value}</option>}
+            {options.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label ?? tt(`options.${setting.id}.${o.value}`)}
+              </option>
+            ))}
+          </Select>
+        </div>
       );
     }
     case "int":
     case "float": {
-      const invalid = draft.trim() !== "" && !isValid(setting, draft);
+      const typed = normalizeNumber(draft);
+      // une valeur déjà dans l'INI, même hors des bornes proposées, n'est pas une erreur de saisie
+      const invalid =
+        draft.trim() !== "" && !sameValue(setting, typed, value) && !isValid(setting, typed);
       return (
-        <div className="flex flex-col items-end gap-y-1">
+        <div className="flex flex-col items-start gap-y-1">
           <div className="flex items-center gap-x-2">
             <Input
               aria-label={label}
-              className="w-32 text-right"
+              className="w-28"
               disabled={!enabled}
               invalid={invalid}
-              max={setting.max}
-              min={setting.min}
-              step={setting.step}
-              type="number"
+              inputMode={setting.type === "int" ? "numeric" : "decimal"}
+              placeholder="—"
               value={draft}
               onChange={(event) => {
                 setDraft(event.target.value);
-                if (isValid(setting, event.target.value)) onChange(event.target.value);
+                const next = normalizeNumber(event.target.value);
+                if (isValid(setting, next)) onChange(next);
               }}
             />
-            {setting.unit !== undefined && (
-              <Typography appearance="subdued" typographyType="body-sm">
-                {setting.unit}
-              </Typography>
-            )}
+            <Typography appearance="subdued" className="w-8" typographyType="body-xs">
+              {setting.unit ?? ""}
+            </Typography>
           </div>
           {invalid && (
             <Typography brand="danger" typographyType="body-xs">
@@ -124,7 +132,7 @@ function Control({
       return (
         <Input
           aria-label={label}
-          className="w-64"
+          className="w-full"
           disabled={!enabled}
           value={draft}
           onChange={(event) => {
@@ -177,29 +185,27 @@ export default function SettingRow({
 
   return (
     <div
-      className={`flex items-center gap-x-4 rounded-md px-3 py-2 ${modified ? "bg-success-weak" : ""} ${enabled ? "" : "opacity-50"}`}
+      className={`flex min-h-9 items-center gap-x-3 rounded-sm px-2 py-1 ${modified ? "bg-success-weak/40" : "hover:bg-surface-high"} ${enabled ? "" : "opacity-50"}`}
       data-testid={`settings-row-${setting.id}`}
     >
       <Tooltip customContent={tip} placement="right">
-        <div className="flex min-w-0 flex-1 flex-col">
-          <Typography className="font-semibold" typographyType="body-md">
+        <div className="min-w-0 flex-1">
+          <Typography className="leading-tight" typographyType="body-sm">
             {label}
-          </Typography>
-          <Typography appearance="subdued" typographyType="body-xs">
-            {modified ? `${tt("ui.modified")} · ` : ""}
-            {origin}
           </Typography>
         </div>
       </Tooltip>
-      <Control
-        enabled={enabled}
-        label={label}
-        setting={setting}
-        tt={tt}
-        value={value}
-        onChange={onChange}
-      />
-      <div className="w-8">
+      <div className="flex w-36 shrink-0 items-center justify-start">
+        <Control
+          enabled={enabled}
+          label={label}
+          setting={setting}
+          tt={tt}
+          value={value}
+          onChange={onChange}
+        />
+      </div>
+      <div className="w-6 shrink-0">
         {modified && (
           <Button
             appearance="moderate"

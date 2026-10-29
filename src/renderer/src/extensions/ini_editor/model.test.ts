@@ -5,9 +5,11 @@ import { SKYRIMSE_CATALOG } from "./catalog/skyrimse";
 import {
   type IValueContext,
   baseValue,
+  formatNumber,
   currentValue,
   isEnabled,
   isValid,
+  normalizeNumber,
   pendingChanges,
   pendingFromPreset,
   targetRole,
@@ -121,5 +123,16 @@ describe("modèle de l'Éditeur de réglages", () => {
       ctx,
     );
     expect(pending).toEqual({ shadowResolution: "4096", objectFade: "30" });
+  });
+});
+
+describe("nombres affichés", () => {
+  it("drops useless zeros and accepts a comma", () => {
+    expect(formatNumber("10000.0000")).toBe("10000");
+    expect(formatNumber("0.0125")).toBe("0.0125");
+    expect(formatNumber("9999999.0000")).toBe("9999999");
+    expect(formatNumber("STRINGS")).toBe("STRINGS");
+    expect(formatNumber(undefined)).toBe("");
+    expect(normalizeNumber(" 1,5 ")).toBe("1.5");
   });
 });

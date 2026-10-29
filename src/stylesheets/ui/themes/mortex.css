@@ -1400,6 +1400,7 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
 /* mORTEX (macOS) : bouton à menu façon AppKit (controls/macos/MacPullDownButton) */
 .mac-pulldown {
     display: inline-flex;
+    max-width: 100%;
     height: 22px;
     border-radius: 6px;
     background: rgb(255 255 255 / 16%);
@@ -1430,6 +1431,10 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     gap: 5px;
     padding: 0 9px 0 7px;
     border-radius: 6px 0 0 6px;
+    /* colonne étroite : le libellé reste sur une ligne (rogné), il ne déborde plus sur les lignes voisines */
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
 }
 .mac-pulldown-main:only-child {
     border-radius: 6px;

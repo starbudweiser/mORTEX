@@ -132,3 +132,13 @@ export function pendingFromPreset(
   }
   return pending;
 }
+
+/** nombre saisi avec une virgule ou un point : toujours un point dans l'INI */
+export const normalizeNumber = (raw: string) => raw.trim().replace(",", ".");
+
+/** nombre sans zéros inutiles (10000.0000 → 10000) pour l'affichage ; le reste tel quel */
+export function formatNumber(value: string | undefined): string {
+  if (value === undefined) return "";
+  const n = Number(value);
+  return value.trim() !== "" && Number.isFinite(n) ? String(n) : value;
+}

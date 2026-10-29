@@ -3,6 +3,7 @@ import * as path from "path";
 
 import { describe, expect, it } from "vitest";
 
+import { TAB_GROUPS } from "./catalog/groups";
 import { SKYRIMSE_CATALOG } from "./catalog/skyrimse";
 
 const LANGS = ["fr", "en", "es", "it"] as const;
@@ -32,6 +33,7 @@ const texts = Object.fromEntries(LANGS.map((lang) => [lang, load(lang)])) as Rec
 function expectedKeys(): string[] {
   const keys = [
     ...TABS.map((tab) => `tab.${tab}`),
+    ...Object.values(TAB_GROUPS).flatMap((groups) => groups.map((g) => `group.${g.id}`)),
     // textes de la page elle-même : mêmes clés que le français
     ...Object.keys(texts.fr).filter((key) => key.startsWith("ui.")),
   ];

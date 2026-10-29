@@ -37,6 +37,7 @@ import {
   type IBethesdaValues,
   readBethesdaValues,
 } from "./bethesdaPresets";
+import { TAB_GROUPS } from "./catalog/groups";
 import { SKYRIMSE_CATALOG, settingsOfTab } from "./catalog/skyrimse";
 import type { TabId } from "./catalog/types";
 import { type IValueContext, type Pending, isEnabled, pendingFromPreset, withValue } from "./model";
@@ -216,26 +217,46 @@ export default function SettingsEditorPage({ api }: IProps) {
                   </TabBar>
                   {TABS.map((id) => (
                     <TabPanel id={id} key={id}>
-                      <div className="mt-3 flex flex-col gap-y-1">
-                        {settingsOfTab(id).map((setting) => {
-                          const dep = SKYRIMSE_CATALOG.find((s) => s.id === setting.dependsOn?.on);
-                          return (
-                            <SettingRow
-                              ctx={ctx}
-                              dependsOnLabel={dep !== undefined ? tt(`label.${dep.id}`) : undefined}
-                              enabled={isEnabled(ctx, setting, SKYRIMSE_CATALOG)}
-                              key={`${setting.id}-${revision}`}
-                              setting={setting}
-                              tt={tt}
-                              onChange={(value) => setPending(withValue(ctx, setting, value))}
-                              onReset={() => {
-                                const { [setting.id]: _unused, ...rest } = pending;
-                                setPending(rest);
-                                setRevision((r) => r + 1);
-                              }}
-                            />
-                          );
-                        })}
+                      <div className="mt-4 columns-[26rem] gap-4">
+                        {TAB_GROUPS[id].map((group) => (
+                          <section
+                            className="mb-4 break-inside-avoid rounded-md bg-surface-mid p-3"
+                            data-testid={`settings-group-${group.id}`}
+                            key={group.id}
+                          >
+                            <Typography
+                              className="mb-1 px-2 font-semibold !text-[#f59e0b]"
+                              typographyType="body-md"
+                            >
+                              {tt(`group.${group.id}`)}
+                            </Typography>
+                            {group.ids.map((settingId) => {
+                              const setting = SKYRIMSE_CATALOG.find((s) => s.id === settingId);
+                              if (setting === undefined) return null;
+                              const dep = SKYRIMSE_CATALOG.find(
+                                (s) => s.id === setting.dependsOn?.on,
+                              );
+                              return (
+                                <SettingRow
+                                  ctx={ctx}
+                                  dependsOnLabel={
+                                    dep !== undefined ? tt(`label.${dep.id}`) : undefined
+                                  }
+                                  enabled={isEnabled(ctx, setting, SKYRIMSE_CATALOG)}
+                                  key={`${setting.id}-${revision}`}
+                                  setting={setting}
+                                  tt={tt}
+                                  onChange={(value) => setPending(withValue(ctx, setting, value))}
+                                  onReset={() => {
+                                    const { [setting.id]: _unused, ...rest } = pending;
+                                    setPending(rest);
+                                    setRevision((r) => r + 1);
+                                  }}
+                                />
+                              );
+                            })}
+                          </section>
+                        ))}
                       </div>
                     </TabPanel>
                   ))}

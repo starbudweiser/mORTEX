@@ -475,14 +475,6 @@
     .dropdown-toggle {
         min-width: initial;
     }
-
-    // colonne étroite : le libellé reste sur une ligne (tronqué), il ne déborde plus sur les lignes voisines
-    .btn {
-        max-width: 100%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
 }
 
 .table-group-enabled {

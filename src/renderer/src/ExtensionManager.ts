@@ -3034,6 +3034,7 @@ class ExtensionManager {
       browse_nexus: () => require("./extensions/browse_nexus/index.ts"),
       bottle_documents: () => require("./extensions/bottle_documents/index.ts"),
       dxmt_workshop: () => require("./extensions/dxmt_workshop/index.ts"),
+      ini_editor: () => require("./extensions/ini_editor/index.ts"),
       dll_overrides: () => require("./extensions/dll_overrides/index.ts"),
       time_machine: () => require("./extensions/time_machine/index.ts"),
       script_extender_log: () => require("./extensions/script_extender_log/index.ts"),

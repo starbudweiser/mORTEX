@@ -318,7 +318,7 @@ export const SKYRIMSE_CATALOG: readonly ICatalogSetting[] = [
   }),
   int("waterFx", "maxParticles", "Particles", "iMaxDesired", {
     min: 100,
-    max: 5000,
+    max: 20000,
     step: 50,
   }),
 
