@@ -72,9 +72,11 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
   const menuOrder = useSelector(
     (state: IState) => (state.settings as any).mortex?.menuOrder ?? NO_ORDER,
   );
-  const [dragged, setDragged] = useState<{ section: string; id: string } | undefined>(undefined);
-  /** ordre du groupe pendant le déplacement : les autres entrées s'écartent en direct */
-  const [preview, setPreview] = useState<string[] | undefined>(undefined);
+  /** entrée saisie : son groupe, sa place de départ, la place visée et le déplacement du curseur */
+  const [drag, setDrag] = useState<
+    | { section: string; id: string; from: number; target: number; delta: number; tops: number[] }
+    | undefined
+  >(undefined);
 
   const onScroll = (event: Event) => setCanScrollUp((event.target as HTMLDivElement).scrollTop > 0);
 
@@ -89,47 +91,74 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
   }, [scrollRef]);
 
   // Déplacement fait maison, à la souris : le glisser-déposer natif d'Electron est annulé par
-  // macOS au relâchement (dragend sans drop), l'entrée ne bougeait donc jamais. L'entrée saisie
-  // prend la place de celle qu'elle survole, et les autres s'écartent aussitôt.
+  // macOS au relâchement (dragend sans drop), l'entrée ne bougeait donc jamais. Pendant le
+  // déplacement rien n'est réordonné : l'entrée saisie décolle et suit le curseur, les autres
+  // glissent pour lui faire place (translate seulement) ; l'ordre change au relâchement.
   const moving = useRef<
-    | { section: string; id: string; ids: string[]; x: number; y: number; order: string[] }
+    | {
+        section: string;
+        id: string;
+        ids: string[];
+        from: number;
+        x: number;
+        y: number;
+        /** haut de chaque entrée du groupe au moment de la saisie */
+        tops: number[];
+        height: number;
+        target: number;
+        lifted: boolean;
+        timer?: ReturnType<typeof setTimeout>;
+      }
     | undefined
   >(undefined);
+
+  const lift = () => {
+    const move = moving.current;
+    if (move === undefined || move.lifted) return;
+    clearTimeout(move.timer);
+    move.lifted = true;
+    document.body.classList.add("mortex-menu-moving");
+    const { section, id, from, tops } = move;
+    setDrag({ section, id, from, target: from, delta: 0, tops });
+  };
 
   useEffect(() => {
     const onMove = (event: PointerEvent) => {
       const move = moving.current;
       if (move === undefined) return;
-      if (dragged === undefined) {
+      if (!move.lifted) {
         if (Math.hypot(event.clientX - move.x, event.clientY - move.y) < 5) return;
-        setDragged({ section: move.section, id: move.id });
-        document.body.classList.add("mortex-menu-moving");
+        lift();
       }
-      const over = document
-        .elementFromPoint(event.clientX, event.clientY)
-        ?.closest<HTMLElement>("[data-reorder-id]");
-      const overId =
-        over?.dataset.reorderSection === move.section ? over.dataset.reorderId : undefined;
-      if (overId === undefined || overId === move.id) return;
-      const order = move.order.filter((id) => id !== move.id);
-      order.splice(move.order.indexOf(overId), 0, move.id);
-      move.order = order;
-      setPreview(order);
+      // la place visée : celle dont le milieu est le plus proche du milieu de l'entrée saisie
+      const delta = event.clientY - move.y;
+      const middle = move.tops[move.from] + delta + move.height / 2;
+      let target = 0;
+      move.tops.forEach((top, idx) => {
+        const best = Math.abs(move.tops[target] + move.height / 2 - middle);
+        if (Math.abs(top + move.height / 2 - middle) < best) target = idx;
+      });
+      move.target = target;
+      const { section, id, from, tops } = move;
+      setDrag({ section, id, from, target, delta, tops });
     };
     const onUp = () => {
       const move = moving.current;
       moving.current = undefined;
-      if (move === undefined || dragged === undefined) return;
-      if (move.order.join() !== move.ids.join()) {
-        dispatch(setMenuOrder(move.section, move.order));
+      if (move === undefined) return;
+      clearTimeout(move.timer);
+      if (!move.lifted) return;
+      if (move.target !== move.from) {
+        const order = move.ids.filter((id) => id !== move.id);
+        order.splice(move.target, 0, move.id);
+        dispatch(setMenuOrder(move.section, order));
       }
       // le clic qui suit le relâchement n'ouvre pas la page
       const swallow = (event: MouseEvent) => event.stopPropagation();
       window.addEventListener("click", swallow, { capture: true, once: true });
       setTimeout(() => window.removeEventListener("click", swallow, true), 0);
       document.body.classList.remove("mortex-menu-moving");
-      setDragged(undefined);
-      setPreview(undefined);
+      setDrag(undefined);
     };
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerup", onUp);
@@ -137,18 +166,55 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
     };
-  }, [dragged, dispatch]);
+  }, [dispatch]);
+
+  /** décalage vertical d'une entrée pendant un déplacement dans son groupe */
+  const shiftOf = (index: number): number => {
+    if (drag === undefined) return 0;
+    if (index === drag.from) return drag.delta;
+    // place qu'occupera l'entrée une fois la saisie déposée à la place visée
+    let slot = index;
+    if (drag.from < index && index <= drag.target) slot = index - 1;
+    if (drag.target <= index && index < drag.from) slot = index + 1;
+    // et un léger écart de part et d'autre de la place libérée
+    const spread = slot < drag.target ? -3 : 3;
+    return drag.tops[slot] - drag.tops[index] + spread;
+  };
 
   /** propriétés de déplacement d'une entrée : on la saisit et on la dépose dans son groupe */
-  const reorderProps = (section: string, ids: string[], id: string) => ({
-    "data-reorder-id": id,
-    "data-reorder-section": section,
-    lifted: dragged?.section === section && dragged.id === id,
-    onPointerDown: (event: React.PointerEvent) => {
-      if (event.button !== 0) return;
-      moving.current = { section, id, ids, x: event.clientX, y: event.clientY, order: ids };
-    },
-  });
+  const reorderProps = (section: string, ids: string[], id: string) => {
+    const index = ids.indexOf(id);
+    const inGroup = drag?.section === section;
+    return {
+      "data-reorder-id": id,
+      "data-reorder-section": section,
+      lifted: inGroup && drag.id === id,
+      sliding: inGroup && drag.id !== id,
+      style: inGroup ? { translate: `0 ${shiftOf(index)}px` } : undefined,
+      onPointerDown: (event: React.PointerEvent) => {
+        if (event.button !== 0) return;
+        const group = event.currentTarget.closest(".mortex-menu-section") ?? document;
+        const tops = ids.map(
+          (other) =>
+            group.querySelector(`[data-reorder-id="${CSS.escape(other)}"]`)?.getBoundingClientRect()
+              .top ?? 0,
+        );
+        moving.current = {
+          section,
+          id,
+          ids,
+          from: index,
+          x: event.clientX,
+          y: event.clientY,
+          tops,
+          height: event.currentTarget.getBoundingClientRect().height,
+          target: index,
+          lifted: false,
+          timer: setTimeout(lift, 180),
+        };
+      },
+    };
+  };
 
   const renderPage = (page: IMainPage, extra = {}) => (
     <MenuButton
@@ -201,13 +267,7 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
         ),
       });
     }
-    const sorted = sortByOrder(
-      entries,
-      (entry) => entry.id,
-      dragged?.section === section.title && preview !== undefined
-        ? preview
-        : menuOrder[section.title],
-    );
+    const sorted = sortByOrder(entries, (entry) => entry.id, menuOrder[section.title]);
     const ids = sorted.map((entry) => entry.id);
     return sorted.map((entry) => entry.render(reorderProps(section.title, ids, entry.id)));
   };

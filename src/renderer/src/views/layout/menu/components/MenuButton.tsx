@@ -18,6 +18,8 @@ interface MenuButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   accent?: "mac" | "nexus";
   /** mORTEX : l'entrée saisie pendant qu'on la déplace */
   lifted?: boolean;
+  /** mORTEX : entrée du groupe qui glisse pour faire place à celle qu'on déplace */
+  sliding?: boolean;
 }
 
 export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
@@ -28,6 +30,7 @@ export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
   count,
   accent,
   lifted,
+  sliding,
   ...props
 }) => {
   const { menuIsCollapsed } = useWindowContext();
@@ -46,6 +49,7 @@ export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
                 ? "mortex-menu-accent-nexus"
                 : "text-neutral-subdued",
           lifted ? "mortex-menu-lifted" : "",
+          sliding ? "mortex-menu-sliding" : "",
         ])}
         draggable={false}
         {...props}
