@@ -188,7 +188,7 @@ async function testMissingScriptExtender(api: types.IExtensionApi): Promise<type
 
     return Promise.resolve({
       description: {
-        short: `${gameSupport.name} not installed`,
+        short: "{{name}} not installed",
         long:
           `mORTEX could not detect "{{name}}". This means it is either not installed or installed incorrectly.\n\n` +
           `For the best modding experience, we recommend downloading and installing the script extender.\n\n` +
@@ -206,10 +206,10 @@ async function testMissingScriptExtender(api: types.IExtensionApi): Promise<type
     // For non-Nexus extenders (GitHub, Silverlock)
     return Promise.resolve({
       description: {
-        short: `${gameSupport.name} not installed`,
+        short: "{{name}} not installed",
         long:
-          `mORTEX could not detect ${gameSupport.name}. This means it is either not installed or installed incorrectly.\n\n` +
-          `For the best modding experience, we recommend installing the script extender by visiting ${gameSupport.website}.\n\n` +
+          `mORTEX could not detect {{name}}. This means it is either not installed or installed incorrectly.\n\n` +
+          `For the best modding experience, we recommend installing the script extender by visiting {{website}}.\n\n` +
           `Click "Fix" to open the download page.`,
         replace: {
           name: gameSupport.name,

@@ -1478,6 +1478,17 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     color: #f59e0b;
 }
 
+/* nom des collections installées en bleu Socle (util/collectionHighlight.ts) ; souligné sur les
+   fonds déjà colorés (notifications, bulles), où le bleu ne se lirait pas */
+::highlight(mortex-collection) {
+    color: #38bdf8;
+}
+
+::highlight(mortex-collection-on-color) {
+    text-decoration: underline 1.5px;
+    text-underline-offset: 2px;
+}
+
 /* Bulles d'aide au survol : style Socle « bubble-help », celui des notifications de la cloche
    (fond bleu plein, texte foncé, rayon 6px, sans bordure ni ombre, 340px au plus). Les cartes
    riches au survol (hover cards) gardent leur propre style. */
