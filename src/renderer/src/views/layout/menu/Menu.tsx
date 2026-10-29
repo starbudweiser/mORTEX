@@ -31,15 +31,7 @@ import { useSpineContext } from "@/views/components/Spine/SpineContext";
 import { GameActions } from "./components/game_actions/GameActions";
 import { MenuButton } from "./components/MenuButton";
 import { MenuSection } from "./components/MenuSection";
-import { ToolsProvider, useToolsContext } from "./context/ToolsContext";
-
-const toolPadding = {
-  1: "pb-32",
-  2: "pb-42",
-  3: "pb-52",
-  4: "pb-62",
-  5: "pb-72",
-};
+import { ToolsProvider } from "./context/ToolsContext";
 
 /** mORTEX : pages rangées sous « Outils » ; les autres pages du jeu vont sous « Jeu » */
 const TOOL_PAGE_IDS = new Set(["Browse Nexus Mods", "Tools", "Health check"]);
@@ -153,8 +145,9 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const { mainPage } = usePagesContext();
-  const { visibleTools } = useToolsContext();
-  const toolCount = visibleTools.length;
+  // mORTEX : place réservée en bas aux actions du jeu, mesurée (elle était fixe, et faisait
+  // apparaître un ascenseur sans rien à faire défiler quand ces actions sont vides)
+  const [actionsHeight, setActionsHeight] = useState(0);
   const [canScrollUp, setCanScrollUp] = useState(false);
 
   const menuOrder = useSelector(
@@ -392,8 +385,9 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
         <div
           className={joinClasses([
             "flex flex-col gap-y-0.5 pt-1 transition-[width]",
-            menuIsCollapsed ? `w-10 ${toolPadding[toolCount]}` : "w-49 pb-34",
+            menuIsCollapsed ? "w-10" : "w-49",
           ])}
+          style={{ paddingBottom: actionsHeight > 0 ? actionsHeight + 24 : 12 }}
         >
           {sections.map(
             (section) =>
@@ -409,7 +403,7 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
         <div className="pointer-events-none absolute right-0 bottom-0 size-3 bg-surface-base" />
       </div>
 
-      <GameActions />
+      <GameActions onHeight={setActionsHeight} />
 
       {palette !== undefined && (
         <ColorPalette

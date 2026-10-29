@@ -1,5 +1,5 @@
 import { Transition } from "@headlessui/react";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 
 import { useMainContext, useWindowContext } from "@/contexts";
 import { useDeployMods } from "@/extensions/mod_management/hooks/useDeployMods.hook";
@@ -12,7 +12,9 @@ import { ApplyButton } from "../apply_button/ApplyButton";
 import { PlayButton } from "../play_button/PlayButton";
 import { ToolButton } from "../ToolButton";
 
-export const GameActions = () => {
+/** `onHeight` : mORTEX, hauteur occupée, pour que la barre latérale ne réserve que la place utile */
+export const GameActions = ({ onHeight }: { onHeight?: (height: number) => void } = {}) => {
+  const ref = useRef<HTMLDivElement>(null);
   const { api } = useMainContext();
   const { trackApplyClicked } = useMemo(() => createMenuTracker(api), [api]);
   const { menuIsCollapsed } = useWindowContext();
@@ -44,12 +46,25 @@ export const GameActions = () => {
     [handlePlay],
   );
 
-  if (gameId === undefined || selection.type !== "game") {
+  const shown = gameId !== undefined && selection.type === "game";
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!shown || element === null || typeof ResizeObserver === "undefined") {
+      onHeight?.(0);
+      return undefined;
+    }
+    const observer = new ResizeObserver(() => onHeight?.(element.offsetHeight));
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [shown, onHeight]);
+
+  if (!shown) {
     return null;
   }
 
   return (
     <div
+      ref={ref}
       className={joinClasses([
         "absolute bottom-3 left-3 z-2 flex flex-col items-center gap-y-3 transition-[left,width]",
         menuIsCollapsed ? "w-10" : "w-49",
