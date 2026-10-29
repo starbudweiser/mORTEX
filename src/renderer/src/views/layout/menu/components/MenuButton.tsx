@@ -16,10 +16,8 @@ interface MenuButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   count?: number;
   /** mORTEX : en couleur pour ressortir, orange pour une page exclusive au Mac, bleu Socle pour Nexus */
   accent?: "mac" | "nexus";
-  /** mORTEX : Option enfoncée, l'entrée se déplace */
-  reorderable?: boolean;
-  /** mORTEX : une entrée glissée sera déposée ici */
-  dropHint?: boolean;
+  /** mORTEX : l'entrée saisie pendant qu'on la déplace */
+  lifted?: boolean;
 }
 
 export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
@@ -29,8 +27,7 @@ export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
   Badge,
   count,
   accent,
-  reorderable,
-  dropHint,
+  lifted,
   ...props
 }) => {
   const { menuIsCollapsed } = useWindowContext();
@@ -48,10 +45,9 @@ export const MenuButton: FC<React.PropsWithChildren<MenuButtonProps>> = ({
               : accent === "nexus"
                 ? "mortex-menu-accent-nexus"
                 : "text-neutral-subdued",
-          reorderable ? "mortex-menu-reorderable" : "",
-          dropHint ? "mortex-menu-drop" : "",
+          lifted ? "mortex-menu-lifted" : "",
         ])}
-        draggable={reorderable}
+        draggable={false}
         {...props}
       >
         <Icon {...getIconProps(icon)} className="shrink-0" size="sm" />

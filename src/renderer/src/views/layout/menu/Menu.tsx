@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { setOpenMainPage } from "@/actions";
 import { usePagesContext, useWindowContext } from "@/contexts";
-import { moveBefore, setMenuOrder, sortByOrder } from "@/extensions/mortex_dashlet/menuOrder";
+import { setMenuOrder, sortByOrder } from "@/extensions/mortex_dashlet/menuOrder";
 import type { IMainPage } from "@/types/IMainPage";
 import type { IState } from "@/types/IState";
 import { TooltipDelayGroup } from "@/ui/components/tooltip/TooltipDelayGroup";
@@ -73,7 +73,8 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
     (state: IState) => (state.settings as any).mortex?.menuOrder ?? NO_ORDER,
   );
   const [dragged, setDragged] = useState<{ section: string; id: string } | undefined>(undefined);
-  const [dropTarget, setDropTarget] = useState<string | undefined>(undefined);
+  /** ordre du groupe pendant le déplacement : les autres entrées s'écartent en direct */
+  const [preview, setPreview] = useState<string[] | undefined>(undefined);
 
   const onScroll = (event: Event) => setCanScrollUp((event.target as HTMLDivElement).scrollTop > 0);
 
@@ -87,31 +88,65 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
     return () => element.removeEventListener("scroll", onScroll);
   }, [scrollRef]);
 
-  /** propriétés de glisser-déposer d'une entrée : on la saisit et on la dépose dans son groupe */
-  const reorderProps = (section: string, ids: string[], id: string) => ({
-    draggable: true,
-    reorderable: dragged !== undefined,
-    dropHint: dragged?.section === section && dropTarget === id && dragged.id !== id,
-    onDragStart: (event: React.DragEvent) => {
-      event.dataTransfer.effectAllowed = "move";
-      setDragged({ section, id });
-    },
-    onDragOver: (event: React.DragEvent) => {
-      if (dragged?.section !== section) return;
-      event.preventDefault();
-      setDropTarget(id);
-    },
-    onDrop: (event: React.DragEvent) => {
-      event.preventDefault();
-      if (dragged?.section === section && dragged.id !== id) {
-        dispatch(setMenuOrder(section, moveBefore(ids, dragged.id, id)));
+  // Déplacement fait maison, à la souris : le glisser-déposer natif d'Electron est annulé par
+  // macOS au relâchement (dragend sans drop), l'entrée ne bougeait donc jamais. L'entrée saisie
+  // prend la place de celle qu'elle survole, et les autres s'écartent aussitôt.
+  const moving = useRef<
+    | { section: string; id: string; ids: string[]; x: number; y: number; order: string[] }
+    | undefined
+  >(undefined);
+
+  useEffect(() => {
+    const onMove = (event: PointerEvent) => {
+      const move = moving.current;
+      if (move === undefined) return;
+      if (dragged === undefined) {
+        if (Math.hypot(event.clientX - move.x, event.clientY - move.y) < 5) return;
+        setDragged({ section: move.section, id: move.id });
+        document.body.classList.add("mortex-menu-moving");
       }
+      const over = document
+        .elementFromPoint(event.clientX, event.clientY)
+        ?.closest<HTMLElement>("[data-reorder-id]");
+      const overId =
+        over?.dataset.reorderSection === move.section ? over.dataset.reorderId : undefined;
+      if (overId === undefined || overId === move.id) return;
+      const order = move.order.filter((id) => id !== move.id);
+      order.splice(move.order.indexOf(overId), 0, move.id);
+      move.order = order;
+      setPreview(order);
+    };
+    const onUp = () => {
+      const move = moving.current;
+      moving.current = undefined;
+      if (move === undefined || dragged === undefined) return;
+      if (move.order.join() !== move.ids.join()) {
+        dispatch(setMenuOrder(move.section, move.order));
+      }
+      // le clic qui suit le relâchement n'ouvre pas la page
+      const swallow = (event: MouseEvent) => event.stopPropagation();
+      window.addEventListener("click", swallow, { capture: true, once: true });
+      setTimeout(() => window.removeEventListener("click", swallow, true), 0);
+      document.body.classList.remove("mortex-menu-moving");
       setDragged(undefined);
-      setDropTarget(undefined);
-    },
-    onDragEnd: () => {
-      setDragged(undefined);
-      setDropTarget(undefined);
+      setPreview(undefined);
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, [dragged, dispatch]);
+
+  /** propriétés de déplacement d'une entrée : on la saisit et on la dépose dans son groupe */
+  const reorderProps = (section: string, ids: string[], id: string) => ({
+    "data-reorder-id": id,
+    "data-reorder-section": section,
+    lifted: dragged?.section === section && dragged.id === id,
+    onPointerDown: (event: React.PointerEvent) => {
+      if (event.button !== 0) return;
+      moving.current = { section, id, ids, x: event.clientX, y: event.clientY, order: ids };
     },
   });
 
@@ -166,7 +201,13 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
         ),
       });
     }
-    const sorted = sortByOrder(entries, (entry) => entry.id, menuOrder[section.title]);
+    const sorted = sortByOrder(
+      entries,
+      (entry) => entry.id,
+      dragged?.section === section.title && preview !== undefined
+        ? preview
+        : menuOrder[section.title],
+    );
     const ids = sorted.map((entry) => entry.id);
     return sorted.map((entry) => entry.render(reorderProps(section.title, ids, entry.id)));
   };
