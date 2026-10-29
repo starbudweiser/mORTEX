@@ -47,6 +47,7 @@ import { withBatchContext } from "../../../util/BatchContext";
 import calculateFolderSize from "../../../util/calculateFolderSize";
 import { ProcessCanceled, UserCanceled } from "../../../util/CustomErrors";
 import Debouncer from "../../../util/Debouncer";
+import type { ISnapshot } from "../../../util/macos/timeMachine";
 import * as selectors from "../../../util/selectors";
 import { getSafe } from "../../../util/storeHelper";
 import {
@@ -65,6 +66,12 @@ import getDownloadGames from "../../download_management/util/getDownloadGames";
 import { getGame } from "../../gamemode_management/util/getGame";
 import { setModEnabled, setModsEnabled } from "../../profile_management/actions/profiles";
 import type { IProfileMod } from "../../profile_management/types/IProfile";
+import {
+  DELETE_SNAPSHOTS,
+  deleteSnapshotsAfterRemoval,
+  deleteSnapshotsCheckbox,
+  previousSnapshots,
+} from "../../time_machine/timeMachineApi";
 import { removeMod, setModAttribute } from "../actions/mods";
 import { setShowModDropzone } from "../actions/settings";
 import { ModsDropTarget } from "../components/mods_drop_target/ModsDropTarget";
@@ -1633,26 +1640,40 @@ class ModList extends ComponentEx<IProps, IComponentState> {
 
     const insert = " [style=dialog-danger-text]" + t("from all profiles") + "[/style]";
 
-    onShowDialog(
-      "question",
-      "Confirm removal",
-      {
-        bbcode: t("Do you really want to remove this mod{{insert}}?", {
-          count: filteredIds.length,
-          replace: {
-            insert,
+    // mORTEX : les instantanés de la Time Machine gardent les fichiers des mods retirés
+    let snapshots: ISnapshot[] = [];
+    previousSnapshots(this.context.api)
+      .then((previous) => {
+        snapshots = allArchives ? [] : previous;
+        return onShowDialog(
+          "question",
+          "Confirm removal",
+          {
+            bbcode: t("Do you really want to remove this mod{{insert}}?", {
+              count: filteredIds.length,
+              replace: {
+                insert,
+              },
+            }),
+            message: modNames.join("\n"),
+            checkboxes: [...checkboxes, ...deleteSnapshotsCheckbox(this.context.api, snapshots)],
           },
-        }),
-        message: modNames.join("\n"),
-        checkboxes,
-      },
-      [{ label: "Cancel" }, { label: "Remove" }],
-    )
+          [{ label: "Cancel" }, { label: "Remove" }],
+        );
+      })
       .then((result: IDialogResult) => {
         doRemoveMods = result.action === "Remove" && result.input.mod;
         removeArchive = result.action === "Remove" && result.input.archive;
 
-        return this.removeSelectedImpl(filteredIds, doRemoveMods, removeArchive);
+        return this.removeSelectedImpl(filteredIds, doRemoveMods, removeArchive).then(() =>
+          doRemoveMods
+            ? deleteSnapshotsAfterRemoval(
+                this.context.api,
+                snapshots,
+                result.input[DELETE_SNAPSHOTS],
+              )
+            : undefined,
+        );
       })
       .catch((err) => {
         if (err instanceof ProcessCanceled) {

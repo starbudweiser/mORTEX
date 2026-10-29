@@ -5,6 +5,9 @@
  *  - timeMachineContext(api)   où sont Data, la préparation, la config et les instantanés du jeu actif
  *  - takeSnapshot(api, reason)   instantané du jeu et du profil actifs, puis tri façon Time Machine
  *  - restoreSnapshot(api, snapshot)        instantané de sécurité, purge, fichiers, état des mods, déploiement
+ *  - previousSnapshots(api)   instantanés existants du jeu actif (vide sans Time Machine)
+ *  - replaceSnapshots(api, previous)   nouvel instantané de l'état actuel, puis suppression des
+ *    précédents : après un retrait de mods, ce sont eux qui gardent les fichiers sur le disque
  *
  * Les instantanés vivent dans la bouteille du jeu (<bouteille>/mortex-time-machine/<jeu>), sur le
  * même volume APFS que Data et la préparation, condition des clones.
@@ -196,5 +199,77 @@ export async function restoreSnapshot(api: IExtensionApi, snapshot: ISnapshot): 
   } finally {
     restoring = false;
     api.events.emit(CHANGED_EVENT);
+  }
+}
+
+export async function previousSnapshots(api: IExtensionApi): Promise<ISnapshot[]> {
+  const context = timeMachineContext(api);
+  if (context === undefined) return [];
+  return listSnapshots(context.root).catch(() => []);
+}
+
+export async function replaceSnapshots(api: IExtensionApi, previous: ISnapshot[]): Promise<number> {
+  const context = timeMachineContext(api);
+  if (context === undefined || previous.length === 0) return 0;
+  // l'état actuel d'abord : la Time Machine n'est jamais vide
+  if ((await takeSnapshot(api, "manual")) === undefined) return 0;
+  let deleted = 0;
+  for (const snapshot of previous) {
+    try {
+      await deleteSnapshot(context.root, snapshot.id);
+      ++deleted;
+    } catch (err) {
+      // déjà retiré par le tri qui suit chaque instantané
+      log("info", "snapshot not deleted", { id: snapshot.id, error: (err as Error).message });
+    }
+  }
+  api.events.emit(CHANGED_EVENT);
+  return deleted;
+}
+
+/** id de la case des boîtes de retrait de mods */
+export const DELETE_SNAPSHOTS = "delete_snapshots";
+
+/** case des boîtes de retrait de mods, cochée ; absente s'il n'y a pas d'instantané */
+export function deleteSnapshotsCheckbox(api: IExtensionApi, previous: ISnapshot[]) {
+  return previous.length === 0
+    ? []
+    : [
+        {
+          id: DELETE_SNAPSHOTS,
+          text: api.translate(
+            "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)",
+            { ns: "common", count: previous.length, replace: { count: previous.length } },
+          ),
+          value: true,
+        },
+      ];
+}
+
+/** après le retrait, si la case était cochée */
+export async function deleteSnapshotsAfterRemoval(
+  api: IExtensionApi,
+  previous: ISnapshot[],
+  checked: boolean | undefined,
+): Promise<void> {
+  if (checked !== true || previous.length === 0) return;
+  try {
+    const deleted = await replaceSnapshots(api, previous);
+    if (deleted > 0) {
+      api.sendNotification({
+        id: "time-machine-snapshots-deleted",
+        type: "success",
+        message:
+          deleted === 1
+            ? "Previous snapshot deleted, the space of the removed mods is freed"
+            : "{{count}} previous snapshots deleted, the space of the removed mods is freed",
+        replace: { count: deleted },
+        displayMS: 5000,
+      });
+    }
+  } catch (err) {
+    api.showErrorNotification?.("Failed to delete the previous snapshots", err as Error, {
+      allowReport: false,
+    });
   }
 }

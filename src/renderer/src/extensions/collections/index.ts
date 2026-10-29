@@ -49,6 +49,12 @@ import testModReference, {
 } from "../mod_management/util/testModReference";
 import { convertGameIdReverse } from "../nexus_integration/util/convertGameId";
 import type { IProfile } from "../profile_management/types/IProfile";
+import {
+  DELETE_SNAPSHOTS,
+  deleteSnapshotsAfterRemoval,
+  deleteSnapshotsCheckbox,
+  previousSnapshots,
+} from "../time_machine/timeMachineApi";
 import { clearPendingVote, setCollectionFailures, updateSuccessRate } from "./actions/persistent";
 import {
   addCollectionAction,
@@ -443,6 +449,9 @@ async function removeCollection(
   const confirmButtonText: string =
     cancel && incomplete ? "Cancel installation" : "Remove collection";
 
+  // mORTEX : les instantanés de la Time Machine gardent les fichiers des mods retirés
+  const snapshots = await previousSnapshots(api);
+
   const result = await api.showDialog(
     "question",
     message,
@@ -471,6 +480,7 @@ async function removeCollection(
               },
             ]
           : []),
+        ...deleteSnapshotsCheckbox(api, snapshots),
       ],
     },
     [{ label: "Close" }, { label: confirmButtonText }],
@@ -579,6 +589,7 @@ async function removeCollection(
     if (deleteProfile && ownProfile !== undefined && otherProfile !== undefined) {
       await removeCollectionProfile(api, ownProfile, otherProfile);
     }
+    await deleteSnapshotsAfterRemoval(api, snapshots, result.input[DELETE_SNAPSHOTS]);
   } catch (err) {
     if (!(err instanceof UserCanceled)) {
       // possible reason for ProcessCanceled is that (un-)deployment may

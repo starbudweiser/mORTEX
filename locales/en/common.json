@@ -553,5 +553,7 @@
   "Add collection": "Add collection",
   "Also delete the profile \"{{name}}\" created for this collection (mORTEX switches back to \"{{fallback}}\")": "Also delete the profile \"{{name}}\" created for this collection (mORTEX switches back to \"{{fallback}}\")",
   "Profile \"{{name}}\" removed, back to \"{{fallback}}\"": "Profile \"{{name}}\" removed, back to \"{{fallback}}\"",
-  "Failed to restore the profile": "Failed to restore the profile"
+  "Failed to restore the profile": "Failed to restore the profile",
+  "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)_plural": "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)",
+  "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)": "Also delete the previous Time Machine snapshot: it keeps the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)"
 }
