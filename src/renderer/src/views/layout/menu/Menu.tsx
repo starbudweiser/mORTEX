@@ -1,6 +1,7 @@
 import React, {
   useState,
   useCallback,
+  useLayoutEffect,
   type FC,
   useRef,
   useEffect,
@@ -64,11 +65,25 @@ const ColorPalette: FC<{
 }> = ({ x, y, current, onPick, onClose }) => {
   const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
+  // sous la souris, mais toujours entière dans la fenêtre : une palette qui dépasse fait
+  // défiler toute la fenêtre
+  const [place, setPlace] = useState({ left: x, top: y });
+  useLayoutEffect(() => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (rect === undefined) return;
+    setPlace({
+      left: Math.max(8, Math.min(x, window.innerWidth - rect.width - 8)),
+      top: Math.max(8, Math.min(y, window.innerHeight - rect.height - 8)),
+    });
+  }, [x, y]);
   useEffect(() => {
     const onDown = (event: PointerEvent) => {
       if (!ref.current?.contains(event.target as Node)) onClose();
     };
     const onKey = (event: KeyboardEvent) => event.key === "Escape" && onClose();
+    // la fenêtre elle-même ne doit jamais défiler : on remet sa position en partant
+    const scroller = document.scrollingElement;
+    const saved = scroller?.scrollTop ?? 0;
     window.addEventListener("pointerdown", onDown, true);
     window.addEventListener("keydown", onKey);
     window.addEventListener("blur", onClose);
@@ -76,6 +91,7 @@ const ColorPalette: FC<{
       window.removeEventListener("pointerdown", onDown, true);
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("blur", onClose);
+      if (scroller !== null) scroller.scrollTop = saved;
     };
   }, [onClose]);
   return createPortal(
@@ -84,7 +100,7 @@ const ColorPalette: FC<{
       ref={ref}
       role="dialog"
       aria-label={t("Entry colour")}
-      style={{ left: x, top: Math.min(y, window.innerHeight - 96) }}
+      style={place}
     >
       <div className="mortex-menu-palette-swatches">
         {MENU_COLORS.map((color) => (
@@ -277,8 +293,7 @@ const MenuContent: FC<React.PropsWithChildren<unknown>> = () => {
         if (!event.altKey) return;
         event.preventDefault();
         event.stopPropagation();
-        const rect = event.currentTarget.getBoundingClientRect();
-        setPalette({ id, x: rect.right + 6, y: rect.top });
+        setPalette({ id, x: event.clientX, y: event.clientY });
       },
       onPointerDown: (event: React.PointerEvent) => {
         if (event.button !== 0) return;
