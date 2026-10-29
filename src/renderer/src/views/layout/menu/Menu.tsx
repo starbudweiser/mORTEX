@@ -30,7 +30,7 @@ const toolPadding = {
 const TOOL_PAGE_IDS = new Set(["Browse Nexus Mods", "Tools", "Health check"]);
 
 /** mORTEX : pages exclusives au Mac, en couleur dans la barre latérale */
-const MAC_PAGE_IDS = new Set(["DXMT workshop", "Time Machine"]);
+const MAC_PAGE_IDS = new Set(["DXMT workshop", "Settings editor", "Time Machine"]);
 /** pages tournées vers Nexus Mods, en bleu Socle */
 const NEXUS_PAGE_IDS = new Set(["Browse Nexus Mods"]);
 

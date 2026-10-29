@@ -24,6 +24,7 @@ import {} from "./gamemode_management";
 import {} from "./hardlink_activator";
 import {} from "./health_check";
 import {} from "./history_management";
+import {} from "./ini_editor";
 import {} from "./ini_prep";
 import {} from "./installer_dotnet";
 import {} from "./installer_fomod_ipc";

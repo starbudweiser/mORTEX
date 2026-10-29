@@ -30,7 +30,11 @@ const texts = Object.fromEntries(LANGS.map((lang) => [lang, load(lang)])) as Rec
 
 /** toutes les clés de texte que le catalogue exige */
 function expectedKeys(): string[] {
-  const keys = TABS.map((tab) => `tab.${tab}`);
+  const keys = [
+    ...TABS.map((tab) => `tab.${tab}`),
+    // textes de la page elle-même : mêmes clés que le français
+    ...Object.keys(texts.fr).filter((key) => key.startsWith("ui.")),
+  ];
   for (const s of SKYRIMSE_CATALOG) {
     keys.push(`label.${s.id}`, `help.${s.id}`);
     if (s.macNote) keys.push(`macNote.${s.id}`);
