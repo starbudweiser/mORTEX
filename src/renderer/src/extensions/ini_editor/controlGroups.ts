@@ -50,6 +50,11 @@ export const CONTROL_GROUPS: ReadonlyArray<{ id: string; slugs: readonly string[
 ];
 
 /** événements dont l'écran a un texte (les autres sont affichés avec leur nom du jeu) */
+/** actions qui ont un texte à l'écran (les autres, dans les menus du jeu, gardent leur nom du jeu) */
+export const TRANSLATED_SLUGS: ReadonlySet<string> = new Set(
+  CONTROL_GROUPS.flatMap((g) => g.slugs),
+);
+
 export interface IControlGroup {
   id: string;
   events: IControlEvent[];

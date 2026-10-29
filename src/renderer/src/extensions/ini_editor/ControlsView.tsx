@@ -12,7 +12,7 @@ import { Typography } from "@/ui/components/typography/Typography";
 import { log } from "@/util/log";
 
 import { type IBackup, restoreBackup } from "./backup";
-import { eventSlug, keysText, remappableGroups } from "./controlGroups";
+import { TRANSLATED_SLUGS, eventSlug, keysText, remappableGroups } from "./controlGroups";
 import {
   type IControlEvent,
   type IControlMap,
@@ -99,7 +99,10 @@ export default function ControlsView({ api, tt, gamePath, iniDir, toolRunning, o
     return () => window.removeEventListener("keydown", onKey, true);
   }, [capture, findMode]);
 
-  const label = (event: IControlEvent) => tt(`ui.ctl.${eventSlug(event.name)}`);
+  const label = (event: IControlEvent) => {
+    const slug = eventSlug(event.name);
+    return TRANSLATED_SLUGS.has(slug) ? tt(`ui.ctl.${slug}`) : event.name;
+  };
   const none = tt("ui.ctlNoKey");
   const fieldText = (field: string) => {
     const slot = parseKeySlot(field);

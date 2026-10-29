@@ -20,6 +20,9 @@ const TABLE = [
   `Left Attack/Block${T}0xff${T}0x1${T}0x9${T}1${T}1${T}1`,
   `Hotkey1${T}${T}0x02${T}0xff${T}0xff${T}0${T}0${T}0`,
   "",
+  "// Menus",
+  `Item Zoom${T}${T}0x1e${T}0xff${T}0xff${T}0${T}0${T}0`,
+  "",
 ].join("\r\n");
 
 vi.mock("./controls", async (importOriginal) => ({
@@ -128,6 +131,16 @@ describe("ControlsView", () => {
     await waitFor(() => expect(screen.getByText(/ui.ctlFindResult/)).toBeTruthy());
     expect(screen.getByText(/ui.ctlFindResult/)).toHaveTextContent("ui.ctl.sprint");
     expect(screen.getByTestId("controls-row-sprint").className).toContain("bg-warning-weak");
+  });
+
+  it("nomme avec leur nom du jeu les actions de menus sans texte", async () => {
+    renderView();
+    await screen.findByTestId("controls-row-forward");
+    await userEvent.click(screen.getByRole("button", { name: /ui.ctlFind/ }));
+    fireEvent.keyDown(window, { code: "KeyA" });
+    await waitFor(() => expect(screen.getByText(/ui.ctlFindResult/)).toBeTruthy());
+    expect(screen.getByText(/ui.ctlFindResult/)).toHaveTextContent("Item Zoom");
+    expect(screen.getByText(/ui.ctlFindResult/)).not.toHaveTextContent("ui.ctl.item_zoom");
   });
 
   it("annule les changements en attente", async () => {
