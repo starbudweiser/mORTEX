@@ -323,7 +323,6 @@
   "ui.loadError": "Couldn't read the INI files. Check that the bottle is reachable.",
   "ui.pending": "Pending changes: {{count}}",
   "ui.save": "Save",
-  "ui.saveSoon": "Saving isn't available yet.",
   "ui.revert": "Discard changes",
   "ui.refresh": "Refresh",
   "ui.presets": "Bethesda presets",
@@ -365,5 +364,17 @@
   "group.shoulder": "Camera position",
   "group.idle": "Idle camera",
   "group.volume": "Volume and sound",
-  "group.music": "Music"
+  "group.music": "Music",
+  "ui.confirmTitle": "Here is what will change",
+  "ui.confirmIntro": "These files will be edited line by line; nothing else changes. A copy is kept before writing and you will be able to undo.",
+  "ui.confirmUnset": "(not set)",
+  "ui.confirmNewSection": "— new section",
+  "ui.back": "Back",
+  "ui.saved": "Settings saved: {{count}}. Copy kept in “{{backup}}”.",
+  "ui.undo": "Undo",
+  "ui.undone": "The previous settings are back.",
+  "ui.undoFailed": "Couldn't restore the previous settings",
+  "ui.gameRunning": "The game or a tool is running. Close it before saving: the game rewrites its INI files on exit and would erase your changes.",
+  "ui.readOnly": "{{file}} is read-only. Make it writable in the Finder (Get Info), then try again. Nothing was written.",
+  "ui.saveFailed": "Couldn't save the settings"
 }

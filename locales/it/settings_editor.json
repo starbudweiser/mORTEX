@@ -323,7 +323,6 @@
   "ui.loadError": "Impossibile leggere i file INI. Verifica che la bottiglia sia accessibile.",
   "ui.pending": "Modifiche in sospeso: {{count}}",
   "ui.save": "Salva",
-  "ui.saveSoon": "Il salvataggio non è ancora disponibile.",
   "ui.revert": "Annulla le modifiche",
   "ui.refresh": "Aggiorna",
   "ui.presets": "Preset di Bethesda",
@@ -365,5 +364,17 @@
   "group.shoulder": "Posizione della telecamera",
   "group.idle": "Telecamera di riposo",
   "group.volume": "Volume e audio",
-  "group.music": "Musica"
+  "group.music": "Musica",
+  "ui.confirmTitle": "Ecco cosa cambierà",
+  "ui.confirmIntro": "Questi file saranno modificati riga per riga; il resto non cambia. Prima di scrivere viene conservata una copia e potrai annullare.",
+  "ui.confirmUnset": "(non definito)",
+  "ui.confirmNewSection": "— nuova sezione",
+  "ui.back": "Indietro",
+  "ui.saved": "Impostazioni salvate: {{count}}. Copia conservata in «{{backup}}».",
+  "ui.undo": "Annulla",
+  "ui.undone": "Le impostazioni precedenti sono state ripristinate.",
+  "ui.undoFailed": "Impossibile ripristinare le impostazioni precedenti",
+  "ui.gameRunning": "Il gioco o uno strumento è in esecuzione. Chiudilo prima di salvare: il gioco riscrive i suoi INI all'uscita e cancellerebbe le tue modifiche.",
+  "ui.readOnly": "{{file}} è in sola lettura. Rendilo modificabile nel Finder (Ottieni informazioni) e riprova. Non è stato scritto nulla.",
+  "ui.saveFailed": "Impossibile salvare le impostazioni"
 }

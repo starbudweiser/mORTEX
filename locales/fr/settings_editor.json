@@ -323,7 +323,6 @@
   "ui.loadError": "Impossible de lire les fichiers INI. Vérifiez que la bouteille est accessible.",
   "ui.pending": "Changements en attente : {{count}}",
   "ui.save": "Enregistrer",
-  "ui.saveSoon": "L'enregistrement n'est pas encore disponible.",
   "ui.revert": "Annuler les changements",
   "ui.refresh": "Actualiser",
   "ui.presets": "Préréglages Bethesda",
@@ -365,5 +364,17 @@
   "group.shoulder": "Position de la caméra",
   "group.idle": "Caméra de repos",
   "group.volume": "Volume et son",
-  "group.music": "Musique"
+  "group.music": "Musique",
+  "ui.confirmTitle": "Voici ce qui va changer",
+  "ui.confirmIntro": "Ces fichiers seront modifiés ligne par ligne, le reste ne change pas. Une copie est gardée avant l'écriture et vous pourrez annuler.",
+  "ui.confirmUnset": "(absent)",
+  "ui.confirmNewSection": "— nouvelle section",
+  "ui.back": "Revenir",
+  "ui.saved": "Réglages enregistrés : {{count}}. Copie gardée dans « {{backup}} ».",
+  "ui.undo": "Annuler",
+  "ui.undone": "Les réglages précédents sont rétablis.",
+  "ui.undoFailed": "Impossible de rétablir les réglages précédents",
+  "ui.gameRunning": "Le jeu ou un outil est en cours d'exécution. Fermez-le avant d'enregistrer : le jeu réécrit ses INI en quittant et effacerait vos changements.",
+  "ui.readOnly": "{{file}} est en lecture seule. Rendez-le modifiable dans le Finder (Lire les informations), puis recommencez. Rien n'a été écrit.",
+  "ui.saveFailed": "Impossible d'enregistrer les réglages"
 }

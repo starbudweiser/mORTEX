@@ -86,7 +86,7 @@ function applyDelta(data: any, delta: any) {
 /**
  * updates the .base ini file to reflect changes the user made manually
  */
-function discoverSettingsChanges(
+export function discoverSettingsChanges(
   api: IExtensionApi,
   gameMode: string,
   discovery: IDiscoveryResult,
@@ -163,7 +163,7 @@ function getBaseFile(input: string): string {
 
 type ApplySettings = (fileName: string, parser: IniFile<any>) => PromiseBB<void>;
 
-function bakeSettings(
+export function bakeSettings(
   t: TFunction,
   gameMode: string,
   discovery: IDiscoveryResult,

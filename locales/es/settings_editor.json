@@ -323,7 +323,6 @@
   "ui.loadError": "No se pueden leer los archivos INI. Comprueba que la botella es accesible.",
   "ui.pending": "Cambios pendientes: {{count}}",
   "ui.save": "Guardar",
-  "ui.saveSoon": "Guardar aún no está disponible.",
   "ui.revert": "Descartar los cambios",
   "ui.refresh": "Actualizar",
   "ui.presets": "Preajustes de Bethesda",
@@ -365,5 +364,17 @@
   "group.shoulder": "Posición de la cámara",
   "group.idle": "Cámara de reposo",
   "group.volume": "Volumen y sonido",
-  "group.music": "Música"
+  "group.music": "Música",
+  "ui.confirmTitle": "Esto es lo que va a cambiar",
+  "ui.confirmIntro": "Estos archivos se modificarán línea a línea; lo demás no cambia. Se guarda una copia antes de escribir y podrás deshacer.",
+  "ui.confirmUnset": "(sin definir)",
+  "ui.confirmNewSection": "— nueva sección",
+  "ui.back": "Volver",
+  "ui.saved": "Ajustes guardados: {{count}}. Copia conservada en «{{backup}}».",
+  "ui.undo": "Deshacer",
+  "ui.undone": "Se han restablecido los ajustes anteriores.",
+  "ui.undoFailed": "No se pueden restablecer los ajustes anteriores",
+  "ui.gameRunning": "El juego o una herramienta se está ejecutando. Ciérralo antes de guardar: el juego reescribe sus INI al salir y borraría tus cambios.",
+  "ui.readOnly": "{{file}} es de solo lectura. Hazlo modificable en el Finder (Obtener información) y vuelve a intentarlo. No se ha escrito nada.",
+  "ui.saveFailed": "No se pueden guardar los ajustes"
 }

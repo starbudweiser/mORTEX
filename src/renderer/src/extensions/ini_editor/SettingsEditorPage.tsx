@@ -31,6 +31,7 @@ import {
   settingId,
 } from "../../util/macos/iniEdit";
 import { iniFiles } from "../ini_prep/gameSupport";
+import { restoreBackup } from "./backup";
 import {
   BETHESDA_PRESET_IDS,
   type BethesdaPresetId,
@@ -40,7 +41,15 @@ import {
 import { TAB_GROUPS } from "./catalog/groups";
 import { SKYRIMSE_CATALOG, settingsOfTab } from "./catalog/skyrimse";
 import type { TabId } from "./catalog/types";
-import { type IValueContext, type Pending, isEnabled, pendingFromPreset, withValue } from "./model";
+import {
+  type IValueContext,
+  type Pending,
+  isEnabled,
+  pendingChanges,
+  pendingFromPreset,
+  withValue,
+} from "./model";
+import { SettingsSaveError, commitSave, formatSummary, previewSave, summarizePlan } from "./save";
 import SettingRow from "./SettingRow";
 
 interface IProps {
@@ -86,6 +95,11 @@ export default function SettingsEditorPage({ api }: IProps) {
   // change à chaque remise à zéro ou préréglage : les champs de saisie repartent de la valeur
   const [revision, setRevision] = useState(0);
   const [tab, setTab] = useState<TabId>("display");
+  const [saving, setSaving] = useState(false);
+  // le jeu ou un outil tourne : le jeu réécrit ses INI en quittant, on n'écrit pas par-dessus
+  const toolRunning = useSelector(
+    (state: IState) => Object.keys(state.session.base.toolsRunning ?? {}).length > 0,
+  );
 
   const gamePath = discovery?.path;
   const load = useCallback(() => {
@@ -130,6 +144,82 @@ export default function SettingsEditorPage({ api }: IProps) {
     setRevision((r) => r + 1);
   };
 
+  const save = async () => {
+    if (files === undefined || changeCount === 0) return;
+    if (toolRunning) {
+      api.sendNotification?.({
+        id: "settings-editor-game-running",
+        type: "warning",
+        message: tt("ui.gameRunning"),
+        displayMS: 8000,
+      });
+      return;
+    }
+    setSaving(true);
+    try {
+      const plan = previewSave(files, pendingChanges(SKYRIMSE_CATALOG, pending));
+      if (plan.changes.length === 0) {
+        revert();
+        return;
+      }
+      const answer = await api.showDialog?.(
+        "question",
+        tt("ui.confirmTitle"),
+        {
+          text: tt("ui.confirmIntro"),
+          message: formatSummary(summarizePlan(plan), {
+            unset: tt("ui.confirmUnset"),
+            newSection: tt("ui.confirmNewSection"),
+          }),
+          options: { translated: true, wrap: false },
+        },
+        [{ label: tt("ui.back") }, { label: tt("ui.save"), default: true }],
+      );
+      if (answer?.action !== tt("ui.save")) return;
+
+      const { backup } = await commitSave(plan);
+      revert();
+      load();
+      api.sendNotification?.({
+        id: "settings-editor-saved",
+        type: "success",
+        message: tt("ui.saved", { count: plan.changes.length, backup: backup.name }),
+        // annulable : la notification reste jusqu'à ce qu'on la ferme
+        actions: [
+          {
+            title: tt("ui.undo"),
+            action: (dismiss) => {
+              restoreBackup(backup.dir)
+                .then(() => {
+                  load();
+                  api.sendNotification?.({
+                    id: "settings-editor-undone",
+                    type: "info",
+                    message: tt("ui.undone"),
+                    displayMS: 5000,
+                  });
+                })
+                .catch((err) => api.showErrorNotification?.(tt("ui.undoFailed"), err))
+                .finally(dismiss);
+            },
+          },
+        ],
+      });
+    } catch (err) {
+      if (err instanceof SettingsSaveError) {
+        api.sendNotification?.({
+          id: "settings-editor-read-only",
+          type: "error",
+          message: tt("ui.readOnly", { file: err.file.split(/[\\/]/).pop() }),
+        });
+      } else {
+        api.showErrorNotification?.(tt("ui.saveFailed"), err);
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const presets = BETHESDA_PRESET_IDS.filter((id) => (bethesda?.presets[id].length ?? 0) > 0);
 
   return (
@@ -161,13 +251,15 @@ export default function SettingsEditorPage({ api }: IProps) {
             <Button disabled={changeCount === 0} leftIcon="undo" size="sm" onClick={revert}>
               {tt("ui.revert")}
             </Button>
-            <Tooltip content={tt("ui.saveSoon")}>
-              <span>
-                <Button disabled={true} leftIcon="save" size="sm">
-                  {tt("ui.save")}
-                </Button>
-              </span>
-            </Tooltip>
+            <Button
+              disabled={changeCount === 0}
+              isLoading={saving}
+              leftIcon="save"
+              size="sm"
+              onClick={() => void save()}
+            >
+              {tt("ui.save")}
+            </Button>
           </div>
 
           <Typography appearance="moderate" typographyType="body-md">
