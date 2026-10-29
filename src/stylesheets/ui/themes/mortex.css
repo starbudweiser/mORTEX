@@ -609,6 +609,25 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
             gap: 6px !important;
         }
 
+        /* compteur des plugins (Actif, Complets, Légers) : toujours rangé à droite */
+        .menubar > .gamebryo-plugin-count {
+            flex: none !important;
+            margin-left: auto !important;
+        }
+
+        /* la barre reste sur une ligne : trop étroite pour les libellés, ses boutons n'affichent
+           plus que leur icône (le libellé reste dans la bulle d'aide) */
+        .mainpage-header {
+            container-type: inline-size;
+        }
+
+        @container (max-width: 1340px) {
+            .menubar:has(> .gamebryo-plugin-count) > .btn .button-text,
+            .menubar:has(> .gamebryo-plugin-count) > .dropdown > button .button-text {
+                display: none !important;
+            }
+        }
+
         .menubar > .btn,
         .menubar > .dropdown > button {
             display: inline-flex !important;
