@@ -14,6 +14,8 @@ export interface IControlEvent {
   name: string;
   /** champ clavier tel qu'écrit dans le fichier : `0x11`, `0x02,0x4f`, `0x1d+0xb7`, `0xff`, `!0,Activate` */
   keyboard: string;
+  /** champ souris tel qu'écrit dans le fichier (`0xff` : pas de bouton) */
+  mouse: string;
   /** vrai si le jeu permet de changer la touche clavier de cet événement */
   remappable: boolean;
   /** numéro de la ligne dans le fichier */
@@ -71,6 +73,7 @@ export function parseControlMap(text: string): IControlMap {
       context: current.index,
       name: fields[0],
       keyboard: fields[1],
+      mouse: fields[2] ?? "0xff",
       remappable: fields[4] === "1",
       line: i,
     });

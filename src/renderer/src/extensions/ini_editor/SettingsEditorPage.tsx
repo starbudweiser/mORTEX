@@ -44,6 +44,7 @@ import { EXE_SETTINGS } from "./catalog/exeSettings";
 import { TAB_GROUPS } from "./catalog/groups";
 import { SKYRIMSE_CATALOG, settingsOfTab } from "./catalog/skyrimse";
 import type { TabId } from "./catalog/types";
+import ControlsView from "./ControlsView";
 import {
   type IValueContext,
   type Pending,
@@ -100,7 +101,7 @@ export default function SettingsEditorPage({ api }: IProps) {
   const [revision, setRevision] = useState(0);
   const [tab, setTab] = useState<TabId>("display");
   const [saving, setSaving] = useState(false);
-  const [view, setView] = useState<"main" | "advanced" | "backups">("main");
+  const [view, setView] = useState<"main" | "advanced" | "controls" | "backups">("main");
   const [backups, setBackups] = useState<IBackup[]>([]);
   // le jeu ou un outil tourne : le jeu réécrit ses INI en quittant, on n'écrit pas par-dessus
   const toolRunning = useSelector(
@@ -310,28 +311,32 @@ export default function SettingsEditorPage({ api }: IProps) {
             >
               {tt("ui.macExclusive")}
             </Typography>
-            <Typography appearance="moderate" className="ml-auto" typographyType="body-sm">
-              {tt("ui.pending", { count: changeCount })}
-            </Typography>
-            <Button
-              appearance="moderate"
-              brand="neutral"
-              leftIcon="refresh"
-              title={tt("ui.refresh")}
-              onClick={load}
-            />
-            <Button disabled={changeCount === 0} leftIcon="undo" size="sm" onClick={revert}>
-              {tt("ui.revert")}
-            </Button>
-            <Button
-              disabled={changeCount === 0}
-              isLoading={saving}
-              leftIcon="save"
-              size="sm"
-              onClick={() => void save()}
-            >
-              {tt("ui.save")}
-            </Button>
+            {view !== "controls" && (
+              <>
+                <Typography appearance="moderate" className="ml-auto" typographyType="body-sm">
+                  {tt("ui.pending", { count: changeCount })}
+                </Typography>
+                <Button
+                  appearance="moderate"
+                  brand="neutral"
+                  leftIcon="refresh"
+                  title={tt("ui.refresh")}
+                  onClick={load}
+                />
+                <Button disabled={changeCount === 0} leftIcon="undo" size="sm" onClick={revert}>
+                  {tt("ui.revert")}
+                </Button>
+                <Button
+                  disabled={changeCount === 0}
+                  isLoading={saving}
+                  leftIcon="save"
+                  size="sm"
+                  onClick={() => void save()}
+                >
+                  {tt("ui.save")}
+                </Button>
+              </>
+            )}
           </div>
 
           <Typography appearance="moderate" typographyType="body-md">
@@ -339,7 +344,7 @@ export default function SettingsEditorPage({ api }: IProps) {
           </Typography>
 
           <div className="flex gap-x-2">
-            {(["main", "advanced", "backups"] as const).map((id) => (
+            {(["main", "advanced", "controls", "backups"] as const).map((id) => (
               <Button
                 appearance={view === id ? undefined : "moderate"}
                 brand={view === id ? undefined : "neutral"}
@@ -454,6 +459,16 @@ export default function SettingsEditorPage({ api }: IProps) {
                     onChange={(section, key, value) =>
                       setPending(withEntryValue(ctx, SKYRIMSE_CATALOG, section, key, value))
                     }
+                  />
+                )}
+                {view === "controls" && iniDir !== undefined && (
+                  <ControlsView
+                    api={api}
+                    gamePath={gamePath}
+                    iniDir={iniDir}
+                    toolRunning={toolRunning}
+                    tt={tt}
+                    onSaved={loadBackups}
                   />
                 )}
                 {view === "backups" && (
