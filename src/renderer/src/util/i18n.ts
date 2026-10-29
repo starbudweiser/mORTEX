@@ -315,6 +315,7 @@ export async function init(
         // community translation packs ship these strings under this name
         "gamebryo-plugin-management",
         "support_bundle",
+        "settings_editor",
       ],
       defaultNS: "common",
 

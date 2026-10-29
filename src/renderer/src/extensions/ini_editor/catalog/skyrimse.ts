@@ -53,12 +53,12 @@ export const SKYRIMSE_CATALOG: readonly ICatalogSetting[] = [
     macNote: true,
   }),
   choice("display", "vsync", "Display", "iPresentInterval", {
-    options: numbers(0, 1),
+    options: states("0", "1"),
     macNote: true,
     outsideExe: true,
   }),
   choice("display", "multisample", "Display", "iMultiSample", {
-    options: numbers(0, 2, 4, 8),
+    options: states("0", "2", "4", "8"),
     macNote: true,
     outsideExe: true,
   }),
@@ -75,7 +75,7 @@ export const SKYRIMSE_CATALOG: readonly ICatalogSetting[] = [
     dependsOn: { on: "taa" },
   }),
   choice("display", "anisotropy", "Display", "iMaxAnisotropy", {
-    options: numbers(0, 2, 4, 8, 16),
+    options: states("0", "2", "4", "8", "16"),
     outsideExe: true,
   }),
   float("display", "gamma", "Display", "fGamma", { min: 0.5, max: 2, step: 0.05 }),
@@ -277,7 +277,7 @@ export const SKYRIMSE_CATALOG: readonly ICatalogSetting[] = [
     macNote: true,
   }),
   choice("waterFx", "volumetricQuality", "Display", "iVolumetricLightingQuality", {
-    options: numbers(0, 1, 2, 3),
+    options: states("0", "1", "2", "3"),
     dependsOn: { on: "volumetricLighting" },
     macNote: true,
   }),
@@ -353,24 +353,26 @@ export const SKYRIMSE_CATALOG: readonly ICatalogSetting[] = [
   }),
 
   // --- Jeu -------------------------------------------------------------------------------------
-  choice("game", "difficulty", "GamePlay", "iDifficulty", { options: numbers(0, 1, 2, 3, 4, 5) }),
+  choice("game", "difficulty", "GamePlay", "iDifficulty", {
+    options: states("0", "1", "2", "3", "4", "5"),
+  }),
   bool("game", "questMarkers", "GamePlay", "bShowQuestMarkers"),
   bool("game", "floatingQuestMarkers", "GamePlay", "bShowFloatingQuestMarkers", {
     dependsOn: { on: "questMarkers" },
   }),
   bool("game", "healthBar", "GamePlay", "bHealthBarShowing"),
   choice("game", "language", "General", "sLanguage", {
-    options: states(
-      "ENGLISH",
-      "FRENCH",
-      "GERMAN",
-      "ITALIAN",
-      "SPANISH",
-      "POLISH",
-      "RUSSIAN",
-      "JAPANESE",
-      "CZECH",
-    ),
+    options: [
+      { value: "ENGLISH", label: "English" },
+      { value: "FRENCH", label: "Français" },
+      { value: "GERMAN", label: "Deutsch" },
+      { value: "ITALIAN", label: "Italiano" },
+      { value: "SPANISH", label: "Español" },
+      { value: "POLISH", label: "Polski" },
+      { value: "RUSSIAN", label: "Русский" },
+      { value: "JAPANESE", label: "日本語" },
+      { value: "CZECH", label: "Čeština" },
+    ],
   }),
   bool("game", "alwaysRun", "Controls", "bAlwaysRunByDefault"),
   bool("game", "invertY", "Controls", "bInvertYValues"),
