@@ -44,3 +44,101 @@
         }
     }
 }
+
+// mORTEX : page d'avertissement avant d'ouvrir un site externe, selon Socle (aplats, un seul encart
+// d'alerte, un seul bouton principal, marges de 8 en 8 px)
+#browser-dialog .browser-confirm {
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px;
+
+    .browser-confirm-card {
+        width: 100%;
+        max-width: 600px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .browser-confirm-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 700;
+        letter-spacing: 0.025em;
+        color: #fafafa;
+    }
+
+    .browser-confirm-icon {
+        color: #f59e0b;
+        font-size: 18px;
+        line-height: 1;
+    }
+
+    .browser-confirm-site {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        p {
+            margin: 0;
+            color: #e5e5e5;
+            line-height: 1.5;
+        }
+    }
+
+    // l'adresse : dans un cadre creux, en police machine, à la couleur des valeurs mises en avant
+    .browser-confirm-url {
+        display: block;
+        padding: 10px 12px;
+        border-radius: 4px;
+        background: #1a1a1a;
+        font-family: ui-monospace, "SF Mono", Menlo, monospace;
+        font-size: 12px;
+        line-height: 1.5;
+        color: #38bdf8;
+        word-break: break-all;
+    }
+
+    // l'avertissement : un seul encart sur fond neutre, filet ambre
+    .browser-confirm-warning {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px 14px;
+        border: 1px solid #f59e0b;
+        border-radius: 4px;
+        background: #262626;
+
+        p {
+            margin: 0;
+            color: #d4d4d4;
+            line-height: 1.6;
+        }
+    }
+
+    .browser-confirm-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .browser-confirm-continue {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 36px;
+        padding: 0 16px;
+        border: 0;
+        border-radius: 4px;
+        background-color: var(--color-primary-700, #1d5d94);
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.025em;
+        line-height: 1;
+        text-transform: uppercase;
+    }
+}

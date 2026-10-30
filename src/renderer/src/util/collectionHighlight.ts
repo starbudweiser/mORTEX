@@ -17,7 +17,9 @@ const REFRESH_MS = 250;
 const MIN_LENGTH = 3;
 const ZERO_WIDTH = new Set(["\u200b", "\u200c", "\u200d", "\u2060"]);
 /** éléments dont le fond est déjà de couleur */
-const ON_COLOR = ".notification, .nxm-tooltip, .tooltip, .btn-primary, .mortex-apply-wrap";
+const ON_COLOR =
+  ".notification, .mortex-notification, .nxm-tooltip, .tooltip, .btn-primary, " +
+  ".nxm-button-primary, .mortex-apply-wrap";
 
 export function matchOffsets(text: string, name: string): Array<[number, number]> {
   // texte sans espaces invisibles, et pour chaque caractère gardé sa place d'origine

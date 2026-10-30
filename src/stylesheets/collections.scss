@@ -1785,7 +1785,8 @@ ul.collection-mods-page-attrib-tooltip {
 }
 
 .collection-sort-container {
-    width: 20em;
+    // mORTEX : assez large pour « Date de téléchargement » en entier (rien de tronqué, règle Socle)
+    width: 26em;
     display: flex;
     align-items: center;
     gap: 1em;

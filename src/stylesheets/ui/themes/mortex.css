@@ -333,6 +333,21 @@ body[data-platform="darwin"] [data-testid="window-titlebar"] {
     margin-right: -0.04em;
 }
 
+/* Pendant le déploiement, le bouton devient une barre de progression : son libellé (« Déploiement… »)
+   ne doit jamais être tronqué ; la barre prend la largeur de son libellé, pas celle de la colonne */
+.mortex-apply-wrap [role="progressbar"] {
+    width: max-content !important;
+    min-width: 100px;
+    padding-inline: 14px !important;
+    white-space: nowrap;
+}
+
+.mortex-apply-wrap [role="progressbar"] span {
+    max-width: none !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
 /* 132 (LANCER) + largeur réelle de DÉPLOYER + 12 d'écart : l'avatar ne passe jamais sous le bouton */
 body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titlebar"] {
     padding-right: calc(144px + var(--mortex-apply-width, 160px));
@@ -1429,6 +1444,22 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
 
 .mortex-notification [class*="bg-info-strong"] {
     background-color: #ffffff;
+}
+
+/* Règle Socle « contenu des boutons centré » : libellé et icône forment un seul groupe centré dans la
+   largeur et la hauteur du bouton. Hauteur de ligne du libellé ramenée à sa taille (celle d'un
+   Typography plus grand décale le texte), icône sans marge négative (elle décentrait le groupe). */
+.nxm-button {
+    text-align: center;
+    padding-block: 0;
+}
+
+.nxm-button > :not(.nxm-button-icon) {
+    line-height: 1.15 !important;
+}
+
+.nxm-button .nxm-button-icon {
+    margin-inline: 0 !important;
 }
 
 /* Zone de dépôt sous la liste des mods (nouvelle interface) : chevron de repli sur la zone */

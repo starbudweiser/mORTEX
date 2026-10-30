@@ -293,25 +293,45 @@ class BrowserView extends ComponentEx<IProps, IComponentState> {
   private renderConfirm() {
     const { t, url } = this.props;
     return (
-      <div>
-        <h3>{t("Attention")}</h3>
-        <p>{t("mORTEX is about to open an external web page:")}</p>
-        <a href="#">{url}</a>
-        <p>
-          {t(
-            "Please be aware that mORTEX is based on Electron which in turn is based on " +
-              "Chrome, but it will not always be the newest version. Also, we can't rule out " +
-              "that electron might contain it's own security issues pertaining to website " +
-              "access.",
-          )}
-        </p>
-        <p>
-          {t(
-            "If you have security concerns or don't fully trust this page, please don't " +
-              "continue. Don't navigate away from pages you don't trust.",
-          )}
-        </p>
-        <Button onClick={this.confirm}>{t("Continue")}</Button>
+      <div className="browser-confirm">
+        <div className="browser-confirm-card">
+          <h3 className="browser-confirm-title">
+            <span aria-hidden="true" className="browser-confirm-icon">
+              ⚠
+            </span>
+            {t("Attention")}
+          </h3>
+
+          <div className="browser-confirm-site">
+            <p>{t("mORTEX is about to open an external web page:")}</p>
+            <a className="browser-confirm-url" href="#">
+              {url}
+            </a>
+          </div>
+
+          <div className="browser-confirm-warning" role="note">
+            <p>
+              {t(
+                "Please be aware that mORTEX is based on Electron which in turn is based on " +
+                  "Chrome, but it will not always be the newest version. Also, we can't rule " +
+                  "out that electron might contain it's own security issues pertaining to " +
+                  "website access.",
+              )}
+            </p>
+            <p>
+              {t(
+                "If you have security concerns or don't fully trust this page, please don't " +
+                  "continue. Don't navigate away from pages you don't trust.",
+              )}
+            </p>
+          </div>
+
+          <div className="browser-confirm-actions">
+            <Button className="browser-confirm-continue" onClick={this.confirm}>
+              {t("Continue")}
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
