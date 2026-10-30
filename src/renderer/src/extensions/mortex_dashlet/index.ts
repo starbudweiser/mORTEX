@@ -61,7 +61,8 @@ function init(context: IExtensionContext): boolean {
       return;
     }
     const layout: string[] = store.getState().settings.interface.dashboardLayout ?? [];
-    store.dispatch(setLayout([DASHLET_ID, ...layout.filter((id) => id !== DASHLET_ID)]));
+    const first = [BOTTLE_DASHLET_ID, DASHLET_ID];
+    store.dispatch(setLayout([...first, ...layout.filter((id) => !first.includes(id))]));
     store.dispatch(setDashletEnabled("News", false));
     store.dispatch(setDashletEnabled("Latest Mods", false));
     store.dispatch(markDashboardArranged(true));

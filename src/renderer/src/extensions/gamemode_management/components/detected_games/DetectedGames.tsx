@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
+import { setOpenMainPage } from "@/actions";
 import { useMainContext } from "@/contexts";
 import { useFlag } from "@/contexts/FlagsContext";
 import type { IState } from "@/types/IState";
@@ -208,6 +209,12 @@ export const DetectedGames = ({
     return {
       children: (
         <div className="flex gap-x-2">
+          {process.platform === "darwin" && (
+            <Button onClick={() => dispatch(setOpenMainPage("Dashboard", false))}>
+              {t("Prepare Skyrim on your Mac")}
+            </Button>
+          )}
+
           <Button appearance="moderate" brand="neutral" onClick={onBrowseSupported}>
             {t("Browse games")}
           </Button>

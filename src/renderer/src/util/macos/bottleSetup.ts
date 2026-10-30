@@ -14,7 +14,7 @@
  */
 import { execFile, spawn } from "node:child_process";
 import { existsSync } from "node:fs";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdir, rm } from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 
@@ -204,7 +204,10 @@ export async function runBottleSetup(
     throw new Error("CrossOver is not installed");
   }
   const bottleDir = crossoverBottleDir();
-  const downloads = await mkdtemp(path.join(os.tmpdir(), "mortex-bottle-"));
+  // Toujours le même dossier : ce qu'une appli quittée en cours de route a laissé part au nouvel essai.
+  const downloads = path.join(os.tmpdir(), "mortex-bottle-setup");
+  await rm(downloads, { recursive: true, force: true });
+  await mkdir(downloads, { recursive: true });
   const context: ISetupContext = { bin, bottleDir, downloads };
   try {
     for (const step of setupSteps(options)) {

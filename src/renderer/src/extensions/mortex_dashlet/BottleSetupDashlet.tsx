@@ -91,6 +91,7 @@ function BottleSetupDashlet() {
             </p>
             <CheckboxField
               checked={netfx48}
+              fieldClassName="self-stretch"
               hints={t("Only for older tools such as Nemesis or FNIS. You can leave it out.")}
               label={t("Also install .NET Framework 4.8")}
               onChange={setNetfx48}
