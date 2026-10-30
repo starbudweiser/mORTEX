@@ -294,7 +294,7 @@ class DownloadView extends ComponentEx<IDownloadViewProps, IComponentState> {
                       actions={this.actions}
                     />
                   </FlexLayout.Flex>
-                  <FlexLayout.Fixed style={{ textAlign: "center" }}>
+                  <FlexLayout.Fixed className="download-view-all" style={{ textAlign: "center" }}>
                     <Button bsStyle="ghost" onClick={this.toggleViewAll}>
                       {viewAll ? t("View not-yet-installed Downloads") : t("View All Downloads")}
                     </Button>

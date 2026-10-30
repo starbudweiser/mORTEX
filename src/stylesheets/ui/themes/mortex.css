@@ -1458,8 +1458,55 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     line-height: 1.15 !important;
 }
 
+/* l'écart icône-libellé passe de la marge de l'icône (retirée ci-dessous) à l'écart du bouton : 6 px,
+   comme `space-1.5` de Socle (sans lui l'icône touchait le libellé) */
+.nxm-button:not(.nxm-button-icon-only) {
+    gap: 6px;
+}
+
 .nxm-button .nxm-button-icon {
     margin-inline: 0 !important;
+}
+
+/* Téléchargements : le bouton « Voir tous les téléchargements » est un pied de liste à fond opaque
+   (celui du panneau) : il ne flotte plus par-dessus les dernières lignes */
+.download-view-all {
+    position: relative;
+    z-index: 2;
+    padding: 8px 0;
+    background-color: #222222;
+}
+
+/* Boutons de l'ancienne interface (react-bootstrap) restés clairs dans l'interface sombre (ex. « Réinitialiser
+   les notifications masquées ») : aplat Socle `control`, sans contour, libellé et icône centrés */
+.modern-layout .btn.btn-default:not(.btn-embed):not(.dropdown-toggle):not(.btn-block) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 0;
+    border-radius: 4px;
+    background-color: #2e2e2e;
+    color: #fafafa;
+    font-weight: 500;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.modern-layout
+    .btn.btn-default:not(.btn-embed):not(.dropdown-toggle):not(.btn-block):hover:not(:disabled) {
+    background-color: #3a3a3a;
+}
+
+/* Bouton neutre « fort » (fond clair, texte sombre) : seul bouton clair de l'interface sombre (ex. « Réinitialiser
+   les notifications masquées »). Socle : un bouton est un aplat `control`, jamais un aplat clair. */
+.nxm-button.nxm-button-neutral.nxm-button-strong {
+    background-color: #2e2e2e;
+    color: #fafafa;
+}
+
+.nxm-button.nxm-button-neutral.nxm-button-strong:is(:enabled, a):not(.nxm-button-disabled):hover {
+    background-color: #3a3a3a;
 }
 
 /* Zone de dépôt sous la liste des mods (nouvelle interface) : chevron de repli sur la zone */
