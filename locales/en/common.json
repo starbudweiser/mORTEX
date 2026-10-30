@@ -558,5 +558,12 @@
   "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)_plural": "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)",
   "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)": "Also delete the previous Time Machine snapshot: it keeps the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)",
   "Entry colour": "Entry colour",
-  "Original colour": "Original colour"
+  "Original colour": "Original colour",
+  "SKSE does not match your game version": "SKSE does not match your game version",
+  "After installing “{{collection}}”:": "After installing “{{collection}}”:",
+  "Your game version: {{game}}": "Your game version: {{game}}",
+  "SKSE is made for Skyrim {{skse}}, but your game is version {{game}}. Skyrim will not start through SKSE: install the SKSE build for {{game}}.": "SKSE is made for Skyrim {{skse}}, but your game is version {{game}}. Skyrim will not start through SKSE: install the SKSE build for {{game}}.",
+  "{{plugins}} SKSE plugins are installed, but SKSE is not in the game folder. Install SKSE for Skyrim {{game}}, or these mods will not load.": "{{plugins}} SKSE plugins are installed, but SKSE is not in the game folder. Install SKSE for Skyrim {{game}}, or these mods will not load.",
+  "The Address Library installed is for Skyrim {{found}}, not for your version {{game}}. Most SKSE plugins will not load: install the Address Library for {{game}}.": "The Address Library installed is for Skyrim {{found}}, not for your version {{game}}. Most SKSE plugins will not load: install the Address Library for {{game}}.",
+  "The Address Library for Skyrim {{game}} is missing. Most SKSE plugins need it to load.": "The Address Library for Skyrim {{game}} is missing. Most SKSE plugins need it to load."
 }

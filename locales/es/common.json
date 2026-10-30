@@ -3891,5 +3891,12 @@
   "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)_plural": "Eliminar también las {{count}} instantáneas anteriores de la Time Machine: conservan los archivos de los mods quitados y el espacio en disco no se liberaría (se toma una nueva instantánea del estado actual)",
   "Previous snapshot deleted, the space of the removed mods is freed": "Instantánea anterior eliminada: se ha liberado el espacio de los mods quitados",
   "Entry colour": "Color de la entrada",
-  "Original colour": "Color original"
+  "Original colour": "Color original",
+  "SKSE does not match your game version": "SKSE no corresponde a tu versión del juego",
+  "After installing “{{collection}}”:": "Tras instalar «{{collection}}»:",
+  "Your game version: {{game}}": "Tu versión del juego: {{game}}",
+  "SKSE is made for Skyrim {{skse}}, but your game is version {{game}}. Skyrim will not start through SKSE: install the SKSE build for {{game}}.": "SKSE está hecho para Skyrim {{skse}}, pero tu juego es la versión {{game}}. Skyrim no arrancará con SKSE: instala la versión de SKSE para {{game}}.",
+  "{{plugins}} SKSE plugins are installed, but SKSE is not in the game folder. Install SKSE for Skyrim {{game}}, or these mods will not load.": "Hay {{plugins}} complementos de SKSE instalados, pero SKSE no está en la carpeta del juego. Instala SKSE para Skyrim {{game}} o estos mods no se cargarán.",
+  "The Address Library installed is for Skyrim {{found}}, not for your version {{game}}. Most SKSE plugins will not load: install the Address Library for {{game}}.": "La Address Library instalada es para Skyrim {{found}}, no para tu versión {{game}}. La mayoría de los complementos de SKSE no se cargarán: instala la Address Library para {{game}}.",
+  "The Address Library for Skyrim {{game}} is missing. Most SKSE plugins need it to load.": "Falta la Address Library para Skyrim {{game}}. La mayoría de los complementos de SKSE la necesitan para cargarse."
 }

@@ -3891,5 +3891,12 @@
   "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)_plural": "Elimina anche le {{count}} istantanee precedenti della Time Machine: conservano i file delle mod rimosse, e lo spazio su disco non verrebbe liberato (viene presa una nuova istantanea dello stato attuale)",
   "Previous snapshot deleted, the space of the removed mods is freed": "Istantanea precedente eliminata: lo spazio delle mod rimosse è stato liberato",
   "Entry colour": "Colore della voce",
-  "Original colour": "Colore originale"
+  "Original colour": "Colore originale",
+  "SKSE does not match your game version": "SKSE non corrisponde alla tua versione del gioco",
+  "After installing “{{collection}}”:": "Dopo l'installazione di «{{collection}}»:",
+  "Your game version: {{game}}": "La tua versione del gioco: {{game}}",
+  "SKSE is made for Skyrim {{skse}}, but your game is version {{game}}. Skyrim will not start through SKSE: install the SKSE build for {{game}}.": "SKSE è fatto per Skyrim {{skse}}, ma il tuo gioco è la versione {{game}}. Skyrim non si avvierà tramite SKSE: installa la versione di SKSE per {{game}}.",
+  "{{plugins}} SKSE plugins are installed, but SKSE is not in the game folder. Install SKSE for Skyrim {{game}}, or these mods will not load.": "Sono installati {{plugins}} plugin SKSE, ma SKSE non è nella cartella del gioco. Installa SKSE per Skyrim {{game}}, altrimenti questi mod non verranno caricati.",
+  "The Address Library installed is for Skyrim {{found}}, not for your version {{game}}. Most SKSE plugins will not load: install the Address Library for {{game}}.": "L'Address Library installata è per Skyrim {{found}}, non per la tua versione {{game}}. La maggior parte dei plugin SKSE non verrà caricata: installa l'Address Library per {{game}}.",
+  "The Address Library for Skyrim {{game}} is missing. Most SKSE plugins need it to load.": "Manca l'Address Library per Skyrim {{game}}. La maggior parte dei plugin SKSE ne ha bisogno per caricarsi."
 }

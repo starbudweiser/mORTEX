@@ -95,6 +95,7 @@ import { addExtension } from "./util/extension";
 import InstallDriver from "./util/InstallDriver";
 import { canLinkProfile, findLinkedCollection, linkProfileToCollection } from "./util/profileLink";
 import { makeCollectionModsResolver } from "./util/resolveCollectionMods/resolveCollectionMods";
+import { warnScriptExtenderMismatch } from "./util/scriptExtenderCheck";
 import { getActiveInstallSession } from "./util/selectors";
 import { makeCollectionId } from "./util/transformCollection";
 import { bbProm, getUnfulfilledNotificationId } from "./util/util";
@@ -1532,6 +1533,10 @@ function once(api: IExtensionApi, collectionsCB: () => ICallbackMap) {
 
   api.onAsync("unfulfilled-rules", makeOnUnfulfilledRules(api));
   api.events.on("collection-update", onCollectionUpdate(api, driver));
+  api.events.on("collection-postprocess-complete", (gameId: string, modId: string) => {
+    const collection = api.getState().persistent.mods[gameId]?.[modId];
+    void warnScriptExtenderMismatch(api, gameId, renderModName(collection) ?? modId);
+  });
 
   api.events.on("did-finish-download", (dlId: string, outcome: string) => {
     if (outcome === "finished") {

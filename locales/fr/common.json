@@ -3891,5 +3891,12 @@
   "Also delete the {{count}} previous Time Machine snapshots: they keep the files of removed mods, so the disk space is not freed (a new snapshot of the current state is taken)_plural": "Supprimer aussi les {{count}} instantanés précédents de la Time Machine : ils gardent les fichiers des mods retirés, et l'espace disque ne serait pas libéré (un nouvel instantané de l'état actuel est pris)",
   "Previous snapshot deleted, the space of the removed mods is freed": "Instantané précédent supprimé : l'espace des mods retirés est libéré",
   "Entry colour": "Couleur de l'entrée",
-  "Original colour": "Couleur d'origine"
+  "Original colour": "Couleur d'origine",
+  "SKSE does not match your game version": "SKSE ne correspond pas à votre version du jeu",
+  "After installing “{{collection}}”:": "Après l'installation de « {{collection}} » :",
+  "Your game version: {{game}}": "Votre version du jeu : {{game}}",
+  "SKSE is made for Skyrim {{skse}}, but your game is version {{game}}. Skyrim will not start through SKSE: install the SKSE build for {{game}}.": "SKSE est prévu pour Skyrim {{skse}}, mais votre jeu est en version {{game}}. Skyrim ne démarrera pas par SKSE : installez la version de SKSE faite pour {{game}}.",
+  "{{plugins}} SKSE plugins are installed, but SKSE is not in the game folder. Install SKSE for Skyrim {{game}}, or these mods will not load.": "{{plugins}} modules SKSE sont installés, mais SKSE n'est pas dans le dossier du jeu. Installez SKSE pour Skyrim {{game}}, sinon ces mods ne se chargeront pas.",
+  "The Address Library installed is for Skyrim {{found}}, not for your version {{game}}. Most SKSE plugins will not load: install the Address Library for {{game}}.": "L'Address Library installée est prévue pour Skyrim {{found}}, pas pour votre version {{game}}. La plupart des modules SKSE ne se chargeront pas : installez l'Address Library pour {{game}}.",
+  "The Address Library for Skyrim {{game}} is missing. Most SKSE plugins need it to load.": "L'Address Library pour Skyrim {{game}} est absente. La plupart des modules SKSE en ont besoin pour se charger."
 }
