@@ -3903,5 +3903,21 @@
   "\"{{modName}}\" is already installed on your system and is trying to be reinstalled as a dependency by another mod or collection.[br][/br][br][/br]Would you like to:": "« {{modName}} » est déjà installé sur votre système, et un autre mod ou une collection essaie de le réinstaller comme dépendance.[br][/br][br][/br]Que voulez-vous faire ?",
   "Replace the existing mod (recommended)": "Remplacer le mod existant (recommandé)",
   "This will replace the existing mod on all your profiles.": "Le mod existant sera remplacé dans tous vos profils.",
-  "This will allow you to install variants of the same mod and easily switch between them from the version drop-down in the mods table. This can be useful if you want to install the same mod but with different options in different profiles.": "Vous pourrez installer plusieurs variantes du même mod et passer de l'une à l'autre avec la liste des versions du tableau des mods. Utile pour installer le même mod avec des options différentes selon les profils."
+  "This will allow you to install variants of the same mod and easily switch between them from the version drop-down in the mods table. This can be useful if you want to install the same mod but with different options in different profiles.": "Vous pourrez installer plusieurs variantes du même mod et passer de l'une à l'autre avec la liste des versions du tableau des mods. Utile pour installer le même mod avec des options différentes selon les profils.",
+  "Prepare Skyrim on your Mac": "Préparer Skyrim sur votre Mac",
+  "Skyrim runs on Mac through CrossOver, a paid app from CodeWeavers with a free trial. Install it, and this card will prepare a bottle for you.": "Sur Mac, Skyrim tourne grâce à CrossOver, une appli payante de CodeWeavers avec essai gratuit. Installez-la, et cette carte préparera une bouteille pour vous.",
+  "Get CrossOver": "Obtenir CrossOver",
+  "No Skyrim was found. A CrossOver bottle can be prepared for you, with Steam, Visual C++ and .NET 8. You then sign in to Steam and install Skyrim yourself.": "Aucun Skyrim n'a été trouvé. Une bouteille CrossOver peut être préparée pour vous, avec Steam, Visual C++ et .NET 8. Vous vous connectez ensuite à Steam et vous installez Skyrim vous-même.",
+  "Only for older tools such as Nemesis or FNIS. You can leave it out.": "Seulement pour d'anciens outils comme Nemesis ou FNIS. Vous pouvez vous en passer.",
+  "Also install .NET Framework 4.8": "Installer aussi .NET Framework 4.8",
+  "Everything is downloaded from Valve and Microsoft. By continuing, you accept their licences:": "Tout est téléchargé depuis les sites de Valve et de Microsoft. En continuant, vous acceptez leurs licences :",
+  "Accept and prepare the bottle": "Accepter et préparer la bouteille",
+  "Creating the bottle": "Création de la bouteille",
+  "Installing Visual C++": "Installation de Visual C++",
+  "Installing .NET 8": "Installation de .NET 8",
+  "Installing .NET Framework 4.8": "Installation de .NET Framework 4.8",
+  "Installing Steam": "Installation de Steam",
+  "The bottle could not be prepared: {{error}}": "La bouteille n'a pas pu être préparée : {{error}}",
+  "The bottle is ready. Sign in to Steam and install Skyrim Special Edition, then search for games again.": "La bouteille est prête. Connectez-vous à Steam, installez Skyrim Special Edition, puis relancez la recherche des jeux.",
+  "Open Steam": "Ouvrir Steam"
 }

@@ -11,6 +11,7 @@
  *  - WineBottlesStore (id "wine")                   IGameStore branché dans GameModeManager
  *  - runInBottle(exe, args, env?)                   {executable, args, env} pour lancer un .exe dans sa bouteille
  *  - wineCommand(bottle, args)                      {executable, args, env} pour un outil Wine (reg, regedit…)
+ *  - crossoverBottleDir() / crossoverBinDir()        où CrossOver range ses bouteilles et ses outils
  *
  * État : <userData>/bottles.json  { roots?: string[], activeBottle?: string, exclusive?: boolean, userDir?: string }
  * `exclusive` + `activeBottle` : ne voir que cette bouteille (essais de dev)
@@ -125,6 +126,17 @@ function crossoverRoots(): string[] {
   const custom = run("defaults", ["read", "com.codeweavers.CrossOver", "BottleDir"]);
   if (custom) roots.push(custom);
   return roots;
+}
+
+/** Dossier où CrossOver range ses bouteilles : celui de ses préférences, sinon celui par défaut. */
+export function crossoverBottleDir(): string {
+  return crossoverRoots().at(-1) as string;
+}
+
+/** Dossier `bin` de CrossOver ; la version stable d'abord, undefined s'il n'est pas installé. */
+export function crossoverBinDir(): string | undefined {
+  const app = CX_APPS.find((candidate) => fs.existsSync(candidate));
+  return app && path.join(app, "Contents/SharedSupport/CrossOver/bin");
 }
 
 function whiskyRoots(): string[] {

@@ -2,11 +2,14 @@ import safeCreateAction from "../../actions/safeCreateAction";
 import type { IExtensionContext, IReducerSpec } from "../../types/IExtensionContext";
 import { setSafe } from "../../util/storeHelper";
 import { setDashletEnabled, setLayout } from "../dashboard/actions";
+import { discoveryByGame } from "../gamemode_management/selectors";
 import { activeGameId } from "../profile_management/selectors";
+import BottleSetupDashlet from "./BottleSetupDashlet";
 import { menuOrderReducers } from "./menuOrder";
 import MortexStatusDashlet from "./MortexStatusDashlet";
 
 const DASHLET_ID = "mORTEX";
+const BOTTLE_DASHLET_ID = "mORTEX bottle setup";
 
 const markDashboardArranged = safeCreateAction(
   "MORTEX_DASHBOARD_ARRANGED",
@@ -33,6 +36,19 @@ function init(context: IExtensionContext): boolean {
     10,
     MortexStatusDashlet,
     (state) => activeGameId(state) !== undefined,
+    undefined,
+    { fixed: false, closable: true },
+  );
+
+  // Tant qu'aucun Skyrim n'est trouvé : disparaît dès que le jeu est détecté.
+  context.registerDashlet(
+    BOTTLE_DASHLET_ID,
+    3,
+    2,
+    5,
+    BottleSetupDashlet,
+    (state) =>
+      process.platform === "darwin" && discoveryByGame(state, "skyrimse")?.path === undefined,
     undefined,
     { fixed: false, closable: true },
   );

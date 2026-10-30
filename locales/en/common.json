@@ -565,5 +565,22 @@
   "SKSE is made for Skyrim {{skse}}, but your game is version {{game}}. Skyrim will not start through SKSE: install the SKSE build for {{game}}.": "SKSE is made for Skyrim {{skse}}, but your game is version {{game}}. Skyrim will not start through SKSE: install the SKSE build for {{game}}.",
   "{{plugins}} SKSE plugins are installed, but SKSE is not in the game folder. Install SKSE for Skyrim {{game}}, or these mods will not load.": "{{plugins}} SKSE plugins are installed, but SKSE is not in the game folder. Install SKSE for Skyrim {{game}}, or these mods will not load.",
   "The Address Library installed is for Skyrim {{found}}, not for your version {{game}}. Most SKSE plugins will not load: install the Address Library for {{game}}.": "The Address Library installed is for Skyrim {{found}}, not for your version {{game}}. Most SKSE plugins will not load: install the Address Library for {{game}}.",
-  "The Address Library for Skyrim {{game}} is missing. Most SKSE plugins need it to load.": "The Address Library for Skyrim {{game}} is missing. Most SKSE plugins need it to load."
+  "The Address Library for Skyrim {{game}} is missing. Most SKSE plugins need it to load.": "The Address Library for Skyrim {{game}} is missing. Most SKSE plugins need it to load.",
+  "Prepare Skyrim on your Mac": "Prepare Skyrim on your Mac",
+  "Skyrim runs on Mac through CrossOver, a paid app from CodeWeavers with a free trial. Install it, and this card will prepare a bottle for you.": "Skyrim runs on Mac through CrossOver, a paid app from CodeWeavers with a free trial. Install it, and this card will prepare a bottle for you.",
+  "Get CrossOver": "Get CrossOver",
+  "No Skyrim was found. A CrossOver bottle can be prepared for you, with Steam, Visual C++ and .NET 8. You then sign in to Steam and install Skyrim yourself.": "No Skyrim was found. A CrossOver bottle can be prepared for you, with Steam, Visual C++ and .NET 8. You then sign in to Steam and install Skyrim yourself.",
+  "Only for older tools such as Nemesis or FNIS. You can leave it out.": "Only for older tools such as Nemesis or FNIS. You can leave it out.",
+  "Also install .NET Framework 4.8": "Also install .NET Framework 4.8",
+  "Everything is downloaded from Valve and Microsoft. By continuing, you accept their licences:": "Everything is downloaded from Valve and Microsoft. By continuing, you accept their licences:",
+  "Accept and prepare the bottle": "Accept and prepare the bottle",
+  "Creating the bottle": "Creating the bottle",
+  "Installing Visual C++": "Installing Visual C++",
+  "Installing .NET 8": "Installing .NET 8",
+  "Installing .NET Framework 4.8": "Installing .NET Framework 4.8",
+  "Installing Steam": "Installing Steam",
+  "The bottle could not be prepared: {{error}}": "The bottle could not be prepared: {{error}}",
+  "Try again": "Try again",
+  "The bottle is ready. Sign in to Steam and install Skyrim Special Edition, then search for games again.": "The bottle is ready. Sign in to Steam and install Skyrim Special Edition, then search for games again.",
+  "Open Steam": "Open Steam"
 }
