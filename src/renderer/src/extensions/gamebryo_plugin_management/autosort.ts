@@ -235,7 +235,7 @@ class LootInterface {
       this.mExtensionApi.sendNotification({
         id: "loot-sorted",
         type: "success",
-        message: "LOOT sorting successful",
+        message: this.mExtensionApi.translate("LOOT sorting successful"),
         displayMS: 3000,
       });
     }

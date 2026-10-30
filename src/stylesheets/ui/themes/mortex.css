@@ -1361,6 +1361,17 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     color: #ffffff;
 }
 
+/* Texte illisible (nom de profil ou de collection en bleu clair sur fond bleu ou vert) : tout
+   le texte de la carte reste blanc, y compris les éléments en ligne ; les boutons gardent le
+   leur (règles plus bas, plus spécifiques) */
+.mortex-notification :is(p, div, span, strong, b, em, i, a, code, mark, small) {
+    color: #ffffff !important;
+}
+
+.mortex-notification :is(p, span, strong, b, em, i, a, code, mark, small) {
+    opacity: 1 !important;
+}
+
 .mortex-notification p.font-semibold {
     font-weight: 700;
 }

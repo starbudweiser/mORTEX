@@ -37,7 +37,9 @@ export interface ISpaceEstimate {
   free: number;
 }
 
-export function volumeOf(dir: string): IVolume | undefined {
+export function volumeOf(dir: string | undefined): IVolume | undefined {
+  // sans profil ni dossier de staging (tous les profils supprimés), le chemin est indéfini
+  if (typeof dir !== "string" || dir === "") return undefined;
   let current = dir;
   // un dossier pas encore créé : on remonte jusqu'à un parent existant
   for (;;) {

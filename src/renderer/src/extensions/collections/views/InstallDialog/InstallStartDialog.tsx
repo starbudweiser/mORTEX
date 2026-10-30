@@ -49,8 +49,8 @@ interface IConnectedProps {
   collectionsInstallWhileDownloading: boolean;
   useModernLayout: boolean;
   downloads: { [id: string]: IDownload };
-  downloadPath: string;
-  modsPath: string;
+  downloadPath: string | undefined;
+  modsPath: string | undefined;
 }
 
 interface IActionProps {

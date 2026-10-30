@@ -1,8 +1,19 @@
 import { describe, expect, it } from "vitest";
 
-import { estimateSpace, INSTALLED_FACTOR, SPARE_BYTES } from "./diskSpace";
+import { estimateSpace, INSTALLED_FACTOR, SPARE_BYTES, volumeOf } from "./diskSpace";
 
 const GB = 1024 ** 3;
+
+describe("volumeOf", () => {
+  it("renvoie undefined au lieu de planter quand le chemin est indéfini ou vide", () => {
+    expect(volumeOf(undefined)).toBeUndefined();
+    expect(volumeOf("")).toBeUndefined();
+  });
+
+  it("remonte jusqu'à un dossier existant pour un chemin pas encore créé", () => {
+    expect(volumeOf("/tmp/mortex-dossier-inexistant/sous-dossier")?.free).toBeGreaterThan(0);
+  });
+});
 
 const rule = (type: string, fileSize: number, fileMD5?: string): any => ({
   type,
