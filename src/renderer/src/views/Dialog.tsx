@@ -529,9 +529,16 @@ export const Dialog: React.FC<React.PropsWithChildren<unknown>> = () => {
       }
 
       if (content.bbcode !== undefined) {
-        // BBCode content is always raw text, not translation keys
-        // Bypass i18next entirely to avoid key separator parsing
-        let bbcodeContent = content.bbcode;
+        // looked up whole (i18next would split it on its key separators), without interpolation:
+        // the parameters are put in by hand below
+        let bbcodeContent = content.options?.translated
+          ? content.bbcode
+          : t(content.bbcode, {
+              keySeparator: false,
+              nsSeparator: false,
+              skipInterpolation: true,
+              defaultValue: content.bbcode,
+            });
 
         // Manual parameter interpolation
         if (content.parameters) {

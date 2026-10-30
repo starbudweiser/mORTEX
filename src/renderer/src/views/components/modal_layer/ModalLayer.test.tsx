@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import i18next from "i18next";
 import React from "react";
 import { toast } from "react-hot-toast";
 import { Provider } from "react-redux";
@@ -644,6 +645,30 @@ describe("ModalLayer", () => {
       expect(proseOf(screen.getByRole("dialog"))).toHaveTextContent("Hello Ada, you have 3 mods");
 
       await settleTransitions();
+    });
+
+    it("looks bbcode up whole, separators and placeholders included", async () => {
+      // the options translateBBCode passes, against the app's own separators
+      const i18n = i18next.createInstance();
+      const key = "Your game version: [style=x]{{actual}}[/style]. Done.";
+      await i18n.init({
+        lng: "fr",
+        nsSeparator: ":::",
+        keySeparator: "::",
+        resources: {
+          fr: { common: { [key]: "Votre version : [style=x]{{actual}}[/style]. Fini." } },
+        },
+        defaultNS: "common",
+      });
+
+      expect(
+        i18n.t(key, {
+          keySeparator: false,
+          nsSeparator: false,
+          skipInterpolation: true,
+          defaultValue: key,
+        }),
+      ).toBe("Votre version : [style=x]{{actual}}[/style]. Fini.");
     });
 
     it("draws markdown", async () => {

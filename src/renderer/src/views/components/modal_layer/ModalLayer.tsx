@@ -59,8 +59,8 @@ const DISMISS_ACTIONS = new Set(["Close"]);
 const SMALL_MAX_TEXT_LENGTH = 200;
 const MAX_BUTTONS_IN_SMALL = 3;
 
-// bbcode is raw text, not a translation key, and i18next would split it on its key separators. So
-// the parameters are put in by hand, as in the legacy renderer.
+// i18next would split bbcode on its key separators, so it is looked up whole, without interpolation,
+// and the parameters are put in by hand, as in the legacy renderer.
 const fillParameters = (text: string, parameters: IDialogContent["parameters"] = {}) =>
   Object.entries(parameters).reduce(
     (filled, [name, value]) => filled.split(`{{${name}}}`).join(String(value)),
@@ -155,6 +155,16 @@ export const ModalLayer = () => {
     });
 
   const text = content.text ? translateBody(content.text) : "";
+
+  const translateBBCode = (bbcode: string) =>
+    content.options?.translated
+      ? bbcode
+      : t(bbcode, {
+          keySeparator: false,
+          nsSeparator: false,
+          skipInterpolation: true,
+          defaultValue: bbcode,
+        });
 
   const translateMessage = (message: string) => translateMessageParts(message, translateBody);
 
@@ -265,7 +275,7 @@ export const ModalLayer = () => {
       id: "bbcode",
       node: (
         <BBCode
-          bbcode={fillParameters(content.bbcode, content.parameters)}
+          bbcode={fillParameters(translateBBCode(content.bbcode), content.parameters)}
           context={content.options?.bbcodeContext}
           size="sm"
         />
