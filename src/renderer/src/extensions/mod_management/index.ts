@@ -1562,10 +1562,25 @@ function once(api: IExtensionApi) {
   });
 
   api.events.on("purge-mods", (allowFallback: boolean, callback: (err: Error) => void) => {
+    // mORTEX : la purge peut durer longtemps (plusieurs centaines de mods) : on l'indique tant
+    // qu'elle tourne, puis on retire l'indicateur avant le retour (le « Mods purgés » suit)
+    const activityId = "mods-purging";
+    api.sendNotification({
+      id: activityId,
+      type: "activity",
+      message: "Purging mods",
+      noDismiss: true,
+    });
     purgeMods(api)
       .catch((err) => (allowFallback ? fallbackPurge(api) : Promise.reject(err)))
-      .then(() => callback(null))
-      .catch((err) => callback(unknownToError(err)));
+      .then(() => {
+        api.dismissNotification(activityId);
+        callback(null);
+      })
+      .catch((err) => {
+        api.dismissNotification(activityId);
+        callback(unknownToError(err));
+      });
   });
 
   api.events.on("await-activation", (callback: (err: Error) => void) => {

@@ -968,7 +968,9 @@ ul.collection-mods-page-attrib-tooltip {
     .collections-refresh-meta {
         position: absolute;
         top: 6px;
-        right: 0;
+        // mORTEX : bord droit aligné sur celui du bouton JOUER (16 px du bord de la fenêtre ;
+        // la page va jusqu'à 1 px du bord)
+        right: 15px;
     }
 }
 

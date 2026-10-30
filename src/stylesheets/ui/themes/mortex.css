@@ -303,6 +303,36 @@ body[data-platform="darwin"] [data-testid="window-titlebar"] {
     color: #ffffff !important;
 }
 
+/* Icône et libellé centrés dans la largeur et la hauteur du bouton : même ligne de base (hauteur de
+   ligne réduite à celle du texte), icône de 16 px sans marge, et l'espacement de lettres ajouté
+   après la dernière lettre est retiré pour ne pas décaler le contenu vers la gauche */
+.mortex-apply-wrap button,
+.mortex-apply-wrap [data-testid="menu-apply"] {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding-block: 0 !important;
+    /* mesuré : le glyphe de l'icône laisse ~2 px de vide à gauche, on rend ces 2 px à droite */
+    padding-inline: 12px 16px !important;
+    line-height: 1 !important;
+}
+
+.mortex-apply-wrap .nxm-button-icon {
+    flex: none;
+    width: 16px !important;
+    height: 16px !important;
+    margin: 0 !important;
+    font-size: 16px !important;
+    line-height: 16px !important;
+}
+
+.mortex-apply-wrap button span,
+.mortex-apply-wrap [data-testid="menu-apply"] span {
+    line-height: 1 !important;
+    margin-right: -0.04em;
+}
+
 /* 132 (LANCER) + largeur réelle de DÉPLOYER + 12 d'écart : l'avatar ne passe jamais sous le bouton */
 body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titlebar"] {
     padding-right: calc(144px + var(--mortex-apply-width, 160px));
