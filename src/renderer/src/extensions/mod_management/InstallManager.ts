@@ -2805,6 +2805,9 @@ class InstallManager {
   // in InstallPhaseTracker; the orchestration below reaches each collection's entry via
   // ensure()/get() and drives the sentinel-safe backfill through markPhasesBeforeFinished().
   private mPhaseTracker = new InstallPhaseTracker();
+  // mORTEX : (collection, téléchargement) dont aucune règle de la collection ne reconnaît le fichier :
+  // inutile de les remettre en file à chaque passage (toutes les 600 ms, sans fin)
+  private mUnmatchableDownloads = new Set<string>();
 
   // Optional (recommends) members whose download the completion poll has already kicked off this
   // session, keyed by rule id. Guards driveSelectedOptionals against re-triggering the same
@@ -3315,6 +3318,11 @@ class InstallManager {
         return; // Skip this mod
       }
 
+      const unmatchableKey = `${sourceModId}:${downloadId}`;
+      if (this.mUnmatchableDownloads.has(unmatchableKey)) {
+        return;
+      }
+
       const downloadState = downloads[downloadId]?.state;
       log("debug", "Download state check", { downloadId, downloadState });
       if (downloads[downloadId].state === "finished") {
@@ -3342,6 +3350,18 @@ class InstallManager {
             anyQueued = true;
           } else {
             log("debug", "Requeue failed - collection not currently installing", { downloadId });
+            const gameMods = api.getState().persistent.mods[gameId] ?? {};
+            const lookup = lookupFromDownload(downloads[downloadId]);
+            const recognised = (gameMods[sourceModId]?.rules ?? []).some((rule) =>
+              testModReference(lookup, rule.reference),
+            );
+            if (!recognised) {
+              log("warn", "download matches no rule of the collection, not requeued again", {
+                downloadId,
+                sourceModId,
+              });
+              this.mUnmatchableDownloads.add(unmatchableKey);
+            }
           }
         } else if (!hasPendingOrActive && existingMod) {
           const installKey = this.generateDependencyInstallKey(sourceModId, downloadId);
