@@ -73,7 +73,7 @@ mkdir -p "$PLUGIN_DIR"
 /Volumes/SKYRIM/TOOLS/MAC/_tools/sign_app.sh "$APP_DIR/mORTEX.app"
 # sign_app.sh signe en profondeur avec l'identifiant de l'appli : chaque extension reprend le sien
 # et ses droits (bac à sable obligatoire), puis l'appli est rescellée sans --deep.
-SIGN_HASH="$(security find-identity -v -p codesigning | grep '"sKYCRASH Local Signing"' | awk '{print $2}' | head -1)"
+SIGN_HASH="$(security find-identity -p codesigning | { grep '"sKYCRASH Local Signing"' || true; } | awk '{print $2}' | head -1)"
 for APPEX in "$EXT_DIR"/*.appex "$PLUGIN_DIR"/*.appex; do
   NAME="$(basename "$APPEX" .appex)"
   codesign --force --sign "${SIGN_HASH:--}" \
