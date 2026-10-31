@@ -196,7 +196,7 @@ export default function SettingsEditorPage({ api }: IProps) {
             title: tt("ui.tweaksUndo"),
             action: (dismiss) => {
               undo().catch((err) =>
-                log("warn", "display tweaks undo failed", { error: String(err) }),
+                log("warn", "display tweaks undo failed", { error: (err as Error).message }),
               );
               dismiss();
             },

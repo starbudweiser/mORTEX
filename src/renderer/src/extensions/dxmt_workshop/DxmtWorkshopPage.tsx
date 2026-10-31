@@ -75,10 +75,12 @@ function SectionTitle({ icon, children }: { icon: SymbolName; children: React.Re
 
 /** une étape du chemin du rendu, colorée d'après le contrôle qui la concerne */
 function RenderStage({
+  index,
   stage,
   status,
   t,
 }: {
+  index: number;
   stage: IRenderStage;
   status?: IDxmtCheck["status"];
   t: Translate;
@@ -103,8 +105,9 @@ function RenderStage({
           : "text-warning-strong";
   return (
     <div
-      className={`flex min-w-0 flex-1 basis-36 flex-col items-center gap-y-1 rounded-md bg-surface-mid px-3 py-3 text-center ${frame} ${missing ? "opacity-70" : ""}`}
+      className={`dxmt-stage flex min-w-0 flex-1 basis-36 flex-col items-center gap-y-1 rounded-md bg-surface-mid px-3 py-3 text-center ${frame} ${missing ? "dxmt-stage-missing opacity-70" : ""}`}
       data-testid={`dxmt-stage-${stage.id}`}
+      style={{ "--i": index } as React.CSSProperties}
     >
       <Icon className={iconColor} name={stage.icon as SymbolName} size="lg" />
       <Typography className="font-semibold" typographyType="body-md">
@@ -288,17 +291,18 @@ export default function DxmtWorkshopPage({ api }: IProps) {
           </div>
 
           <SectionTitle icon="route">{t("How a frame reaches your Mac")}</SectionTitle>
-          <div className="flex flex-wrap items-stretch gap-2">
+          <div className="dxmt-path flex flex-wrap items-stretch gap-2">
             {RENDER_PATH.map((stage, idx) => (
               <React.Fragment key={stage.id}>
                 {idx > 0 && (
-                  <Icon
-                    className="self-center text-neutral-subdued"
-                    name="arrow_forward"
-                    size="md"
-                  />
+                  <span
+                    className="dxmt-arrow self-center"
+                    style={{ "--i": idx } as React.CSSProperties}
+                  >
+                    <Icon className="text-neutral-subdued" name="arrow_forward" size="md" />
+                  </span>
                 )}
-                <RenderStage stage={stage} status={statusOf(stage.check)} t={t} />
+                <RenderStage index={idx} stage={stage} status={statusOf(stage.check)} t={t} />
               </React.Fragment>
             ))}
           </div>
