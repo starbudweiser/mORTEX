@@ -334,6 +334,18 @@ function getModsByPhase(allMods: any[], phase: number): any[] {
   return allMods.filter((mod: any) => (mod.phase ?? 0) === phase);
 }
 
+/** vrai quand les deux côtés donnent une empreinte, une taille ou un identifiant de fichier et qu'ils diffèrent */
+function isOtherFile(reference: IModReference, download: IDownload): boolean {
+  const differs = (a: string | number | undefined, b: string | number | undefined) =>
+    a !== undefined && b !== undefined && String(a) !== String(b);
+  const lookup = lookupFromDownload(download);
+  return (
+    differs(reference.fileMD5?.toLowerCase(), lookup.fileMD5?.toLowerCase()) ||
+    differs(reference.fileSize, lookup.fileSizeBytes) ||
+    differs(reference.repo?.fileId, lookup.fileId)
+  );
+}
+
 function findCollectionByDownload(
   state: IState,
   download: IDownload,
@@ -7619,7 +7631,34 @@ class InstallManager {
   /**
    * Find any download that matches the given mod reference using all available methods
    */
+  /**
+   * mORTEX : ne rend pas un téléchargement dont on SAIT que c'est un autre fichier que celui de la
+   * règle (empreinte MD5, taille ou identifiant de fichier différents). Les recherches de repli
+   * ci-dessous sont larges (même nom, même mod Nexus) : elles prenaient un AUTRE fichier du même mod
+   * pour celui qu'attend la collection, qui le croyait téléchargé, ne le téléchargeait jamais et se
+   * remettait en file sans fin (bloquée à ~92 %).
+   */
   private findDownloadForMod(
+    reference: IModReference,
+    downloads: { [id: string]: IDownload },
+  ): string | null {
+    let pool = downloads;
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const id = this.findDownloadForModLoose(reference, pool);
+      if (id === null) {
+        return null;
+      }
+      const download = downloads[id];
+      if (download !== undefined && !isOtherFile(reference, download)) {
+        return id;
+      }
+      const { [id]: _wrong, ...rest } = pool;
+      pool = rest;
+    }
+    return null;
+  }
+
+  private findDownloadForModLoose(
     reference: IModReference,
     downloads: { [id: string]: IDownload },
   ): string | null {
