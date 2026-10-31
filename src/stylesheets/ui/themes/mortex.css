@@ -40,7 +40,7 @@
 .container-quicklaunch-launch button {
     background-color: #f59e0b !important;
     color: #1a1200 !important;
-    border-radius: 6px;
+    border-radius: 4px;
 }
 
 #btn-quicklaunch-play:hover,
@@ -254,7 +254,7 @@ body[data-platform="darwin"] [data-testid="window-titlebar"] {
 .modern-layout .nxm-view-picker {
     gap: 2px;
     padding: 2px;
-    border-radius: 7px;
+    border-radius: 4px;
     background-color: var(--color-surface-base);
     width: fit-content;
     flex: 0 0 auto !important;
@@ -262,7 +262,7 @@ body[data-platform="darwin"] [data-testid="window-titlebar"] {
 
 .modern-layout .nxm-view-button {
     height: 24px;
-    border-radius: 5px;
+    border-radius: 4px;
     background-color: transparent;
 }
 
@@ -455,7 +455,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 .mortex-card {
     background-color: var(--color-surface-mid);
     border: 1px solid var(--color-stroke-weak);
-    border-radius: 10px;
+    border-radius: 8px;
     /* tient dans la hauteur d'une case du tableau de bord (114 px) sans déborder sur la suivante */
     padding: 12px 16px;
 }
@@ -606,7 +606,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 /* ---- Téléchargements : zone de dépôt et boutons plats ---- */
 .modern-layout .dropzone.stand-alone {
     border: 1px dashed var(--color-stroke-subdued);
-    border-radius: 10px;
+    border-radius: 8px;
     background-color: transparent;
     color: var(--color-neutral-subdued);
 }
@@ -614,7 +614,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 .modern-layout #table-downloads .btn {
     height: 26px;
     padding: 2px 10px;
-    border-radius: 6px;
+    border-radius: 4px;
 }
 
 /* ---- Cadre des maquettes : barre latérale plus claire que le contenu, contenu à plat ---- */
@@ -691,7 +691,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
             height: 26px !important;
             padding: 0 10px !important;
             border: 0 !important;
-            border-radius: 6px !important;
+            border-radius: 4px !important;
             background-color: var(--color-zinc-700) !important;
             color: var(--color-neutral-moderate) !important;
             font-size: 12px !important;
@@ -808,12 +808,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     outline: 1px solid #f59e0b;
     outline-offset: -1px;
     scale: 1.025;
-    box-shadow:
-        0 14px 30px rgb(0 0 0 / 0.55),
-        0 3px 8px rgb(0 0 0 / 0.35);
-    transition:
-        scale 0.18s cubic-bezier(0.3, 1.6, 0.5, 1),
-        box-shadow 0.18s ease-out;
+    transition: scale 0.18s cubic-bezier(0.3, 1.6, 0.5, 1);
 }
 
 .mortex-menu-sliding {
@@ -837,7 +832,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     display: flex;
     flex-shrink: 0;
     padding: 2px;
-    border-radius: 7px;
+    border-radius: 4px;
     background-color: #181818;
 }
 
@@ -845,7 +840,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     height: 22px;
     padding: 0 12px;
     border: 0;
-    border-radius: 5px;
+    border-radius: 4px;
     background: transparent;
     color: var(--color-neutral-subdued);
     font-size: 12px;
@@ -890,7 +885,6 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
         height: 14px;
         border-radius: 50%;
         background-color: #ffffff;
-        box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
         transition: left 150ms ease;
 
         svg {
@@ -937,7 +931,6 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
         height: 14px;
         border: 0;
         background-color: #ffffff;
-        box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
     }
 
     &[data-checked] .nxm-switch-thumb,
@@ -972,7 +965,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     .select-compact .Select-control {
         height: 24px !important;
         border: 1px solid var(--color-stroke-weak) !important;
-        border-radius: 6px !important;
+        border-radius: 4px !important;
         background-color: #181818 !important;
         color: var(--color-neutral-strong) !important;
         font-size: 12px !important;
@@ -1026,7 +1019,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
             button {
                 width: 24px;
                 height: 24px;
-                border-radius: 6px;
+                border-radius: 4px;
                 background-color: var(--color-zinc-700);
                 color: var(--color-neutral-moderate);
                 font-size: 12px;
@@ -1143,7 +1136,7 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     width: 100%;
     aspect-ratio: 16 / 9;
     margin-top: 12px;
-    border-radius: 6px;
+    border-radius: 4px;
 }
 
 .mortex-inspector-fields {
@@ -1213,7 +1206,7 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     height: 22px !important;
     padding: 0 !important;
     border: 0 !important;
-    border-radius: 6px !important;
+    border-radius: 4px !important;
     background-color: transparent !important;
     color: var(--color-neutral-subdued) !important;
 
@@ -1342,7 +1335,7 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
    sans la marge droite de 50 px de l'amont qui décalait la grille des outils */
 .dashlet-starter {
     padding: 12px 16px !important;
-    border-radius: 10px !important;
+    border-radius: 8px !important;
 }
 
 /* Nouvelle interface : la liste des jeux au centre de la barre de titre */
@@ -1555,12 +1548,10 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     display: inline-flex;
     max-width: 100%;
     height: 22px;
-    border-radius: 6px;
+    border-radius: 4px;
     background: rgb(255 255 255 / 16%);
-    box-shadow:
-        0 0 0 0.5px rgb(0 0 0 / 45%),
-        0 1px 1.5px rgb(0 0 0 / 25%),
-        inset 0 0.5px 0 rgb(255 255 255 / 16%);
+    outline: 1px solid rgb(255 255 255 / 12%);
+    outline-offset: -1px;
     font:
         400 13px/22px -apple-system,
         BlinkMacSystemFont,
@@ -1583,14 +1574,14 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
 .mac-pulldown-main {
     gap: 5px;
     padding: 0 9px 0 7px;
-    border-radius: 6px 0 0 6px;
+    border-radius: 4px 0 0 4px;
     /* colonne étroite : le libellé reste sur une ligne (rogné), il ne déborde plus sur les lignes voisines */
     min-width: 0;
     overflow: hidden;
     white-space: nowrap;
 }
 .mac-pulldown-main:only-child {
-    border-radius: 6px;
+    border-radius: 4px;
 }
 .mac-pulldown-main .icon {
     width: 13px;
@@ -1728,7 +1719,7 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
 
 .mortex-tour-ring {
     position: absolute;
-    border-radius: 10px;
+    border-radius: 8px;
     outline: 2px solid #0ea5e9;
     transition:
         left 300ms ease,
@@ -1742,7 +1733,7 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     position: absolute;
     box-sizing: border-box;
     padding: 12px 14px 10px;
-    border-radius: 14px;
+    border-radius: 12px;
     background: #0ea5e9;
     color: #1a1a1a;
     font-size: 13px;
@@ -1886,7 +1877,7 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
 .mortex-tour-button,
 .mortex-tour-link {
     border: none;
-    border-radius: 6px;
+    border-radius: 4px;
     font: inherit;
     font-size: 12px;
     font-weight: 600;
@@ -1948,7 +1939,7 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     min-height: 0 !important;
     padding: 0 8px !important;
     margin-block: 4px !important;
-    border-radius: 6px;
+    border-radius: 4px;
     line-height: 24px;
     vertical-align: middle;
 }
@@ -1968,10 +1959,9 @@ body.mortex-menu-moving * {
     flex-direction: column;
     gap: 8px;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 8px;
     background-color: var(--color-surface-high);
     border: 1px solid rgb(255 255 255 / 0.08);
-    box-shadow: 0 14px 30px rgb(0 0 0 / 0.55);
 }
 
 .mortex-menu-palette-swatches {
@@ -2000,7 +1990,7 @@ body.mortex-menu-moving * {
 .mortex-menu-palette-reset {
     font-size: 12px;
     padding: 4px 6px;
-    border-radius: 6px;
+    border-radius: 4px;
     color: var(--color-neutral-moderate, #d4d4d4);
 }
 
