@@ -125,24 +125,21 @@ export function DuplicatesRow({ api }: { api: IExtensionApi }) {
           })}
         </Button>
       ) : (
-        <Typography className="min-w-0 truncate" typographyType="body-sm">
-          {t("None")}
-        </Typography>
-      )}
-      {found !== undefined && !recoverable ? (
+        // aucun doublon : le bouton garde la même place et relance l'analyse
         <Button
           appearance="moderate"
           brand="neutral"
+          className="justify-self-start"
           isLoading={busy}
-          leftIcon="search"
+          leftIcon="check"
           size="sm"
+          title={t("Analyze")}
           onClick={analyze}
         >
-          {t("Analyze")}
+          {t("None")}
         </Button>
-      ) : (
-        <span />
       )}
+      <span />
     </div>
   );
 }
