@@ -88,9 +88,7 @@ class SettingsUpdate extends ComponentEx<IProps, ISettingsUpdateState> {
       // managed and not development
       if (process.env.NODE_ENV !== "development") {
         return this.renderCallout(
-          t(
-            "mORTEX was installed through a third-party service which will take care of updating it.",
-          ),
+          t("mORTEX has no built-in updater: download new versions from Nexus Mods."),
         );
       }
 

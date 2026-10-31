@@ -4,11 +4,7 @@ import type * as Redux from "redux";
 import type { ThunkDispatch } from "redux-thunk";
 
 import { ComponentEx, connect, translate } from "../../../controls/ComponentEx";
-import Toggle from "../../../controls/Toggle";
-import { TypographyLink } from "../../../ui/components/typography/TypographyLink";
-import opn from "../../../util/opn";
 import { setAnalytics } from "../actions/analytics.action";
-import { HELP_ARTICLE, PRIVACY_POLICY } from "../constants";
 
 interface IConnectedProps {
   analytics: boolean;
@@ -29,33 +25,8 @@ class SettingsAnalytics extends ComponentEx<IProps, {}> {
         <FormGroup controlId="analytics">
           <ControlLabel>{t("Data & Privacy")}</ControlLabel>
 
-          <Toggle checked={analytics} disabled={!userInfo} onToggle={this.toggleAnalytics}>
-            {t("Allow this app to collect usage data to improve your experience")}
-          </Toggle>
-
           <HelpBlock>
-            {t(
-              "Help us provide you with the best modding experience. With your permission, we will collect analytics information and send it to our team to help us improve quality and performance. This information is sent anonymously and will never be shared with a 3rd party.",
-            )}
-            <br />
-            <br />
-            <TypographyLink
-              brand="info"
-              onClick={() => {
-                opn(HELP_ARTICLE).catch(() => undefined);
-              }}
-            >
-              {t("More about the data we track")}
-            </TypographyLink>{" "}
-            |{" "}
-            <TypographyLink
-              brand="info"
-              onClick={() => {
-                opn(PRIVACY_POLICY).catch(() => undefined);
-              }}
-            >
-              {t("Privacy Policy")}
-            </TypographyLink>
+            {t("mORTEX sends no usage data. Error reports stay on your Mac, in the logs folder.")}
           </HelpBlock>
         </FormGroup>
       </form>

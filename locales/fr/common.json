@@ -3922,5 +3922,7 @@
   "The bottle is ready. Sign in to Steam and install Skyrim Special Edition, then search for games again.": "La bouteille est prête. Connectez-vous à Steam, installez Skyrim Special Edition, puis relancez la recherche des jeux.",
   "Open Steam": "Ouvrir Steam",
   "Step {{current}} of {{total}}": "Étape {{current}} sur {{total}}",
-  "Show column": "Afficher la colonne"
+  "Show column": "Afficher la colonne",
+  "mORTEX sends no usage data. Error reports stay on your Mac, in the logs folder.": "mORTEX n'envoie aucune donnée d'usage. Les rapports d'erreur restent sur votre Mac, dans le dossier des journaux.",
+  "mORTEX has no built-in updater: download new versions from Nexus Mods.": "mORTEX n'a pas de mise à jour intégrée : téléchargez les nouvelles versions sur Nexus Mods."
 }
