@@ -586,5 +586,6 @@
   "Step {{current}} of {{total}}": "Step {{current}} of {{total}}",
   "Show column": "Show column",
   "mORTEX sends no usage data. Error reports stay on your Mac, in the logs folder.": "mORTEX sends no usage data. Error reports stay on your Mac, in the logs folder.",
-  "mORTEX has no built-in updater: download new versions from Nexus Mods.": "mORTEX has no built-in updater: download new versions from Nexus Mods."
+  "mORTEX has no built-in updater: download new versions from Nexus Mods.": "mORTEX has no built-in updater: download new versions from Nexus Mods.",
+  "Double-click to fit the card to its content": "Double-click to fit the card to its content"
 }

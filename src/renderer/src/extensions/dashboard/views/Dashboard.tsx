@@ -97,7 +97,7 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
   }
 
   public render(): JSX.Element {
-    const { dashletSettings, dashletVisible, layout, dashlets, grid } = this.props;
+    const { t, dashletSettings, dashletVisible, layout, dashlets, grid } = this.props;
     const { editMode } = this.state;
 
     const layoutMap: { [key: string]: number } = layout.reduce((prev, key, idx) => {
@@ -150,6 +150,7 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
           <div className="fixed-dashlets">{fixed.map(this.renderFixedItem)}</div>
           <div className="dynamic-dashlets">
             <DashboardGrid
+              t={t}
               items={dynamic.map((dash) => ({
                 id: dash.title,
                 closable: dash.closable !== false,

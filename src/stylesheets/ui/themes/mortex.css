@@ -2171,3 +2171,26 @@ body.mortex-menu-moving * {
     background-color: #fbbf24 !important;
     border-color: #fbbf24 !important;
 }
+
+/* Tableau de bord : la carte remplit toute la case de la grille (plus de zone vide entre la carte
+   et son cadre de redimensionnement) ; si la case est trop petite, la carte défile */
+.dashlet.mortex-status-dashlet {
+    height: 100%;
+    min-height: 0;
+}
+
+.dashlet.mortex-status-dashlet > .mortex-card {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+}
+
+.dashlet.mortex-status-dashlet > .mortex-cards {
+    flex: 1 1 auto;
+    min-height: 0;
+    grid-auto-rows: 1fr;
+}
+
+.dashlet.mortex-crashes > .mortex-card-crashes {
+    max-width: none;
+}

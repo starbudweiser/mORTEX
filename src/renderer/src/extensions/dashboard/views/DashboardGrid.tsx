@@ -8,6 +8,7 @@ import {
   columnWidth,
   GAP,
   resolveLayout,
+  MIN_H,
   ROW_HEIGHT,
   rowCount,
   sizeAt,
@@ -27,6 +28,7 @@ export interface IProps {
   editMode: boolean;
   onCommit: (rects: RectMap) => void;
   onDismiss: (id: string) => void;
+  t: (key: string) => string;
 }
 
 interface IDrag {
@@ -48,7 +50,7 @@ const SPARE_ROWS = 2;
  * est montrée par un cadre en pointillés, les cartes gênées s'écartent.
  */
 function DashboardGrid(props: IProps): JSX.Element {
-  const { items, rects, editMode, onCommit, onDismiss } = props;
+  const { items, rects, editMode, onCommit, onDismiss, t } = props;
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [width, setWidth] = React.useState(0);
   const [drag, setDrag] = React.useState<IDrag | undefined>(undefined);
@@ -125,6 +127,26 @@ function DashboardGrid(props: IProps): JSX.Element {
 
   const cancel = React.useCallback(() => setDrag(undefined), []);
 
+  /** double-clic sur la poignée : la carte prend la hauteur de son contenu */
+  const fitHeight = React.useCallback(
+    (id: string, element: HTMLElement) => {
+      const content = element.closest(".dash-item")?.querySelector(".dash-item-content");
+      const card = content?.firstElementChild as HTMLElement | null | undefined;
+      if (card === null || card === undefined) {
+        return;
+      }
+      const prev = { flex: card.style.flex, height: card.style.height };
+      card.style.flex = "0 0 auto";
+      card.style.height = "auto";
+      const natural = card.offsetHeight;
+      card.style.flex = prev.flex;
+      card.style.height = prev.height;
+      const h = Math.max(MIN_H, Math.ceil((natural + GAP) / (ROW_HEIGHT + GAP)));
+      onCommit(resolveLayout({ ...rects, [id]: { ...rects[id], h } }, id));
+    },
+    [rects, onCommit],
+  );
+
   const rows = rowCount(preview) + (editMode ? SPARE_ROWS : 0);
   const style: React.CSSProperties = {
     height: rows > 0 ? rows * (ROW_HEIGHT + GAP) - GAP : 0,
@@ -195,6 +217,8 @@ function DashboardGrid(props: IProps): JSX.Element {
               onPointerMove={move}
               onPointerUp={end}
               onPointerCancel={cancel}
+              onDoubleClick={(evt) => fitHeight(item.id, evt.currentTarget)}
+              title={t("Double-click to fit the card to its content")}
             >
               <Icon name="corner-handle" />
             </div>
