@@ -97,21 +97,39 @@ export function DuplicatesRow({ api }: { api: IExtensionApi }) {
       <Typography appearance="moderate" typographyType="body-sm">
         {t("Duplicate files")}
       </Typography>
-      <Typography className="min-w-0 truncate" typographyType="body-sm">
-        {found === undefined
-          ? t("Not analyzed")
-          : recoverable
-            ? t("{{size}} to reclaim ({{count}} files)", {
-                size: formatSize(found.savings, t),
-                count: found.files,
-              })
-            : t("None")}
-      </Typography>
-      {recoverable ? (
-        <Button isLoading={busy} leftIcon="compress" size="sm" onClick={reclaim}>
-          {t("Reclaim")}
+      {found === undefined ? (
+        // pas encore analysé : le bouton prend la place de la valeur
+        <Button
+          appearance="moderate"
+          brand="neutral"
+          className="justify-self-start"
+          isLoading={busy}
+          leftIcon="search"
+          size="sm"
+          title={t("Not analyzed")}
+          onClick={analyze}
+        >
+          {t("Analyze")}
+        </Button>
+      ) : recoverable ? (
+        <Button
+          className="justify-self-start"
+          isLoading={busy}
+          leftIcon="compress"
+          size="sm"
+          onClick={reclaim}
+        >
+          {t("{{size}} to reclaim ({{count}} files)", {
+            size: formatSize(found.savings, t),
+            count: found.files,
+          })}
         </Button>
       ) : (
+        <Typography className="min-w-0 truncate" typographyType="body-sm">
+          {t("None")}
+        </Typography>
+      )}
+      {found !== undefined && !recoverable ? (
         <Button
           appearance="moderate"
           brand="neutral"
@@ -122,6 +140,8 @@ export function DuplicatesRow({ api }: { api: IExtensionApi }) {
         >
           {t("Analyze")}
         </Button>
+      ) : (
+        <span />
       )}
     </div>
   );
