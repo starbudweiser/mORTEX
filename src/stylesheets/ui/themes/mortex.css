@@ -2029,17 +2029,33 @@ body.mortex-menu-moving * {
     --dxmt-step: 0.8s;
     --dxmt-cycle: 6s;
     --dxmt-start: 1.8s;
+    /* la boucle s'arrête après 3 passages : une animation qui tourne sans fin empêche le moteur
+       de se mettre au repos et coûte du processeur même quand rien ne bouge */
+    --dxmt-loops: 3;
 }
 .dxmt-stage {
+    --dxmt-halo: 245 158 11; /* orange : étape en place */
     position: relative;
-    animation:
-        dxmt-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both,
-        dxmt-pulse var(--dxmt-cycle) cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    animation-delay: calc(var(--i) * 0.22s), calc(var(--dxmt-start) + var(--i) * var(--dxmt-step));
-}
-.dxmt-stage-missing {
     animation: dxmt-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: calc(var(--i) * 0.22s);
+}
+/* Halo : un calque statique dont seule l'opacité varie (composé par le GPU, aucun recalcul de
+   mise en page ni de peinture à chaque image) */
+.dxmt-stage::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    box-shadow:
+        0 0 0 1.5px rgb(var(--dxmt-halo) / 0.9),
+        0 0 26px 4px rgb(var(--dxmt-halo) / 0.4);
+    animation: dxmt-halo var(--dxmt-cycle) ease-in-out var(--dxmt-loops);
+    animation-delay: calc(var(--dxmt-start) + var(--i) * var(--dxmt-step));
+}
+.dxmt-stage-missing {
+    --dxmt-halo: 59 130 246; /* bleu : étape absente ou facultative */
 }
 .dxmt-arrow {
     position: relative;
@@ -2077,7 +2093,7 @@ body.mortex-menu-moving * {
     background: linear-gradient(90deg, transparent, #f59e0b 70%, #fff3d6);
     box-shadow: 0 0 10px 2px rgba(245, 158, 11, 0.7);
     opacity: 0;
-    animation: dxmt-comet var(--dxmt-cycle) cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation: dxmt-comet var(--dxmt-cycle) cubic-bezier(0.4, 0, 0.2, 1) var(--dxmt-loops);
     animation-delay: calc(var(--dxmt-start) + (var(--i) - 0.6) * var(--dxmt-step));
 }
 .dxmt-arrow > * {
@@ -2122,18 +2138,14 @@ body.mortex-menu-moving * {
         transform: translateX(38px);
     }
 }
-@keyframes dxmt-pulse {
+@keyframes dxmt-halo {
     0%,
-    22%,
+    26%,
     100% {
-        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
-        transform: none;
+        opacity: 0;
     }
-    6% {
-        box-shadow:
-            0 0 0 1.5px rgba(245, 158, 11, 0.95),
-            0 0 28px 4px rgba(245, 158, 11, 0.4);
-        transform: translateY(-3px) scale(1.03);
+    8% {
+        opacity: 1;
     }
 }
 @media (prefers-reduced-motion: reduce) {
