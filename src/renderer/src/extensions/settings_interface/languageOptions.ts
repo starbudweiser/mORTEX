@@ -33,10 +33,13 @@ export function buildLanguageOptions(
   languages: ILanguage[],
   t: (input: string, options?: Record<string, unknown>) => string,
 ): ILanguageOption[] {
-  const nameOf = (language: ILanguage) =>
-    language.progress !== undefined && language.progress < 100
-      ? `${language.displayName} — ${t("translation in progress, {{percent}}%", { replace: { percent: language.progress } })}`
-      : language.displayName;
+  // mORTEX : les langues livrées avec l'appli sont signées, comme celles des extensions
+  const nameOf = (language: ILanguage) => {
+    const signed = `${language.displayName} (${t("Extension")} ${t("by")} mORTEX)`;
+    return language.progress !== undefined && language.progress < 100
+      ? `${signed} — ${t("translation in progress, {{percent}}%", { replace: { percent: language.progress } })}`
+      : signed;
+  };
 
   const optionFor = (
     language: ILanguage,
@@ -47,7 +50,7 @@ export function buildLanguageOptions(
     extName: ext.name,
     label:
       ext.modId !== undefined
-        ? `${language.displayName} (${t("Extension")} by ${ext["author"] || "unknown author"})`
+        ? `${language.displayName} (${t("Extension")} ${t("by")} ${ext["author"] || "unknown author"})`
         : nameOf(language),
   });
 

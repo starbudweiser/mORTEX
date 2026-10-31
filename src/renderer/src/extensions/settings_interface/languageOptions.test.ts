@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { buildLanguageOptions, type ILanguage } from "./languageOptions";
 
 // identity translation, so labels are asserted verbatim
+// ("by" reste « by » ici : traduit « par », « por », « di » à l'affichage)
 const t = (input: string) => input;
 
 // At runtime language.ext entries are IAvailableExtension objects (they carry `author`),
@@ -16,14 +17,16 @@ describe("buildLanguageOptions", () => {
     const languages: ILanguage[] = [{ key: "en", displayName: "English", ext: [] }];
 
     expect(buildLanguageOptions(languages, t)).toEqual([
-      { id: "en::local", key: "en", extName: undefined, label: "English" },
+      { id: "en::local", key: "en", extName: undefined, label: "English (Extension by mORTEX)" },
     ]);
   });
 
   it("uses the precomputed displayName verbatim for region-specific tags", () => {
     const languages: ILanguage[] = [{ key: "en-GB", displayName: "British English", ext: [] }];
 
-    expect(buildLanguageOptions(languages, t)[0].label).toBe("British English");
+    expect(buildLanguageOptions(languages, t)[0].label).toBe(
+      "British English (Extension by mORTEX)",
+    );
   });
 
   it("uses the single extension and adds an author suffix when it has a modId", () => {
@@ -46,7 +49,7 @@ describe("buildLanguageOptions", () => {
     ];
 
     const [option] = buildLanguageOptions(languages, t);
-    expect(option.label).toBe("French");
+    expect(option.label).toBe("French (Extension by mORTEX)");
     expect(option.extName).toBe("fr-local");
   });
 
@@ -70,15 +73,18 @@ describe("buildLanguageOptions", () => {
 
   it("shows how far mORTEX's own translation has got until it's complete", () => {
     const tr = (input: string, options?: Record<string, unknown>) =>
-      input.replace("{{percent}}", String((options?.replace as { percent: number }).percent));
+      input.replace(
+        "{{percent}}",
+        String((options?.replace as { percent?: number })?.percent ?? ""),
+      );
     const languages: ILanguage[] = [
       { key: "es", displayName: "Español", ext: [], progress: 38 },
       { key: "it", displayName: "Italiano", ext: [], progress: 100 },
     ];
 
     expect(buildLanguageOptions(languages, tr).map((option) => option.label)).toEqual([
-      "Español — translation in progress, 38%",
-      "Italiano",
+      "Español (Extension by mORTEX) — translation in progress, 38%",
+      "Italiano (Extension by mORTEX)",
     ]);
   });
 
