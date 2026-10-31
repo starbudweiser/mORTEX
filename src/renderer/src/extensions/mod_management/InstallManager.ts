@@ -686,7 +686,12 @@ class InstallManager {
     sourceModId?: string,
   ): boolean {
     const state = api.getState();
-    const download = state.persistent.downloads.files[downloadId];
+    const stored = state.persistent.downloads.files[downloadId];
+    // mORTEX : certains téléchargements enregistrés n'ont pas de champ `id` (anciens imports) ; sans
+    // lui, la recherche de la collection échouait à chaque passage et la file se remettait en
+    // boucle toutes les 600 ms sans jamais installer le mod (collection bloquée à ~92 %).
+    const download =
+      stored !== undefined && stored.id === undefined ? { ...stored, id: downloadId } : stored;
 
     if (!download || download.state !== "finished") {
       log("debug", "Skipping download - not found or not finished", {
