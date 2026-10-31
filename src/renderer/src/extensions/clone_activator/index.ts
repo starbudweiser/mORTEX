@@ -46,6 +46,41 @@ async function cloneFile(sourcePath: string, linkPath: string): Promise<void> {
 }
 
 /** clé d'un fichier : chemin relatif (casse ignorée, comme APFS) et taille */
+/**
+ * mORTEX : après une purge, les dossiers vides que les déploiements et les mods retirés ont laissés
+ * (des milliers après une grosse collection : DynDOLOD, OStim, SKSE…) sont supprimés, ainsi que le
+ * .DS_Store du Finder qui les empêchait de disparaître. Un jeu purgé n'a plus de trace des mods.
+ * Le dossier de données lui-même reste.
+ */
+export async function removeEmptyDirs(root: string): Promise<void> {
+  const visit = async (dir: string): Promise<boolean> => {
+    let entries: nodeFs.Dirent[];
+    try {
+      entries = await nodeFs.promises.readdir(dir, { withFileTypes: true });
+    } catch {
+      return false;
+    }
+    let empty = true;
+    for (const entry of entries) {
+      if (entry.name === ".DS_Store") continue;
+      if (entry.isDirectory() && !entry.isSymbolicLink()) {
+        if (!(await visit(path.join(dir, entry.name)))) empty = false;
+      } else {
+        empty = false;
+      }
+    }
+    if (!empty || dir === root) return empty;
+    try {
+      await nodeFs.promises.rm(path.join(dir, ".DS_Store"), { force: true });
+      await nodeFs.promises.rmdir(dir);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  await visit(root);
+}
+
 export function cloneKey(relPath: string, size: number): string {
   return `${relPath.toLowerCase()}|${size}`;
 }
@@ -205,6 +240,7 @@ class DeploymentMethod extends LinkingDeployment {
             );
         }),
       )
+      .then(() => removeEmptyDirs(dataPath))
       .then(() => undefined);
   }
 

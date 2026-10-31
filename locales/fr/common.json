@@ -3920,5 +3920,7 @@
   "Installing Steam": "Installation de Steam",
   "The bottle could not be prepared: {{error}}": "La bouteille n'a pas pu être préparée : {{error}}",
   "The bottle is ready. Sign in to Steam and install Skyrim Special Edition, then search for games again.": "La bouteille est prête. Connectez-vous à Steam, installez Skyrim Special Edition, puis relancez la recherche des jeux.",
-  "Open Steam": "Ouvrir Steam"
+  "Open Steam": "Ouvrir Steam",
+  "Step {{current}} of {{total}}": "Étape {{current}} sur {{total}}",
+  "Show column": "Afficher la colonne"
 }

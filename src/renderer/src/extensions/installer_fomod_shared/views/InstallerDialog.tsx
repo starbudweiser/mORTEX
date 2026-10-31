@@ -405,7 +405,7 @@ class InstallerDialog extends PureComponentEx<IProps, IDialogState> {
       >
         <Modal.Header>
           <Modal.Title>{moduleName}</Modal.Title>
-          {steps[idx].name}
+          <span className="fomod-step-name">{steps[idx].name}</span>
           <IconButton
             id="fomod-cancel"
             className="close-button"
@@ -445,6 +445,11 @@ class InstallerDialog extends PureComponentEx<IProps, IDialogState> {
               ) : null}
             </div>
             <div className="fomod-progress">
+              <span className="fomod-progress-label">
+                {t!("Step {{current}} of {{total}}", {
+                  replace: { current: idx + 1, total: steps.length },
+                })}
+              </span>
               <ProgressBar now={idx} max={steps.length - 1} />
             </div>
             <div>

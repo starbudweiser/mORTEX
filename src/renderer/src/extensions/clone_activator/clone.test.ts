@@ -1,10 +1,11 @@
 import * as nodeFs from "node:fs";
+import * as os from "node:os";
 import * as path from "node:path";
 
 import { describe, expect } from "vitest";
 
 import { test } from "../../test-utils/deploymentTest";
-import { cloneKey, sameTime } from "./index";
+import { cloneKey, removeEmptyDirs, sameTime } from "./index";
 
 const FILES = {
   "SkyUI_SE.esp": "esp data",
@@ -60,6 +61,28 @@ describe.skipIf(process.platform !== "darwin")("purge and the Finder", () => {
     await h.method.purge(h.stagingDir, h.gameDir, "skyrimse");
 
     expect(nodeFs.existsSync(folder)).toBe(false);
+  });
+});
+
+describe("removeEmptyDirs", () => {
+  test("removes nested empty folders and Finder-only ones, keeps the root and anything with a file", async () => {
+    const root = nodeFs.mkdtempSync(path.join(os.tmpdir(), "mortex-empty-"));
+    try {
+      nodeFs.mkdirSync(path.join(root, "DynDOLOD", "Plugins", "x"), { recursive: true });
+      nodeFs.writeFileSync(path.join(root, "DynDOLOD", ".DS_Store"), "finder");
+      nodeFs.mkdirSync(path.join(root, "SKSE", "Plugins"), { recursive: true });
+      nodeFs.writeFileSync(path.join(root, "SKSE", "Plugins", "keep.ini"), "x");
+      nodeFs.mkdirSync(path.join(root, "vide"));
+
+      await removeEmptyDirs(root);
+
+      expect(nodeFs.existsSync(path.join(root, "DynDOLOD"))).toBe(false);
+      expect(nodeFs.existsSync(path.join(root, "vide"))).toBe(false);
+      expect(nodeFs.existsSync(path.join(root, "SKSE", "Plugins", "keep.ini"))).toBe(true);
+      expect(nodeFs.existsSync(root)).toBe(true);
+    } finally {
+      nodeFs.rmSync(root, { recursive: true, force: true });
+    }
   });
 });
 

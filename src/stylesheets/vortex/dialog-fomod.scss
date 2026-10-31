@@ -22,10 +22,30 @@
         padding-bottom: 5px;
     }
 
+    // mORTEX : « Étape 2 sur 4 » au-dessus d'une barre fine, centrés dans le pied
+    .fomod-progress {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .fomod-progress-label {
+        font-size: 11px;
+        line-height: 1;
+        color: #a3a3a3;
+    }
+
+    .fomod-step-name {
+        display: block;
+        margin-top: 2px;
+        font-size: 12px;
+        color: #a3a3a3;
+    }
+
     .progress {
-        display: inline-block;
+        display: block;
         width: 200px;
-        height: 16px;
         margin-bottom: 0px;
         background-color: $gray-dark;
         height: 4px;

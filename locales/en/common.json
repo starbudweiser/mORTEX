@@ -582,5 +582,7 @@
   "The bottle could not be prepared: {{error}}": "The bottle could not be prepared: {{error}}",
   "Try again": "Try again",
   "The bottle is ready. Sign in to Steam and install Skyrim Special Edition, then search for games again.": "The bottle is ready. Sign in to Steam and install Skyrim Special Edition, then search for games again.",
-  "Open Steam": "Open Steam"
+  "Open Steam": "Open Steam",
+  "Step {{current}} of {{total}}": "Step {{current}} of {{total}}",
+  "Show column": "Show column"
 }

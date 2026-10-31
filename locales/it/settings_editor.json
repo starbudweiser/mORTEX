@@ -335,7 +335,7 @@
   "ui.defaultValue": "Valore predefinito del gioco",
   "ui.notSet": "Non definito: il gioco usa il suo valore interno",
   "ui.line": "Riga scritta",
-  "ui.macTitle": "Su Mac",
+  "ui.macTitle": "Su Mac · consiglio generale, non misurato",
   "ui.dependsOn": "Dipende da «{{name}}»",
   "ui.invalidRange": "Valore non valido: tra {{min}} e {{max}}",
   "ui.resetOne": "Torna al valore attuale",
