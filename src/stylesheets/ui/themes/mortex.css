@@ -2239,3 +2239,13 @@ body.mortex-menu-moving * {
 .mortex-status-dashlet .mortex-card [data-testid^="bottle-health-"] > :nth-child(3) {
     color: #f4f4f5;
 }
+
+/* titres de carte et de rubrique : même police */
+.mortex-card h5,
+.mortex-crash-env h6,
+.mortex-inspector-crashes h6 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+}
