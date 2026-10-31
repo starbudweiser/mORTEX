@@ -339,7 +339,8 @@ export const ModsTableSwitch = ({
       {
         id: "version",
         header: t("Version"),
-        width: "160px",
+        // mORTEX : assez large pour « 1.2 (Nom d'une collection) » sans le tronquer
+        width: "280px",
         isToggleable: true,
         position: 40,
         searchText: ({ mod }) => modVersionText(mod, alternatives[mod.id], t),

@@ -50,13 +50,13 @@ const api = {
   showErrorNotification: vi.fn(),
 } as unknown as IExtensionApi;
 
-const renderView = () =>
+const renderView = (toolRunning = false) =>
   render(
     <ControlsView
       api={api}
       gamePath="/game"
       iniDir="/x"
-      toolRunning={false}
+      toolRunning={toolRunning}
       tt={tt}
       onSaved={() => undefined}
     />,
@@ -77,6 +77,25 @@ describe("controlGroups", () => {
     expect(keysText([[0x02], [0x4f]], "—")).toBe("1 / Num 1");
     expect(keysText([[0x1d, 0xb7]], "—")).toBe("⌃ Control + Print Screen");
     expect(keysText([], "—")).toBe("—");
+  });
+});
+
+describe("ControlsView, jeu lancé", () => {
+  it("refuse d'enregistrer tant que le jeu tourne : un avertissement, ni boîte de confirmation ni écriture", async () => {
+    vi.mocked(api.sendNotification).mockClear();
+    vi.mocked(api.showDialog).mockClear();
+    renderView(true);
+    const row = await screen.findByTestId("controls-row-forward");
+    await userEvent.click(row.querySelector("button")!);
+    fireEvent.keyDown(window, { code: "ArrowUp" });
+    await waitFor(() => expect(row).toHaveTextContent("↑"));
+
+    await userEvent.click(screen.getByRole("button", { name: /ui.save/ }));
+
+    expect(api.sendNotification).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "settings-editor-game-running", type: "warning" }),
+    );
+    expect(api.showDialog).not.toHaveBeenCalled();
   });
 });
 
