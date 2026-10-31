@@ -170,7 +170,8 @@ export default function SettingRow({
       <p>{tt(`help.${setting.id}`)}</p>
       {setting.macNote === true && (
         <p>
-          <span className="font-semibold">{tt("ui.macTitle")}</span> {tt(`macNote.${setting.id}`)}
+          <span className="block font-semibold">{tt("ui.macTitle")}</span>
+          {tt(`macNote.${setting.id}`)}
         </p>
       )}
       {dependsOnLabel !== undefined && <p>{tt("ui.dependsOn", { name: dependsOnLabel })}</p>}
