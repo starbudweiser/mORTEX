@@ -23,6 +23,7 @@ import { log } from "@/util/log";
 import { activeGameId } from "@/util/selectors";
 import MainPage from "@/views/MainPage";
 
+import { applyMacDisplayTweaks, hasDisplayTweaks } from "../../util/macos/dxmtChecks";
 import {
   type IIniFile,
   INI_FILE_NAMES,
@@ -105,6 +106,7 @@ export default function SettingsEditorPage({ api }: IProps) {
   const [files, setFiles] = useState<IIniFile[] | undefined>(undefined);
   const [bethesda, setBethesda] = useState<IBethesdaValues | undefined>(undefined);
   const [failed, setFailed] = useState(false);
+  const [tweaksInstalled, setTweaksInstalled] = useState(false);
   const [pending, setPending] = useState<Pending>({});
   // change à chaque remise à zéro ou préréglage : les champs de saisie repartent de la valeur
   const [revision, setRevision] = useState(0);
@@ -124,10 +126,12 @@ export default function SettingsEditorPage({ api }: IProps) {
     Promise.all([
       loadIniFiles(iniPaths(gameId, discovery)),
       readBethesdaValues(gamePath).catch(() => undefined),
+      hasDisplayTweaks(gamePath).catch(() => false),
     ])
-      .then(([loaded, values]) => {
+      .then(([loaded, values, tweaks]) => {
         setFiles(loaded);
         setBethesda(values);
+        setTweaksInstalled(tweaks);
       })
       .catch((err) => {
         log("warn", "settings editor: cannot read INI files", { error: (err as Error).message });
@@ -163,6 +167,45 @@ export default function SettingsEditorPage({ api }: IProps) {
     if (bethesda === undefined) return;
     setPending(pendingFromPreset(SKYRIMSE_CATALOG, bethesda.presets[id], ctx));
     setRevision((r) => r + 1);
+  };
+  const tuneDisplayTweaks = async () => {
+    if (gamePath === undefined) return;
+    if (toolRunning) {
+      api.sendNotification?.({
+        id: "settings-editor-busy",
+        type: "warning",
+        message: tt("ui.gameRunning"),
+      });
+      return;
+    }
+    const answer = await api.showDialog?.(
+      "question",
+      tt("ui.tweaksTitle"),
+      { text: tt("ui.tweaksConfirm"), options: { translated: true } },
+      [{ label: tt("ui.back") }, { label: tt("ui.tweaksApply"), default: true }],
+    );
+    if (answer?.action !== tt("ui.tweaksApply")) return;
+    try {
+      const undo = await applyMacDisplayTweaks(gamePath);
+      api.sendNotification?.({
+        id: "settings-editor-tweaks",
+        type: "success",
+        message: tt("ui.tweaksDone"),
+        actions: [
+          {
+            title: tt("ui.tweaksUndo"),
+            action: (dismiss) => {
+              undo().catch((err) =>
+                log("warn", "display tweaks undo failed", { error: String(err) }),
+              );
+              dismiss();
+            },
+          },
+        ],
+      });
+    } catch (err) {
+      api.showErrorNotification?.(tt("ui.tweaksError"), err as Error);
+    }
   };
   const revert = () => {
     setPending({});
@@ -411,6 +454,19 @@ export default function SettingsEditorPage({ api }: IProps) {
               <>
                 {view === "main" && (
                   <>
+                    {tweaksInstalled && (
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <Tooltip content={tt("ui.tweaksHint")}>
+                          <Typography className="font-semibold" typographyType="body-md">
+                            SSE Display Tweaks
+                          </Typography>
+                        </Tooltip>
+                        <Button size="sm" onClick={() => void tuneDisplayTweaks()}>
+                          {tt("ui.tweaksButton")}
+                        </Button>
+                      </div>
+                    )}
+
                     {presets.length > 0 && (
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                         <Tooltip content={tt("ui.presetHint")}>

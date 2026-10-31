@@ -454,5 +454,13 @@
   "ui.protectedNote": "Fichiers protégés en écriture ; « Annuler » ou une restauration les rend de nouveau modifiables.",
   "ui.makeWritable": "Rendre modifiable",
   "ui.madeWritable": "{{file}} est de nouveau modifiable : recommencez l'enregistrement.",
-  "ui.loading": "Lecture des fichiers INI…"
+  "ui.loading": "Lecture des fichiers INI…",
+  "ui.tweaksButton": "Régler pour Mac",
+  "ui.tweaksHint": "SSE Display Tweaks est installé : règle son fichier pour un Mac Silicon (60 images/s, VSync, trois réglages DXMT). Vos autres lignes restent telles quelles.",
+  "ui.tweaksTitle": "Régler SSE Display Tweaks pour Mac",
+  "ui.tweaksConfirm": "mORTEX change quelques lignes de SSEDisplayTweaks.ini : SwapEffect = flip_discard, SwapBufferCount = 3, VideoMemorySizeMb, EnableVSync = true, VSyncPresentInterval = 1, FramerateLimit = 60 et, pour la physique, MaximumFramerate = 60. Vos autres réglages et commentaires restent tels quels. Vous pourrez annuler juste après.",
+  "ui.tweaksApply": "Régler",
+  "ui.tweaksDone": "SSE Display Tweaks est réglé pour Mac.",
+  "ui.tweaksUndo": "Annuler",
+  "ui.tweaksError": "Impossible de régler SSE Display Tweaks"
 }

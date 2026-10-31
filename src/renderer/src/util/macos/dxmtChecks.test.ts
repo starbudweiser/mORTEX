@@ -5,7 +5,9 @@ import * as path from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import {
+  applyMacDisplayTweaks,
   displayTweaksTargets,
+  hasDisplayTweaks,
   fixDisplayTweaks,
   graphicsBackend,
   runDxmtChecks,
@@ -91,6 +93,23 @@ describe("DXMT checks", () => {
       `[Render]\nVideoMemorySizeMb = ${video}\nSwapBufferCount = 3\nSwapEffect = flip_discard ; comment\nOther = 1\n`,
     );
     expect((await byId()).displayTweaks.status).toBe("ok");
+  });
+
+  it("tunes SSE Display Tweaks for Mac and can undo it", async () => {
+    const ini = path.join(plugins, "SSEDisplayTweaks.ini");
+    expect(await hasDisplayTweaks(game)).toBe(false);
+    const original =
+      "[Render]\nFramerateLimit = 240 ; mine\nOther = 1\n[HAVOK]\nMaximumFramerate = 240\n";
+    fs.writeFileSync(ini, original);
+    expect(await hasDisplayTweaks(game)).toBe(true);
+    const undo = await applyMacDisplayTweaks(game);
+    const text = fs.readFileSync(ini, "utf8");
+    expect(text).toContain("FramerateLimit = 60 ; mine");
+    expect(text).toContain("MaximumFramerate = 60");
+    expect(text).toContain("EnableVSync = true");
+    expect(text).toContain("Other = 1");
+    await undo();
+    expect(fs.readFileSync(ini, "utf8")).toBe(original);
   });
 
   it("switches the bottle to DXMT, keeping the rest of cxbottle.conf", async () => {

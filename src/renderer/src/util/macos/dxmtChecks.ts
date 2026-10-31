@@ -116,6 +116,45 @@ function displayTweaksCheck(tweaks: Record<string, string> | undefined): IDxmtCh
   };
 }
 
+/**
+ * Réglages de SSE Display Tweaks pour un Mac Silicon (M1 Max et au-delà) : image régulière à 60 i/s
+ * (physique de Havok alignée dessus), VSync, et les trois réglages DXMT ci-dessus. Les autres
+ * lignes et commentaires du fichier restent tels quels.
+ */
+export function macDisplayTweaks(totalMemory = os.totalmem()) {
+  return [
+    ...Object.entries(displayTweaksTargets(totalMemory)).map(([key, value]) => ({
+      section: "Render",
+      key,
+      value,
+    })),
+    { section: "Render", key: "EnableVSync", value: "true" },
+    { section: "Render", key: "VSyncPresentInterval", value: "1" },
+    { section: "Render", key: "FramerateLimit", value: "60" },
+    { section: "HAVOK", key: "MaximumFramerate", value: "60" },
+  ];
+}
+
+export const displayTweaksPath = (gamePath: string) =>
+  path.join(gamePath, ...PLUGINS_DIR, DISPLAY_TWEAKS_INI);
+
+/** SSE Display Tweaks est-il installé (son INI existe dans le dossier du jeu) ? */
+export async function hasDisplayTweaks(gamePath: string): Promise<boolean> {
+  return (await readText(displayTweaksPath(gamePath))) !== undefined;
+}
+
+/** Applique macDisplayTweaks ; rend la fonction qui remet le fichier tel qu'il était */
+export async function applyMacDisplayTweaks(gamePath: string): Promise<() => Promise<void>> {
+  const target = displayTweaksPath(gamePath);
+  const before = await readFile(target);
+  const file = await loadIniFile("ini", target);
+  if (file.exists === false) throw new Error(`${DISPLAY_TWEAKS_INI} introuvable`);
+  await applyChanges(planChanges([file], macDisplayTweaks(), { insertAt: "start" }));
+  return async () => {
+    await writeFile(target, before);
+  };
+}
+
 export async function fixDisplayTweaks(gamePath: string): Promise<void> {
   const file = await loadIniFile("ini", path.join(gamePath, ...PLUGINS_DIR, DISPLAY_TWEAKS_INI));
   if (file.exists === false) throw new Error(`${DISPLAY_TWEAKS_INI} introuvable`);
