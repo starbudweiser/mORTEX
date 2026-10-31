@@ -2022,72 +2022,128 @@ body.mortex-menu-moving * {
     mask-size: contain;
 }
 
-/* Trajet d'une image (atelier DXMT) : les étapes apparaissent l'une après l'autre, puis une
-   impulsion orange parcourt la chaîne en boucle. 5 étapes x 0,7 s, 3,5 s de pause. */
+/* Trajet d'une image (atelier DXMT). À l'ouverture : les étapes entrent une à une (fondu, montée,
+   léger grossissement, flou qui se dissipe) et les liaisons se tracent. Ensuite, en boucle (6 s), une
+   comète orange traverse chaque liaison et allume l'étape qu'elle atteint. */
 .dxmt-path {
-    --dxmt-step: 0.7s;
-    --dxmt-cycle: 7s;
-}
-.dxmt-stage,
-.dxmt-arrow {
-    animation:
-        dxmt-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both,
-        dxmt-pulse var(--dxmt-cycle) ease-in-out infinite;
-    animation-delay: calc(var(--i) * 0.12s), calc(1s + var(--i) * var(--dxmt-step));
+    --dxmt-step: 0.8s;
+    --dxmt-cycle: 6s;
+    --dxmt-start: 1.8s;
 }
 .dxmt-stage {
     position: relative;
+    animation:
+        dxmt-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both,
+        dxmt-pulse var(--dxmt-cycle) cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation-delay: calc(var(--i) * 0.22s), calc(var(--dxmt-start) + var(--i) * var(--dxmt-step));
 }
 .dxmt-stage-missing {
-    animation-name: dxmt-in;
-    animation-iteration-count: 1;
+    animation: dxmt-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--i) * 0.22s);
 }
 .dxmt-arrow {
+    position: relative;
     display: inline-flex;
-    animation-name: dxmt-in, dxmt-arrow;
-    animation-delay: calc(var(--i) * 0.12s), calc(1s + (var(--i) - 0.5) * var(--dxmt-step));
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    overflow: hidden;
+    animation: dxmt-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--i) * 0.22s - 0.11s);
+}
+.dxmt-arrow::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    top: 50%;
+    height: 2px;
+    margin-top: -1px;
+    border-radius: 2px;
+    background: rgba(245, 158, 11, 0.25);
+    transform-origin: left center;
+    animation: dxmt-draw 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--i) * 0.22s);
+}
+.dxmt-arrow::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 18px;
+    height: 4px;
+    margin-top: -2px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, transparent, #f59e0b 70%, #fff3d6);
+    box-shadow: 0 0 10px 2px rgba(245, 158, 11, 0.7);
+    opacity: 0;
+    animation: dxmt-comet var(--dxmt-cycle) cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation-delay: calc(var(--dxmt-start) + (var(--i) - 0.6) * var(--dxmt-step));
+}
+.dxmt-arrow > * {
+    position: relative;
+    z-index: 1;
 }
 @keyframes dxmt-in {
     from {
         opacity: 0;
-        transform: translateY(8px);
+        transform: translateY(14px) scale(0.94);
+        filter: blur(6px);
     }
     to {
         opacity: 1;
         transform: none;
+        filter: none;
+    }
+}
+@keyframes dxmt-draw {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+@keyframes dxmt-comet {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    3% {
+        opacity: 1;
+    }
+    11% {
+        opacity: 1;
+        transform: translateX(34px);
+    }
+    13%,
+    100% {
+        opacity: 0;
+        transform: translateX(38px);
     }
 }
 @keyframes dxmt-pulse {
     0%,
-    14%,
+    22%,
     100% {
         box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
         transform: none;
     }
     6% {
         box-shadow:
-            0 0 0 1px rgba(245, 158, 11, 0.9),
-            0 0 18px 2px rgba(245, 158, 11, 0.35);
-        transform: translateY(-2px);
-    }
-}
-@keyframes dxmt-arrow {
-    0%,
-    10%,
-    100% {
-        opacity: 1;
-        transform: none;
-        color: inherit;
-    }
-    4% {
-        opacity: 1;
-        transform: translateX(4px);
-        filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.9));
+            0 0 0 1.5px rgba(245, 158, 11, 0.95),
+            0 0 28px 4px rgba(245, 158, 11, 0.4);
+        transform: translateY(-3px) scale(1.03);
     }
 }
 @media (prefers-reduced-motion: reduce) {
     .dxmt-stage,
-    .dxmt-arrow {
+    .dxmt-arrow,
+    .dxmt-arrow::before,
+    .dxmt-arrow::after {
         animation: none;
+    }
+    .dxmt-arrow::after {
+        display: none;
     }
 }
