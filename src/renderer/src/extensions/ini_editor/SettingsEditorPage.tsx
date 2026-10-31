@@ -3,6 +3,8 @@
  * SkyrimPrefs > Skyrim), montre la valeur effective de chaque réglage du catalogue et garde les
  * modifications en attente. Rien n'est écrit ici : l'enregistrement vient avec l'étape suivante.
  */
+import { chmod } from "node:fs/promises";
+
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -54,7 +56,14 @@ import {
   withEntryValue,
   withValue,
 } from "./model";
-import { SettingsSaveError, commitSave, formatSummary, previewSave, summarizePlan } from "./save";
+import {
+  SettingsSaveError,
+  commitSave,
+  formatSummary,
+  previewSave,
+  protectFiles,
+  summarizePlan,
+} from "./save";
 import SettingRow from "./SettingRow";
 
 interface IProps {
@@ -188,19 +197,24 @@ export default function SettingsEditorPage({ api }: IProps) {
             newSection: tt("ui.confirmNewSection"),
           }),
           options: { translated: true, wrap: false },
+          checkboxes: [{ id: "protect", text: tt("ui.protectCheckbox"), value: false }],
         },
         [{ label: tt("ui.back") }, { label: tt("ui.save"), default: true }],
       );
       if (answer?.action !== tt("ui.save")) return;
 
-      const { backup } = await commitSave(plan);
+      const { backup, written } = await commitSave(plan);
+      const protect = answer?.input?.protect === true;
+      if (protect) await protectFiles(written);
       revert();
       load();
       loadBackups();
       api.sendNotification?.({
         id: "settings-editor-saved",
         type: "success",
-        message: tt("ui.saved", { count: plan.changes.length, backup: backup.name }),
+        message:
+          tt("ui.saved", { count: plan.changes.length, backup: backup.name }) +
+          (protect ? ` ${tt("ui.protectedNote")}` : ""),
         // annulable : la notification reste jusqu'à ce qu'on la ferme
         actions: [
           {
@@ -225,10 +239,31 @@ export default function SettingsEditorPage({ api }: IProps) {
       });
     } catch (err) {
       if (err instanceof SettingsSaveError) {
+        const readOnlyFile = err.file;
         api.sendNotification?.({
           id: "settings-editor-read-only",
           type: "error",
-          message: tt("ui.readOnly", { file: err.file.split(/[\\/]/).pop() }),
+          message: tt("ui.readOnly", { file: readOnlyFile.split(/[\\/]/).pop() }),
+          actions: [
+            {
+              title: tt("ui.makeWritable"),
+              action: (dismiss) => {
+                chmod(readOnlyFile, 0o644)
+                  .then(() =>
+                    api.sendNotification?.({
+                      id: "settings-editor-made-writable",
+                      type: "info",
+                      message: tt("ui.madeWritable", {
+                        file: readOnlyFile.split(/[\\/]/).pop(),
+                      }),
+                      displayMS: 6000,
+                    }),
+                  )
+                  .catch((error) => api.showErrorNotification?.(tt("ui.saveFailed"), error))
+                  .finally(dismiss);
+              },
+            },
+          ],
         });
       } else {
         api.showErrorNotification?.(tt("ui.saveFailed"), err);
@@ -356,6 +391,12 @@ export default function SettingsEditorPage({ api }: IProps) {
               </Button>
             ))}
           </div>
+
+          {gamePath !== undefined && !failed && files === undefined && (
+            <Typography appearance="subdued" typographyType="body-md">
+              {tt("ui.loading")}
+            </Typography>
+          )}
 
           {gamePath === undefined ? (
             <Typography brand="warning" typographyType="body-md">

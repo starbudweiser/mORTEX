@@ -448,5 +448,10 @@
   "ui.ctl.quick_magic": "Quick magic",
   "ui.ctl.quick_stats": "Quick skills",
   "ui.ctl.quick_map": "Quick map",
-  "ui.ctlDefault": "default: {{key}}"
+  "ui.ctlDefault": "default: {{key}}",
+  "ui.protectCheckbox": "Protect these files from writing after saving (the game will no longer be able to rewrite them on exit, or save its own settings)",
+  "ui.protectedNote": "Files are write-protected; \"Undo\" or a restore makes them editable again.",
+  "ui.makeWritable": "Make writable",
+  "ui.madeWritable": "{{file}} is writable again: save again.",
+  "ui.loading": "Reading the INI files…"
 }

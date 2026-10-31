@@ -448,5 +448,10 @@
   "ui.ctl.quick_magic": "Magia rápida",
   "ui.ctl.quick_stats": "Habilidades rápidas",
   "ui.ctl.quick_map": "Mapa rápido",
-  "ui.ctlDefault": "original: {{key}}"
+  "ui.ctlDefault": "original: {{key}}",
+  "ui.protectCheckbox": "Proteger estos archivos contra escritura tras guardar (el juego ya no podrá reescribirlos al salir ni guardar sus propios ajustes)",
+  "ui.protectedNote": "Archivos protegidos contra escritura; «Deshacer» o una restauración los vuelve a hacer editables.",
+  "ui.makeWritable": "Hacer editable",
+  "ui.madeWritable": "{{file}} vuelve a ser editable: vuelva a guardar.",
+  "ui.loading": "Leyendo los archivos INI…"
 }

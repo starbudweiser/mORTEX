@@ -4,7 +4,7 @@
  *  - commitSave  : copie de sécurité, puis écriture ligne à ligne (util/macos/iniEdit)
  * Rien n'est écrit si un fichier est en lecture seule ou a changé depuis l'aperçu.
  */
-import { access, constants } from "node:fs/promises";
+import { access, chmod, constants } from "node:fs/promises";
 import * as path from "node:path";
 
 import {
@@ -26,6 +26,14 @@ export class SettingsSaveError extends Error {
   ) {
     super(`${code}: ${path.basename(file)}`);
   }
+}
+
+/**
+ * Case « Protéger en écriture après l'enregistrement » : les fichiers écrits passent en lecture seule,
+ * le jeu ne peut plus les réécrire en quittant. Restaurer ou annuler les rend de nouveau modifiables.
+ */
+export async function protectFiles(files: string[]): Promise<void> {
+  for (const file of files) await chmod(file, 0o444);
 }
 
 export interface IPlanFileSummary {

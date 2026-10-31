@@ -448,5 +448,10 @@
   "ui.ctl.quick_magic": "Magie rapide",
   "ui.ctl.quick_stats": "Compétences rapides",
   "ui.ctl.quick_map": "Carte rapide",
-  "ui.ctlDefault": "d'origine : {{key}}"
+  "ui.ctlDefault": "d'origine : {{key}}",
+  "ui.protectCheckbox": "Protéger ces fichiers en écriture après l'enregistrement (le jeu ne pourra plus les réécrire en quittant, ni enregistrer ses propres réglages)",
+  "ui.protectedNote": "Fichiers protégés en écriture ; « Annuler » ou une restauration les rend de nouveau modifiables.",
+  "ui.makeWritable": "Rendre modifiable",
+  "ui.madeWritable": "{{file}} est de nouveau modifiable : recommencez l'enregistrement.",
+  "ui.loading": "Lecture des fichiers INI…"
 }

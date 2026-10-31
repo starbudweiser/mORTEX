@@ -4,7 +4,7 @@
  * manifeste qui dit d'où vient chaque fichier : la restauration (Annuler, ou la liste des sauvegardes)
  * remet chaque fichier à sa place et supprime ceux que l'enregistrement avait créés.
  */
-import { copyFile, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
+import { chmod, copyFile, mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import * as path from "node:path";
 
 export const BACKUPS_DIRNAME = "mORTEX Backups";
@@ -76,6 +76,8 @@ export async function restoreBackup(dir: string): Promise<string[]> {
   const manifest = JSON.parse(await readFile(path.join(dir, MANIFEST), "utf8")) as IManifest;
   const restored: string[] = [];
   for (const file of manifest.files) {
+    // un fichier protégé en écriture par l'éditeur est rendu modifiable : restaurer est une demande explicite
+    await chmod(file.path, 0o644).catch(() => undefined);
     await writeFile(file.path, await readFile(path.join(dir, file.name)));
     restored.push(file.path);
   }

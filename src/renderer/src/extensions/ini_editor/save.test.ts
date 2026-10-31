@@ -12,7 +12,14 @@ import {
   restoreBackup,
   restoreBackupSafely,
 } from "./backup";
-import { SettingsSaveError, commitSave, formatSummary, previewSave, summarizePlan } from "./save";
+import {
+  SettingsSaveError,
+  commitSave,
+  formatSummary,
+  previewSave,
+  protectFiles,
+  summarizePlan,
+} from "./save";
 
 describe("enregistrement des réglages", () => {
   let dir: string;
@@ -100,6 +107,24 @@ describe("enregistrement des réglages", () => {
     } finally {
       fs.chmodSync(file("Skyrim.ini"), 0o644);
     }
+  });
+
+  it("protects the written files from writing, refuses the next save, and a restore makes them editable again", async () => {
+    fs.writeFileSync(file("SkyrimPrefs.ini"), "[Display]\r\niShadowMapResolution=2048\r\n");
+    const first = await commitSave(
+      await plan([{ section: "Display", key: "iShadowMapResolution", value: "4096" }]),
+    );
+    await protectFiles(first.written);
+    expect(fs.statSync(file("SkyrimPrefs.ini")).mode & 0o222).toBe(0);
+
+    await expect(
+      commitSave(await plan([{ section: "Display", key: "iShadowMapResolution", value: "1024" }])),
+    ).rejects.toBeInstanceOf(SettingsSaveError);
+    expect(read("SkyrimPrefs.ini")).toContain("iShadowMapResolution=4096");
+
+    await restoreBackup(first.backup.dir);
+    expect(read("SkyrimPrefs.ini")).toContain("iShadowMapResolution=2048");
+    expect(fs.statSync(file("SkyrimPrefs.ini")).mode & 0o200).not.toBe(0);
   });
 
   it("writes the summary the way the confirmation box shows it", async () => {
