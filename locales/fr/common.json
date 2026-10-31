@@ -3925,5 +3925,10 @@
   "Show column": "Afficher la colonne",
   "mORTEX sends no usage data. Error reports stay on your Mac, in the logs folder.": "mORTEX n'envoie aucune donnée d'usage. Les rapports d'erreur restent sur votre Mac, dans le dossier des journaux.",
   "mORTEX has no built-in updater: download new versions from Nexus Mods.": "mORTEX n'a pas de mise à jour intégrée : téléchargez les nouvelles versions sur Nexus Mods.",
-  "Double-click to fit the card to its content": "Double-cliquez pour ajuster la carte à son contenu"
+  "Double-click to fit the card to its content": "Double-cliquez pour ajuster la carte à son contenu",
+  "Small": "Petit",
+  "Medium": "Moyen",
+  "Large": "Grand",
+  "Full width": "Pleine largeur",
+  "Fit": "Ajuster"
 }

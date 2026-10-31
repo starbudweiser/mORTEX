@@ -120,7 +120,7 @@ function BottleHealthDashlet({ api }: { api: IExtensionApi }) {
                 >
                   {t(LABELS[check.id])}
                 </Typography>
-                <Typography className="min-w-0 flex-1 truncate" typographyType="body-sm">
+                <Typography className="min-w-0 truncate" typographyType="body-sm">
                   {text(check)}
                 </Typography>
                 {check.fixable === true && (

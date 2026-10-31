@@ -2194,3 +2194,48 @@ body.mortex-menu-moving * {
 .dashlet.mortex-crashes > .mortex-card-crashes {
     max-width: none;
 }
+
+/* ---- Cartes de l'Accueil : des couleurs pour lire d'un coup d'œil titres, valeurs et états ---- */
+.mortex-card h5 {
+    color: #f59e0b;
+    font-size: 13px;
+    letter-spacing: 0.01em;
+}
+
+.mortex-card .mortex-card-big {
+    color: #f4f4f5;
+}
+
+.mortex-crash-env h6,
+.mortex-inspector-crashes h6 {
+    color: #38bdf8;
+}
+
+.mortex-suspect-rank,
+.mortex-suspect-score {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+.mortex-suspect-head > :nth-child(2) {
+    color: #f4f4f5;
+    font-weight: 600;
+}
+
+.mortex-badge {
+    background-color: rgba(56, 189, 248, 0.14) !important;
+    color: #7dd3fc !important;
+}
+
+.mortex-suspect-where {
+    color: #a1a1aa;
+}
+
+.mortex-crash-verdict {
+    color: #fbbf24;
+}
+
+/* carte « Bouteille » : étiquettes en retrait, valeurs en clair */
+.mortex-status-dashlet .mortex-card [data-testid^="bottle-health-"] > :nth-child(3) {
+    color: #f4f4f5;
+}

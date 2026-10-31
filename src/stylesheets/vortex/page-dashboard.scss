@@ -143,3 +143,39 @@
         width 0.12s ease,
         height 0.12s ease;
 }
+
+// Tailles prédéfinies d'une carte (mode édition)
+.dash-editing .dash-presets {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    z-index: 2;
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 8px;
+    background: rgba(24, 24, 27, 0.92);
+    border: 1px solid rgba(245, 158, 11, 0.45);
+
+    button {
+        border: 0;
+        background: transparent;
+        color: #d4d4d8;
+        font-size: 11px;
+        line-height: 1;
+        padding: 5px 8px;
+        border-radius: 6px;
+        cursor: pointer;
+
+        &:hover {
+            background: rgba(245, 158, 11, 0.18);
+            color: #fff;
+        }
+
+        &.active {
+            background: #f59e0b;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+    }
+}

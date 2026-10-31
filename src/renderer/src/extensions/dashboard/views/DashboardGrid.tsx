@@ -5,6 +5,7 @@ import Icon from "../../../controls/Icon";
 import type { IRect, RectMap } from "../gridLayout";
 import {
   cellAt,
+  COLS,
   columnWidth,
   GAP,
   resolveLayout,
@@ -28,6 +29,8 @@ export interface IProps {
   editMode: boolean;
   onCommit: (rects: RectMap) => void;
   onDismiss: (id: string) => void;
+  /** cartes encore sans position enregistrée : leur hauteur est ajustée au contenu à la première pose */
+  autoFit: string[];
   t: (key: string) => string;
 }
 
@@ -45,12 +48,20 @@ interface IDrag {
 /** lignes libres ajoutées sous les cartes en mode édition, pour pouvoir les poser plus bas */
 const SPARE_ROWS = 2;
 
+/** tailles prédéfinies : largeur en colonnes */
+const PRESETS = [
+  { label: "Small", w: 2 },
+  { label: "Medium", w: 3 },
+  { label: "Large", w: 4 },
+  { label: "Full width", w: COLS },
+];
+
 /**
  * Grille du tableau de bord : les cartes se posent où on veut, sur des cases ; la case visée
  * est montrée par un cadre en pointillés, les cartes gênées s'écartent.
  */
 function DashboardGrid(props: IProps): JSX.Element {
-  const { items, rects, editMode, onCommit, onDismiss, t } = props;
+  const { items, rects, editMode, onCommit, onDismiss, autoFit, t } = props;
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [width, setWidth] = React.useState(0);
   const [drag, setDrag] = React.useState<IDrag | undefined>(undefined);
@@ -127,25 +138,64 @@ function DashboardGrid(props: IProps): JSX.Element {
 
   const cancel = React.useCallback(() => setDrag(undefined), []);
 
-  /** double-clic sur la poignée : la carte prend la hauteur de son contenu */
+  /** hauteur (en cases) qu'il faut à la carte pour montrer tout son contenu */
+  const naturalRows = React.useCallback((id: string): number | undefined => {
+    const content = containerRef.current?.querySelector(`[id="${id}"] .dash-item-content`);
+    const card = content?.firstElementChild as HTMLElement | null | undefined;
+    if (card === null || card === undefined) {
+      return undefined;
+    }
+    const prev = { flex: card.style.flex, height: card.style.height };
+    card.style.flex = "0 0 auto";
+    card.style.height = "auto";
+    const natural = card.offsetHeight;
+    card.style.flex = prev.flex;
+    card.style.height = prev.height;
+    return Math.max(MIN_H, Math.ceil((natural + GAP) / (ROW_HEIGHT + GAP)));
+  }, []);
+
+  const latest = React.useRef(rects);
+  latest.current = rects;
+
+  /** ajuste la hauteur au contenu */
   const fitHeight = React.useCallback(
-    (id: string, element: HTMLElement) => {
-      const content = element.closest(".dash-item")?.querySelector(".dash-item-content");
-      const card = content?.firstElementChild as HTMLElement | null | undefined;
-      if (card === null || card === undefined) {
-        return;
+    (id: string) => {
+      const h = naturalRows(id);
+      if (h !== undefined) {
+        onCommit(resolveLayout({ ...latest.current, [id]: { ...latest.current[id], h } }, id));
       }
-      const prev = { flex: card.style.flex, height: card.style.height };
-      card.style.flex = "0 0 auto";
-      card.style.height = "auto";
-      const natural = card.offsetHeight;
-      card.style.flex = prev.flex;
-      card.style.height = prev.height;
-      const h = Math.max(MIN_H, Math.ceil((natural + GAP) / (ROW_HEIGHT + GAP)));
-      onCommit(resolveLayout({ ...rects, [id]: { ...rects[id], h } }, id));
     },
-    [rects, onCommit],
+    [naturalRows, onCommit],
   );
+
+  /** tailles prédéfinies, comme les widgets macOS : largeur choisie, hauteur ajustée au contenu */
+  const preset = React.useCallback(
+    (id: string, w: number) => {
+      const rect = { ...latest.current[id], w, x: Math.min(latest.current[id].x, COLS - w) };
+      onCommit(resolveLayout({ ...latest.current, [id]: rect }, id));
+      // la hauteur dépend de la largeur : on la mesure une fois la carte redimensionnée
+      window.setTimeout(() => fitHeight(id), 260);
+    },
+    [onCommit, fitHeight],
+  );
+
+  // première pose : chaque nouvelle carte prend la hauteur de son contenu
+  React.useEffect(() => {
+    if (autoFit.length === 0 || colW === 0) {
+      return undefined;
+    }
+    const timer = window.setTimeout(() => {
+      const next: RectMap = { ...latest.current };
+      for (const id of autoFit) {
+        const h = naturalRows(id);
+        if (h !== undefined && next[id] !== undefined) {
+          next[id] = { ...next[id], h };
+        }
+      }
+      onCommit(resolveLayout(next));
+    }, 120);
+    return () => window.clearTimeout(timer);
+  }, [autoFit, colW, naturalRows, onCommit]);
 
   const rows = rowCount(preview) + (editMode ? SPARE_ROWS : 0);
   const style: React.CSSProperties = {
@@ -203,6 +253,21 @@ function DashboardGrid(props: IProps): JSX.Element {
               onPointerUp={end}
               onPointerCancel={cancel}
             />
+            <div className="dash-presets" onPointerDown={(evt) => evt.stopPropagation()}>
+              {PRESETS.map((entry) => (
+                <button
+                  key={entry.label}
+                  type="button"
+                  className={rect.w === entry.w ? "active" : undefined}
+                  onClick={() => preset(item.id, entry.w)}
+                >
+                  {t(entry.label)}
+                </button>
+              ))}
+              <button type="button" onClick={() => fitHeight(item.id)}>
+                {t("Fit")}
+              </button>
+            </div>
             {item.closable ? (
               <Button
                 className="dashlet-close-button dash-close"
@@ -217,7 +282,7 @@ function DashboardGrid(props: IProps): JSX.Element {
               onPointerMove={move}
               onPointerUp={end}
               onPointerCancel={cancel}
-              onDoubleClick={(evt) => fitHeight(item.id, evt.currentTarget)}
+              onDoubleClick={() => fitHeight(item.id)}
               title={t("Double-click to fit the card to its content")}
             >
               <Icon name="corner-handle" />

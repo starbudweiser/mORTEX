@@ -141,6 +141,8 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
       grid ?? {},
     );
 
+    const autoFit = this.autoFitIds(dynamic.map((dash) => dash.title));
+
     const classes = ["page-dashboard", editMode ? "dashboard-edit" : "dashboard-view"];
 
     return (
@@ -151,6 +153,7 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
           <div className="dynamic-dashlets">
             <DashboardGrid
               t={t}
+              autoFit={autoFit}
               items={dynamic.map((dash) => ({
                 id: dash.title,
                 closable: dash.closable !== false,
@@ -259,6 +262,17 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
       </FixedItem>
     );
   };
+
+  private mAutoFit: string[] = [];
+
+  /** liste stable (même référence tant que son contenu ne change pas) des cartes sans position */
+  private autoFitIds(ids: string[]): string[] {
+    const wanted = ids.filter((id) => this.props.grid?.[id] === undefined);
+    if (wanted.join("|") !== this.mAutoFit.join("|")) {
+      this.mAutoFit = wanted;
+    }
+    return this.mAutoFit;
+  }
 
   private renderContent = (dash: IDashletProps) => {
     const { counter } = this.state;

@@ -97,7 +97,7 @@ export function DuplicatesRow({ api }: { api: IExtensionApi }) {
       <Typography appearance="moderate" className="w-36 shrink-0" typographyType="body-sm">
         {t("Duplicate files")}
       </Typography>
-      <Typography className="min-w-0 flex-1 truncate" typographyType="body-sm">
+      <Typography className="min-w-0 truncate" typographyType="body-sm">
         {found === undefined
           ? t("Not analyzed")
           : recoverable
