@@ -224,220 +224,229 @@ export function SettingsInterfaceForm(props: IFormProps) {
   ) : null;
 
   return (
-    <form>
-      <FormGroup controlId="languageSelect">
-        <div className="flex flex-col items-start gap-y-2">
-          <Typography as="span">{t("Language")}</Typography>
-
-          <Picker<string>
-            options={languageOptions.map((option) => ({
-              label: option.label,
-              value: option.id,
-            }))}
-            placement="left"
-            value={selectedLanguageId}
-            onChange={selectLanguage}
-          />
-
-          <Typography appearance="subdued" typographyType="body-sm">
-            {t("When you select a language for the first time you may have to restart Vortex.")}
-          </Typography>
-        </div>
-      </FormGroup>
-
-      <FormGroup controlId="customization">
-        <ControlLabel>{t("Customisation")}</ControlLabel>
-
-        <div>
-          <div>
-            <Toggle
-              checked={customTitlebar}
-              onToggle={(enabled) => dispatch(setCustomTitlebar(enabled))}
-            >
-              {t("Custom Window Title Bar")}
-            </Toggle>
-          </div>
-
-          <div>
-            <Toggle
-              checked={desktopNotifications !== false}
-              onToggle={(enabled) => dispatch(setDesktopNotifications(enabled))}
-            >
-              {t("Enable Desktop Notifications")}
-            </Toggle>
-          </div>
-
-          <div>
-            <Toggle
-              checked={hideTopLevelCategory}
-              onToggle={(hide) => dispatch(setHideTopLevelCategory(hide))}
-            >
-              {t("Hide Top-Level Category")}
-
-              <More id="more-hide-toplevel-category" name={t("Top-Level Categories")}>
-                {getText("toplevel-categories", t)}
-              </More>
-            </Toggle>
-          </div>
-
-          <div>
-            <Toggle
-              checked={relativeTimes}
-              onToggle={(enabled) => dispatch(setRelativeTimes(enabled))}
-            >
-              {t('Use relative times (e.g. "3 months ago")')}
-            </Toggle>
-          </div>
-
-          <div>
-            <Toggle
-              checked={alwaysCompactHeaders}
-              onToggle={(enabled) => dispatch(setAlwaysCompactHeaders(enabled))}
-            >
-              {t("Always use compact headers")}
-
-              <Typography appearance="subdued" typographyType="body-sm">
-                {t("Keep page headers compact for less motion and more vertical space.")}
-              </Typography>
-            </Toggle>
-          </div>
-        </div>
-
-        <div>
-          <Toggle checked={foregroundDL} onToggle={(enabled) => dispatch(setForegroundDL(enabled))}>
-            {t("Bring mORTEX to foreground when starting downloads in browser")}
-          </Toggle>
-        </div>
-      </FormGroup>
-
-      <FormGroup className="mt-4" controlId="accessibility">
-        <ControlLabel>{t("Accessibility")}</ControlLabel>
-
-        <div>
-          <div>
-            <Toggle
-              checked={reduceMotion}
-              onToggle={(enabled) => dispatch(setReduceMotion(enabled))}
-            >
-              {t("Reduce motion")}
-
-              <Typography appearance="subdued" typographyType="body-sm">
-                {t("Minimise non-essential animations and visual effects.")}
-              </Typography>
-            </Toggle>
-          </div>
-
+    <form className="grid grid-cols-1 items-start gap-4 xl:grid-cols-2">
+      <div className="flex min-w-0 flex-col gap-y-4 rounded-lg bg-surface-mid p-4">
+        <FormGroup controlId="languageSelect">
           <div className="flex flex-col items-start gap-y-2">
-            <Typography as="span" className="font-semibold" typographyType="body-sm">
-              {t("Zoom")}
-            </Typography>
+            <Typography as="span">{t("Language")}</Typography>
 
-            <Picker<number>
-              options={ZOOM_LEVELS.map((level) => ({
-                label:
-                  level === 1
-                    ? t("{{percent}}% (Default)", { replace: { percent: Math.round(level * 100) } })
-                    : t("{{percent}}%", { replace: { percent: Math.round(level * 100) } }),
-                value: level,
+            <Picker<string>
+              options={languageOptions.map((option) => ({
+                label: option.label,
+                value: option.id,
               }))}
               placement="left"
-              value={zoomFactor}
-              onChange={adjustZoom}
+              value={selectedLanguageId}
+              onChange={selectLanguage}
             />
 
             <Typography appearance="subdued" typographyType="body-sm">
-              {t("Tip: You can also zoom using Ctrl +/− or Ctrl + mouse wheel.")}
+              {t("When you select a language for the first time you may have to restart Vortex.")}
             </Typography>
           </div>
-        </div>
-      </FormGroup>
+        </FormGroup>
 
-      <FormGroup controlId="advanced">
-        <ControlLabel>{t("Advanced")}</ControlLabel>
-
-        <div>
-          <div>
-            <Toggle checked={profilesVisible} onToggle={toggleProfiles}>
-              {t("Enable Profile Management")}
-
-              <More id="more-profile-settings" name={t("Profiles")} wikiId="profiles">
-                {getTextProfiles("profiles", t)}
-              </More>
-            </Toggle>
-          </div>
+        <FormGroup controlId="customization">
+          <ControlLabel>{t("Customisation")}</ControlLabel>
 
           <div>
-            <Toggle
-              checked={startup.disableGPU !== true}
-              onToggle={() => changeStartup("disableGPU", startup.disableGPU !== true)}
-            >
-              {t("Enable GPU Acceleration")}
-            </Toggle>
+            <div>
+              <Toggle
+                checked={customTitlebar}
+                onToggle={(enabled) => dispatch(setCustomTitlebar(enabled))}
+              >
+                {t("Custom Window Title Bar")}
+              </Toggle>
+            </div>
 
-            {startup.disableGPU === true ? (
-              <div className="rounded-lg border border-warning-weak bg-warning-950 p-3">
-                <Typography brand="neutral-translucent">
-                  {t(
-                    "Disabling GPU acceleration will make the mORTEX UI significantly less " +
-                      "responsive in places.",
-                  )}
+            <div>
+              <Toggle
+                checked={desktopNotifications !== false}
+                onToggle={(enabled) => dispatch(setDesktopNotifications(enabled))}
+              >
+                {t("Enable Desktop Notifications")}
+              </Toggle>
+            </div>
+
+            <div>
+              <Toggle
+                checked={hideTopLevelCategory}
+                onToggle={(hide) => dispatch(setHideTopLevelCategory(hide))}
+              >
+                {t("Hide Top-Level Category")}
+
+                <More id="more-hide-toplevel-category" name={t("Top-Level Categories")}>
+                  {getText("toplevel-categories", t)}
+                </More>
+              </Toggle>
+            </div>
+
+            <div>
+              <Toggle
+                checked={relativeTimes}
+                onToggle={(enabled) => dispatch(setRelativeTimes(enabled))}
+              >
+                {t('Use relative times (e.g. "3 months ago")')}
+              </Toggle>
+            </div>
+
+            <div>
+              <Toggle
+                checked={alwaysCompactHeaders}
+                onToggle={(enabled) => dispatch(setAlwaysCompactHeaders(enabled))}
+              >
+                {t("Always use compact headers")}
+
+                <Typography appearance="subdued" typographyType="body-sm">
+                  {t("Keep page headers compact for less motion and more vertical space.")}
                 </Typography>
-              </div>
-            ) : null}
+              </Toggle>
+            </div>
           </div>
-        </div>
-      </FormGroup>
 
-      <FormGroup controlId="automation">
-        <ControlLabel>{t("Automation")}</ControlLabel>
-
-        <div>
-          {!useModernLayout && (
+          <div>
             <Toggle
-              checked={autoDeployment}
-              onToggle={(enabled) => dispatch(setAutoDeployment(enabled))}
+              checked={foregroundDL}
+              onToggle={(enabled) => dispatch(setForegroundDL(enabled))}
             >
-              {t("Deploy Mods when Enabled")}
-
-              <More id="more-deploy-settings" name={t("Deployment")}>
-                {getTextModManagement("deployment", t)}
-              </More>
+              {t("Bring mORTEX to foreground when starting downloads in browser")}
             </Toggle>
-          )}
+          </div>
+        </FormGroup>
 
-          <Toggle checked={autoInstall} onToggle={(enabled) => dispatch(setAutoInstall(enabled))}>
-            {t("Install Mods when downloaded")}
-          </Toggle>
+        <FormGroup className="mt-4" controlId="accessibility">
+          <ControlLabel>{t("Accessibility")}</ControlLabel>
 
-          <Toggle checked={autoEnable} onToggle={(enabled) => dispatch(setAutoEnable(enabled))}>
-            {t("Enable Mods when installed (in current profile)")}
-          </Toggle>
+          <div>
+            <div>
+              <Toggle
+                checked={reduceMotion}
+                onToggle={(enabled) => dispatch(setReduceMotion(enabled))}
+              >
+                {t("Reduce motion")}
 
-          <Toggle checked={autoStart} onToggle={toggleAutoStart}>
-            {t("Run mORTEX when my computer starts")}
-          </Toggle>
+                <Typography appearance="subdued" typographyType="body-sm">
+                  {t("Minimise non-essential animations and visual effects.")}
+                </Typography>
+              </Toggle>
+            </div>
 
-          {startMinimizedToggle}
-        </div>
-      </FormGroup>
+            <div className="flex flex-col items-start gap-y-2">
+              <Typography as="span" className="font-semibold" typographyType="body-sm">
+                {t("Zoom")}
+              </Typography>
 
-      <FormGroup controlId="notifications">
-        <ControlLabel>{t("Notifications")}</ControlLabel>
+              <Picker<number>
+                options={ZOOM_LEVELS.map((level) => ({
+                  label:
+                    level === 1
+                      ? t("{{percent}}% (Default)", {
+                          replace: { percent: Math.round(level * 100) },
+                        })
+                      : t("{{percent}}%", { replace: { percent: Math.round(level * 100) } }),
+                  value: level,
+                }))}
+                placement="left"
+                value={zoomFactor}
+                onChange={adjustZoom}
+              />
 
-        <div className="flex items-center gap-x-2">
-          <Button brand="neutral" onClick={() => dispatch(resetSuppression(null))}>
-            {t("Reset suppressed notifications")}
-          </Button>
+              <Typography appearance="subdued" typographyType="body-sm">
+                {t("Tip: You can also zoom using Ctrl +/− or Ctrl + mouse wheel.")}
+              </Typography>
+            </div>
+          </div>
+        </FormGroup>
+      </div>
 
-          <Typography appearance="subdued" typographyType="body-sm">
-            {t("({{count}} notification is being suppressed)", {
-              replace: { count: numSuppressed },
-            })}
-          </Typography>
-        </div>
-      </FormGroup>
+      <div className="flex min-w-0 flex-col gap-y-4 rounded-lg bg-surface-mid p-4">
+        <FormGroup controlId="advanced">
+          <ControlLabel>{t("Advanced")}</ControlLabel>
 
-      {needRestartNotification}
+          <div>
+            <div>
+              <Toggle checked={profilesVisible} onToggle={toggleProfiles}>
+                {t("Enable Profile Management")}
+
+                <More id="more-profile-settings" name={t("Profiles")} wikiId="profiles">
+                  {getTextProfiles("profiles", t)}
+                </More>
+              </Toggle>
+            </div>
+
+            <div>
+              <Toggle
+                checked={startup.disableGPU !== true}
+                onToggle={() => changeStartup("disableGPU", startup.disableGPU !== true)}
+              >
+                {t("Enable GPU Acceleration")}
+              </Toggle>
+
+              {startup.disableGPU === true ? (
+                <div className="rounded-lg border border-warning-weak bg-warning-950 p-3">
+                  <Typography brand="neutral-translucent">
+                    {t(
+                      "Disabling GPU acceleration will make the mORTEX UI significantly less " +
+                        "responsive in places.",
+                    )}
+                  </Typography>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </FormGroup>
+
+        <FormGroup controlId="automation">
+          <ControlLabel>{t("Automation")}</ControlLabel>
+
+          <div>
+            {!useModernLayout && (
+              <Toggle
+                checked={autoDeployment}
+                onToggle={(enabled) => dispatch(setAutoDeployment(enabled))}
+              >
+                {t("Deploy Mods when Enabled")}
+
+                <More id="more-deploy-settings" name={t("Deployment")}>
+                  {getTextModManagement("deployment", t)}
+                </More>
+              </Toggle>
+            )}
+
+            <Toggle checked={autoInstall} onToggle={(enabled) => dispatch(setAutoInstall(enabled))}>
+              {t("Install Mods when downloaded")}
+            </Toggle>
+
+            <Toggle checked={autoEnable} onToggle={(enabled) => dispatch(setAutoEnable(enabled))}>
+              {t("Enable Mods when installed (in current profile)")}
+            </Toggle>
+
+            <Toggle checked={autoStart} onToggle={toggleAutoStart}>
+              {t("Run mORTEX when my computer starts")}
+            </Toggle>
+
+            {startMinimizedToggle}
+          </div>
+        </FormGroup>
+
+        <FormGroup controlId="notifications">
+          <ControlLabel>{t("Notifications")}</ControlLabel>
+
+          <div className="flex items-center gap-x-2">
+            <Button brand="neutral" onClick={() => dispatch(resetSuppression(null))}>
+              {t("Reset suppressed notifications")}
+            </Button>
+
+            <Typography appearance="subdued" typographyType="body-sm">
+              {t("({{count}} notification is being suppressed)", {
+                replace: { count: numSuppressed },
+              })}
+            </Typography>
+          </div>
+        </FormGroup>
+      </div>
+
+      <div className="col-span-full empty:hidden">{needRestartNotification}</div>
     </form>
   );
 }
