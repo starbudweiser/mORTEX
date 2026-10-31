@@ -88,7 +88,7 @@ export const SKYRIMSE_CATALOG: readonly ICatalogSetting[] = [
   bool("display", "parallaxOcclusion", "Display", "bEnableParallaxOcclusion"),
   bool("display", "precipitationOcclusion", "Display", "bUsePrecipitationOcclusion"),
   bool("display", "lockFramerate", "Display", "bLockFramerate", { macNote: true }),
-  int("display", "fpsClamp", "General", "iFPSClamp", { min: 0, max: 360, step: 1, unit: "ips" }),
+  int("display", "fpsClamp", "General", "iFPSClamp", { min: 0, max: 360, step: 1, unit: "fps" }),
   float("display", "worldFov", "Display", "fDefaultWorldFOV", {
     min: 50,
     max: 120,

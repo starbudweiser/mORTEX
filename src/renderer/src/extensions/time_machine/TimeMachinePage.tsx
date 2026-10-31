@@ -204,7 +204,7 @@ export default function TimeMachinePage({ api }: IProps) {
                     >
                       <span className="absolute top-1/2 -left-[1.3rem] size-2.5 -translate-y-1/2 rounded-full bg-warning-strong" />
                       <Typography
-                        className="w-14 font-semibold tabular-nums"
+                        className="w-20 font-semibold whitespace-nowrap tabular-nums"
                         typographyType="body-lg"
                       >
                         {new Date(snapshot.created).toLocaleTimeString(language, {
