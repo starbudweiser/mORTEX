@@ -1271,12 +1271,19 @@ ul.collection-mods-page-attrib-tooltip {
     .collection-workshop-actions {
         height: 100%;
         display: flex;
-        align-items: center;
+        // mORTEX : le bouton prend toute la largeur de la carte et est décollé d'elle (10 px) ; la
+        // hauteur du conteneur est comptée avec ce décollement, le bouton n'est plus rogné en bas
+        box-sizing: border-box;
+        align-items: flex-end;
+        padding-top: 10px;
 
+        .btn-group,
         .dropdown {
             display: flex;
             width: 100%;
+        }
 
+        .dropdown {
             svg {
                 margin-right: 0.5em;
             }

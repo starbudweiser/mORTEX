@@ -52,7 +52,11 @@ export const StatusBar: FC = () => {
       <span>{t("{{count}} mods installed", { count: installed })}</span>
       <span>{t("{{count}} enabled", { count: enabled })}</span>
       <span className={needToDeploy ? "mortex-statusbar-warn" : undefined}>{deployment}</span>
-      <span className="mortex-statusbar-end">{nexus}</span>
+      <span
+        className={`mortex-statusbar-end ${loggedIn && premium ? "mortex-statusbar-ok" : "mortex-statusbar-warn"}`}
+      >
+        {nexus}
+      </span>
     </div>
   );
 };

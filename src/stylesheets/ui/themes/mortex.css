@@ -396,6 +396,11 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     color: #f59e0b;
 }
 
+/* Nexus connecté en Premium : vert (orange sinon, avec la classe -warn) */
+.mortex-statusbar-ok {
+    color: #22c55e;
+}
+
 .mortex-statusbar-end {
     margin-left: auto;
 }
@@ -1507,6 +1512,19 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
 
 .nxm-button.nxm-button-neutral.nxm-button-strong:is(:enabled, a):not(.nxm-button-disabled):hover {
     background-color: #3a3a3a;
+}
+
+/* Carte de révision d'une collection : « Voir sur Nexus Mods » occupe toute la largeur de la carte, son
+   libellé centré dans la partie principale, et reste décollé d'elle (8 px, voir collections.scss) */
+.collection-workshop-actions .mac-pulldown {
+    display: flex;
+    width: 100%;
+    max-width: none;
+}
+
+.collection-workshop-actions .mac-pulldown-main {
+    flex: 1 1 0;
+    justify-content: center;
 }
 
 /* Zone de dépôt sous la liste des mods (nouvelle interface) : chevron de repli sur la zone */
