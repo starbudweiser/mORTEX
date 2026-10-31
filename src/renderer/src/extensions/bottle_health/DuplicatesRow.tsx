@@ -88,13 +88,13 @@ export function DuplicatesRow({ api }: { api: IExtensionApi }) {
 
   const recoverable = found !== undefined && found.savings > 0;
   return (
-    <div className="flex items-center gap-x-2" data-testid="bottle-health-duplicates">
+    <div className="contents" data-testid="bottle-health-duplicates">
       <Icon
         className={`shrink-0 ${recoverable ? "!text-warning-strong" : "!text-neutral-subdued"}`}
         name={recoverable ? "content_copy" : "info"}
         size="sm"
       />
-      <Typography appearance="moderate" className="w-36 shrink-0" typographyType="body-sm">
+      <Typography appearance="moderate" typographyType="body-sm">
         {t("Duplicate files")}
       </Typography>
       <Typography className="min-w-0 truncate" typographyType="body-sm">

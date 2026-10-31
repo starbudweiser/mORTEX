@@ -103,26 +103,19 @@ function BottleHealthDashlet({ api }: { api: IExtensionApi }) {
     <Dashlet className="mortex-status-dashlet" title="">
       <div className="mortex-card">
         <h5>{t("Bottle {{name}}", { name: bottle.name })}</h5>
-        <div className="flex flex-col gap-y-1.5">
+        <div className="grid grid-cols-[auto_9rem_auto_1fr] items-center gap-x-2 gap-y-1.5">
           {checks.map((check) => {
             const look = LOOK[check.status];
             return (
-              <div
-                className="flex items-center gap-x-2"
-                data-testid={`bottle-health-${check.id}`}
-                key={check.id}
-              >
+              <div className="contents" data-testid={`bottle-health-${check.id}`} key={check.id}>
                 <Icon className={`shrink-0 ${look.color}`} name={look.icon} size="sm" />
-                <Typography
-                  appearance="moderate"
-                  className="w-36 shrink-0"
-                  typographyType="body-sm"
-                >
+                <Typography appearance="moderate" typographyType="body-sm">
                   {t(LABELS[check.id])}
                 </Typography>
                 <Typography className="min-w-0 truncate" typographyType="body-sm">
                   {text(check)}
                 </Typography>
+                {check.fixable !== true && <span />}
                 {check.fixable === true && (
                   <Button
                     isLoading={fixing === check.id}
