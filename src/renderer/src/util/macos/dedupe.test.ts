@@ -39,12 +39,21 @@ describe("dedupe by clones", () => {
     ]);
     expect(found).toMatchObject({ savings: 4000, files: 2 });
 
-    expect(await cloneDuplicates(found.groups)).toBe(4000);
+    expect(await cloneDuplicates(found.groups, tmp)).toBe(4000);
     for (const file of found.groups[0]) {
       expect(fs.readFileSync(file, "utf8")).toBe(texture);
     }
+    // les clones ne sont plus proposés une seconde fois
+    expect(await findDuplicates(tmp, 1000)).toEqual({ groups: [], savings: 0, files: 0 });
+    // une copie neuve du même fichier se clone sur les clones existants
+    write("Later/rock.dds", texture);
+    const again = await findDuplicates(tmp, 1000);
+    expect(again.files).toBe(1);
+    expect(path.relative(tmp, again.groups[0][0])).toBe("ModA v1/textures/rock.dds");
     // un clone se sépare quand on le modifie
     fs.writeFileSync(found.groups[0][1], "changed");
+    // (le fichier modifié sort du groupe ; reste la copie neuve « Later »)
+    expect((await findDuplicates(tmp, 1000)).files).toBe(1);
     expect(fs.readFileSync(found.groups[0][0], "utf8")).toBe(texture);
     expect(fs.readdirSync(path.join(tmp, "ModA v2/textures"))).toEqual(["rock.dds"]);
   });

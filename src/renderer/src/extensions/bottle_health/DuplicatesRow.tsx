@@ -65,7 +65,7 @@ export function DuplicatesRow({ api }: { api: IExtensionApi }) {
         setBusy(true);
         try {
           await asPromise((callback) => api.events.emit("purge-mods", false, callback));
-          const saved = await cloneDuplicates(found.groups);
+          const saved = await cloneDuplicates(found.groups, staging);
           await asPromise((callback) =>
             api.events.emit("deploy-mods", callback, undefined, undefined, { manual: true }),
           );

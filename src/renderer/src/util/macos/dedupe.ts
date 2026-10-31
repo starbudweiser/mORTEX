@@ -9,14 +9,30 @@
  *
  * Comparaison : taille, puis empreinte SHA-256 du contenu. Les fichiers déjà liés entre eux (même
  * inode) ne comptent qu'une fois.
+ *
+ * Un clone APFS a son propre inode et le même contenu : rien ne le distingue d'une vraie copie. Les
+ * fichiers clonés sont donc notés dans un registre (`.mortex-clones.json` à la racine, avec taille
+ * et date de modification) ; tant qu'un fichier n'a pas changé, il n'est plus proposé au clonage.
  */
 import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
 import { createReadStream } from "node:fs";
-import { readdir, rename, rm, stat } from "node:fs/promises";
+import { readdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
 import * as path from "node:path";
 
 export const MIN_SIZE = 64 * 1024;
+export const LEDGER_NAME = ".mortex-clones.json";
+
+/** fichier relatif -> [taille, date de modification] au moment du clonage */
+type Ledger = { [file: string]: [number, number] };
+
+async function readLedger(root: string): Promise<Ledger> {
+  try {
+    return JSON.parse(await readFile(path.join(root, LEDGER_NAME), "utf8")) as Ledger;
+  } catch {
+    return {};
+  }
+}
 
 export interface IDuplicates {
   /** fichiers identiques, le premier est gardé */
@@ -46,6 +62,8 @@ const hashOf = (file: string) =>
 
 export async function findDuplicates(root: string, minSize = MIN_SIZE): Promise<IDuplicates> {
   // par taille d'abord : seules les tailles partagées valent une empreinte
+  const ledger = await readLedger(root);
+  const cloned = new Set<string>();
   const bySize = new Map<number, string[]>();
   const seenInodes = new Set<string>();
   for await (const file of walk(root)) {
@@ -54,6 +72,10 @@ export async function findDuplicates(root: string, minSize = MIN_SIZE): Promise<
     const inode = `${info.dev}:${info.ino}`;
     if (seenInodes.has(inode)) continue;
     seenInodes.add(inode);
+    const noted = ledger[path.relative(root, file)];
+    if (noted !== undefined && noted[0] === info.size && noted[1] === info.mtimeMs) {
+      cloned.add(file);
+    }
     bySize.set(info.size, [...(bySize.get(info.size) ?? []), file]);
   }
 
@@ -69,9 +91,16 @@ export async function findDuplicates(root: string, minSize = MIN_SIZE): Promise<
     }
     for (const group of byHash.values()) {
       if (group.length < 2) continue;
-      groups.push(group.sort());
-      savings += size * (group.length - 1);
-      files += group.length - 1;
+      // les fichiers déjà clonés partagent leur place : seuls les autres sont à regagner, et ils
+      // se clonent sur un fichier déjà cloné s'il y en a un
+      const done = group.filter((file) => cloned.has(file)).sort();
+      const fresh = group.filter((file) => !cloned.has(file)).sort();
+      if (fresh.length === 0) continue;
+      const ordered = done.length > 0 ? [done[0], ...fresh] : fresh;
+      if (ordered.length < 2) continue;
+      groups.push(ordered);
+      savings += size * (ordered.length - 1);
+      files += ordered.length - 1;
     }
   }
   return { groups, savings, files };
@@ -84,8 +113,17 @@ const cp = (args: string[]) =>
     ),
   );
 
-/** remplace chaque doublon par un clone du premier fichier du groupe ; renvoie les octets regagnés */
-export async function cloneDuplicates(groups: string[][]): Promise<number> {
+/**
+ * remplace chaque doublon par un clone du premier fichier du groupe ; renvoie les octets regagnés.
+ * `root` : dossier analysé, où le registre des fichiers clonés est tenu à jour.
+ */
+export async function cloneDuplicates(groups: string[][], root?: string): Promise<number> {
+  const ledger = root === undefined ? {} : await readLedger(root);
+  const note = async (file: string) => {
+    if (root === undefined) return;
+    const info = await stat(file).catch(() => undefined);
+    if (info !== undefined) ledger[path.relative(root, file)] = [info.size, info.mtimeMs];
+  };
   let saved = 0;
   for (const [keep, ...others] of groups) {
     const { size } = await stat(keep);
@@ -96,10 +134,15 @@ export async function cloneDuplicates(groups: string[][]): Promise<number> {
         await cp(["-cp", keep, temp]);
         await rename(temp, file);
         saved += size;
+        await note(file);
       } catch {
         await rm(temp, { force: true });
       }
     }
+    await note(keep);
+  }
+  if (root !== undefined && saved > 0) {
+    await writeFile(path.join(root, LEDGER_NAME), JSON.stringify(ledger));
   }
   return saved;
 }
