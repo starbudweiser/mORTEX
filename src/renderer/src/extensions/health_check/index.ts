@@ -64,7 +64,10 @@ function init(context: IExtensionContext): boolean {
     hotkey: "H",
     group: "per-game",
     newLayout: true,
-    visible: () => activeGameId(context.api.getState()) !== undefined,
+    // Sous macOS aucune vérification de Skyrim n'est enregistrée : la page affichait toujours
+    // « Prêt à jouer » sans rien contrôler ; l'état réel est dans les cartes du tableau de bord.
+    visible: () =>
+      process.platform !== "darwin" && activeGameId(context.api.getState()) !== undefined,
     menuBadge: HealthCheckMenuBadge,
     props: () => ({
       api: context.api,

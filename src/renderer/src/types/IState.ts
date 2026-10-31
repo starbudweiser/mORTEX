@@ -237,6 +237,7 @@ export interface ISettingsInterface {
   dashboardLayout: string[];
   foregroundDL: boolean;
   dashletSettings: { [dashletId: string]: IDashletSettings };
+  dashboardGrid?: { [dashletId: string]: { x: number; y: number; w: number; h: number } };
   usage: { [usageId: string]: boolean };
   tools?: {
     addToolsToTitleBar: boolean;

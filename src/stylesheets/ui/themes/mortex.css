@@ -2159,3 +2159,15 @@ body.mortex-menu-moving * {
         display: none;
     }
 }
+
+/* Bouton « Se connecter » de la barre de titre : orange mORTEX */
+.mortex-login-button {
+    background-color: #f59e0b !important;
+    border-color: #f59e0b !important;
+    color: #1a1a1a !important;
+}
+
+.mortex-login-button:hover {
+    background-color: #fbbf24 !important;
+    border-color: #fbbf24 !important;
+}

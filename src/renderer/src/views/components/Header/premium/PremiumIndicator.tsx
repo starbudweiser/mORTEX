@@ -36,7 +36,7 @@ export const PremiumIndicator: FC<React.PropsWithChildren<unknown>> = () => {
 
   if (!loggedIn) {
     return (
-      <Button brand="primary" onClick={handleLogin}>
+      <Button brand="primary" className="mortex-login-button" onClick={handleLogin}>
         {t("Log in")}
       </Button>
     );

@@ -1,4 +1,3 @@
-import * as _ from "lodash";
 import * as React from "react";
 import { Button, MenuItem } from "react-bootstrap";
 import type * as Redux from "redux";
@@ -10,16 +9,15 @@ import FlexLayout from "../../../controls/FlexLayout";
 import Icon from "../../../controls/Icon";
 import { IconButton } from "../../../controls/TooltipControls";
 import type { IDashletSettings, IState } from "../../../types/IState";
-import Debouncer from "../../../util/Debouncer";
 import { getWindowId } from "../../../util/preloadAccess";
 import { getSafe } from "../../../util/storeHelper";
 import MainPage from "../../../views/MainPage";
-import { setDashletEnabled, setDashletHeight, setDashletWidth, setLayout } from "../actions";
+import { setDashboardGrid, setDashletEnabled } from "../actions";
+import type { RectMap } from "../gridLayout";
+import { layoutAll, LEGACY_H, LEGACY_W } from "../gridLayout";
 import type { IDashletProps } from "../types/IDashletProps";
+import DashboardGrid from "./DashboardGrid";
 import FixedItem from "./FixedItem";
-import PackeryGrid from "./PackeryGrid";
-import type { IPackeryItemProps } from "./PackeryItem";
-import PackeryItem from "./PackeryItem";
 
 const UPDATE_FREQUENCY_MS = 1000;
 
@@ -30,6 +28,7 @@ interface IBaseProps {
 
 interface IConnectedProps {
   layout: string[];
+  grid: RectMap;
   dashletSettings: { [dashletId: string]: IDashletSettings };
   // Per-dashlet visibility keyed by dash.title. Computed in mapStateToProps
   // so any state slice an isVisible() callback reads becomes part of
@@ -39,21 +38,11 @@ interface IConnectedProps {
 }
 
 interface IActionProps {
-  onSetLayout: (items: string[]) => void;
   onSetDashletEnabled: (dashletId: string, enabled: boolean) => void;
-  onSetDashletWidth: (dashletId: string, width: number) => void;
-  onSetDashletHeight: (dashletId: string, height: number) => void;
+  onSetGrid: (grid: RectMap) => void;
 }
 
 type IProps = IBaseProps & IConnectedProps & IActionProps;
-
-function BackgroundGrid(props: Partial<IPackeryItemProps> & { editMode: boolean }) {
-  return props.editMode ? (
-    <div key="background-grid" className="dashboard-background-grid" />
-  ) : (
-    <div key="background-grid" />
-  );
-}
 
 interface IComponentState {
   counter: number;
@@ -65,7 +54,6 @@ interface IComponentState {
  */
 class Dashboard extends ComponentEx<IProps, IComponentState> {
   private mUpdateTimer: NodeJS.Timeout;
-  private mLayoutDebouncer: Debouncer;
   private mWindowFocused: boolean = true;
   private mUnsubscribeFocus: (() => void) | undefined;
   private mUnsubscribeBlur: (() => void) | undefined;
@@ -77,13 +65,6 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
       counter: 0,
       editMode: false,
     });
-
-    this.mLayoutDebouncer = new Debouncer((layout: string[]) => {
-      if (!_.isEqual(layout, this.props.layout)) {
-        this.props.onSetLayout(layout);
-      }
-      return null;
-    }, 500);
   }
 
   public componentDidMount() {
@@ -116,7 +97,7 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
   }
 
   public render(): JSX.Element {
-    const { t, dashletSettings, dashletVisible, layout, dashlets } = this.props;
+    const { dashletSettings, dashletVisible, layout, dashlets, grid } = this.props;
     const { editMode } = this.state;
 
     const layoutMap: { [key: string]: number } = layout.reduce((prev, key, idx) => {
@@ -149,6 +130,17 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
       { fixed: [], dynamic: [] },
     );
 
+    const rects = layoutAll(
+      dynamic.map((dash) => ({
+        id: dash.title,
+        defaultSize: {
+          w: (dashletSettings?.[dash.title]?.width ?? dash.width) * LEGACY_W,
+          h: (dashletSettings?.[dash.title]?.height ?? dash.height) * LEGACY_H,
+        },
+      })),
+      grid ?? {},
+    );
+
     const classes = ["page-dashboard", editMode ? "dashboard-edit" : "dashboard-view"];
 
     return (
@@ -157,15 +149,17 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
           <div className="dashboard-editbar">{this.renderEditBar()}</div>
           <div className="fixed-dashlets">{fixed.map(this.renderFixedItem)}</div>
           <div className="dynamic-dashlets">
-            <PackeryGrid
-              totalWidth={3}
-              onChangeLayout={this.onChangeLayout}
-              settings={dashletSettings}
-              items={dynamic.map((iter) => iter.title).sort()}
-            >
-              <BackgroundGrid editMode={editMode} />
-              {dynamic.map(this.renderItem)}
-            </PackeryGrid>
+            <DashboardGrid
+              items={dynamic.map((dash) => ({
+                id: dash.title,
+                closable: dash.closable !== false,
+                content: this.renderContent(dash),
+              }))}
+              rects={rects}
+              editMode={editMode}
+              onCommit={this.onCommitGrid}
+              onDismiss={this.dismissDashlet}
+            />
           </div>
         </MainPage.Body>
       </MainPage>
@@ -216,20 +210,11 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
     const { dashletSettings } = this.props;
     const dashId = evt.currentTarget.getAttribute("data-id");
     const old = dashletSettings[dashId]?.enabled !== false;
-    if (old) {
-      // Clear pending layout save so it can't restore a stale position
-      // for this dashlet after the reducer has already removed it.
-      this.mLayoutDebouncer.clear();
-    }
     this.props.onSetDashletEnabled(dashId, !old);
   };
 
   private toggleEdit = () => {
     this.nextState.editMode = !this.nextState.editMode;
-  };
-
-  private onChangeLayout = (layout: string[]) => {
-    this.mLayoutDebouncer.schedule(undefined, layout);
   };
 
   private onFocus = () => {
@@ -274,40 +259,17 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
     );
   };
 
-  private renderItem = (dash: IDashletProps, idx: number) => {
-    const { t, dashletSettings } = this.props;
-    const { counter, editMode } = this.state;
+  private renderContent = (dash: IDashletProps) => {
+    const { counter } = this.state;
     const componentProps = dash.props !== undefined ? dash.props() : {};
-    return (
-      <PackeryItem
-        t={t}
-        id={dash.title}
-        key={dash.title}
-        closable={dash.closable}
-        editable={editMode}
-        position={idx + 1}
-        width={dashletSettings?.[dash.title]?.width ?? dash.width}
-        height={dashletSettings?.[dash.title]?.height ?? dash.height}
-        onSetWidth={this.setWidth}
-        onSetHeight={this.setHeight}
-        onDismiss={dash.closable ? this.dismissDashlet : undefined}
-        fixed={dash.fixed}
-      >
-        <dash.component t={this.props.t} {...componentProps} counter={counter} />
-      </PackeryItem>
-    );
+    return <dash.component t={this.props.t} {...componentProps} counter={counter} />;
   };
 
-  private setWidth = (id: string, width: number) => {
-    this.props.onSetDashletWidth(id, width);
-  };
-
-  private setHeight = (id: string, height: number) => {
-    this.props.onSetDashletHeight(id, height);
+  private onCommitGrid = (rects: RectMap) => {
+    this.props.onSetGrid({ ...this.props.grid, ...rects });
   };
 
   private dismissDashlet = (dashletId: string) => {
-    this.mLayoutDebouncer.clear();
     this.props.onSetDashletEnabled(dashletId, false);
   };
 }
@@ -316,6 +278,8 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
 // visibility record. Without memoization the object reference would change
 // on every dispatch and defeat react-redux's shallow comparison, causing a
 // re-render on every action.
+const EMPTY_GRID: RectMap = {};
+
 function makeMapStateToProps(): (state: IState, ownProps: IBaseProps) => IConnectedProps {
   let lastDashlets: IDashletProps[] | undefined;
   let lastKey: string | undefined;
@@ -339,6 +303,7 @@ function makeMapStateToProps(): (state: IState, ownProps: IBaseProps) => IConnec
     return {
       // Defensive checks: interface might not be initialized during hydration
       layout: state.settings?.interface?.dashboardLayout ?? [],
+      grid: state.settings?.interface?.dashboardGrid ?? EMPTY_GRID,
       dashletSettings: state.settings?.interface?.dashletSettings ?? {},
       dashletVisible: lastVisible,
     };
@@ -347,13 +312,9 @@ function makeMapStateToProps(): (state: IState, ownProps: IBaseProps) => IConnec
 
 function mapDispatchToProps(dispatch: ThunkDispatch<any, null, Redux.Action>): IActionProps {
   return {
-    onSetLayout: (items: string[]) => dispatch(setLayout(items)),
     onSetDashletEnabled: (dashletId: string, enabled: boolean) =>
       dispatch(setDashletEnabled(dashletId, enabled)),
-    onSetDashletWidth: (dashletId: string, width: number) =>
-      dispatch(setDashletWidth(dashletId, width)),
-    onSetDashletHeight: (dashletId: string, height: number) =>
-      dispatch(setDashletHeight(dashletId, height)),
+    onSetGrid: (grid: RectMap) => dispatch(setDashboardGrid(grid)),
   };
 }
 

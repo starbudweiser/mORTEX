@@ -16,3 +16,9 @@ export const setDashletHeight = safeCreateAction(
   "SET_WIDGET_HEIGHT",
   (widgetId: string, height: number) => ({ widgetId, height }),
 );
+
+/** positions et tailles (en cases) de toutes les cartes du tableau de bord */
+export const setDashboardGrid = safeCreateAction(
+  "SET_DASHBOARD_GRID",
+  (grid: { [widgetId: string]: { x: number; y: number; w: number; h: number } }) => grid,
+);
