@@ -25,6 +25,20 @@ const reducer: IReducerSpec = {
   defaults: { dashboardArranged: false },
 };
 
+/** cartes de Vortex, masquées par défaut */
+const INHERITED_DASHLETS = [
+  "News",
+  "Latest Mods",
+  "Onboarding",
+  "ToDo List",
+  "Tools",
+  "Recently Managed",
+  "Extensions",
+  "Changelog",
+  "Go Premium",
+  "Nexus Mods Account Banner",
+];
+
 function init(context: IExtensionContext): boolean {
   context.registerReducer(["settings", "mortex"], reducer);
 
@@ -55,16 +69,19 @@ function init(context: IExtensionContext): boolean {
 
   context.once(() => {
     const { store } = context.api;
-    // Une seule fois : les cartes mORTEX passent en tête et les fils d'actualité Nexus sont
-    // masqués (« Personnaliser le tableau de bord » les remet).
+    // Une seule fois : les cartes mORTEX passent en tête et toutes les cartes héritées de Vortex
+    // (actualités, vidéos d'initiation, extensions, bannières Nexus…) sont masquées : le tableau
+    // de bord par défaut ne garde que les modules de mORTEX (« Personnaliser le tableau de bord »
+    // les remet).
     if (store.getState().settings.mortex?.dashboardArranged) {
       return;
     }
     const layout: string[] = store.getState().settings.interface.dashboardLayout ?? [];
     const first = [BOTTLE_DASHLET_ID, DASHLET_ID];
     store.dispatch(setLayout([...first, ...layout.filter((id) => !first.includes(id))]));
-    store.dispatch(setDashletEnabled("News", false));
-    store.dispatch(setDashletEnabled("Latest Mods", false));
+    for (const id of INHERITED_DASHLETS) {
+      store.dispatch(setDashletEnabled(id, false));
+    }
     store.dispatch(markDashboardArranged(true));
   });
 
