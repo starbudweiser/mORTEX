@@ -34,7 +34,14 @@ import { MenuSection } from "./components/MenuSection";
 import { ToolsProvider } from "./context/ToolsContext";
 
 /** mORTEX : pages rangées sous « Outils » ; les autres pages du jeu vont sous « Jeu » */
-const TOOL_PAGE_IDS = new Set(["Browse Nexus Mods", "Tools", "Health check"]);
+const TOOL_PAGE_IDS = new Set([
+  "Browse Nexus Mods",
+  "Tools",
+  "Health check",
+  "DXMT workshop",
+  "Time Machine",
+  "Settings editor",
+]);
 
 /** mORTEX : pages exclusives au Mac, en couleur dans la barre latérale */
 const MAC_PAGE_IDS = new Set(["DXMT workshop", "Settings editor", "Time Machine"]);
