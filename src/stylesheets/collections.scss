@@ -773,6 +773,7 @@ ul.collection-mods-page-attrib-tooltip {
 
 .collection-detail-cell {
     padding: 0 0.5em;
+    flex-shrink: 0;
 
     img {
         width: 32px;

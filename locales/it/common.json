@@ -2485,6 +2485,8 @@
   "Potential merged data mismatch": "Possibile discrepanza nei dati uniti",
   "Purge failed, please try again": "Purga non riuscita, riprova",
   "Remove mods from old revision?": "Rimuovere le mod della revisione precedente?",
+  "Notifications": "Notifiche",
+  "You have a mod type conflict. Show the Dependencies column to manage it.": "Hai un conflitto di tipo di mod. Mostra la colonna Dipendenze per gestirlo.",
   "Reset suppressed notifications": "Ripristina notifiche nascoste",
   "Running post-deployment events": "Esecuzione degli eventi post-distribuzione",
   "Switching to Profile: {{name}}": "Passaggio al profilo: {{name}}",

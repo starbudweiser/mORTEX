@@ -2683,6 +2683,7 @@
   "Potential merged data mismatch": "Possible incohérence des données fusionnées",
   "Purge failed, please try again": "Échec de la purge, réessayez",
   "Remove mods from old revision?": "Retirer les mods de l'ancienne révision ?",
+  "You have a mod type conflict. Show the Dependencies column to manage it.": "Vous avez un conflit de type de mod. Affichez la colonne Dépendances pour le gérer.",
   "Reset suppressed notifications": "Réinitialiser les notifications masquées",
   "Running post-deployment events": "Exécution des actions de post-déploiement",
   "Switching to Profile: {{name}}": "Passage au profil : {{name}}",
