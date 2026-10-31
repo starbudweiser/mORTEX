@@ -53,7 +53,7 @@ class Settings extends ComponentEx<IProps, {}> {
     const { t, dashlets, dashletSettings, onSetDashletEnabled } = this.props;
 
     return (
-      <form>
+      <form className="rounded-lg bg-surface-mid p-4">
         <FormGroup controlId="dashlets">
           <ControlLabel>{t("Dashlets")}</ControlLabel>
           <HelpBlock>{t("Enable Dashboard Widgets")}</HelpBlock>
