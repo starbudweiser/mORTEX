@@ -46,6 +46,8 @@ export interface ICollectionProgressProps {
   downloads: { [dlId: string]: IDownload };
   profile: IProfile;
   totalSize: number;
+  // no install is running: members that were never downloaded can't progress and are left out
+  idle?: boolean;
   activity: { [id: string]: string[] };
   onCancel: () => void;
   onPause: () => void;
@@ -82,6 +84,7 @@ class CollectionProgress extends ComponentEx<ICollectionProgressProps, ICompStat
       onCancel,
       onPause,
       onResume,
+      idle,
     } = this.props;
 
     const group = (mod: ICollectionItemRow, download?: IDownload): string => {
@@ -124,6 +127,9 @@ class CollectionProgress extends ComponentEx<ICollectionProgressProps, ICompStat
       (prev, mod) => {
         // required mods and optionals the user selected (non-ignored); default-skipped
         // optionals are ignored and excluded so they never hold the progress panel open
+        if (idle && mod.status === "pending" && downloads[mod.archiveId] === undefined) {
+          return prev;
+        }
         if (isDependencyRule(mod.collectionRule) && !mod.collectionRule.ignored) {
           prev[group(mod, downloads[mod.archiveId])].push(mod);
         }
@@ -209,7 +215,11 @@ class CollectionProgress extends ComponentEx<ICollectionProgressProps, ICompStat
     const curInstall =
       installing.length > 0 ? installing.find((iter) => iter.status === "installing") : undefined;
 
-    const relevant = Object.values(mods).filter(itemRelevant);
+    const relevant = Object.values(mods).filter(
+      (mod) =>
+        itemRelevant(mod) &&
+        !(this.props.idle && mod.status === "pending" && downloads[mod.archiveId] === undefined),
+    );
 
     // numerator scoped to the same relevant members as totalSize so a default-skipped
     // (ignored) optional's file size can't inflate the bar past 100%

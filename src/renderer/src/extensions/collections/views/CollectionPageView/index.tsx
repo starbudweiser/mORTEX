@@ -674,6 +674,7 @@ class CollectionPage extends ComponentEx<IProps, IComponentState> {
               mods={itemRows}
               profile={profile}
               showPremiumAd={this.props.showPremiumAd}
+              idle={!this.mInstalling && !installInFlight}
               t={t}
               totalSize={totalSize}
               onCancel={this.cancel}
