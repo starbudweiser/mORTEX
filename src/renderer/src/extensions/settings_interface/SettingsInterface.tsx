@@ -471,11 +471,18 @@ async function readLocales(
   const bundledLanguages = getVortexPath("locales");
   const userLanguages = path.normalize(path.join(getVortexPath("userData"), "locales"));
 
-  const translationExts = extensions.filter((ext) => ext.type === "translation");
+  // mORTEX (macOS) : seules les langues livrées avec l'appli sont proposées ; les packs de langue
+  // écrits pour Vortex ne couvrent pas les textes de mORTEX
+  const bundledOnly = process.platform === "darwin";
+  const translationExts = bundledOnly ? [] : extensions.filter((ext) => ext.type === "translation");
 
   try {
     const files = (
-      await Promise.all([bundledLanguages, userLanguages].map(listSubdirectories))
+      await Promise.all(
+        (bundledOnly ? [bundledLanguages] : [bundledLanguages, userLanguages]).map(
+          listSubdirectories,
+        ),
+      )
     ).flat();
     const local = files.map((file) => path.basename(file));
 
