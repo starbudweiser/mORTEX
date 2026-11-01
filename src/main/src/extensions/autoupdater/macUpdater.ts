@@ -226,7 +226,7 @@ export function setupMacUpdater(): void {
         (e: { stderr?: string }) => e,
       );
       const team = (out: { stderr?: string } | { stdout: string; stderr: string }) =>
-        /TeamIdentifier=(\S+)/.exec((out as { stderr?: string }).stderr ?? "")?.[1];
+        /TeamIdentifier=(\S+)/.exec(out.stderr ?? "")?.[1];
       if (team(wanted) !== undefined && team(wanted) !== team(got)) {
         throw new Error("Signature d'un autre éditeur : fichier refusé");
       }
