@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { cp, mkdir } from "node:fs/promises";
+import { cp, mkdir, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { join, basename, dirname } from "node:path";
 
@@ -81,6 +81,8 @@ await copy(join(WORKSPACE, "src/renderer/src/splash.html"), join(BUILD, "splash.
 await copy(join(WORKSPACE, "src/queries"), join(BUILD, "queries"));
 
 // Static assets
+// tour: recordings are named after their text, so each rewrite would otherwise leave the old one in.
+await rm(join(ASSETS, "tour"), { recursive: true, force: true });
 for (const dir of ["fonts", "icons", "images", "pictograms", "tour"]) {
   await copy(join(WORKSPACE, "assets", dir), join(ASSETS, dir));
 }
