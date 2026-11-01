@@ -1,5 +1,7 @@
+import * as path from "path";
+
 import * as React from "react";
-import { Button, Media } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { withTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import { connect } from "react-redux";
@@ -9,17 +11,19 @@ import { generate as shortid } from "shortid";
 
 import * as actions from "../../../../actions";
 import { ComponentEx } from "../../../../controls/ComponentEx";
-import FlexLayout from "../../../../controls/FlexLayout";
+import Image from "../../../../controls/Image";
 import Modal from "../../../../controls/Modal";
 import More from "../../../../controls/More";
 import Toggle from "../../../../controls/Toggle";
 import { getGame } from "../../../../extensions/gamemode_management/util/getGame";
 import type { IMod, IModRule } from "../../../../extensions/mod_management/types/IMod";
 import renderModName from "../../../../extensions/mod_management/util/modName";
+import { isDependencyRule } from "../../../../extensions/mod_management/util/testModReference";
 import getTextProfileManagement from "../../../../extensions/profile_management/texts";
 import type { IProfile } from "../../../../extensions/profile_management/types/IProfile";
 import type { IState } from "../../../../types/IState";
 import { Alert } from "../../../../ui/components/alert/Alert";
+import getVortexPath from "../../../../util/getVortexPath";
 import type { TFunction } from "../../../../util/i18n";
 import { getSafe } from "../../../../util/storeHelper";
 import { batchDispatch, bytesToString } from "../../../../util/util";
@@ -30,7 +34,6 @@ import { DEFAULT_INSTRUCTIONS, NAMESPACE } from "../../constants";
 import { estimateSpace, type ISpaceEstimate, volumeOf } from "../../util/diskSpace";
 import { isGamebryoGame } from "../../util/gameSupport";
 import type InstallDriver from "../../util/InstallDriver";
-import CollectionThumbnail from "../CollectionTile";
 import YouCuratedTag from "./YouCuratedThisTag";
 
 interface IInstallDialogProps {
@@ -109,18 +112,13 @@ function InstallDialogSelectProfile(props: IInstallDialogSelectProfileProps) {
     });
 
   return (
-    <FlexLayout id="collections-profile-select" type="row">
-      <FlexLayout.Fixed>{t("Install this collection to profile") + ":"}</FlexLayout.Fixed>
-
-      <FlexLayout.Flex>
-        <Select
-          clearable={false}
-          options={profileOptions}
-          value={selectedProfile ?? profile.id}
-          onChange={onSelectProfile}
-        />
-      </FlexLayout.Flex>
-    </FlexLayout>
+    <Select
+      className="collection-start-select"
+      clearable={false}
+      options={profileOptions}
+      value={selectedProfile ?? profile.id}
+      onChange={onSelectProfile}
+    />
   );
 }
 
@@ -136,7 +134,7 @@ function InstallDialogConfirmProfile(props: IInstallDialogConfirmProfileProps) {
   const profileName = selectedProfile?.name ?? collectionName;
 
   return (
-    <>
+    <div className="collection-start-confirm">
       <p>
         {t("Currently installing to profile: {{profileName}}", {
           replace: {
@@ -146,7 +144,7 @@ function InstallDialogConfirmProfile(props: IInstallDialogConfirmProfileProps) {
       </p>
 
       <p>{t("Do you want to switch to this profile?")}</p>
-    </>
+    </div>
   );
 }
 
@@ -223,8 +221,11 @@ class InstallDialog extends ComponentEx<IProps, IInstallDialogState> {
       return null;
     }
 
-    let installInstructions =
-      driver.collection?.attributes?.installInstructions || t(DEFAULT_INSTRUCTIONS);
+    // pas d'instructions du curateur : rien à montrer, le bloc disparaît
+    const customInstructions = driver.collection?.attributes?.installInstructions;
+    const hasInstructions =
+      !!customInstructions?.trim() && customInstructions !== DEFAULT_INSTRUCTIONS;
+    let installInstructions = customInstructions ?? "";
 
     // used to convert a \n into something that react-markdown can use to detect paragraphs properly
     installInstructions = installInstructions.replace(/\r?\n/g, "  \r\n");
@@ -234,60 +235,68 @@ class InstallDialog extends ComponentEx<IProps, IInstallDialogState> {
     const ownCollection: boolean =
       userInfo?.userId !== undefined && driver.collectionInfo?.user?.memberId === userInfo?.userId;
     const collectionName = renderModName(driver.collection);
+    const attributes = driver.collection?.attributes;
+    const modCount = (driver.collection?.rules ?? []).filter(isDependencyRule).length;
+    const covers = [
+      attributes?.pictureUrl,
+      path.join(getVortexPath("assets"), "images", "collection_fallback_tile.png"),
+    ].filter((iter) => iter !== undefined);
     return (
-      <Modal show={driver.collection !== undefined && driver.step === "query"} onHide={nop}>
-        <Modal.Header>
-          <Modal.Title>
-            {t("{{gameName}} collection added", {
-              replace: { gameName: game.name },
-            })}
-          </Modal.Title>
-        </Modal.Header>
-
+      <Modal
+        id="collection-start"
+        show={driver.collection !== undefined && driver.step === "query"}
+        onHide={nop}
+      >
         <Modal.Body>
-          <Media>
-            <Media.Left>
-              <CollectionThumbnail
-                collection={driver.collection}
-                details={true}
-                gameId={profile.gameId}
-                imageTime={42}
-                t={t}
-              />
-            </Media.Left>
+          <header className="collection-start-hero">
+            <Image circle={false} className="collection-start-cover" srcs={covers} />
 
-            <Media.Right style={{ width: "100%", display: "flex" }}>
-              <Media.Body>
-                <Media.Heading>{t("Collection instructions")}</Media.Heading>
+            <div className="collection-start-heading">
+              <p className="collection-start-eyebrow">
+                {t("{{gameName}} collection added", {
+                  replace: { gameName: game.name },
+                })}
+              </p>
 
-                <p className="collections-instructions-canbereviewed">
-                  {t("Instructions can be reviewed during installation.")}
-                </p>
+              <h3>{collectionName}</h3>
+
+              <p className="collection-start-meta">
+                {attributes?.author !== undefined
+                  ? t("by {{author}}", { replace: { author: attributes.author } }) + " · "
+                  : ""}
+
+                {t("Revision {{number}}", { replace: { number: attributes?.version ?? "0" } })}
+              </p>
+
+              <div className="collection-start-tags">
+                <span className="collection-start-tag">
+                  {t("{{mods}} mods", { replace: { mods: modCount } })}
+                </span>
 
                 {ownCollection ? <YouCuratedTag t={t} /> : null}
+              </div>
+            </div>
+          </header>
 
-                <ReactMarkdown
-                  allowedElements={["p", "br", "a", "em", "strong"]}
-                  className="textarea-install-collection-instructions"
-                  unwrapDisallowed={true}
-                >
-                  {installInstructions}
-                </ReactMarkdown>
-              </Media.Body>
-            </Media.Right>
-          </Media>
+          {this.renderSpace()}
 
-          <FlexLayout type="row">
-            <p>
-              {t(
-                "Profiles allow you to have multiple mod set-ups for a game at once and quickly switch between them.",
-              )}
+          {hasInstructions ? (
+            <section className="collection-start-instructions">
+              <h4>{t("Collection instructions")}</h4>
 
-              <More id="more-profile-instcollection" name={t("Profiles")} wikiId="profiles">
-                {getTextProfileManagement("profiles", t)}
-              </More>
-            </p>
-          </FlexLayout>
+              <ReactMarkdown
+                allowedElements={["p", "br", "a", "em", "strong"]}
+                className="textarea-install-collection-instructions"
+                unwrapDisallowed={true}
+              >
+                {installInstructions}
+              </ReactMarkdown>
+
+              <p className="collection-start-hint">
+                {t("Instructions can be reviewed during installation.")}
+              </p>
+            </section>
+          ) : null}
 
           {this.state.confirmProfile && selectedProfile !== undefined ? (
             <InstallDialogConfirmProfile
@@ -298,38 +307,57 @@ class InstallDialog extends ComponentEx<IProps, IInstallDialogState> {
               t={t}
             />
           ) : (
-            <InstallDialogSelectProfile
-              allProfiles={allProfiles}
-              profile={profile}
-              recommendedNewProfile={recommendedNewProfile}
-              selectedProfile={selectedProfile}
-              t={t}
-              onSelectProfile={this.changeProfile}
-            />
+            <div className="collection-start-options">
+              <div className="collection-start-option">
+                <span>
+                  {t("Profile")}
+
+                  <More id="more-profile-instcollection" name={t("Profiles")} wikiId="profiles">
+                    {getTextProfileManagement("profiles", t)}
+                  </More>
+                </span>
+
+                <InstallDialogSelectProfile
+                  allProfiles={allProfiles}
+                  profile={profile}
+                  recommendedNewProfile={recommendedNewProfile}
+                  selectedProfile={selectedProfile}
+                  t={t}
+                  onSelectProfile={this.changeProfile}
+                />
+              </div>
+
+              <div className="collection-start-option">
+                <span>{t("Install mods during collection downloads")}</span>
+
+                <Toggle
+                  checked={this.props.collectionsInstallWhileDownloading}
+                  onToggle={this.props.onSetCollectionConcurrency}
+                />
+              </div>
+
+              {isGamebryoGame(profile.gameId) ? (
+                <div className="collection-start-option">
+                  <span>
+                    {t("Skip plugin rules")}
+
+                    <More id="install-skip-plugin-rules" name={t("Skip plugin rules")}>
+                      {t(
+                        "If enabled, custom LOOT plugin rules and groups included in this collection " +
+                          "will not be applied. This can help prevent inherited plugin rules from " +
+                          "causing conflicts.",
+                      )}
+                    </More>
+                  </span>
+
+                  <Toggle
+                    checked={this.state.skipPluginRules}
+                    onToggle={this.toggleSkipPluginRules}
+                  />
+                </div>
+              ) : null}
+            </div>
           )}
-
-          {this.renderSpace()}
-
-          <Toggle
-            checked={this.props.collectionsInstallWhileDownloading}
-            onToggle={this.props.onSetCollectionConcurrency}
-          >
-            {t("Install mods during collection downloads")}
-          </Toggle>
-
-          {isGamebryoGame(profile.gameId) ? (
-            <Toggle checked={this.state.skipPluginRules} onToggle={this.toggleSkipPluginRules}>
-              {t("Skip plugin rules")}
-
-              <More id="install-skip-plugin-rules" name={t("Skip plugin rules")}>
-                {t(
-                  "If enabled, custom LOOT plugin rules and groups included in this collection " +
-                    "will not be applied. This can help prevent inherited plugin rules from " +
-                    "causing conflicts.",
-                )}
-              </More>
-            </Toggle>
-          ) : null}
         </Modal.Body>
 
         <Modal.Footer>
@@ -337,13 +365,17 @@ class InstallDialog extends ComponentEx<IProps, IInstallDialogState> {
             <>
               <Button onClick={this.next}>{t("No")}</Button>
 
-              <Button onClick={this.switchProfile}>{t("Yes")}</Button>
+              <Button className="collection-start-primary" onClick={this.switchProfile}>
+                {t("Yes")}
+              </Button>
             </>
           ) : (
             <>
               <Button onClick={this.cancel}>{t("Later")}</Button>
 
-              <Button onClick={this.next}>{t("Install Now")}</Button>
+              <Button className="collection-start-primary" onClick={this.next}>
+                {t("Install Now")}
+              </Button>
             </>
           )}
         </Modal.Footer>
@@ -436,19 +468,32 @@ class InstallDialog extends ComponentEx<IProps, IInstallDialogState> {
       free: bytesToString(estimate.free),
       missing: bytesToString(estimate.missing),
     };
-    return estimate.missing > 0 ? (
-      <Alert className="collection-disk-space" severity="warning">
-        {t(
-          "Not enough disk space: this collection needs about {{needed}} ({{archives}} of " +
-            "archives, roughly twice that once installed). {{missing}} more must be freed " +
-            "before installing.",
-          { replace },
-        )}
-      </Alert>
-    ) : (
-      <Alert className="collection-disk-space">
-        {t("Disk space needed: about {{needed}}. Free on the mods disk: {{free}}.", { replace })}
-      </Alert>
+    const needed = estimate.toDownload + estimate.installed;
+    const share = Math.min(1, needed / Math.max(1, estimate.free));
+    const level = estimate.missing > 0 ? "full" : share > 0.7 ? "tight" : "ok";
+    return (
+      <section className="collection-start-space" data-level={level}>
+        <div className="collection-start-space-head">
+          <span>{t("Disk space")}</span>
+
+          <span>{t("{{needed}} needed, {{free}} free", { replace })}</span>
+        </div>
+
+        <div aria-hidden="true" className="collection-start-gauge">
+          <span style={{ transform: `scaleX(${share})` }} />
+        </div>
+
+        {estimate.missing > 0 ? (
+          <Alert className="collection-disk-space" severity="warning">
+            {t(
+              "Not enough disk space: this collection needs about {{needed}} ({{archives}} of " +
+                "archives, roughly twice that once installed). {{missing}} more must be freed " +
+                "before installing.",
+              { replace },
+            )}
+          </Alert>
+        ) : null}
+      </section>
     );
   }
 

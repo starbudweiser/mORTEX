@@ -3955,5 +3955,8 @@
   "The prepared bottle was not found": "No se encuentra la botella preparada",
   "Details": "Detalles",
   "Automatic layout": "Disposición automática",
-  "Let mORTEX arrange the cards, without gaps": "Dejar que mORTEX ordene las tarjetas, sin huecos"
+  "Let mORTEX arrange the cards, without gaps": "Dejar que mORTEX ordene las tarjetas, sin huecos",
+  "{{mods}} mods": "{{mods}} mods",
+  "Disk space": "Espacio en disco",
+  "{{needed}} needed, {{free}} free": "{{needed}} necesarios, {{free}} libres"
 }

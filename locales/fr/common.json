@@ -3954,5 +3954,8 @@
   "The prepared bottle was not found": "La bouteille préparée est introuvable",
   "Details": "Détails",
   "Automatic layout": "Disposition automatique",
-  "Let mORTEX arrange the cards, without gaps": "Laisser mORTEX ranger les cartes, sans trou"
+  "Let mORTEX arrange the cards, without gaps": "Laisser mORTEX ranger les cartes, sans trou",
+  "{{mods}} mods": "{{mods}} mods",
+  "Disk space": "Espace disque",
+  "{{needed}} needed, {{free}} free": "{{needed}} nécessaires, {{free}} libres"
 }
