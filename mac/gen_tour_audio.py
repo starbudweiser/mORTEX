@@ -12,9 +12,10 @@ Voix neuronales locales Piper (gratuites, hors ligne) :
   en_US-amy-medium, es_ES-sharvard-medium, it_IT-paola-medium, rangées dans un même dossier.
 Ponctuation : Piper marque les pauses de façon inégale (surtout en français). Le texte est donc découpé à chaque
 signe de ponctuation, chaque morceau est synthétisé à part, débarrassé de ses silences de bord, puis suivi d'une
-pause fixe selon le signe (voir PAUSES).
+pause fixe selon le signe (voir PAUSES). Le son passe ensuite par finish() : crêtes limitées, même volume partout.
 Le français et l'anglais sont dits par ElevenLabs (mac/gen_tour_audio_elevenlabs.py, voix plus naturelle) ; ce script ne
 produit que l'espagnol et l'italien, et laisse intacts les fichiers des deux autres langues.
+ffmpeg est nécessaire (finish).
 Usage : /tmp/piper/bin/python mac/gen_tour_audio.py /tmp/piper/voices [--force]
   --force régénère toutes les étapes (après un changement de ce script ; sinon seules les nouvelles le sont).
 """
@@ -40,6 +41,9 @@ ELEVENLABS = {"fr", "en"}
 # Pause après chaque signe, en secondes.
 PAUSES = {".": 0.55, "!": 0.55, "?": 0.55, ":": 0.4, ";": 0.4, ",": 0.2, "(": 0.15, ")": 0.25}
 CHUNK = re.compile(r"[^.!?:;,()]+[.!?:;,()]*")
+# Crêtes limitées à -3 dB, puis même volume pour toutes les étapes et toutes les langues.
+LIMIT = "alimiter=limit=0.7:level=0:attack=2:release=40"
+LOUDNESS = "I=-16:TP=-1.5:LRA=7"
 # Sigles lus lettre à lettre, noms lus comme on les dit
 SAY = {
     "mORTEX": "Mortex", "SKSE": "S K S E", "DXMT": "D X M T", "APFS": "A P F S", "DLL": "D L L", "INI": "I N I",
@@ -117,6 +121,24 @@ def synthesize(voice, text: str, config) -> tuple[bytes, int]:
     return out.tobytes(), rate
 
 
+def ffmpeg(*args: str) -> str:
+    return subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-y", *args], check=True, capture_output=True, text=True).stderr
+
+
+def finish(source: Path, target: Path, filters: str = LIMIT) -> None:
+    """Filtres, puis volume en deux passes (la seconde corrige d'après la mesure de la première), puis AAC."""
+    report = ffmpeg("-i", str(source), "-filter_complex", f"{filters},loudnorm={LOUDNESS}:print_format=json", "-f", "null", "-")
+    measured = json.loads(re.findall(r"\{[^{}]*\}", report)[-1])
+    loudnorm = (
+        f"loudnorm={LOUDNESS}:linear=true:measured_I={measured['input_i']}:measured_TP={measured['input_tp']}"
+        f":measured_LRA={measured['input_lra']}:measured_thresh={measured['input_thresh']}:offset={measured['target_offset']}"
+    )
+    with tempfile.NamedTemporaryFile(suffix=".wav") as tmp:
+        ffmpeg("-i", str(source), "-filter_complex", f"{filters},{loudnorm},aresample=44100", "-ac", "1", "-c:a", "pcm_s16le", tmp.name)
+        target.unlink(missing_ok=True)
+        subprocess.run(["afconvert", "-f", "m4af", "-d", "aac", "-b", "96000", tmp.name, str(target)], check=True)
+
+
 def main() -> None:
     import piper
     from piper import PiperVoice, SynthesisConfig
@@ -150,8 +172,7 @@ def main() -> None:
                     wav.setsampwidth(2)
                     wav.setframerate(rate)
                     wav.writeframes(pcm)
-                target.unlink(missing_ok=True)
-                subprocess.run(["afconvert", "-f", "m4af", "-d", "aac", "-b", "64000", tmp.name, str(target)], check=True)
+                finish(Path(tmp.name), target)
             print(f"{target.name}  {title}")
     print(f"{len(wanted)} fichiers dans {OUT.relative_to(ROOT)}")
 

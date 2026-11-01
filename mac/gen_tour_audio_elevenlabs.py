@@ -17,10 +17,7 @@ Les voix choisies sont rappelées dans mac/tour_voices.json (identifiants seulem
 import hashlib
 import json
 import os
-import re
-import subprocess
 import sys
-import tempfile
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -47,10 +44,8 @@ MASTER = (
     "[lo]highpass=f=70:poles=2,acompressor=threshold=-16dB:ratio=4:attack=0.3:release=50:knee=3[low];"
     "[low][hi]amix=inputs=2:normalize=0,"
     "equalizer=f=280:t=q:w=1:g=-1.5,equalizer=f=3500:t=q:w=1.2:g=2,deesser=i=0.3,"
-    "alimiter=limit=0.7:level=0:attack=2:release=40"
+    f"{base.LIMIT}"
 )
-# Même volume pour toutes les étapes.
-LOUDNESS = "I=-16:TP=-1.5:LRA=7"
 VOICES_FILE = Path(__file__).resolve().parent / "tour_voices.json"
 
 
@@ -106,31 +101,13 @@ def raw_path(voice_id: str, lang: str, text: str) -> Path:
     return RAW / (hashlib.sha256(key.encode("utf-8")).hexdigest()[:24] + ".mp3")
 
 
-def ffmpeg(*args: str) -> str:
-    return subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-y", *args], check=True, capture_output=True, text=True).stderr
-
-
-def master(raw: Path, target: Path) -> None:
-    """Traitement du son, puis volume en deux passes (la seconde corrige d'après la mesure de la première)."""
-    report = ffmpeg("-i", str(raw), "-filter_complex", f"{MASTER},loudnorm={LOUDNESS}:print_format=json", "-f", "null", "-")
-    measured = json.loads(re.findall(r"\{[^{}]*\}", report)[-1])
-    loudnorm = (
-        f"loudnorm={LOUDNESS}:linear=true:measured_I={measured['input_i']}:measured_TP={measured['input_tp']}"
-        f":measured_LRA={measured['input_lra']}:measured_thresh={measured['input_thresh']}:offset={measured['target_offset']}"
-    )
-    with tempfile.NamedTemporaryFile(suffix=".wav") as tmp:
-        ffmpeg("-i", str(raw), "-filter_complex", f"{MASTER},{loudnorm},aresample=44100", "-ac", "1", "-c:a", "pcm_s16le", tmp.name)
-        target.unlink(missing_ok=True)
-        subprocess.run(["afconvert", "-f", "m4af", "-d", "aac", "-b", "96000", tmp.name, str(target)], check=True)
-
-
 def speak(voice_id: str, lang: str, text: str, target: Path) -> None:
     raw = raw_path(voice_id, lang, text)
     if not raw.exists():
         RAW.mkdir(parents=True, exist_ok=True)
         raw.write_bytes(call(f"/text-to-speech/{voice_id}?output_format={OUTPUT}",
                              {"text": text, "model_id": MODEL, "voice_settings": SETTINGS[lang]}))
-    master(raw, target)
+    base.finish(raw, target, MASTER)
 
 
 def main() -> None:
