@@ -3935,5 +3935,8 @@
   "Other games": "Autres jeux",
   "The other games supported by Vortex are potentially compatible, but this version of mORTEX was developed for Skyrim first. They are hidden for now.": "Les autres jeux pris en charge par Vortex sont potentiellement compatibles, mais cette version de mORTEX a d'abord été développée pour Skyrim. Ils sont masqués pour l'instant.",
   "Development will continue and may open up to the other games supported by Vortex.": "Le développement va se poursuivre et pourra s'ouvrir aux autres jeux pris en charge par Vortex.",
-  "Move the cards up to close the empty spaces": "Remonter les cartes pour boucher les espaces vides"
+  "Move the cards up to close the empty spaces": "Remonter les cartes pour boucher les espaces vides",
+  "mORTEX bottle health": "mORTEX : santé de la bouteille",
+  "mORTEX crashes": "mORTEX : plantages",
+  "mORTEX bottle setup": "mORTEX : préparation de la bouteille"
 }

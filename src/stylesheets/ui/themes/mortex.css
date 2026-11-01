@@ -1892,6 +1892,11 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     padding: 4px;
 }
 
+.mortex-tour-button,
+.mortex-tour-link {
+    white-space: nowrap;
+}
+
 .mortex-tour-link {
     background: none;
     text-decoration: underline;

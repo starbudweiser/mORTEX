@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { GAP, placeBubble } from "./placement";
+import { GAP, placeBubble, spotlight } from "./placement";
 
 const viewport = { width: 1440, height: 980 };
 const bubble = { width: 360, height: 180 };
@@ -28,5 +28,22 @@ describe("tour bubble placement", () => {
       side: "center",
       arrow: 0,
     });
+  });
+});
+
+describe("tour spotlight", () => {
+  it("keeps its margin away from the window edges", () => {
+    expect(spotlight({ left: 12, top: 300, width: 196, height: 40 }, viewport)).toEqual({
+      left: 6,
+      top: 294,
+      width: 208,
+      height: 52,
+    });
+  });
+
+  it("tightens near an edge so the ring stays inside the window", () => {
+    const hole = spotlight({ left: 1370, top: 6, width: 32, height: 32 }, viewport);
+    expect(hole.top).toBe(4);
+    expect(hole.height).toBe(36);
   });
 });

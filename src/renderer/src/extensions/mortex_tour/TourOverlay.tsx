@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import type { IExtensionApi } from "@/types/IExtensionContext";
 import { Icon } from "@/ui/components/icon/Icon";
 
-import { type IBubblePlacement, type IRect, placeBubble } from "./placement";
+import { type IBubblePlacement, type IRect, placeBubble, spotlight } from "./placement";
 import { type ITourStep, STEPS } from "./steps";
 import { TourVoice } from "./voice";
 
@@ -18,6 +18,8 @@ export const START_EVENT = "mortex-start-tour";
 const steps: ITourStep[] = STEPS;
 const BUBBLE_WIDTH = 380;
 const OUT_MS = 200;
+/** fin du rebond d'entrée : au-delà, la bulle ne dépend plus d'aucune animation */
+const IN_MS = 450;
 const LANGUAGES = ["fr", "en", "es", "it"];
 
 function rectOf(selector?: string): IRect | undefined {
@@ -39,11 +41,12 @@ export default function TourOverlay({ api }: { api: IExtensionApi }) {
   const voice = useMemo(() => new TourVoice(), []);
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
-  const [phase, setPhase] = useState<"in" | "out">("in");
+  const [phase, setPhase] = useState<"in" | "rest" | "out">("in");
   const [voiceOn, setVoiceOn] = useState(voice.enabled);
   const [target, setTarget] = useState<IRect | undefined>(undefined);
   const [placement, setPlacement] = useState<IBubblePlacement | undefined>(undefined);
   const bubbleRef = useRef<HTMLDivElement>(null);
+  const moving = useRef(false);
   const step = steps[index];
 
   const language = () => {
@@ -88,7 +91,16 @@ export default function TourOverlay({ api }: { api: IExtensionApi }) {
         { width: window.innerWidth, height: window.innerHeight },
       ),
     );
-  }, [open, index, target]);
+    // `placement` vidé après coup (les mises à jour ne sont pas groupées hors d'un événement React) :
+    // la bulle se replace toute seule, avec ou sans élément commenté.
+  }, [open, index, target, placement === undefined]);
+
+  // rebond terminé : la bulle reste visible même si la fenêtre, recouverte, n'anime plus rien
+  useEffect(() => {
+    if (!open || phase !== "in") return;
+    const timer = setTimeout(() => setPhase("rest"), IN_MS);
+    return () => clearTimeout(timer);
+  }, [open, index, phase]);
 
   const close = () => {
     voice.stop();
@@ -98,13 +110,15 @@ export default function TourOverlay({ api }: { api: IExtensionApi }) {
 
   // rebond de sortie, puis l'étape suivante entre en rebond
   const goTo = (next: number) => {
-    if (next < 0) return;
+    if (next < 0 || moving.current) return;
     if (next >= steps.length) {
       close();
       return;
     }
+    moving.current = true;
     setPhase("out");
     setTimeout(() => {
+      moving.current = false;
       setIndex(next);
       setPlacement(undefined);
       setPhase("in");
@@ -135,12 +149,8 @@ export default function TourOverlay({ api }: { api: IExtensionApi }) {
   };
 
   const last = index === steps.length - 1;
-  const hole: React.CSSProperties | undefined = target && {
-    left: target.left - 6,
-    top: target.top - 6,
-    width: target.width + 12,
-    height: target.height + 12,
-  };
+  const hole: React.CSSProperties | undefined =
+    target && spotlight(target, { width: window.innerWidth, height: window.innerHeight });
   const side = placement?.side ?? "center";
   const arrowStyle: React.CSSProperties =
     side === "right" || side === "left" ? { top: placement?.arrow } : { left: placement?.arrow };
@@ -163,7 +173,7 @@ export default function TourOverlay({ api }: { api: IExtensionApi }) {
 
       <div
         className={`mortex-tour-bubble mortex-tour-${side} mortex-tour-${phase}`}
-        key={`${index}-${phase}`}
+        key={`${index}-${phase === "out" ? "out" : "in"}`}
         ref={bubbleRef}
         style={{
           width: BUBBLE_WIDTH,

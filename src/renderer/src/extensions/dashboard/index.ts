@@ -10,6 +10,9 @@ import Settings from "./views/Settings";
 
 const dashlets: IDashletProps[] = [];
 
+/** mORTEX (macOS) : fils d'actualité et vidéos de Vortex, sans objet sur Mac. */
+const HIDDEN_ON_MAC = ["News", "Latest Mods", "Onboarding", "Changelog", "Extensions"];
+
 function registerDashlet(
   title: string,
   width: 1 | 2 | 3,
@@ -20,6 +23,9 @@ function registerDashlet(
   props: PropsCallback,
   options: IDashletOptions,
 ) {
+  if (process.platform === "darwin" && HIDDEN_ON_MAC.includes(title)) {
+    return;
+  }
   const fixed = options !== undefined ? options.fixed || false : false;
   const closable = options !== undefined ? options.closable : true;
   dashlets.push({

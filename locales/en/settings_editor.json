@@ -333,7 +333,7 @@
   "ui.preset.ultra": "Ultra",
   "ui.preset.macLow": "Mac low (M1 Max)",
   "ui.preset.macMid": "Mac mid (M3 Max)",
-  "ui.preset.macUltra": "Mac ultra (M5 Max, 40 cores)",
+  "ui.preset.macUltra": "Mac Ultra (M5 Max)",
   "ui.usedFile": "Value read from {{file}}",
   "ui.defaultValue": "The game's default value",
   "ui.notSet": "Not set: the game uses its built-in value",

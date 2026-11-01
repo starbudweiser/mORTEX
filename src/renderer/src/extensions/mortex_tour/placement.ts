@@ -24,8 +24,31 @@ export interface IBubblePlacement {
 export const GAP = 16;
 const MARGIN = 12;
 const ARROW_INSET = 22;
+const SPOT_PADDING = 6;
+/** place gardée au bord de la fenêtre pour le contour de 2 px */
+const SPOT_INSET = 4;
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+
+/** Trou du voile autour de l'élément : la marge se réduit près d'un bord pour que le contour y tienne. */
+export function spotlight(target: IRect, viewport: { width: number; height: number }): IRect {
+  const padding = clamp(
+    Math.min(
+      target.left,
+      target.top,
+      viewport.width - target.left - target.width,
+      viewport.height - target.top - target.height,
+    ) - SPOT_INSET,
+    0,
+    SPOT_PADDING,
+  );
+  return {
+    left: target.left - padding,
+    top: target.top - padding,
+    width: target.width + padding * 2,
+    height: target.height + padding * 2,
+  };
+}
 
 export function placeBubble(
   target: IRect | undefined,
