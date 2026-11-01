@@ -4,6 +4,7 @@ import {
   COLS,
   cellAt,
   collides,
+  compact,
   columnWidth,
   firstFit,
   GAP,
@@ -60,6 +61,18 @@ describe("gridLayout", () => {
     expect(result.c).toEqual({ x: 4, y: 0, w: 2, h: 2 });
     expect(result.a).toEqual({ x: 0, y: 0, w: 2, h: 2 });
     expect(result.b).toEqual({ x: 0, y: 2, w: 4, h: 2 });
+  });
+
+  it("remonte les cartes pour boucher les trous, sans les chevaucher", () => {
+    const result = compact({
+      a: { x: 0, y: 0, w: 3, h: 2 },
+      b: { x: 0, y: 6, w: 3, h: 2 },
+      c: { x: 3, y: 5, w: 3, h: 2 },
+      d: { x: 0, y: 9, w: 6, h: 2 },
+    });
+    expect(result.b.y).toBe(2);
+    expect(result.c.y).toBe(0);
+    expect(result.d.y).toBe(4);
   });
 
   it("convertit des pixels en cases", () => {

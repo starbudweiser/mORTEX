@@ -10,44 +10,96 @@ import * as path from "node:path";
 
 import { type IChange, loadIniFile, readEffective } from "../../util/macos/iniEdit";
 
-export type BethesdaPresetId = "low" | "medium" | "high" | "ultra" | "mac";
+export type BethesdaPresetId =
+  | "low"
+  | "medium"
+  | "high"
+  | "ultra"
+  | "macLow"
+  | "macMid"
+  | "macUltra";
 
 export const BETHESDA_PRESET_IDS: readonly BethesdaPresetId[] = [
   "low",
   "medium",
   "high",
   "ultra",
-  "mac",
+  "macLow",
+  "macMid",
+  "macUltra",
 ];
+
+type BethesdaFileId = "low" | "medium" | "high" | "ultra";
+
+const display = (key: string, value: string): IChange => ({ section: "Display", key, value });
 
 /**
- * Préréglage « Mac » : le préréglage Élevé de Bethesda (lu dans le dossier du jeu), allégé là où
- * un Mac Silicon (M1 Max et au-delà, via la couche de traduction graphique) perd le plus pour le
- * moins de qualité visible : ombres un peu plus courtes, pas d'occlusion ambiante ni de reflets
- * d'écran, anticrénelage temporel plutôt que multi-échantillonnage. Même esprit que la base
- * « équilibrée » de BethINI ; conseil général, non mesuré sur chaque machine.
+ * Préréglages « Mac » : un par palier de puce Apple Silicon, chacun construit sur le préréglage
+ * Bethesda de même niveau (lu dans le dossier du jeu) dont les réglages les plus coûteux sous la
+ * couche de traduction graphique sont ajustés. Même esprit que la base « équilibrée » de BethINI ;
+ * conseils généraux, non mesurés sur chaque machine.
+ *  - macLow  : M1 Max (32 cœurs GPU), base Moyen
+ *  - macMid  : M3 Max (40 cœurs GPU), base Élevé
+ *  - macUltra: M5 Max (40 cœurs GPU), base Ultra
  */
-export const MAC_OVERRIDES: readonly IChange[] = [
-  { section: "Display", key: "iShadowMapResolution", value: "2048" },
-  { section: "Display", key: "fShadowDistance", value: "8000" },
-  { section: "Display", key: "fInteriorShadowDistance", value: "3000" },
-  { section: "Display", key: "iMaxAnisotropy", value: "8" },
-  { section: "Display", key: "iMultiSample", value: "0" },
-  { section: "Display", key: "bUseTAA", value: "1" },
-  { section: "Display", key: "bFXAAEnabled", value: "0" },
-  { section: "Display", key: "bSAOEnable", value: "0" },
-  { section: "Display", key: "bScreenSpaceReflectionEnabled", value: "0" },
-  { section: "Display", key: "bShadowsOnGrass", value: "0" },
-  { section: "Display", key: "iPresentInterval", value: "1" },
-];
+export const MAC_TIERS: Record<
+  "macLow" | "macMid" | "macUltra",
+  { base: BethesdaFileId; overrides: readonly IChange[] }
+> = {
+  macLow: {
+    base: "medium",
+    overrides: [
+      display("iShadowMapResolution", "2048"),
+      display("fShadowDistance", "6000"),
+      display("fInteriorShadowDistance", "2500"),
+      display("iMaxAnisotropy", "4"),
+      display("iMultiSample", "0"),
+      display("bUseTAA", "1"),
+      display("bFXAAEnabled", "0"),
+      display("bSAOEnable", "0"),
+      display("bScreenSpaceReflectionEnabled", "0"),
+      display("bShadowsOnGrass", "0"),
+      display("iPresentInterval", "1"),
+    ],
+  },
+  macMid: {
+    base: "high",
+    overrides: [
+      display("iShadowMapResolution", "2048"),
+      display("fShadowDistance", "8000"),
+      display("fInteriorShadowDistance", "3000"),
+      display("iMaxAnisotropy", "8"),
+      display("iMultiSample", "0"),
+      display("bUseTAA", "1"),
+      display("bFXAAEnabled", "0"),
+      display("bSAOEnable", "0"),
+      display("bScreenSpaceReflectionEnabled", "0"),
+      display("bShadowsOnGrass", "0"),
+      display("iPresentInterval", "1"),
+    ],
+  },
+  macUltra: {
+    base: "ultra",
+    overrides: [
+      display("iShadowMapResolution", "4096"),
+      display("fShadowDistance", "10000"),
+      display("fInteriorShadowDistance", "3000"),
+      display("iMaxAnisotropy", "16"),
+      display("iMultiSample", "0"),
+      display("bUseTAA", "1"),
+      display("bFXAAEnabled", "0"),
+      display("bSAOEnable", "1"),
+      display("bScreenSpaceReflectionEnabled", "1"),
+      display("bShadowsOnGrass", "1"),
+      display("iPresentInterval", "1"),
+    ],
+  },
+};
 
-/** Fichier de Bethesda sous-jacent (le préréglage Mac part du préréglage Élevé) */
-function withMacOverrides(high: IChange[]): IChange[] {
-  const over = new Set(MAC_OVERRIDES.map((c) => `${c.section}|${c.key}`.toLowerCase()));
-  return [
-    ...high.filter((c) => !over.has(`${c.section}|${c.key}`.toLowerCase())),
-    ...MAC_OVERRIDES,
-  ];
+/** le préréglage de base de Bethesda, puis les réglages du palier par-dessus */
+function withOverrides(base: IChange[], overrides: readonly IChange[]): IChange[] {
+  const over = new Set(overrides.map((c) => `${c.section}|${c.key}`.toLowerCase()));
+  return [...base.filter((c) => !over.has(`${c.section}|${c.key}`.toLowerCase())), ...overrides];
 }
 
 export interface IBethesdaValues {
@@ -58,7 +110,7 @@ export interface IBethesdaValues {
   presets: Record<BethesdaPresetId, IChange[]>;
 }
 
-const PRESET_FILES: Record<Exclude<BethesdaPresetId, "mac">, string> = {
+const PRESET_FILES: Record<BethesdaFileId, string> = {
   low: "Low.ini",
   medium: "Medium.ini",
   high: "High.ini",
@@ -75,21 +127,24 @@ async function valuesOf(file: string): Promise<IChange[]> {
 }
 
 export async function readBethesdaValues(gameDir: string): Promise<IBethesdaValues> {
-  const fileIds = BETHESDA_PRESET_IDS.filter(
-    (id): id is Exclude<BethesdaPresetId, "mac"> => id !== "mac",
-  );
+  const fileIds: BethesdaFileId[] = ["low", "medium", "high", "ultra"];
   const [defaults, launcherPrefs, ...presets] = await Promise.all([
     valuesOf(path.join(gameDir, "Skyrim_Default.ini")),
     valuesOf(path.join(gameDir, "Skyrim", "SkyrimPrefs.ini")),
     ...fileIds.map((id) => valuesOf(path.join(gameDir, PRESET_FILES[id]))),
   ]);
   const byId = Object.fromEntries(fileIds.map((id, i) => [id, presets[i]])) as Record<
-    Exclude<BethesdaPresetId, "mac">,
+    BethesdaFileId,
     IChange[]
   >;
   return {
     defaults,
     launcherPrefs,
-    presets: { ...byId, mac: withMacOverrides(byId.high) },
+    presets: {
+      ...byId,
+      macLow: withOverrides(byId[MAC_TIERS.macLow.base], MAC_TIERS.macLow.overrides),
+      macMid: withOverrides(byId[MAC_TIERS.macMid.base], MAC_TIERS.macMid.overrides),
+      macUltra: withOverrides(byId[MAC_TIERS.macUltra.base], MAC_TIERS.macUltra.overrides),
+    },
   };
 }

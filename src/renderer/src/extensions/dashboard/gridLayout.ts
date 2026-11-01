@@ -89,6 +89,27 @@ export function resolveLayout(rects: RectMap, priorityId?: string): RectMap {
   return result;
 }
 
+/**
+ * Remonte chaque carte au plus haut possible sans toucher aux autres (les trous verticaux
+ * disparaissent). L'ordre de lecture (haut puis gauche) est conservé.
+ */
+export function compact(rects: RectMap): RectMap {
+  const ids = Object.keys(rects).sort(
+    (lhs, rhs) => rects[lhs].y - rects[rhs].y || rects[lhs].x - rects[rhs].x,
+  );
+  const result: RectMap = {};
+  const placed: IRect[] = [];
+  for (const id of ids) {
+    const rect = { ...rects[id] };
+    while (rect.y > 0 && !placed.some((other) => collides({ ...rect, y: rect.y - 1 }, other))) {
+      rect.y -= 1;
+    }
+    result[id] = rect;
+    placed.push(rect);
+  }
+  return result;
+}
+
 export interface ILayoutEntry {
   id: string;
   /** taille d'origine, en cases, quand aucune position n'est enregistrée */

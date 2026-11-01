@@ -14,7 +14,7 @@ import { getSafe } from "../../../util/storeHelper";
 import MainPage from "../../../views/MainPage";
 import { setDashboardGrid, setDashletEnabled } from "../actions";
 import type { RectMap } from "../gridLayout";
-import { layoutAll, LEGACY_H, LEGACY_W } from "../gridLayout";
+import { compact, layoutAll, LEGACY_H, LEGACY_W } from "../gridLayout";
 import type { IDashletProps } from "../types/IDashletProps";
 import DashboardGrid from "./DashboardGrid";
 import FixedItem from "./FixedItem";
@@ -197,6 +197,12 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
                 </MenuItem>
               ))}
           </DropdownButton>
+          <Button
+            onClick={this.compactGrid}
+            title={t("Move the cards up to close the empty spaces")}
+          >
+            {t("Compact")}
+          </Button>
           <Button onClick={this.toggleEdit}>{t("Done")}</Button>
         </FlexLayout.Fixed>
       </FlexLayout>
@@ -282,6 +288,28 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
 
   private onCommitGrid = (rects: RectMap) => {
     this.props.onSetGrid({ ...this.props.grid, ...rects });
+  };
+
+  private compactGrid = () => {
+    const { dashlets, dashletSettings, dashletVisible, grid } = this.props;
+    // seules les cartes affichées comptent : on part des positions résolues, pas du stockage brut
+    const shown = dashlets.filter(
+      (dash) =>
+        dashletVisible[dash.title] &&
+        !getSafe(dashletSettings, [dash.title, "fixed"], dash.fixed) &&
+        (!dash.closable || getSafe(dashletSettings, [dash.title, "enabled"], true)),
+    );
+    const rects = layoutAll(
+      shown.map((dash) => ({
+        id: dash.title,
+        defaultSize: {
+          w: (dashletSettings?.[dash.title]?.width ?? dash.width) * LEGACY_W,
+          h: (dashletSettings?.[dash.title]?.height ?? dash.height) * LEGACY_H,
+        },
+      })),
+      grid ?? {},
+    );
+    this.props.onSetGrid({ ...grid, ...compact(rects) });
   };
 
   private dismissDashlet = (dashletId: string) => {

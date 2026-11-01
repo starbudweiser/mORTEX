@@ -592,5 +592,7 @@
   "Medium": "Medium",
   "Large": "Large",
   "Full width": "Full width",
-  "Fit": "Fit"
+  "Fit": "Fit",
+  "Compact": "Compact",
+  "Move the cards up to close the empty spaces": "Move the cards up to close the empty spaces"
 }

@@ -4,7 +4,7 @@ import * as path from "path";
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { MAC_OVERRIDES, readBethesdaValues } from "./bethesdaPresets";
+import { MAC_TIERS, readBethesdaValues } from "./bethesdaPresets";
 
 describe("readBethesdaValues", () => {
   let game: string;
@@ -49,16 +49,18 @@ describe("readBethesdaValues", () => {
       medium: [],
       high: [],
       ultra: [],
-      mac: MAC_OVERRIDES,
+      macLow: MAC_TIERS.macLow.overrides,
+      macMid: MAC_TIERS.macMid.overrides,
+      macUltra: MAC_TIERS.macUltra.overrides,
     });
   });
 
-  it("builds the Mac preset from High, with the Mac values winning", async () => {
+  it("builds each Mac preset from its Bethesda level, with the Mac values winning", async () => {
     fs.writeFileSync(
       path.join(game, "High.ini"),
       "[Display]\r\niShadowMapResolution=4096\r\nfGamma=1.0\r\n",
     );
-    const { mac } = (await readBethesdaValues(game)).presets;
+    const { macMid: mac } = (await readBethesdaValues(game)).presets;
     expect(mac).toContainEqual({ section: "Display", key: "fGamma", value: "1.0" });
     expect(mac.filter((c) => c.key === "iShadowMapResolution")).toEqual([
       { section: "Display", key: "iShadowMapResolution", value: "2048" },

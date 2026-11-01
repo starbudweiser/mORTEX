@@ -4,9 +4,11 @@
  */
 
 import { getErrorMessageOrDefault } from "@vortex/shared";
+import { app } from "electron";
 
 import { log } from "../logging";
 import { setupAutoUpdater } from "./autoupdater";
+import { setupMacUpdater } from "./autoupdater/macUpdater";
 
 /**
  * Whether the updater should run at all. A managed install is updated by its launcher, and a
@@ -17,8 +19,9 @@ import { setupAutoUpdater } from "./autoupdater";
  * rather than working it out, since only NODE_ENV is inlined into its bundle.
  */
 export function isUpdaterActive(installType: string): boolean {
-  // mORTEX: the Vortex release feed only ships Windows/Linux builds.
-  if (process.platform === "darwin") return false;
+  // mORTEX (macOS) : mise à jour maison depuis les releases GitHub de mORTEX (macUpdater.ts),
+  // seulement dans l'appli empaquetée.
+  if (process.platform === "darwin") return app.isPackaged;
   // A build run from source has no uninstaller beside it, so identifyInstallType always calls it
   // "managed". The install type therefore says nothing in development and the opt-in decides on
   // its own; outside development it is the only thing that decides.
@@ -38,7 +41,9 @@ export function initUpdater(installType: string): void {
   const active = isUpdaterActive(installType);
 
   try {
-    if (active) {
+    if (active && process.platform === "darwin") {
+      setupMacUpdater();
+    } else if (active) {
       setupAutoUpdater(installType);
     }
   } catch (err) {

@@ -3930,5 +3930,7 @@
   "Medium": "Moyen",
   "Large": "Grand",
   "Full width": "Pleine largeur",
-  "Fit": "Ajuster"
+  "Fit": "Ajuster",
+  "Compact": "Compacter",
+  "Move the cards up to close the empty spaces": "Remonter les cartes pour boucher les espaces vides"
 }

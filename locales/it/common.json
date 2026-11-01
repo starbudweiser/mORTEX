@@ -3931,5 +3931,7 @@
   "Medium": "Medio",
   "Large": "Grande",
   "Full width": "Larghezza piena",
-  "Fit": "Adatta"
+  "Fit": "Adatta",
+  "Compact": "Compatta",
+  "Move the cards up to close the empty spaces": "Sposta in alto le schede per chiudere gli spazi vuoti"
 }
