@@ -216,6 +216,15 @@ class Application {
   private setupAppEvents(args: IParameters): void {
     app.on("before-quit", () => markQuitting());
 
+    // mORTEX : un arrêt demandé de l'extérieur (kill, session fermée) ne laissait aucune trace
+    // dans le journal ; on la garde, puis on quitte proprement.
+    for (const signal of ["SIGTERM", "SIGHUP", "SIGINT"] as const) {
+      process.on(signal, () => {
+        log("warn", "Arrêt demandé de l'extérieur", { signal });
+        app.quit();
+      });
+    }
+
     app.on("window-all-closed", () => {
       log("info", "Vortex closing");
       finalizeMainWrite()
