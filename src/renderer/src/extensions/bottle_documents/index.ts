@@ -20,6 +20,7 @@ import {
   restoreSharedDocuments,
   sharedDocumentsTarget,
 } from "../../util/macos/bottleDocuments";
+import { listBottles } from "../../util/macos/bottles";
 import { discoveryByGame } from "../gamemode_management/selectors";
 import { iniFiles } from "../ini_prep/gameSupport";
 import { activeGameId } from "../profile_management/selectors";
@@ -75,6 +76,8 @@ function checkSharedDocuments(api: IExtensionApi): Bluebird<ITestResult | undefi
   if (!documents.includes(`${path.sep}drive_c${path.sep}users${path.sep}`)) {
     return Bluebird.resolve(undefined);
   }
+  // une seule bouteille : rien à partager, et le message alarmerait au premier lancement
+  if (listBottles().length < 2) return Bluebird.resolve(undefined);
   const gameId = activeGameId(api.getState());
   return Bluebird.resolve(sharedDocumentsTarget(documents)).then((target) =>
     target === undefined || gameId === undefined
