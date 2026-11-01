@@ -13,6 +13,8 @@ Voix neuronales locales Piper (gratuites, hors ligne) :
 Ponctuation : Piper marque les pauses de façon inégale (surtout en français). Le texte est donc découpé à chaque
 signe de ponctuation, chaque morceau est synthétisé à part, débarrassé de ses silences de bord, puis suivi d'une
 pause fixe selon le signe (voir PAUSES).
+Le français et l'anglais sont dits par ElevenLabs (mac/gen_tour_audio_elevenlabs.py, voix plus naturelle) ; ce script ne
+produit que l'espagnol et l'italien, et laisse intacts les fichiers des deux autres langues.
 Usage : /tmp/piper/bin/python mac/gen_tour_audio.py /tmp/piper/voices [--force]
   --force régénère toutes les étapes (après un changement de ce script ; sinon seules les nouvelles le sont).
 """
@@ -27,15 +29,14 @@ import tempfile
 import wave
 from pathlib import Path
 
-import piper
-from piper import PiperVoice, SynthesisConfig
-
 ROOT = Path(__file__).resolve().parent.parent
 STEPS = ROOT / "src/renderer/src/extensions/mortex_tour/steps.ts"
 LOCALES = ROOT / "locales"
 OUT = ROOT / "assets/tour"
 ESPEAK = Path(tempfile.gettempdir()) / "mortex-espeak-ng-data"  # espeak-ng ignore un chemin de données trop long
 VOICES = {"fr": "fr_FR-siwis-medium", "en": "en_US-amy-medium", "es": "es_ES-sharvard-medium", "it": "it_IT-paola-medium"}
+# Langues dont la voix vient d'ElevenLabs (mac/gen_tour_audio_elevenlabs.py) : Piper n'y touche pas.
+ELEVENLABS = {"fr", "en"}
 # Pause après chaque signe, en secondes.
 PAUSES = {".": 0.55, "!": 0.55, "?": 0.55, ":": 0.4, ";": 0.4, ",": 0.2, "(": 0.15, ")": 0.25}
 CHUNK = re.compile(r"[^.!?:;,()]+[.!?:;,()]*")
@@ -75,6 +76,7 @@ def spoken(title: str, text: str) -> str:
     # apostrophe typographique et espaces insécables : espeak (phonèmes) les lit mal
     s = s.replace("’", "'").replace(" ", " ").replace(" ", " ").replace("¡", "").replace("¿", "")
     s = re.sub(r"[«»“”]", "", s)
+    s = re.sub(r"([!?])\.", r"\1", s)  # titre déjà ponctué
     return re.sub(r"\s+([.!?:;,)])", r"\1", s)
 
 
@@ -116,6 +118,9 @@ def synthesize(voice, text: str, config) -> tuple[bytes, int]:
 
 
 def main() -> None:
+    import piper
+    from piper import PiperVoice, SynthesisConfig
+
     voices_dir = Path(sys.argv[1])
     force = "--force" in sys.argv[2:]
     if not ESPEAK.exists():
@@ -131,6 +136,10 @@ def main() -> None:
         voice = None
         for title, text in texts[lang]:
             target = OUT / (audio_name(lang, title, text) + ".m4a")
+            if lang in ELEVENLABS:
+                if not target.exists():
+                    print(f"MANQUANT ({lang}, ElevenLabs) : {title}")
+                continue
             if target.exists() and not force:
                 continue
             voice = voice or PiperVoice.load(str(voices_dir / f"{model}.onnx"), espeak_data_dir=ESPEAK)
