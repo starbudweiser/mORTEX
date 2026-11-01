@@ -252,6 +252,7 @@ function DashboardGrid(props: IProps): JSX.Element {
               onPointerMove={move}
               onPointerUp={end}
               onPointerCancel={cancel}
+              onLostPointerCapture={cancel}
             />
             <div className="dash-presets" onPointerDown={(evt) => evt.stopPropagation()}>
               {PRESETS.map((entry) => (
@@ -282,6 +283,7 @@ function DashboardGrid(props: IProps): JSX.Element {
               onPointerMove={move}
               onPointerUp={end}
               onPointerCancel={cancel}
+              onLostPointerCapture={cancel}
               onDoubleClick={() => fitHeight(item.id)}
               title={t("Double-click to fit the card to its content")}
             >
