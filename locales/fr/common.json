@@ -3941,5 +3941,9 @@
   "mORTEX bottle setup": "mORTEX : préparation de la bouteille",
   "Toggle Developer Tools": "Outils de développement",
   "Record missing translations": "Noter les traductions manquantes",
-  "Copy missing translations to clipboard": "Copier les traductions manquantes"
+  "Copy missing translations to clipboard": "Copier les traductions manquantes",
+  "Bottle location: {{path}}": "Emplacement de la bouteille : {{path}}",
+  "Change…": "Changer…",
+  "This disk can't hold a bottle: choose a disk formatted as APFS or Mac OS Extended.": "Ce disque ne peut pas accueillir de bouteille : choisissez un disque au format APFS ou Mac OS étendu.",
+  "Less than 30 GB is free here: Steam, Skyrim and your mods need more.": "Moins de 30 Go sont libres ici : Steam, Skyrim et vos mods auront besoin de plus."
 }

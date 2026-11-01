@@ -1,11 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { addBottleRoot } from "./bottles";
 import type { ISetupCommand, ISetupContext } from "./bottleSetup";
 import { runBottleSetup, setupSteps, stepCommands, stepDownloads } from "./bottleSetup";
 
 vi.mock("./bottles", () => ({
   crossoverBinDir: () => "/cx/bin",
-  crossoverBottleDir: () => "/nonexistent-bottles",
+  crossoverBottleDir: () => "/tmp/mortex-test-crossover",
+  addBottleRoot: vi.fn(),
 }));
 
 const context: ISetupContext = { bin: "/cx/bin", bottleDir: "/bottles", downloads: "/dl" };
@@ -68,14 +70,35 @@ describe("runBottleSetup", () => {
     run.mockRejectedValueOnce(new Error("no network"));
     const download = vi.fn().mockResolvedValue(undefined);
 
-    await expect(runBottleSetup({ netfx48: false }, onStep, { run, download })).rejects.toThrow(
-      "no network",
-    );
+    const link = vi.fn();
+    await expect(
+      runBottleSetup({ netfx48: false }, onStep, { run, download, link }),
+    ).rejects.toThrow("no network");
 
     expect(onStep.mock.calls).toEqual([
       ["bottle", "running"],
       ["bottle", "done"],
       ["vcredist", "running"],
     ]);
+    expect(link).not.toHaveBeenCalled();
+  });
+
+  it("makes a bottle created elsewhere visible in CrossOver", async () => {
+    const run = vi.fn().mockResolvedValue(undefined);
+    const link = vi.fn().mockResolvedValue(undefined);
+    const download = vi.fn().mockResolvedValue(undefined);
+
+    await runBottleSetup({ netfx48: false, bottleDir: "/tmp/mortex-test-t7" }, vi.fn(), {
+      run,
+      download,
+      link,
+    });
+
+    expect(run.mock.calls[0][0].env.CX_BOTTLE_PATH).toBe("/tmp/mortex-test-t7");
+    expect(link).toHaveBeenCalledWith(
+      "/tmp/mortex-test-t7/Skyrim-mORTEX",
+      "/tmp/mortex-test-crossover/Skyrim-mORTEX",
+    );
+    expect(addBottleRoot).toHaveBeenCalledWith("/tmp/mortex-test-t7");
   });
 });

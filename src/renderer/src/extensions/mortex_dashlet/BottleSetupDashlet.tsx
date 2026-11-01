@@ -1,15 +1,21 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { useMainContext } from "@/contexts";
 import { Alert } from "@/ui/components/alert/Alert";
 import { Button } from "@/ui/components/button/Button";
 import { CheckboxField } from "@/ui/components/form/checkbox_field/CheckboxField";
 
 import Dashlet from "../../controls/Dashlet";
 import { log } from "../../logging";
-import { crossoverBinDir } from "../../util/macos/bottles";
-import type { SetupStep, StepStatus } from "../../util/macos/bottleSetup";
-import { openSteam, runBottleSetup, setupSteps } from "../../util/macos/bottleSetup";
+import { crossoverBinDir, crossoverBottleDir } from "../../util/macos/bottles";
+import type { DestinationIssue, SetupStep, StepStatus } from "../../util/macos/bottleSetup";
+import {
+  checkDestination,
+  openSteam,
+  runBottleSetup,
+  setupSteps,
+} from "../../util/macos/bottleSetup";
 import { useOpenUrl } from "../mortex_assistant/useOpenUrl";
 
 const CROSSOVER_URL = "https://www.codeweavers.com/crossover";
@@ -27,6 +33,11 @@ const STEP_LABELS: Record<SetupStep, string> = {
   steam: "Installing Steam",
 };
 
+const ISSUE_TEXTS: Record<DestinationIssue, string> = {
+  format: "This disk can't hold a bottle: choose a disk formatted as APFS or Mac OS Extended.",
+  space: "Less than 30 GB is free here: Steam, Skyrim and your mods need more.",
+};
+
 type Phase = "idle" | "running" | "done" | "failed";
 
 /**
@@ -35,7 +46,10 @@ type Phase = "idle" | "running" | "done" | "failed";
  */
 function BottleSetupDashlet() {
   const { t } = useTranslation(["common"]);
+  const { api } = useMainContext();
   const openUrl = useOpenUrl();
+  const [bottleDir, setBottleDir] = useState(crossoverBottleDir);
+  const [issue, setIssue] = useState<DestinationIssue>();
   const [netfx48, setNetfx48] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
   const [statuses, setStatuses] = useState<Partial<Record<SetupStep, StepStatus>>>({});
@@ -45,7 +59,7 @@ function BottleSetupDashlet() {
     setPhase("running");
     setStatuses({});
     setError(undefined);
-    runBottleSetup({ netfx48 }, (step, status) =>
+    runBottleSetup({ netfx48, bottleDir }, (step, status) =>
       setStatuses((previous) => ({ ...previous, [step]: status })),
     )
       .then(() => setPhase("done"))
@@ -56,9 +70,18 @@ function BottleSetupDashlet() {
       });
   };
 
+  const chooseFolder = () => {
+    void api.selectDir({}).then(async (selected) => {
+      if (!selected) return;
+      const found = await checkDestination(selected);
+      setIssue(found);
+      if (found !== "format") setBottleDir(selected);
+    });
+  };
+
   const launchSteam = () => {
     try {
-      openSteam();
+      openSteam(bottleDir);
     } catch (err) {
       setError((err as Error).message);
     }
@@ -89,6 +112,13 @@ function BottleSetupDashlet() {
                 "No Skyrim was found. A CrossOver bottle can be prepared for you, with Steam, Visual C++ and .NET 8. You then sign in to Steam and install Skyrim yourself.",
               )}
             </p>
+            <div className="flex items-center gap-2">
+              <span>{t("Bottle location: {{path}}", { replace: { path: bottleDir } })}</span>
+              <Button appearance="moderate" brand="neutral" size="sm" onClick={chooseFolder}>
+                {t("Change…")}
+              </Button>
+            </div>
+            {issue !== undefined && <Alert severity="warning">{t(ISSUE_TEXTS[issue])}</Alert>}
             <CheckboxField
               checked={netfx48}
               fieldClassName="self-stretch"

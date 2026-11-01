@@ -10,16 +10,17 @@
  *  - stepCommands(step, context): IBottleLaunch[]           commandes de l'étape, à lancer dans l'ordre
  *  - runBottleSetup(options, onStep, tools?)                exécute le tout
  *  - steamPath(bottleDir)                                   Steam.exe dans la bouteille
- *  - openSteam()                                            ouvre Steam dans la bouteille préparée
+ *  - openSteam(bottleDir?)                                  ouvre Steam dans la bouteille préparée
+ *  - checkDestination(dir)                                  le disque peut-il accueillir la bouteille ?
  */
 import { execFile, spawn } from "node:child_process";
 import { existsSync } from "node:fs";
-import { mkdir, rm } from "node:fs/promises";
+import { mkdir, rm, statfs, symlink } from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 
 import type { IBottleLaunch } from "./bottles";
-import { crossoverBinDir, crossoverBottleDir, runInBottle } from "./bottles";
+import { addBottleRoot, crossoverBinDir, crossoverBottleDir, runInBottle } from "./bottles";
 
 export const SETUP_BOTTLE = "Skyrim-mORTEX";
 
@@ -29,7 +30,12 @@ export type StepStatus = "running" | "done";
 export interface IBottleSetupOptions {
   /** .NET Framework 4.8, pour les anciens outils comme Nemesis ou FNIS. */
   netfx48: boolean;
+  /** Dossier choisi par l'utilisateur ; par défaut celui de CrossOver. */
+  bottleDir?: string;
 }
+
+/** Bouteille, Steam, Skyrim et quelques mods. */
+export const MIN_FREE_BYTES = 30 * 1024 ** 3;
 
 export interface IDownloadFile {
   name: string;
@@ -53,6 +59,8 @@ export interface ISetupCommand extends IBottleLaunch {
 export interface ISetupTools {
   run: (command: ISetupCommand) => Promise<void>;
   download: (file: IDownloadFile, dir: string) => Promise<void>;
+  /** Rend visible dans CrossOver une bouteille créée ailleurs que dans son dossier. */
+  link: (target: string, linkPath: string) => Promise<void>;
 }
 
 const DOWNLOADS: Partial<Record<SetupStep, IDownloadFile[]>> = {
@@ -146,8 +154,8 @@ export function stepCommands(step: SetupStep, context: ISetupContext): ISetupCom
 export const steamPath = (bottleDir: string) =>
   path.join(bottleDir, SETUP_BOTTLE, "drive_c", "Program Files (x86)", "Steam", "Steam.exe");
 
-export function openSteam(): void {
-  const command = runInBottle(steamPath(crossoverBottleDir()));
+export function openSteam(bottleDir: string = crossoverBottleDir()): void {
+  const command = runInBottle(steamPath(bottleDir));
   if (command === undefined) {
     throw new Error("The prepared bottle was not found");
   }
@@ -158,7 +166,25 @@ export function openSteam(): void {
   }).unref();
 }
 
+export type DestinationIssue = "format" | "space";
+
+/** Wine a besoin de liens symboliques et de droits Unix : ni exFAT, ni FAT, ni partage réseau. */
+export async function checkDestination(dir: string): Promise<DestinationIssue | undefined> {
+  const output = (command: string, args: string[]) =>
+    new Promise<string>((resolve) =>
+      execFile(command, args, { timeout: 15_000 }, (_err, stdout) => resolve(stdout)),
+    );
+  // diskutil ne connaît que les points de montage, pas leurs sous-dossiers
+  const mountPoint = /%\s+(\/.*)$/m.exec(await output("df", ["-P", dir]))?.[1] ?? dir;
+  const info = await output("diskutil", ["info", mountPoint]);
+  const format = /Type \(Bundle\):\s+(\S+)/.exec(info)?.[1];
+  if (format === undefined || !["apfs", "hfs"].includes(format)) return "format";
+  const space = await statfs(dir);
+  return space.bavail * space.bsize < MIN_FREE_BYTES ? "space" : undefined;
+}
+
 const defaultTools: ISetupTools = {
+  link: (target, linkPath) => symlink(target, linkPath),
   run: (command) =>
     new Promise((resolve, reject) =>
       execFile(
@@ -203,7 +229,12 @@ export async function runBottleSetup(
   if (bin === undefined) {
     throw new Error("CrossOver is not installed");
   }
-  const bottleDir = crossoverBottleDir();
+  const crossoverDir = crossoverBottleDir();
+  const bottleDir = options.bottleDir ?? crossoverDir;
+  if (bottleDir !== crossoverDir) {
+    await mkdir(bottleDir, { recursive: true });
+    addBottleRoot(bottleDir);
+  }
   // Toujours le même dossier : ce qu'une appli quittée en cours de route a laissé part au nouvel essai.
   const downloads = path.join(os.tmpdir(), "mortex-bottle-setup");
   await rm(downloads, { recursive: true, force: true });
@@ -219,6 +250,12 @@ export async function runBottleSetup(
       const commands = stepCommands(step, context);
       for (const command of step === "bottle" && exists ? commands.slice(1) : commands) {
         await tools.run(command);
+      }
+      if (step === "bottle" && bottleDir !== crossoverDir) {
+        await mkdir(crossoverDir, { recursive: true });
+        await tools
+          .link(path.join(bottleDir, SETUP_BOTTLE), path.join(crossoverDir, SETUP_BOTTLE))
+          .catch(() => undefined); // lien déjà là, ou bouteille simplement absente de CrossOver
       }
       onStep(step, "done");
     }

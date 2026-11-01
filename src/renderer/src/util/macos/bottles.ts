@@ -12,6 +12,7 @@
  *  - runInBottle(exe, args, env?)                   {executable, args, env} pour lancer un .exe dans sa bouteille
  *  - wineCommand(bottle, args)                      {executable, args, env} pour un outil Wine (reg, regedit…)
  *  - crossoverBottleDir() / crossoverBinDir()        où CrossOver range ses bouteilles et ses outils
+ *  - addBottleRoot(dir)                              ajoute un dossier de bouteilles à bottles.json
  *
  * État : <userData>/bottles.json  { roots?: string[], activeBottle?: string, exclusive?: boolean, userDir?: string }
  * `exclusive` + `activeBottle` : ne voir que cette bouteille (essais de dev)
@@ -137,6 +138,12 @@ export function crossoverBottleDir(): string {
 export function crossoverBinDir(): string | undefined {
   const app = CX_APPS.find((candidate) => fs.existsSync(candidate));
   return app && path.join(app, "Contents/SharedSupport/CrossOver/bin");
+}
+
+/** Ajoute un dossier de bouteilles à ceux que mORTEX parcourt. */
+export function addBottleRoot(dir: string): void {
+  const roots = readState().roots ?? [];
+  if (!roots.includes(dir)) writeState({ roots: [...roots, dir] });
 }
 
 function whiskyRoots(): string[] {
