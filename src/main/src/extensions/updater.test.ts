@@ -1,8 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { setupAutoUpdaterMock } = vi.hoisted(() => ({ setupAutoUpdaterMock: vi.fn() }));
+const { setupAutoUpdaterMock, appMock } = vi.hoisted(() => ({
+  setupAutoUpdaterMock: vi.fn(),
+  appMock: { isPackaged: false },
+}));
 
+vi.mock("electron", () => ({ app: appMock }));
 vi.mock("./autoupdater", () => ({ setupAutoUpdater: setupAutoUpdaterMock }));
+vi.mock("./autoupdater/macUpdater", () => ({ setupMacUpdater: vi.fn() }));
 vi.mock("../logging", () => ({ log: vi.fn() }));
 
 import { initUpdater, isUpdaterActive } from "./updater";
@@ -27,9 +32,12 @@ afterEach(() => {
 });
 
 describe("isUpdaterActive", () => {
-  // mORTEX: the Vortex feed ships no macOS build, so the updater stays off whatever the install
-  it("is always off on macOS", () => {
+  // mORTEX: on macOS the updater is ours (GitHub releases of mORTEX), on only in the packaged app
+  it("is on for a packaged app on macOS, off when run from source", () => {
     setPlatform("darwin");
+    appMock.isPackaged = true;
+    expect(isUpdaterActive("managed")).toBe(true);
+    appMock.isPackaged = false;
     expect(isUpdaterActive("regular")).toBe(false);
     vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("VORTEX_DEV_UPDATER", "1");
