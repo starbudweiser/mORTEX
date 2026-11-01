@@ -3958,5 +3958,13 @@
   "Let mORTEX arrange the cards, without gaps": "Dejar que mORTEX ordene las tarjetas, sin huecos",
   "{{mods}} mods": "{{mods}} mods",
   "Disk space": "Espacio en disco",
-  "{{needed}} needed, {{free}} free": "{{needed}} necesarios, {{free}} libres"
+  "{{needed}} needed, {{free}} free": "{{needed}} necesarios, {{free}} libres",
+  "At least one option": "Al menos una opción",
+  "One option at most": "Una opción como máximo",
+  "One option only": "Una sola opción",
+  "All included": "Todo incluido",
+  "Several options possible": "Varias opciones posibles",
+  "Hover an option to see its description.": "Pase el cursor sobre una opción para ver su descripción.",
+  "1 option chosen": "1 opción elegida",
+  "{{chosen}} options chosen": "{{chosen}} opciones elegidas"
 }

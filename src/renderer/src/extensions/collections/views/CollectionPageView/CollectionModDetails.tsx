@@ -1,12 +1,7 @@
 import type { ICollectionRevisionMod } from "@nexusmods/nexus-api";
 import * as React from "react";
-import { Panel } from "react-bootstrap";
 
 import bbcodeToReact from "../../../../controls/bbcode";
-import FlexLayout from "../../../../controls/FlexLayout";
-import Image from "../../../../controls/Image";
-import * as tooltip from "../../../../controls/TooltipControls";
-import ZoomableImage from "../../../../controls/ZoomableImage";
 import { getGame } from "../../../../extensions/gamemode_management/util/getGame";
 import renderModName from "../../../../extensions/mod_management/util/modName";
 import { nexusGameId } from "../../../../extensions/nexus_integration/util/convertGameId";
@@ -20,14 +15,15 @@ export interface ICollectionModDetails {
   local?: IModEx;
   remote?: ICollectionRevisionMod;
   gameId: string;
+  /** barre posée en haut de l'image : collection, position, fermeture */
+  children?: React.ReactNode;
 }
 
 function CollectionModDetails(props: ICollectionModDetails) {
-  const { t, gameId, local, remote } = props;
+  const { t, children, gameId, local, remote } = props;
 
   const uploaderName = local?.attributes?.uploader ?? remote?.file?.owner?.name ?? AUTHOR_UNKNOWN;
   const uploaderId = local?.attributes?.uploaderId ?? remote?.file?.owner?.memberId;
-  const uploaderAvatar = remote?.file?.owner?.avatar ?? "assets/images/noavatar.png";
   const authorName = local?.attributes?.author ?? remote?.file?.mod?.author ?? AUTHOR_UNKNOWN;
   const modTitle = renderModName(local) ?? remote?.file?.mod?.name ?? "";
   const version = local?.attributes?.version ?? remote?.file?.version ?? "???";
@@ -47,69 +43,39 @@ function CollectionModDetails(props: ICollectionModDetails) {
   }, [domainName, modId]);
 
   return (
-    <div className="installing-mod-overview">
-      <FlexLayout type="row">
-        <FlexLayout.Fixed className="collection-mod-detail-imagecontainer">
-          {image ? <ZoomableImage className="installing-mod-image" url={image} /> : null}
-        </FlexLayout.Fixed>
+    <div className="collection-mod-hero">
+      {image ? <img alt="" className="collection-mod-hero-image" src={image} /> : null}
 
-        <FlexLayout.Flex fill>
-          <FlexLayout type="column">
-            <FlexLayout.Fixed>
-              <FlexLayout type="row">
-                <div className="installing-mod-title">{modTitle}</div>
+      {children}
 
-                {modId !== undefined ? (
-                  <tooltip.IconButton
-                    className="collection-open-mod-in-browser"
-                    icon="open-in-browser"
-                    tooltip={t("Open Mod in Webbrowser")}
-                    onClick={visitPage}
-                  />
-                ) : null}
-              </FlexLayout>
-            </FlexLayout.Fixed>
+      <div className="collection-mod-caption">
+        <div className="installing-mod-title">{modTitle}</div>
 
-            <FlexLayout.Flex>
-              <div className="collection-description">{bbcodeToReact(description)}</div>
-            </FlexLayout.Flex>
+        {description ? (
+          <div className="collection-description">{bbcodeToReact(description)}</div>
+        ) : null}
 
-            <FlexLayout.Fixed>
-              <FlexLayout type="row">
-                <FlexLayout.Fixed className="collection-detail-cell">
-                  <FlexLayout type="row">
-                    <Image circle srcs={[uploaderAvatar]} />
+        <div className="collection-mod-meta">
+          <span>
+            {t("Uploaded by")}{" "}
+            {uploaderName !== AUTHOR_UNKNOWN ? (
+              <a onClick={visitUploader}>{uploaderName}</a>
+            ) : (
+              <b>{uploaderName}</b>
+            )}
+          </span>
 
-                    <div>
-                      <div className="title">{t("Uploaded by")}</div>
+          <span>
+            {t("Created by")} <b>{authorName}</b>
+          </span>
 
-                      <div>
-                        {uploaderName !== AUTHOR_UNKNOWN ? (
-                          <a onClick={visitUploader}>{uploaderName}</a>
-                        ) : (
-                          uploaderName
-                        )}
-                      </div>
-                    </div>
-                  </FlexLayout>
-                </FlexLayout.Fixed>
+          <span>
+            {t("Version")} <b>{version}</b>
+          </span>
 
-                <FlexLayout.Fixed className="collection-detail-cell">
-                  <div className="title">{t("Created by")}</div>
-
-                  <div>{authorName}</div>
-                </FlexLayout.Fixed>
-
-                <FlexLayout.Fixed className="collection-detail-cell">
-                  <div className="title">{t("Version")}</div>
-
-                  <div>{version}</div>
-                </FlexLayout.Fixed>
-              </FlexLayout>
-            </FlexLayout.Fixed>
-          </FlexLayout>
-        </FlexLayout.Flex>
-      </FlexLayout>
+          {modId !== undefined ? <a onClick={visitPage}>{t("View on Nexus Mods")}</a> : null}
+        </div>
+      </div>
     </div>
   );
 }

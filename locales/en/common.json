@@ -626,5 +626,13 @@
   "Let mORTEX arrange the cards, without gaps": "Let mORTEX arrange the cards, without gaps",
   "{{mods}} mods": "{{mods}} mods",
   "Disk space": "Disk space",
-  "{{needed}} needed, {{free}} free": "{{needed}} needed, {{free}} free"
+  "{{needed}} needed, {{free}} free": "{{needed}} needed, {{free}} free",
+  "At least one option": "At least one option",
+  "One option at most": "One option at most",
+  "One option only": "One option only",
+  "All included": "All included",
+  "Several options possible": "Several options possible",
+  "Hover an option to see its description.": "Hover an option to see its description.",
+  "1 option chosen": "1 option chosen",
+  "{{chosen}} options chosen": "{{chosen}} options chosen"
 }

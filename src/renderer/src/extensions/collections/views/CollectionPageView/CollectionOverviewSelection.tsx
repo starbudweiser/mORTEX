@@ -47,44 +47,44 @@ class CollectionOverview extends ComponentEx<ICollectionOverviewProps, { selIdx:
 
     return (
       <Panel className={classes.join(" ")}>
-        <div className="collection-overview-title">
-          <div className="collection-title">{renderModName(collection)}</div>
-
-          <CollectionReleaseStatus
-            active={true}
-            collection={collection}
-            enabled={profile.modState?.[collection.id]?.enabled ?? false}
-            incomplete={incomplete}
-            t={t}
-          />
-
-          {modSelection.length > 1 ? (
-            <>
-              <SlideshowControls
-                autoProgressTimeMS={5000}
-                numItems={modSelection.length}
-                t={t}
-                onChangeItem={this.setSelection}
-              />
-
-              <div className="flex-filler" />
-
-              <tooltip.IconButton
-                className="btn-embed"
-                icon="close"
-                tooltip={t("Deselects mods")}
-                onClick={this.props.onDeselectMods}
-              />
-            </>
-          ) : null}
-        </div>
-
         <CollectionModDetails
           gameId={profile.gameId}
           local={modSelection[selIdx]?.local}
           remote={modSelection[selIdx]?.remote}
           t={t}
-        />
+        >
+          <div className="collection-overview-title">
+            <div className="collection-title">{renderModName(collection)}</div>
+
+            <CollectionReleaseStatus
+              active={true}
+              collection={collection}
+              enabled={profile.modState?.[collection.id]?.enabled ?? false}
+              incomplete={incomplete}
+              t={t}
+            />
+
+            {modSelection.length > 1 ? (
+              <>
+                <div className="flex-filler" />
+
+                <SlideshowControls
+                  autoProgressTimeMS={5000}
+                  numItems={modSelection.length}
+                  t={t}
+                  onChangeItem={this.setSelection}
+                />
+
+                <tooltip.IconButton
+                  className="btn-embed"
+                  icon="close"
+                  tooltip={t("Deselects mods")}
+                  onClick={this.props.onDeselectMods}
+                />
+              </>
+            ) : null}
+          </div>
+        </CollectionModDetails>
       </Panel>
     );
   }

@@ -5,18 +5,9 @@ import type { TFunction } from "i18next";
 import update from "immutability-helper";
 import * as _ from "lodash";
 import * as React from "react";
-import {
-  Button,
-  Checkbox,
-  ControlLabel,
-  Form,
-  FormGroup,
-  ProgressBar,
-  Radio,
-} from "react-bootstrap";
+import { Button, Checkbox, ControlLabel, Form, FormGroup, Radio } from "react-bootstrap";
 
 import { connect, PureComponentEx, translate } from "../../../controls/ComponentEx";
-import FlexLayout from "../../../controls/FlexLayout";
 import Modal from "../../../controls/Modal";
 import Spinner from "../../../controls/Spinner";
 import { IconButton } from "../../../controls/TooltipControls";
@@ -41,7 +32,11 @@ interface IGroupProps {
   stepId: number;
   group: IGroup;
   onSelect: (groupId: number, plugins: number[], valid: boolean) => void;
-  onShowDescription: (image: string | undefined, description: string | undefined) => void;
+  onShowDescription: (
+    image: string | undefined,
+    description: string | undefined,
+    name?: string,
+  ) => void;
 }
 
 interface IGroupState {
@@ -124,13 +119,33 @@ class Group extends React.PureComponent<IGroupProps, IGroupState> {
     return (
       <FormGroup disabled={disabled} validationState={validationState}>
         <ControlLabel>
-          {group?.name ?? `<${t("Missing group name")}>`}{" "}
-          {validationMessage ? `(${validationMessage})` : null}
+          <span>{group?.name ?? `<${t("Missing group name")}>`}</span>
+
+          <span className="fomod-group-rule">{validationMessage ?? this.ruleText(group.type)}</span>
         </ControlLabel>
-        {this.renderNoneOption()}
-        {group.options.map(this.renderPlugin)}
+
+        <div className="fomod-options">
+          {this.renderNoneOption()}
+          {group.options.map(this.renderPlugin)}
+        </div>
       </FormGroup>
     );
+  }
+
+  private ruleText(type: GroupType): string {
+    const { t } = this.props;
+    switch (type) {
+      case "SelectAtLeastOne":
+        return t("At least one option");
+      case "SelectAtMostOne":
+        return t("One option at most");
+      case "SelectExactlyOne":
+        return t("One option only");
+      case "SelectAll":
+        return t("All included");
+      default:
+        return t("Several options possible");
+    }
   }
 
   private getSelectedPlugins(props: IGroupProps) {
@@ -241,9 +256,9 @@ class Group extends React.PureComponent<IGroupProps, IGroupState> {
     const { group, onShowDescription } = this.props;
 
     const pluginId = parseInt(evt.currentTarget.getAttribute("data-value"), 10);
-    const { image, description } = group.options[pluginId];
+    const { image, description, name } = group.options[pluginId];
 
-    onShowDescription(image, description);
+    onShowDescription(image, description, name);
   };
 
   private select = (evt: React.FormEvent<any>) => {
@@ -306,7 +321,7 @@ interface IStepProps {
   t: TFunction;
   step: IInstallStep;
   onSelect: (groupId: number, plugins: number[], valid: boolean) => void;
-  onShowDescription: (image: string | undefined, description: string | undefined) => void;
+  onShowDescription: IGroupProps["onShowDescription"];
   disabled: boolean;
 }
 
@@ -349,6 +364,7 @@ interface IDialogState {
   invalidGroups: string[];
   currentImage: string | undefined;
   currentDescription: string | undefined;
+  currentName: string | undefined;
   waiting: boolean;
 }
 
@@ -377,7 +393,7 @@ class InstallerDialog extends PureComponentEx<IProps, IDialogState> {
 
   public render(): JSX.Element | null {
     const { t, installerInfo, installerState, activeInstanceId } = this.props;
-    const { currentDescription, waiting } = this.state;
+    const { currentDescription, currentName, waiting } = this.state;
 
     if (!truthy(installerState)) {
       return null;
@@ -385,7 +401,6 @@ class InstallerDialog extends PureComponentEx<IProps, IDialogState> {
 
     // Use default values if installerInfo is missing
     const moduleName = installerInfo?.moduleName || "FOMOD Installer";
-    const hasImage = installerInfo?.image?.path;
     const idx = installerState.currentStep;
     const steps = installerState.installSteps;
     const nextVisible = steps.find((step: IInstallStep, i: number) => i > idx && step.visible);
@@ -396,6 +411,10 @@ class InstallerDialog extends PureComponentEx<IProps, IDialogState> {
       }
     });
     const nextDisabled = this.state.invalidGroups.length > 0;
+    const chosen = (steps[idx].optionalFileGroups?.group ?? []).reduce(
+      (sum, group) => sum + group.options.filter((option) => option.selected).length,
+      0,
+    );
     return (
       <Modal
         id="fomod-installer-dialog"
@@ -413,57 +432,46 @@ class InstallerDialog extends PureComponentEx<IProps, IDialogState> {
             icon="close"
             onClick={this.cancel}
           />
+          <div aria-hidden="true" className="fomod-progress">
+            <span style={{ transform: `scaleX(${(idx + 1) / steps.length})` }} />
+          </div>
         </Modal.Header>
         <Modal.Body>
-          <FlexLayout type="row" style={{ position: "relative" }}>
-            <FlexLayout.Flex fill style={{ overflowY: "auto" }}>
-              <Step
-                t={t!}
-                step={steps[idx]}
-                onSelect={this.select}
-                onShowDescription={this.showDescription}
-                disabled={waiting}
-              />
-            </FlexLayout.Flex>
-            <FlexLayout.Fixed style={{ maxWidth: "60%", minWidth: "40%", overflowY: "auto" }}>
-              <FlexLayout type="column">
-                <FlexLayout.Flex>{this.renderImage()}</FlexLayout.Flex>
-                <FlexLayout.Flex fill className="description">
-                  <ControlLabel readOnly={true}>{currentDescription}</ControlLabel>
-                </FlexLayout.Flex>
-              </FlexLayout>
-            </FlexLayout.Fixed>
-          </FlexLayout>
+          <div className="fomod-options-column">
+            <Step
+              t={t!}
+              step={steps[idx]}
+              onSelect={this.select}
+              onShowDescription={this.showDescription}
+              disabled={waiting}
+            />
+          </div>
+          <aside className="fomod-preview">
+            {this.renderImage()}
+            <div className="fomod-preview-text">
+              {currentName && this.hasImage() ? <h4>{currentName}</h4> : null}
+              <p>{currentDescription || t!("Hover an option to see its description.")}</p>
+            </div>
+          </aside>
         </Modal.Body>
         <Modal.Footer>
-          <div className="fomod-nav-buttons">
-            <div>
-              {lastVisible !== undefined ? (
-                <Button onClick={this.prev} disabled={waiting}>
-                  {waiting ? <Spinner /> : lastVisible.name || t!("Previous")}
-                </Button>
-              ) : null}
-            </div>
-            <div className="fomod-progress">
-              <span className="fomod-progress-label">
-                {t!("Step {{current}} of {{total}}", {
-                  replace: { current: idx + 1, total: steps.length },
-                })}
-              </span>
-              <ProgressBar now={idx} max={steps.length - 1} />
-            </div>
-            <div>
-              {nextVisible !== undefined ? (
-                <Button disabled={nextDisabled || waiting} onClick={this.next}>
-                  {waiting ? <Spinner /> : nextVisible.name || t!("Next")}
-                </Button>
-              ) : (
-                <Button disabled={nextDisabled || waiting} onClick={this.next}>
-                  {t!("Finish")}
-                </Button>
-              )}
-            </div>
-          </div>
+          <span className="fomod-progress-label">
+            {t!("Step {{current}} of {{total}}", {
+              replace: { current: idx + 1, total: steps.length },
+            })}
+            {" · "}
+            {chosen === 1
+              ? t!("1 option chosen")
+              : t!("{{chosen}} options chosen", { replace: { chosen } })}
+          </span>
+          {lastVisible !== undefined ? (
+            <Button onClick={this.prev} disabled={waiting}>
+              {waiting ? <Spinner /> : t!("Previous")}
+            </Button>
+          ) : null}
+          <Button className="fomod-primary" disabled={nextDisabled || waiting} onClick={this.next}>
+            {waiting ? <Spinner /> : nextVisible !== undefined ? t!("Next") : t!("Finish")}
+          </Button>
         </Modal.Footer>
       </Modal>
     );
@@ -487,14 +495,28 @@ class InstallerDialog extends PureComponentEx<IProps, IDialogState> {
     this.setState(newState);
   };
 
+  private hasImage(): boolean {
+    const { installerInfo } = this.props;
+    const image = this.state.currentImage || installerInfo?.image?.path;
+    return truthy(installerInfo?.dataPath) && truthy(image);
+  }
+
   private renderImage = () => {
     const { installerInfo } = this.props;
-    const { currentImage } = this.state;
+    const { currentImage, currentName } = this.state;
 
     const image = currentImage || installerInfo?.image?.path;
 
     if (!truthy(installerInfo?.dataPath) || !truthy(image)) {
-      return null;
+      return (
+        <div className="fomod-placeholder">
+          <svg aria-hidden="true" viewBox="0 0 96 96">
+            <circle cx="48" cy="48" fill="none" r="44" stroke="currentColor" strokeWidth="2.5" />
+            <path d="M20 48 48 20l28 28-28 28Z" fill="currentColor" opacity="0.8" />
+          </svg>
+          <h4>{currentName || installerInfo?.moduleName}</h4>
+        </div>
+      );
     }
 
     return (
@@ -514,6 +536,7 @@ class InstallerDialog extends PureComponentEx<IProps, IDialogState> {
       invalidGroups: [],
       currentImage: option?.image,
       currentDescription: option?.description,
+      currentName: option?.name,
       waiting: false,
     });
 
@@ -528,11 +551,16 @@ class InstallerDialog extends PureComponentEx<IProps, IDialogState> {
     return ret(selOption || undefined);
   }
 
-  private showDescription = (image: string | undefined, description: string | undefined) => {
+  private showDescription = (
+    image: string | undefined,
+    description: string | undefined,
+    name?: string,
+  ) => {
     this.setState(
       update(this.state, {
         currentDescription: { $set: description || "" },
         currentImage: { $set: image || "" },
+        currentName: { $set: name || "" },
       }),
     );
   };
