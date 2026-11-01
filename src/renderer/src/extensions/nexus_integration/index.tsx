@@ -1013,7 +1013,7 @@ function once(api: IExtensionApi, callbacks: Array<(nexus: NexusT) => void>) {
     const disableable = new Disableable(api);
     nexus = new Proxy(
       new Proxy(
-        new Nexus("Vortex", getApplication().version, nexusGameId(getGame(gameMode)), 30000),
+        new Nexus("mORTEX", getApplication().version, nexusGameId(getGame(gameMode)), 30000),
         disableable,
       ),
       requestLog,

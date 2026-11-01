@@ -15,7 +15,7 @@ export default async function getGameCategories(
     const url = GameV1URL(domainName);
     const headers = {
       Accept: "application/json",
-      "Application-Name": "Vortex",
+      "Application-Name": "mORTEX",
       "Application-Version": getApplication().version,
       Authorization: `Bearer ${token}`,
     };
