@@ -118,7 +118,9 @@ process.on("unhandledRejection", earlyErrHandler);
 
 // ensure the cwd is always set to the path containing the exe, otherwise dynamically loaded
 // dlls will not be able to load vc-runtime files shipped with Vortex.
-process.chdir(getVortexPath("application"));
+// Sur Mac, pas besoin de ces dll : un dossier hors de l'appli survit à son remplacement sur le
+// disque, sinon tout `process.cwd()` échoue (lancement des workers de hachage compris).
+process.chdir(getVortexPath(process.platform === "darwin" ? "home" : "application"));
 
 sourceMapSupport.install();
 
