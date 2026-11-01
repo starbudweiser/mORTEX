@@ -6,6 +6,7 @@ import * as tmp from "tmp";
 import * as winapi from "winapi-bindings";
 
 import { log } from "../logging";
+import getVortexPath from "./getVortexPath";
 import { getRealNodeModulePaths } from "./webpack-hacks";
 
 declare const __non_webpack_require__: NodeJS.Require;
@@ -144,7 +145,9 @@ export function runElevated(
         return reject(err);
       }
 
-      const modulePaths = getRealNodeModulePaths(process.cwd()).map((p) => p.split("\\").join("/"));
+      const modulePaths = getRealNodeModulePaths(getVortexPath("application")).map((p) =>
+        p.split("\\").join("/"),
+      );
 
       // In production builds the elevated Node child runs with
       // ELECTRON_RUN_AS_NODE, which disables Electron's asar resolution.

@@ -3,6 +3,7 @@ import * as fs from "fs";
 import PromiseBB from "bluebird";
 import * as tmp from "tmp";
 
+import getVortexPath from "./getVortexPath";
 import { getRealNodeModulePaths } from "./webpack-hacks";
 
 declare let __non_webpack_require__: NodeJS.Require;
@@ -35,7 +36,9 @@ function trampoline(baseDir: string, moduleRoot: string, main: (...args: any[]) 
 }
 
 function writeProgram(func: (...args: any[]) => any, moduleBase: string, args?: any[]): string {
-  const projectRoot = getRealNodeModulePaths(process.cwd())[0]?.split("\\").join("/");
+  const projectRoot = getRealNodeModulePaths(getVortexPath("application"))[0]
+    ?.split("\\")
+    .join("/");
 
   let mainBody = trampoline.toString();
   mainBody = mainBody.slice(mainBody.indexOf("{") + 1, mainBody.lastIndexOf("}"));
