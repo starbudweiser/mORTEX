@@ -600,5 +600,14 @@
   "Move the cards up to close the empty spaces": "Move the cards up to close the empty spaces",
   "mORTEX bottle health": "mORTEX: bottle health",
   "mORTEX crashes": "mORTEX: crashes",
-  "mORTEX bottle setup": "mORTEX: bottle setup"
+  "mORTEX bottle setup": "mORTEX: bottle setup",
+  "File": "File",
+  "Settings": "Settings",
+  "Reload": "Reload",
+  "Toggle Developer Tools": "Toggle Developer Tools",
+  "Record missing translations": "Record missing translations",
+  "Copy missing translations to clipboard": "Copy missing translations to clipboard",
+  "Zoom In": "Zoom In",
+  "Zoom Out": "Zoom Out",
+  "Reset Zoom": "Reset Zoom"
 }

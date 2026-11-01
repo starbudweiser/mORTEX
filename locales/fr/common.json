@@ -3938,5 +3938,8 @@
   "Move the cards up to close the empty spaces": "Remonter les cartes pour boucher les espaces vides",
   "mORTEX bottle health": "mORTEX : santé de la bouteille",
   "mORTEX crashes": "mORTEX : plantages",
-  "mORTEX bottle setup": "mORTEX : préparation de la bouteille"
+  "mORTEX bottle setup": "mORTEX : préparation de la bouteille",
+  "Toggle Developer Tools": "Outils de développement",
+  "Record missing translations": "Noter les traductions manquantes",
+  "Copy missing translations to clipboard": "Copier les traductions manquantes"
 }

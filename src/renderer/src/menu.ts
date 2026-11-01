@@ -322,10 +322,24 @@ export function initApplicationMenu(extensions: ExtensionManager) {
     ];
 
     // Process the template to assign IDs and store handlers
+    const translated = (
+      items: Electron.MenuItemConstructorOptions[],
+    ): Electron.MenuItemConstructorOptions[] =>
+      items.map((item) => ({
+        ...item,
+        label: item.label && extensions.getApi().translate(item.label, { ns: "common" }),
+        submenu: Array.isArray(item.submenu) ? translated(item.submenu) : item.submenu,
+      }));
+
     const template = processMenuTemplate([
-      { label: "File", submenu: fileMenu },
-      { label: "View", submenu: viewMenu },
-      { label: "Performance", submenu: performanceMenu },
+      ...translated([
+        { label: "File", submenu: fileMenu },
+        { label: "View", submenu: viewMenu },
+        // mORTEX : le profilage de Vortex ne sert pas aux utilisateurs Mac
+        ...(process.platform === "darwin"
+          ? []
+          : [{ label: "Performance", submenu: performanceMenu }]),
+      ]),
       // mORTEX : la visite guidée (extension mortex_tour)
       {
         label: extensions.getApi().translate("Help", { ns: "common" }),

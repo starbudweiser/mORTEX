@@ -65,7 +65,7 @@ function init(context: IExtensionContext): boolean {
   context.registerDashlet(
     BOTTLE_DASHLET_ID,
     3,
-    2,
+    5,
     5,
     BottleSetupDashlet,
     (state) =>
