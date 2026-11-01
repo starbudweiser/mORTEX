@@ -4,7 +4,7 @@
  *
  * Lit `<userData>/bottles.json` (clé `userDir` = drive_c/users/<user>, écrite
  * par le renderer, util/macos/bottles.ts). Renvoie undefined hors darwin ou
- * tant que le fichier n'existe pas (premier lancement : relancer une fois).
+ * tant que le fichier n'existe pas ; le renderer met alors ses chemins à jour lui-même.
  */
 import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import * as path from "node:path";

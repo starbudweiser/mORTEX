@@ -17,7 +17,8 @@
  * État : <userData>/bottles.json  { roots?: string[], activeBottle?: string, exclusive?: boolean, userDir?: string }
  * `exclusive` + `activeBottle` : ne voir que cette bouteille (essais de dev)
  * `userDir` (drive_c/users/<u>) est écrit ici et lu par le processus principal
- * (main/src/macos/bottlePaths.ts) pour rediriger documents et localAppData.
+ * (main/src/macos/bottlePaths.ts) pour rediriger documents et localAppData ;
+ * s'il change pendant que mORTEX tourne, les chemins du renderer suivent aussitôt.
  */
 import { execFileSync } from "node:child_process";
 import * as fs from "node:fs";
@@ -28,6 +29,7 @@ import { parse as parseVdf } from "simple-vdf";
 
 import { log } from "@/logging";
 
+import { ApplicationData } from "../../applicationData";
 import type { IExtensionApi } from "../../types/IExtensionContext";
 import type { IGameStore, IGameStoreSnapshot } from "../../types/IGameStore";
 import { GameEntryNotFound } from "../../types/IGameStore";
@@ -225,6 +227,26 @@ export function listBottles(): IBottle[] {
     result.sort((a, b) => +(b.path === state.activeBottle) - +(a.path === state.activeBottle));
   }
   return result;
+}
+
+export interface IScannedBottle {
+  bottle: IBottle;
+  games: number;
+}
+
+/**
+ * Dossier utilisateur à rediriger : bouteille active, ou déjà utilisée par un jeu (« My Games ») ;
+ * à défaut, celle qui contient un jeu jamais lancé, le cas d'une première installation.
+ */
+export function pickUserDir(
+  scanned: IScannedBottle[],
+  activeBottle: string | undefined,
+): string | undefined {
+  const used = scanned.find(
+    ({ bottle }) =>
+      bottle.path === activeBottle || isDir(path.join(bottle.userDir, "Documents/My Games")),
+  );
+  return (used ?? scanned.find(({ games }) => games > 0))?.bottle.userDir;
 }
 
 export function bottleForPath(p: string, bottles: IBottle[] = listBottles()): IBottle | undefined {
@@ -479,21 +501,21 @@ class WineBottlesStore implements IGameStore {
   public async reloadGames(): Promise<void> {
     const bottles = listBottles();
     const entries: IGameStoreEntry[] = [];
-    let firstUserDir: string | undefined;
+    const scanned: IScannedBottle[] = [];
     for (const bottle of bottles) {
       const found = [...scanSteamGames(bottle), ...scanLooseGames(bottle)];
-      if (
-        firstUserDir === undefined &&
-        (bottle.path === readState().activeBottle ||
-          isDir(path.join(bottle.userDir, "Documents/My Games")))
-      ) {
-        firstUserDir = bottle.userDir;
-      }
+      scanned.push({ bottle, games: found.length });
       entries.push(...found);
     }
     this.#snapshot = { entries, isInstalled: bottles.length > 0 };
-    if (firstUserDir !== undefined && readState().userDir !== firstUserDir) {
-      writeState({ userDir: firstUserDir });
+    const userDir = pickUserDir(scanned, readState().activeBottle);
+    if (userDir !== undefined && readState().userDir !== userDir) {
+      writeState({ userDir });
+      // sans cela, les chemins lus au démarrage restent ceux du Mac jusqu'à la relance de mORTEX
+      const paths = ApplicationData.instance.paths;
+      paths.documents = path.join(userDir, "Documents");
+      paths.localAppData = path.join(userDir, "AppData", "Local");
+      fs.mkdirSync(paths.localAppData, { recursive: true });
     }
   }
 

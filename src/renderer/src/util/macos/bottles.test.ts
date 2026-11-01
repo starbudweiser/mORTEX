@@ -8,6 +8,7 @@ vi.mock("../getVortexPath", () => ({ default: () => os.tmpdir() }));
 
 import {
   hostToWinPath,
+  pickUserDir,
   readRegString,
   scanSteamGames,
   winPathToHost,
@@ -39,6 +40,20 @@ function makeBottle(): IBottle {
 
 describe("bottles", () => {
   const b = makeBottle();
+  it("redirects to a bottle holding a game that was never run", () => {
+    const empty = makeBottle();
+    const fresh = makeBottle();
+    const scanned = [
+      { bottle: empty, games: 0 },
+      { bottle: fresh, games: 1 },
+    ];
+    expect(pickUserDir(scanned, undefined)).toBe(fresh.userDir);
+    expect(pickUserDir(scanned, empty.path)).toBe(empty.userDir);
+    expect(pickUserDir([{ bottle: empty, games: 0 }], undefined)).toBeUndefined();
+    fs.mkdirSync(path.join(empty.userDir, "Documents/My Games"), { recursive: true });
+    expect(pickUserDir(scanned, undefined)).toBe(empty.userDir);
+  });
+
   it("reads system.reg", () => {
     expect(
       readRegString(
