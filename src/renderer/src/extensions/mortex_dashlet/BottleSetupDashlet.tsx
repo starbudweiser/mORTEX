@@ -5,6 +5,7 @@ import { useMainContext } from "@/contexts";
 import { Alert } from "@/ui/components/alert/Alert";
 import { Button } from "@/ui/components/button/Button";
 import { CheckboxField } from "@/ui/components/form/checkbox_field/CheckboxField";
+import { Icon, type SymbolName } from "@/ui/components/icon/Icon";
 
 import Dashlet from "../../controls/Dashlet";
 import { log } from "../../logging";
@@ -39,6 +40,62 @@ const ISSUE_TEXTS: Record<DestinationIssue, string> = {
 };
 
 type Phase = "idle" | "running" | "done" | "failed";
+type StepState = StepStatus | "waiting" | "failed";
+
+const STEP_STATES: Record<StepState, { icon: SymbolName; label: string }> = {
+  done: { icon: "check_circle", label: "Finished" },
+  running: { icon: "progress_activity", label: "In progress…" },
+  waiting: { icon: "radio_button_unchecked", label: "Waiting" },
+  failed: { icon: "report", label: "Not finished" },
+};
+
+function SetupProgress(props: {
+  steps: SetupStep[];
+  statuses: Partial<Record<SetupStep, StepStatus>>;
+  phase: Phase;
+}) {
+  const { steps, statuses, phase } = props;
+  const { t } = useTranslation(["common"]);
+  const finished = steps.filter((step) => statuses[step] === "done").length;
+  const stateOf = (step: SetupStep): StepState => {
+    const status = statuses[step] ?? "waiting";
+    return status === "running" && phase === "failed" ? "failed" : status;
+  };
+
+  return (
+    <div className="mortex-setup-progress" data-phase={phase}>
+      <div className="mortex-setup-summary">
+        {t("Step {{current}} of {{total}}", {
+          replace: { current: Math.min(finished + 1, steps.length), total: steps.length },
+        })}
+      </div>
+      <div aria-hidden="true" className="mortex-setup-bar">
+        <span style={{ transform: `scaleX(${finished / steps.length})` }} />
+      </div>
+      <ol className="mortex-setup-steps">
+        {steps.map((step) => {
+          const state = stateOf(step);
+          return (
+            <li data-state={state} key={step}>
+              <Icon
+                className={state === "running" ? "animate-spin reduce-motion:animate-none" : ""}
+                name={STEP_STATES[state].icon}
+                size="sm"
+              />
+              <span className="mortex-setup-label">{t(STEP_LABELS[step])}</span>
+              <span className="mortex-setup-state">{t(STEP_STATES[state].label)}</span>
+            </li>
+          );
+        })}
+      </ol>
+      {phase === "running" && (
+        <p className="mortex-setup-hint">
+          {t("This can take several minutes. You can keep using your Mac.")}
+        </p>
+      )}
+    </div>
+  );
+}
 
 /**
  * mORTEX : prépare une bouteille CrossOver pour Skyrim. Tout est créé ou téléchargé sur le Mac de
@@ -83,6 +140,7 @@ function BottleSetupDashlet() {
   const launchSteam = () => {
     try {
       openSteam(bottleDir);
+      setError(undefined);
       setSteamStarting(true);
     } catch (err) {
       setError((err as Error).message);
@@ -114,13 +172,19 @@ function BottleSetupDashlet() {
                 "No Skyrim was found. A CrossOver bottle can be prepared for you, with Steam, Visual C++ and .NET 8. You then sign in to Steam and install Skyrim yourself.",
               )}
             </p>
-            <div className="flex items-center gap-2">
-              <span>{t("Bottle location: {{path}}", { replace: { path: bottleDir } })}</span>
+            <div className="flex items-center justify-between gap-3 self-stretch">
+              <span className="min-w-0 break-words">
+                {t("Bottle location: {{path}}", { replace: { path: bottleDir } })}
+              </span>
               <Button appearance="moderate" brand="neutral" size="sm" onClick={chooseFolder}>
                 {t("Change…")}
               </Button>
             </div>
-            {issue !== undefined && <Alert severity="warning">{t(ISSUE_TEXTS[issue])}</Alert>}
+            {issue !== undefined && (
+              <Alert className="self-stretch" severity="warning">
+                {t(ISSUE_TEXTS[issue])}
+              </Alert>
+            )}
             <CheckboxField
               checked={netfx48}
               fieldClassName="self-stretch"
@@ -133,7 +197,7 @@ function BottleSetupDashlet() {
                 "Everything is downloaded from Valve and Microsoft. By continuing, you accept their licences:",
               )}
             </p>
-            <div className="flex gap-1">
+            <div className="-ml-2 flex gap-1">
               {LICENCES.map((licence) => (
                 <Button
                   appearance="weak"
@@ -150,34 +214,37 @@ function BottleSetupDashlet() {
           </>
         )}
 
-        {phase !== "idle" && (
-          <ul className="flex flex-col gap-1">
-            {setupSteps({ netfx48 }).map((step) => (
-              <li key={step}>
-                {statuses[step] === "done" ? "✓ " : statuses[step] === "running" ? "… " : "· "}
-                {t(STEP_LABELS[step])}
-              </li>
-            ))}
-          </ul>
+        {(phase === "running" || phase === "failed") && (
+          <SetupProgress phase={phase} statuses={statuses} steps={setupSteps({ netfx48 })} />
         )}
 
         {phase === "failed" && (
           <>
-            <Alert severity="danger">
-              {t("The bottle could not be prepared: {{error}}", { replace: { error } })}
+            <Alert className="self-stretch" severity="danger">
+              {t(
+                "The bottle could not be prepared. Check the chosen folder and your connection, then try again.",
+              )}
             </Alert>
+            <details className="mortex-setup-details">
+              <summary>{t("Details")}</summary>
+              <code>{error}</code>
+            </details>
             <Button onClick={start}>{t("Try again")}</Button>
           </>
         )}
 
         {phase === "done" && (
           <>
-            <Alert severity="success">
+            <Alert className="self-stretch" severity="success">
               {t(
                 "The bottle is ready. Sign in to Steam and install Skyrim Special Edition, then search for games again.",
               )}
             </Alert>
-            {error !== undefined && <Alert severity="danger">{error}</Alert>}
+            {error !== undefined && (
+              <Alert className="self-stretch" severity="danger">
+                {t(error)}
+              </Alert>
+            )}
             {steamStarting && (
               <p>{t("Steam is starting: its first update can take several minutes.")}</p>
             )}

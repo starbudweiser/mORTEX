@@ -3918,7 +3918,7 @@
   "Installing .NET 8": "Installation de .NET 8",
   "Installing .NET Framework 4.8": "Installation de .NET Framework 4.8",
   "Installing Steam": "Installation de Steam",
-  "The bottle could not be prepared: {{error}}": "La bouteille n'a pas pu être préparée : {{error}}",
+  "The bottle could not be prepared. Check the chosen folder and your connection, then try again.": "La bouteille n'a pas pu être préparée. Vérifiez le dossier choisi et votre connexion, puis réessayez.",
   "The bottle is ready. Sign in to Steam and install Skyrim Special Edition, then search for games again.": "La bouteille est prête. Connectez-vous à Steam, installez Skyrim Special Edition, puis relancez la recherche des jeux.",
   "Open Steam": "Ouvrir Steam",
   "Step {{current}} of {{total}}": "Étape {{current}} sur {{total}}",
@@ -3946,5 +3946,11 @@
   "Change…": "Changer…",
   "This disk can't hold a bottle: choose a disk formatted as APFS or Mac OS Extended.": "Ce disque ne peut pas accueillir de bouteille : choisissez un disque au format APFS ou Mac OS étendu.",
   "Less than 30 GB is free here: Steam, Skyrim and your mods need more.": "Moins de 30 Go sont libres ici : Steam, Skyrim et vos mods auront besoin de plus.",
-  "Steam is starting: its first update can take several minutes.": "Steam démarre : sa première mise à jour peut prendre plusieurs minutes."
+  "Steam is starting: its first update can take several minutes.": "Steam démarre : sa première mise à jour peut prendre plusieurs minutes.",
+  "In progress…": "En cours…",
+  "Waiting": "En attente",
+  "Not finished": "Interrompu",
+  "This can take several minutes. You can keep using your Mac.": "Cela peut prendre plusieurs minutes. Vous pouvez continuer à utiliser votre Mac.",
+  "The prepared bottle was not found": "La bouteille préparée est introuvable",
+  "Details": "Détails"
 }

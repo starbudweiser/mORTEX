@@ -2250,3 +2250,134 @@ body.mortex-menu-moving * {
 .mortex-inspector-crashes h6 {
     color: #7dd3fc;
 }
+
+/* carte « Préparer Skyrim » : progression, sur une grille commune aux lignes */
+.mortex-setup-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-self: stretch;
+}
+
+.mortex-setup-summary {
+    color: var(--color-neutral-strong);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.mortex-setup-bar {
+    height: 4px;
+    overflow: hidden;
+    border-radius: 2px;
+    background-color: var(--color-surface-high);
+
+    span {
+        display: block;
+        height: 100%;
+        background-color: var(--color-primary-strong);
+        transform-origin: left;
+        transition: transform 300ms ease-out;
+    }
+}
+
+.mortex-setup-progress[data-phase="failed"] .mortex-setup-bar span {
+    background-color: var(--color-danger-strong);
+}
+
+.mortex-setup-steps {
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+        display: grid;
+        grid-template-columns: 20px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        min-height: 36px;
+        margin: 0;
+        padding: 0 8px;
+        border-radius: 6px;
+        background: transparent !important;
+        color: var(--color-neutral-subdued);
+    }
+
+    li[data-state="done"] {
+        color: var(--color-neutral-moderate);
+
+        .nxm-icon,
+        .mortex-setup-state {
+            color: var(--color-success-strong);
+        }
+    }
+
+    li[data-state="running"] {
+        background: color-mix(in srgb, var(--color-primary-strong) 12%, transparent) !important;
+
+        .mortex-setup-label {
+            color: var(--color-neutral-strong);
+        }
+
+        .nxm-icon,
+        .mortex-setup-state {
+            color: var(--color-primary-strong);
+        }
+    }
+
+    li[data-state="failed"] {
+        background: color-mix(in srgb, var(--color-danger-strong) 12%, transparent) !important;
+
+        .mortex-setup-label {
+            color: var(--color-neutral-strong);
+        }
+
+        .nxm-icon,
+        .mortex-setup-state {
+            color: var(--color-danger-strong);
+        }
+    }
+
+    span {
+        margin: 0;
+    }
+}
+
+.mortex-setup-state {
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.mortex-setup-hint {
+    margin: 4px 0 0;
+    color: var(--color-neutral-subdued);
+    font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mortex-setup-bar span {
+        transition: none;
+    }
+}
+
+/* toutes les cartes : le contenu ne touche jamais le bord */
+#page-dashboard .dashlet {
+    padding: 24px;
+    gap: 12px;
+}
+
+.mortex-setup-details {
+    align-self: stretch;
+    color: var(--color-neutral-subdued);
+    font-size: 12px;
+
+    summary {
+        cursor: pointer;
+    }
+
+    code {
+        display: block;
+        margin-top: 6px;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+    }
+}

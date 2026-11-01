@@ -56,6 +56,13 @@
     width: 100%;
 }
 
+/* carte seule : centrée dans la zone, jamais tronquée (le défilement passe à la page) */
+.dash-grid-solo {
+    display: grid;
+    place-items: center;
+    min-height: 100%;
+}
+
 .dash-item {
     position: absolute;
     top: 0;
@@ -69,6 +76,21 @@
         transition: none;
         z-index: 5;
         border-radius: 8px;
+    }
+}
+
+.dash-item-solo {
+    position: relative;
+    width: min(720px, 100%);
+    transition: none;
+
+    .dash-item-content {
+        height: auto;
+        overflow: visible;
+    }
+
+    .dashlet {
+        height: auto;
     }
 }
 

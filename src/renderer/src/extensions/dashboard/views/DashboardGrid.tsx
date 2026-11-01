@@ -78,6 +78,8 @@ function DashboardGrid(props: IProps): JSX.Element {
   }, []);
 
   const colW = columnWidth(width);
+  // une carte seule n'a rien à composer : elle se centre, à la hauteur de tout son contenu
+  const solo = !editMode && items.length === 1;
 
   const preview = React.useMemo<RectMap>(
     () => (drag === undefined ? rects : resolveLayout({ ...rects, [drag.id]: drag.cell }, drag.id)),
@@ -198,9 +200,9 @@ function DashboardGrid(props: IProps): JSX.Element {
   }, [autoFit, colW, naturalRows, onCommit]);
 
   const rows = rowCount(preview) + (editMode ? SPARE_ROWS : 0);
-  const style: React.CSSProperties = {
-    height: rows > 0 ? rows * (ROW_HEIGHT + GAP) - GAP : 0,
-  };
+  const style: React.CSSProperties = solo
+    ? {}
+    : { height: rows > 0 ? rows * (ROW_HEIGHT + GAP) - GAP : 0 };
   if (editMode && colW > 0) {
     style.backgroundImage =
       "radial-gradient(circle, var(--color-stroke-moderate) 1.5px, transparent 2px)";
@@ -212,6 +214,13 @@ function DashboardGrid(props: IProps): JSX.Element {
     const rect = preview[item.id];
     if (rect === undefined || colW === 0) {
       return null;
+    }
+    if (solo) {
+      return (
+        <div key={item.id} id={item.id} className="dash-item dash-item-solo">
+          <div className="dash-item-content">{item.content}</div>
+        </div>
+      );
     }
     const px = toPixels(rect, colW);
     const dragged = drag?.id === item.id;
@@ -298,7 +307,11 @@ function DashboardGrid(props: IProps): JSX.Element {
   const ghost = drag !== undefined && colW > 0 ? toPixels(preview[drag.id], colW) : undefined;
 
   return (
-    <div ref={containerRef} className="dash-grid" style={style}>
+    <div
+      ref={containerRef}
+      className={solo ? "dash-grid dash-grid-solo" : "dash-grid"}
+      style={style}
+    >
       {ghost !== undefined ? (
         <div
           className="dash-ghost"
