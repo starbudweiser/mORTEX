@@ -238,6 +238,8 @@ export interface ISettingsInterface {
   foregroundDL: boolean;
   dashletSettings: { [dashletId: string]: IDashletSettings };
   dashboardGrid?: { [dashletId: string]: { x: number; y: number; w: number; h: number } };
+  /** vrai dès que l'utilisateur a placé lui-même une carte */
+  dashboardCustomized?: boolean;
   usage: { [usageId: string]: boolean };
   tools?: {
     addToolsToTitleBar: boolean;

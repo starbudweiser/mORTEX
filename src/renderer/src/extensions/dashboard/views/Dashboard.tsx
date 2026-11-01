@@ -12,9 +12,9 @@ import type { IDashletSettings, IState } from "../../../types/IState";
 import { getWindowId } from "../../../util/preloadAccess";
 import { getSafe } from "../../../util/storeHelper";
 import MainPage from "../../../views/MainPage";
-import { setDashboardGrid, setDashletEnabled } from "../actions";
+import { setDashboardCustomized, setDashboardGrid, setDashletEnabled } from "../actions";
 import type { RectMap } from "../gridLayout";
-import { compact, layoutAll, LEGACY_H, LEGACY_W } from "../gridLayout";
+import { compact, composeLayout, layoutAll, LEGACY_H, LEGACY_W, rowsFor } from "../gridLayout";
 import type { IDashletProps } from "../types/IDashletProps";
 import DashboardGrid from "./DashboardGrid";
 import FixedItem from "./FixedItem";
@@ -29,6 +29,7 @@ interface IBaseProps {
 interface IConnectedProps {
   layout: string[];
   grid: RectMap;
+  customized: boolean;
   dashletSettings: { [dashletId: string]: IDashletSettings };
   // Per-dashlet visibility keyed by dash.title. Computed in mapStateToProps
   // so any state slice an isVisible() callback reads becomes part of
@@ -40,6 +41,7 @@ interface IConnectedProps {
 interface IActionProps {
   onSetDashletEnabled: (dashletId: string, enabled: boolean) => void;
   onSetGrid: (grid: RectMap) => void;
+  onSetCustomized: (customized: boolean) => void;
 }
 
 type IProps = IBaseProps & IConnectedProps & IActionProps;
@@ -97,8 +99,45 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
   }
 
   public render(): JSX.Element {
-    const { t, dashletSettings, dashletVisible, layout, dashlets, grid } = this.props;
+    const { t, dashletSettings, customized } = this.props;
     const { editMode } = this.state;
+
+    const { fixed, dynamic } = this.shownDashlets();
+    const rects = this.placedRects(dynamic);
+
+    const autoFit = this.autoFitIds(dynamic.map((dash) => dash.title));
+
+    const classes = ["page-dashboard", editMode ? "dashboard-edit" : "dashboard-view"];
+
+    return (
+      <MainPage id="page-dashboard" className={classes.join(" ")}>
+        <MainPage.Body style={{ display: "flex", flexDirection: "column" }}>
+          <div className="dashboard-editbar">{this.renderEditBar()}</div>
+          <div className="fixed-dashlets">{fixed.map(this.renderFixedItem)}</div>
+          <div className="dynamic-dashlets">
+            <DashboardGrid
+              t={t}
+              autoFit={autoFit}
+              items={dynamic.map((dash) => ({
+                id: dash.title,
+                closable: dash.closable !== false,
+                content: this.renderContent(dash),
+              }))}
+              rects={rects}
+              editMode={editMode}
+              customized={customized}
+              onCommit={this.onCommitGrid}
+              onDismiss={this.dismissDashlet}
+            />
+          </div>
+        </MainPage.Body>
+      </MainPage>
+    );
+  }
+
+  /** cartes affichées, dans l'ordre du tableau de bord */
+  private shownDashlets(): { fixed: IDashletProps[]; dynamic: IDashletProps[] } {
+    const { dashletSettings, dashletVisible, layout, dashlets } = this.props;
 
     const layoutMap: { [key: string]: number } = layout.reduce((prev, key, idx) => {
       prev[key] = idx + 1;
@@ -121,7 +160,7 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
           (layoutMap[lhs.title] ?? layoutSize + lhs.position) -
           (layoutMap[rhs.title] ?? layoutSize + rhs.position),
       );
-    const { fixed, dynamic } = sorted.reduce(
+    return sorted.reduce(
       (prev, dash) => {
         const isFixed = getSafe(dashletSettings, [dash.title, "fixed"], dash.fixed);
         prev[isFixed ? "fixed" : "dynamic"].push(dash);
@@ -129,8 +168,11 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
       },
       { fixed: [], dynamic: [] },
     );
+  }
 
-    const rects = layoutAll(
+  private placedRects(dynamic: IDashletProps[]): RectMap {
+    const { dashletSettings, grid } = this.props;
+    return layoutAll(
       dynamic.map((dash) => ({
         id: dash.title,
         defaultSize: {
@@ -139,34 +181,6 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
         },
       })),
       grid ?? {},
-    );
-
-    const autoFit = this.autoFitIds(dynamic.map((dash) => dash.title));
-
-    const classes = ["page-dashboard", editMode ? "dashboard-edit" : "dashboard-view"];
-
-    return (
-      <MainPage id="page-dashboard" className={classes.join(" ")}>
-        <MainPage.Body style={{ display: "flex", flexDirection: "column" }}>
-          <div className="dashboard-editbar">{this.renderEditBar()}</div>
-          <div className="fixed-dashlets">{fixed.map(this.renderFixedItem)}</div>
-          <div className="dynamic-dashlets">
-            <DashboardGrid
-              t={t}
-              autoFit={autoFit}
-              items={dynamic.map((dash) => ({
-                id: dash.title,
-                closable: dash.closable !== false,
-                content: this.renderContent(dash),
-              }))}
-              rects={rects}
-              editMode={editMode}
-              onCommit={this.onCommitGrid}
-              onDismiss={this.dismissDashlet}
-            />
-          </div>
-        </MainPage.Body>
-      </MainPage>
     );
   }
 
@@ -197,6 +211,9 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
                 </MenuItem>
               ))}
           </DropdownButton>
+          <Button onClick={this.resetGrid} title={t("Let mORTEX arrange the cards, without gaps")}>
+            {t("Automatic layout")}
+          </Button>
           <Button
             onClick={this.compactGrid}
             title={t("Move the cards up to close the empty spaces")}
@@ -224,7 +241,32 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
   };
 
   private toggleEdit = () => {
+    if (!this.state.editMode && !this.props.customized) {
+      this.freezeLayout();
+    }
     this.nextState.editMode = !this.nextState.editMode;
+  };
+
+  /** avant de personnaliser : la disposition automatique affichée devient une grille de cases */
+  private freezeLayout() {
+    const { dynamic } = this.shownDashlets();
+    const rects = this.placedRects(dynamic);
+    const height = (id: string) => document.getElementById(id)?.getBoundingClientRect().height ?? 0;
+    this.props.onSetGrid(
+      composeLayout(
+        dynamic.map((dash) => ({
+          id: dash.title,
+          w: rects[dash.title].w,
+          h: rowsFor(height(dash.title)),
+        })),
+      ),
+    );
+  }
+
+  private resetGrid = () => {
+    this.props.onSetGrid({});
+    this.props.onSetCustomized(false);
+    this.nextState.editMode = false;
   };
 
   private onFocus = () => {
@@ -286,30 +328,19 @@ class Dashboard extends ComponentEx<IProps, IComponentState> {
     return <dash.component t={this.props.t} {...componentProps} counter={counter} />;
   };
 
-  private onCommitGrid = (rects: RectMap) => {
+  private onCommitGrid = (rects: RectMap, byUser: boolean) => {
     this.props.onSetGrid({ ...this.props.grid, ...rects });
+    if (byUser) {
+      this.props.onSetCustomized(true);
+    }
   };
 
   private compactGrid = () => {
-    const { dashlets, dashletSettings, dashletVisible, grid } = this.props;
+    const { grid } = this.props;
     // seules les cartes affichées comptent : on part des positions résolues, pas du stockage brut
-    const shown = dashlets.filter(
-      (dash) =>
-        dashletVisible[dash.title] &&
-        !getSafe(dashletSettings, [dash.title, "fixed"], dash.fixed) &&
-        (!dash.closable || getSafe(dashletSettings, [dash.title, "enabled"], true)),
-    );
-    const rects = layoutAll(
-      shown.map((dash) => ({
-        id: dash.title,
-        defaultSize: {
-          w: (dashletSettings?.[dash.title]?.width ?? dash.width) * LEGACY_W,
-          h: (dashletSettings?.[dash.title]?.height ?? dash.height) * LEGACY_H,
-        },
-      })),
-      grid ?? {},
-    );
+    const rects = this.placedRects(this.shownDashlets().dynamic);
     this.props.onSetGrid({ ...grid, ...compact(rects) });
+    this.props.onSetCustomized(true);
   };
 
   private dismissDashlet = (dashletId: string) => {
@@ -347,6 +378,7 @@ function makeMapStateToProps(): (state: IState, ownProps: IBaseProps) => IConnec
       // Defensive checks: interface might not be initialized during hydration
       layout: state.settings?.interface?.dashboardLayout ?? [],
       grid: state.settings?.interface?.dashboardGrid ?? EMPTY_GRID,
+      customized: state.settings?.interface?.dashboardCustomized ?? false,
       dashletSettings: state.settings?.interface?.dashletSettings ?? {},
       dashletVisible: lastVisible,
     };
@@ -358,6 +390,7 @@ function mapDispatchToProps(dispatch: ThunkDispatch<any, null, Redux.Action>): I
     onSetDashletEnabled: (dashletId: string, enabled: boolean) =>
       dispatch(setDashletEnabled(dashletId, enabled)),
     onSetGrid: (grid: RectMap) => dispatch(setDashboardGrid(grid)),
+    onSetCustomized: (customized: boolean) => dispatch(setDashboardCustomized(customized)),
   };
 }
 

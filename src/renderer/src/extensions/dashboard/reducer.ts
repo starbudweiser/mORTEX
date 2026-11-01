@@ -31,6 +31,8 @@ const settingsReducer: IReducerSpec = {
     },
     [actions.setDashboardGrid as any]: (state, payload) =>
       setSafe(state, ["dashboardGrid"], payload),
+    [actions.setDashboardCustomized as any]: (state, payload) =>
+      setSafe(state, ["dashboardCustomized"], payload),
     [actions.setDashletWidth as any]: (state, payload) =>
       setSafe(state, ["dashletSettings", payload.widgetId, "width"], payload.width),
     [actions.setDashletHeight as any]: (state, payload) =>
@@ -39,6 +41,7 @@ const settingsReducer: IReducerSpec = {
   defaults: {
     dashboardLayout: [],
     dashboardGrid: {},
+    dashboardCustomized: false,
     dashletSettings: {},
   },
 };

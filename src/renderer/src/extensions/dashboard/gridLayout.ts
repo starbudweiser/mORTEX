@@ -141,6 +141,48 @@ export function layoutAll(entries: ILayoutEntry[], stored: RectMap): RectMap {
   return result;
 }
 
+export interface IComposeEntry {
+  id: string;
+  w: number;
+  h: number;
+}
+
+/**
+ * Disposition automatique, dans l'ordre donné : les cartes remplissent les lignes sans trou,
+ * une ligne incomplète est centrée, et les cartes d'une ligne ont la même hauteur.
+ */
+export function composeLayout(entries: IComposeEntry[]): RectMap {
+  const result: RectMap = {};
+  let row: IComposeEntry[] = [];
+  let y = 0;
+  const closeRow = () => {
+    const used = row.reduce((sum, entry) => sum + entry.w, 0);
+    const h = Math.max(...row.map((entry) => entry.h));
+    let x = (COLS - used) / 2;
+    for (const entry of row) {
+      result[entry.id] = { x, y, w: entry.w, h };
+      x += entry.w;
+    }
+    y += h;
+    row = [];
+  };
+  for (const entry of entries) {
+    if (row.reduce((sum, other) => sum + other.w, entry.w) > COLS) {
+      closeRow();
+    }
+    row.push(entry);
+  }
+  if (row.length > 0) {
+    closeRow();
+  }
+  return result;
+}
+
+/** nombre de cases qu'il faut pour afficher une hauteur en pixels */
+export function rowsFor(pxHeight: number): number {
+  return Math.max(MIN_H, Math.ceil((pxHeight + GAP) / (ROW_HEIGHT + GAP)));
+}
+
 /** dimensions en pixels d'une colonne pour une largeur de conteneur donnée */
 export function columnWidth(containerWidth: number): number {
   return Math.max(0, (containerWidth - GAP * (COLS - 1)) / COLS);

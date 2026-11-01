@@ -449,15 +449,14 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 .mortex-cards {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
+    gap: 16px;
 }
 
 .mortex-card {
     background-color: var(--color-surface-mid);
     border: 1px solid var(--color-stroke-weak);
     border-radius: 8px;
-    /* tient dans la hauteur d'une case du tableau de bord (114 px) sans déborder sur la suivante */
-    padding: 12px 16px;
+    padding: 24px;
 }
 
 .mortex-card h5 {

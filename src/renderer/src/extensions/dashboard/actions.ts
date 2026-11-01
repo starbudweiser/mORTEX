@@ -22,3 +22,9 @@ export const setDashboardGrid = safeCreateAction(
   "SET_DASHBOARD_GRID",
   (grid: { [widgetId: string]: { x: number; y: number; w: number; h: number } }) => grid,
 );
+
+/** vrai dès que l'utilisateur a placé lui-même une carte : la disposition automatique s'efface */
+export const setDashboardCustomized = safeCreateAction(
+  "SET_DASHBOARD_CUSTOMIZED",
+  (customized: boolean) => customized,
+);

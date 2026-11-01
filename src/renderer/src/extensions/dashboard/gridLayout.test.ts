@@ -6,15 +6,50 @@ import {
   collides,
   compact,
   columnWidth,
+  composeLayout,
   firstFit,
   GAP,
   layoutAll,
   resolveLayout,
+  rowsFor,
   sanitize,
   sizeAt,
 } from "./gridLayout";
 
 describe("gridLayout", () => {
+  it("compose les lignes sans trou, centre celle qui est incomplète", () => {
+    expect(
+      composeLayout([
+        { id: "a", w: 6, h: 2 },
+        { id: "b", w: 2, h: 3 },
+        { id: "c", w: 2, h: 5 },
+      ]),
+    ).toEqual({
+      a: { x: 0, y: 0, w: 6, h: 2 },
+      b: { x: 1, y: 2, w: 2, h: 5 },
+      c: { x: 3, y: 2, w: 2, h: 5 },
+    });
+  });
+
+  it("passe à la ligne quand une carte ne tient plus", () => {
+    const rects = composeLayout([
+      { id: "a", w: 4, h: 2 },
+      { id: "b", w: 4, h: 2 },
+    ]);
+    expect(rects.a).toEqual({ x: 1, y: 0, w: 4, h: 2 });
+    expect(rects.b).toEqual({ x: 1, y: 2, w: 4, h: 2 });
+  });
+
+  it("ne compose rien sans carte", () => {
+    expect(composeLayout([])).toEqual({});
+  });
+
+  it("arrondit une hauteur en pixels à la case supérieure", () => {
+    expect(rowsFor(10)).toBe(2);
+    expect(rowsFor(136)).toBe(2);
+    expect(rowsFor(137)).toBe(3);
+  });
+
   it("détecte les collisions", () => {
     expect(collides({ x: 0, y: 0, w: 2, h: 2 }, { x: 1, y: 1, w: 2, h: 2 })).toBe(true);
     expect(collides({ x: 0, y: 0, w: 2, h: 2 }, { x: 2, y: 0, w: 2, h: 2 })).toBe(false);

@@ -3953,5 +3953,7 @@
   "Not finished": "Interrumpido",
   "This can take several minutes. You can keep using your Mac.": "Puede tardar varios minutos. Puede seguir usando su Mac.",
   "The prepared bottle was not found": "No se encuentra la botella preparada",
-  "Details": "Detalles"
+  "Details": "Detalles",
+  "Automatic layout": "Disposición automática",
+  "Let mORTEX arrange the cards, without gaps": "Dejar que mORTEX ordene las tarjetas, sin huecos"
 }

@@ -56,10 +56,18 @@
     width: 100%;
 }
 
+/* disposition automatique : lignes sans trou, lignes incomplètes centrées, hauteur du contenu */
+.dash-grid-auto {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    gap: 16px;
+}
+
 /* carte seule : centrée dans la zone, jamais tronquée (le défilement passe à la page) */
 .dash-grid-solo {
-    display: grid;
-    place-items: center;
+    align-content: center;
     min-height: 100%;
 }
 
@@ -79,18 +87,26 @@
     }
 }
 
-.dash-item-solo {
+.dash-item-auto {
     position: relative;
-    width: min(720px, 100%);
+    flex: 0 0 calc((100% + 16px) * var(--dash-cols) / 6 - 16px);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
     transition: none;
 
     .dash-item-content {
+        flex: 1 1 auto;
         height: auto;
         overflow: visible;
     }
 
     .dashlet {
         height: auto;
+    }
+
+    .dash-grid-solo & {
+        flex: 0 1 720px;
     }
 }
 

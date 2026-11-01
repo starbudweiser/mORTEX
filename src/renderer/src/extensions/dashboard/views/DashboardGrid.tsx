@@ -9,9 +9,9 @@ import {
   columnWidth,
   GAP,
   resolveLayout,
-  MIN_H,
   ROW_HEIGHT,
   rowCount,
+  rowsFor,
   sizeAt,
   toPixels,
 } from "../gridLayout";
@@ -27,7 +27,10 @@ export interface IProps {
   /** positions des cartes, collisions déjà résolues */
   rects: RectMap;
   editMode: boolean;
-  onCommit: (rects: RectMap) => void;
+  /** l'utilisateur a placé lui-même ses cartes */
+  customized: boolean;
+  /** `byUser` : geste de l'utilisateur, pas un ajustement automatique */
+  onCommit: (rects: RectMap, byUser: boolean) => void;
   onDismiss: (id: string) => void;
   /** cartes encore sans position enregistrée : leur hauteur est ajustée au contenu à la première pose */
   autoFit: string[];
@@ -61,7 +64,7 @@ const PRESETS = [
  * est montrée par un cadre en pointillés, les cartes gênées s'écartent.
  */
 function DashboardGrid(props: IProps): JSX.Element {
-  const { items, rects, editMode, onCommit, onDismiss, autoFit, t } = props;
+  const { items, rects, editMode, customized, onCommit, onDismiss, autoFit, t } = props;
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [width, setWidth] = React.useState(0);
   const [drag, setDrag] = React.useState<IDrag | undefined>(undefined);
@@ -78,8 +81,9 @@ function DashboardGrid(props: IProps): JSX.Element {
   }, []);
 
   const colW = columnWidth(width);
-  // une carte seule n'a rien à composer : elle se centre, à la hauteur de tout son contenu
   const solo = !editMode && items.length === 1;
+  // disposition automatique : le navigateur compose les lignes, sans case ni position enregistrée
+  const auto = !editMode && (!customized || solo);
 
   const preview = React.useMemo<RectMap>(
     () => (drag === undefined ? rects : resolveLayout({ ...rects, [drag.id]: drag.cell }, drag.id)),
@@ -133,7 +137,7 @@ function DashboardGrid(props: IProps): JSX.Element {
       }
       const final = resolveLayout({ ...rects, [drag.id]: drag.cell }, drag.id);
       setDrag(undefined);
-      onCommit(final);
+      onCommit(final, true);
     },
     [drag, rects, onCommit],
   );
@@ -153,7 +157,7 @@ function DashboardGrid(props: IProps): JSX.Element {
     const natural = card.offsetHeight;
     card.style.flex = prev.flex;
     card.style.height = prev.height;
-    return Math.max(MIN_H, Math.ceil((natural + GAP) / (ROW_HEIGHT + GAP)));
+    return rowsFor(natural);
   }, []);
 
   const latest = React.useRef(rects);
@@ -164,7 +168,10 @@ function DashboardGrid(props: IProps): JSX.Element {
     (id: string) => {
       const h = naturalRows(id);
       if (h !== undefined) {
-        onCommit(resolveLayout({ ...latest.current, [id]: { ...latest.current[id], h } }, id));
+        onCommit(
+          resolveLayout({ ...latest.current, [id]: { ...latest.current[id], h } }, id),
+          true,
+        );
       }
     },
     [naturalRows, onCommit],
@@ -174,7 +181,7 @@ function DashboardGrid(props: IProps): JSX.Element {
   const preset = React.useCallback(
     (id: string, w: number) => {
       const rect = { ...latest.current[id], w, x: Math.min(latest.current[id].x, COLS - w) };
-      onCommit(resolveLayout({ ...latest.current, [id]: rect }, id));
+      onCommit(resolveLayout({ ...latest.current, [id]: rect }, id), true);
       // la hauteur dépend de la largeur : on la mesure une fois la carte redimensionnée
       window.setTimeout(() => fitHeight(id), 260);
     },
@@ -183,7 +190,7 @@ function DashboardGrid(props: IProps): JSX.Element {
 
   // première pose : chaque nouvelle carte prend la hauteur de son contenu
   React.useEffect(() => {
-    if (autoFit.length === 0 || colW === 0) {
+    if (autoFit.length === 0 || colW === 0 || !customized) {
       return undefined;
     }
     const timer = window.setTimeout(() => {
@@ -194,13 +201,13 @@ function DashboardGrid(props: IProps): JSX.Element {
           next[id] = { ...next[id], h };
         }
       }
-      onCommit(resolveLayout(next));
+      onCommit(resolveLayout(next), false);
     }, 120);
     return () => window.clearTimeout(timer);
-  }, [autoFit, colW, naturalRows, onCommit]);
+  }, [autoFit, colW, customized, naturalRows, onCommit]);
 
   const rows = rowCount(preview) + (editMode ? SPARE_ROWS : 0);
-  const style: React.CSSProperties = solo
+  const style: React.CSSProperties = auto
     ? {}
     : { height: rows > 0 ? rows * (ROW_HEIGHT + GAP) - GAP : 0 };
   if (editMode && colW > 0) {
@@ -212,15 +219,20 @@ function DashboardGrid(props: IProps): JSX.Element {
 
   const renderItem = (item: IGridItem): JSX.Element | null => {
     const rect = preview[item.id];
-    if (rect === undefined || colW === 0) {
-      return null;
-    }
-    if (solo) {
+    if (auto) {
       return (
-        <div key={item.id} id={item.id} className="dash-item dash-item-solo">
+        <div
+          key={item.id}
+          id={item.id}
+          className="dash-item dash-item-auto"
+          style={{ "--dash-cols": rect?.w ?? COLS } as React.CSSProperties}
+        >
           <div className="dash-item-content">{item.content}</div>
         </div>
       );
+    }
+    if (rect === undefined || colW === 0) {
+      return null;
     }
     const px = toPixels(rect, colW);
     const dragged = drag?.id === item.id;
@@ -309,7 +321,9 @@ function DashboardGrid(props: IProps): JSX.Element {
   return (
     <div
       ref={containerRef}
-      className={solo ? "dash-grid dash-grid-solo" : "dash-grid"}
+      className={["dash-grid", auto ? "dash-grid-auto" : "", solo ? "dash-grid-solo" : ""].join(
+        " ",
+      )}
       style={style}
     >
       {ghost !== undefined ? (
