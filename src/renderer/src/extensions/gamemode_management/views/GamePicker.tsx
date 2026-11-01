@@ -26,6 +26,7 @@ import { setShowHiddenGames } from "../actions/session";
 import { setPickerLayout, setSortManaged, setSortUnmanaged } from "../actions/settings";
 import { AddedGames } from "../components/added_games/AddedGames";
 import { DetectedGames } from "../components/detected_games/DetectedGames";
+import { OtherGamesNotice } from "../components/other_games/OtherGamesNotice";
 import { Search } from "../components/search/Search";
 import { Section } from "../components/section/Section";
 import { SupportedGames } from "../components/supported_games/SupportedGames";
@@ -364,10 +365,20 @@ const GamePicker = ({
     }),
   );
 
-  const filteredManaged = managedGameList.filter(applyGameFilter).sort(sortBy(sortManaged));
+  // mORTEX (macOS) : cette version a d'abord été développée pour Skyrim, les autres jeux sont masqués
+  const skyrimOnly = process.platform === "darwin";
+  const inScope = (game: IGameStored) => !skyrimOnly || game.id.startsWith("skyrim");
+
+  const filteredManaged = managedGameList
+    .filter(inScope)
+    .filter(applyGameFilter)
+    .sort(sortBy(sortManaged));
   // The section owns its own sort control, so the input is only filtered here.
-  const filteredDetected = detectedGameList.filter(applyGameFilter);
-  const filteredSupported = supportedGameList.filter(applyGameFilter).sort(sortBy(sortUnmanaged));
+  const filteredDetected = detectedGameList.filter(inScope).filter(applyGameFilter);
+  const filteredSupported = supportedGameList
+    .filter(inScope)
+    .filter(applyGameFilter)
+    .sort(sortBy(sortUnmanaged));
 
   const displayOptions = useDisplayOptionsAction({
     pickerLayout,
@@ -445,17 +456,21 @@ const GamePicker = ({
           onSortChange={onSetSortManaged}
         />
 
-        <SupportedGames
-          count={getTabGameNumber(supportedGameList, filteredSupported)}
-          filterValue={currentFilterValue}
-          games={filteredSupported}
-          ref={supportedSectionRef}
-          sortOrder={sortUnmanaged}
-          onBrowseGameLocation={onBrowseGameLocation}
-          onPageChange={scrollToSupported}
-          onRefreshGameInfo={onRefreshGameInfo}
-          onSortChange={onSetSortUnmanaged}
-        />
+        {(!skyrimOnly || filteredSupported.length > 0) && (
+          <SupportedGames
+            count={getTabGameNumber(supportedGameList.filter(inScope), filteredSupported)}
+            filterValue={currentFilterValue}
+            games={filteredSupported}
+            ref={supportedSectionRef}
+            sortOrder={sortUnmanaged}
+            onBrowseGameLocation={onBrowseGameLocation}
+            onPageChange={scrollToSupported}
+            onRefreshGameInfo={onRefreshGameInfo}
+            onSortChange={onSetSortUnmanaged}
+          />
+        )}
+
+        {skyrimOnly && <OtherGamesNotice />}
       </PageScroll>
     </Page>
   );

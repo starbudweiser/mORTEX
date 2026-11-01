@@ -3933,5 +3933,8 @@
   "Full width": "Ancho completo",
   "Fit": "Ajustar",
   "Compact": "Compactar",
+  "Other games": "Otros juegos",
+  "The other games supported by Vortex are potentially compatible, but this version of mORTEX was developed for Skyrim first. They are hidden for now.": "Los demás juegos compatibles con Vortex son potencialmente compatibles, pero esta versión de mORTEX se desarrolló primero para Skyrim. Por ahora están ocultos.",
+  "Development will continue and may open up to the other games supported by Vortex.": "El desarrollo continuará y podrá abrirse a los demás juegos compatibles con Vortex.",
   "Move the cards up to close the empty spaces": "Subir las tarjetas para cerrar los espacios vacíos"
 }
