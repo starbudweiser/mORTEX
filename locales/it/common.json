@@ -3946,5 +3946,6 @@
   "Bottle location: {{path}}": "Posizione della bottiglia: {{path}}",
   "Change…": "Cambia…",
   "This disk can't hold a bottle: choose a disk formatted as APFS or Mac OS Extended.": "Questo disco non può ospitare una bottiglia: scegli un disco formattato APFS o Mac OS esteso.",
-  "Less than 30 GB is free here: Steam, Skyrim and your mods need more.": "Qui ci sono meno di 30 GB liberi: Steam, Skyrim e i tuoi mod richiedono più spazio."
+  "Less than 30 GB is free here: Steam, Skyrim and your mods need more.": "Qui ci sono meno di 30 GB liberi: Steam, Skyrim e i tuoi mod richiedono più spazio.",
+  "Steam is starting: its first update can take several minutes.": "Steam si sta avviando: il primo aggiornamento può richiedere alcuni minuti."
 }

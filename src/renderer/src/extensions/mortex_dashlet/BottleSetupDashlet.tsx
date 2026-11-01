@@ -54,6 +54,7 @@ function BottleSetupDashlet() {
   const [phase, setPhase] = useState<Phase>("idle");
   const [statuses, setStatuses] = useState<Partial<Record<SetupStep, StepStatus>>>({});
   const [error, setError] = useState<string>();
+  const [steamStarting, setSteamStarting] = useState(false);
 
   const start = () => {
     setPhase("running");
@@ -82,6 +83,7 @@ function BottleSetupDashlet() {
   const launchSteam = () => {
     try {
       openSteam(bottleDir);
+      setSteamStarting(true);
     } catch (err) {
       setError((err as Error).message);
     }
@@ -129,7 +131,9 @@ function BottleSetupDashlet() {
             <p>
               {t(
                 "Everything is downloaded from Valve and Microsoft. By continuing, you accept their licences:",
-              )}{" "}
+              )}
+            </p>
+            <div className="flex gap-1">
               {LICENCES.map((licence) => (
                 <Button
                   appearance="weak"
@@ -141,7 +145,7 @@ function BottleSetupDashlet() {
                   {licence.label}
                 </Button>
               ))}
-            </p>
+            </div>
             <Button onClick={start}>{t("Accept and prepare the bottle")}</Button>
           </>
         )}
@@ -174,6 +178,9 @@ function BottleSetupDashlet() {
               )}
             </Alert>
             {error !== undefined && <Alert severity="danger">{error}</Alert>}
+            {steamStarting && (
+              <p>{t("Steam is starting: its first update can take several minutes.")}</p>
+            )}
             <Button onClick={launchSteam}>{t("Open Steam")}</Button>
           </>
         )}
