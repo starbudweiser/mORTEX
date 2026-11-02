@@ -44,6 +44,16 @@ describe("time machine", () => {
 
   afterEach(() => fs.rmSync(tmp, { recursive: true, force: true }));
 
+  it("leaves out a mod that is still being installed", async () => {
+    write(path.join(staging, "ModB.installing", "b.esp"), "half extracted");
+    write(path.join(staging, ".hidden", "h.txt"), "hidden");
+
+    const snapshot = await take(1 * HOUR);
+
+    const kept = fs.readdirSync(path.join(root, snapshot.id, "staging")).sort();
+    expect(kept).toEqual([".hidden", "ModA"]);
+  });
+
   const take = (now: number) =>
     createSnapshot(root, {
       reason: "manual",

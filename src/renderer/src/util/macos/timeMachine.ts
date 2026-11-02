@@ -76,13 +76,40 @@ const cp = (args: string[]) =>
 const cloneFile = (src: string, dst: string) =>
   cp(["-cp", src, dst]).catch(() => cp(["-p", src, dst]));
 
-/** clone le contenu de `src` dans `dst` (créé au besoin) */
-async function cloneContents(src: string, dst: string): Promise<void> {
+/** dossier d'un mod en cours d'installation : il disparaît (renommé) dès que le mod est prêt */
+const isInstalling = (name: string) => name.endsWith(".installing");
+
+/**
+ * clone le contenu de `src` dans `dst` (créé au besoin). Avec `skip`, chaque entrée est copiée à
+ * part : une entrée retirée entre la lecture du dossier et sa copie (un mod qui finit de
+ * s'installer pendant une collection) est ignorée au lieu de faire échouer tout l'instantané.
+ */
+async function cloneContents(
+  src: string,
+  dst: string,
+  skip?: (name: string) => boolean,
+): Promise<void> {
   await mkdir(dst, { recursive: true });
-  const entries = await readdir(src).catch(() => [] as string[]);
+  const entries = (await readdir(src).catch(() => [] as string[])).filter(
+    (name) => skip === undefined || !skip(name),
+  );
   if (entries.length === 0) return;
-  // « src/. » copie le contenu sans recréer le dossier lui-même
-  await cp(["-cRp", `${src}/.`, dst]);
+  if (skip === undefined) {
+    // « src/. » copie le contenu sans recréer le dossier lui-même
+    await cp(["-cRp", `${src}/.`, dst]);
+    return;
+  }
+  const CHUNK = 200;
+  for (let from = 0; from < entries.length; from += CHUNK) {
+    const chunk = entries.slice(from, from + CHUNK).map((name) => path.join(src, name));
+    await cp(["-cRp", ...chunk, dst]).catch(async () => {
+      for (const entry of chunk) {
+        await cp(["-cRp", entry, dst]).catch(async (err) => {
+          if (await exists(entry)) throw err;
+        });
+      }
+    });
+  }
 }
 
 export async function canClone(paths: string[]): Promise<boolean> {
@@ -114,7 +141,7 @@ export async function createSnapshot(root: string, input: ISnapshotInput): Promi
   await mkdir(path.join(partial, "config"), { recursive: true });
 
   await cloneContents(input.dataPath, path.join(partial, "Data"));
-  await cloneContents(input.stagingPath, path.join(partial, "staging"));
+  await cloneContents(input.stagingPath, path.join(partial, "staging"), isInstalling);
   const config: ISnapshotConfigFile[] = [];
   for (const [idx, file] of input.configFiles.entries()) {
     if (!(await exists(file))) continue;
