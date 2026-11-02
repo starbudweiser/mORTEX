@@ -259,7 +259,9 @@ export function lookupFromDownload(download: IDownload): IModLookupInfo {
     version: download.modInfo?.version ?? download.modInfo?.meta?.fileVersion,
     logicalFileName: download.modInfo?.name ?? download.modInfo?.meta?.logicalFileName,
     game: download.game,
-    source: download.modInfo?.source,
+    // mORTEX : une archive indexée sans passer par un téléchargement n'a sa source que dans ses
+    // métadonnées ; sans elle, aucune règle de collection ne la reconnaissait
+    source: download.modInfo?.source ?? download.modInfo?.meta?.source,
     referenceTag: download.modInfo?.referenceTag,
     referenceTags: download.modInfo?.referenceTags,
     modId,

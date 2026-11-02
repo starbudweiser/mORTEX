@@ -403,4 +403,63 @@ describe("stall recovery", () => {
       }
     },
   );
+
+  imTest("an idle install gives up within two minutes", async ({ makeInstallManager }) => {
+    vi.useFakeTimers();
+    try {
+      const { h } = makeParkedInstall(makeInstallManager, { noDownloadRecord: true });
+      const mgr = internals(h.manager);
+      mgr.mDependencyInstalls[COLLECTION] = () => undefined;
+
+      const polling = mgr.pollAllPhasesComplete(h.api, COLLECTION);
+      await vi.advanceTimersByTimeAsync(122_000);
+      await polling;
+
+      expect(h.getState().session.collections.activeSession?.stalled).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  imTest("a dialog waiting for the user is not a stall", async ({ makeInstallManager }) => {
+    vi.useFakeTimers();
+    try {
+      const { h } = makeParkedInstall(makeInstallManager, { noDownloadRecord: true });
+      h.setState((draft) => {
+        Object.assign(draft.session, {
+          fomod: { installer: { dialog: { activeInstanceId: "fomod-1" } } },
+        });
+      });
+      const mgr = internals(h.manager);
+      mgr.mDependencyInstalls[COLLECTION] = () => undefined;
+
+      const polling = mgr.pollAllPhasesComplete(h.api, COLLECTION);
+      await vi.advanceTimersByTimeAsync(700_000);
+      expect(h.getState().session.collections.activeSession?.stalled).not.toBe(true);
+
+      delete mgr.mDependencyInstalls[COLLECTION];
+      await vi.advanceTimersByTimeAsync(600);
+      await polling;
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  // an archive from an old download folder carries neither tag nor source: its hash is all it has
+  imTest("a bare archive is matched to its rule by hash", async ({ makeInstallManager }) => {
+    const { h, phaseState } = makeParkedInstall(makeInstallManager, { optionalTagged: false });
+    h.setState((draft) => {
+      draft.persistent.downloads.files["dl-opt"].modInfo = {};
+      draft.persistent.mods[GAME][COLLECTION].rules[1].reference.repo = {
+        repository: "nexus",
+        modId: "1",
+        fileId: "2",
+      };
+    });
+
+    const queued = internals(h.manager).handleDownloadFinished(h.api, "dl-opt", COLLECTION);
+
+    expect(queued).toBe(true);
+    expect(phaseState.downloadLookupCache?.byMd5.get("md5-opt-a")).toBe("dl-opt");
+  });
 });

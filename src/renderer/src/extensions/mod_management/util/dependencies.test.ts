@@ -8,11 +8,11 @@
  */
 import { describe, expect, vi } from "vitest";
 
-import { makeMod, makeReference, makeRule } from "../../../test-utils/builders";
+import { makeDownload, makeMod, makeReference, makeRule } from "../../../test-utils/builders";
 import { test } from "../../../test-utils/harnessTest";
 import { modRuleId } from "../../../util/collectionInstallSession";
 import type { IMod } from "../types/IMod";
-import gatherDependencies, { selectedOptionalRules } from "./dependencies";
+import gatherDependencies, { lookupFromDownload, selectedOptionalRules } from "./dependencies";
 
 vi.mock("../../../util/log", () => ({ log: vi.fn() }));
 
@@ -41,6 +41,14 @@ describe("selectedOptionalRules", () => {
   test("tolerates an empty / undefined rule list", () => {
     expect(selectedOptionalRules([], {})).toEqual([]);
     expect(selectedOptionalRules(undefined as unknown as [], {})).toEqual([]);
+  });
+});
+
+describe("lookupFromDownload", () => {
+  test("reads the source of an indexed archive from its metadata", () => {
+    const download = makeDownload({ modInfo: { meta: { source: "nexus" } } });
+
+    expect(lookupFromDownload(download).source).toBe("nexus");
   });
 });
 

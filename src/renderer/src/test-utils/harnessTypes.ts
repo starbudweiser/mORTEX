@@ -320,6 +320,7 @@ export interface IManagerInternals {
   driveSelectedOptionals: (api: unknown, sourceModId: string) => void;
   admitSettledOptionalPhase: (sourceModId: string, api: unknown) => void;
   pollAllPhasesComplete: (api: unknown, sourceModId: string) => Promise<void>;
+  handleDownloadFinished: (api: unknown, downloadId: string, sourceModId?: string) => boolean;
   doInstallDependencies: (
     api: unknown,
     gameId: string,

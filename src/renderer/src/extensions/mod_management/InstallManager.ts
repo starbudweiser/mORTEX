@@ -159,6 +159,7 @@ import { isExtensionDownload } from "../extension_manager/queries";
 import { discoveryByGame } from "../gamemode_management/selectors";
 import type { IModType } from "../gamemode_management/types/IModType";
 import { getGame } from "../gamemode_management/util/getGame";
+import { hasActiveFomodDialog } from "../installer_fomod_shared/utils/helpers";
 import { convertGameIdReverse } from "../nexus_integration/util/convertGameId";
 import { setModEnabled, setModsEnabled } from "../profile_management/actions/profiles";
 import {
@@ -378,9 +379,15 @@ function findCollectionByDownload(
 
     // Download lookups will not hold any patch/filelist/installerChoices info.
     //  Which is why in this case we want to ensure that we only match using regular reference fields.
-    const matchingRule = collectionMod.rules?.find((rule) =>
-      testModReference(lookup, rule.reference),
-    );
+    // mORTEX : une empreinte identique désigne le même fichier, même si l'archive n'a aucune
+    // métadonnée (ancien dossier de téléchargements) : le membre ne doit pas rester sans suite
+    const matchingRule =
+      collectionMod.rules?.find((rule) => testModReference(lookup, rule.reference)) ??
+      collectionMod.rules?.find(
+        (rule) =>
+          truthy(download.fileMD5) &&
+          (rule.reference.fileMD5 ?? rule.reference.md5Hint) === download.fileMD5,
+      );
 
     if (matchingRule) {
       return { collectionMod, matchingRule, gameId };
@@ -2821,6 +2828,8 @@ class InstallManager {
     // If no progress (new mods reaching terminal state) is made for this
     // duration, attempt a rescue (force-clean stuck installs + requeue).
     const STALL_TIMEOUT_MS = 5 * 60 * 1000;
+    // mORTEX : quand plus rien ne tourne, attendre ne peut rien débloquer
+    const IDLE_STALL_TIMEOUT_MS = 60 * 1000;
 
     return new Promise<void>((resolve) => {
       let lastProgressTime = Date.now();
@@ -2850,8 +2859,18 @@ class InstallManager {
           rescueAttempted = false;
         }
 
+        // mORTEX : un téléchargement facultatif en cours ou une fenêtre laissée ouverte n'est pas un
+        // blocage : sans cela, le secours annulait l'installation d'un FOMOD resté 5 min à l'écran
+        if (this.mOptionalDownloadsInFlight.size > 0 || this.isWaitingForUser(api)) {
+          lastProgressTime = Date.now();
+        }
+
+        const isIdle =
+          !this.hasActiveOrPendingInstallation(sourceModId) &&
+          !phaseState.isDeploying &&
+          (phaseState.deploymentPromises?.size ?? 0) === 0;
         const stallDuration = Date.now() - lastProgressTime;
-        if (stallDuration > STALL_TIMEOUT_MS) {
+        if (stallDuration > (isIdle ? IDLE_STALL_TIMEOUT_MS : STALL_TIMEOUT_MS)) {
           if (!rescueAttempted) {
             // First timeout: attempt rescue
             log("warn", "Collection install stalled, attempting rescue", {
@@ -3262,6 +3281,15 @@ class InstallManager {
 
     return Object.values(session.mods).filter((mod: any) => isTerminalMemberStatus(mod.status))
       .length;
+  }
+
+  private isWaitingForUser(api: IExtensionApi): boolean {
+    const { session } = api.getState();
+    return (
+      (session.notifications?.dialogs?.length ?? 0) > 0 ||
+      hasActiveFomodDialog(api) ||
+      session.browser?.url !== undefined
+    );
   }
 
   // Helper to check if an archiveId has pending or active installations
