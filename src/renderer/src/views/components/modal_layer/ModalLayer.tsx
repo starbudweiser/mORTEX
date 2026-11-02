@@ -457,7 +457,9 @@ export const ModalLayer = () => {
 
   return (
     <Modal
-      className="mortex-modal-fit"
+      className={
+        dialog.type === "error" ? "mortex-modal-fit mortex-modal-error" : "mortex-modal-fit"
+      }
       initialFocusRef={inputs.length > 0 ? firstInputRef : defaultButtonRef}
       isOpen
       key={id}

@@ -114,7 +114,7 @@ function runCheck(api: IExtensionApi, check: ICheckEntry): Promise<void> {
         const showMore = () =>
           api.store.dispatch(
             showDialog(
-              "info",
+              "error",
               "Check failed",
               {
                 bbcode: result.description.long,
