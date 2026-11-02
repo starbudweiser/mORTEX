@@ -152,7 +152,7 @@ function init(context: IExtensionContext): boolean {
     5000,
   );
 
-  context.registerAction("mod-icons", 115, "undo", {}, "Reset to manifest", () => {
+  context.registerAction("mod-icons", 115, "undo", {}, "Reset to last deployment", () => {
     void resetToManifest(context.api);
   });
 

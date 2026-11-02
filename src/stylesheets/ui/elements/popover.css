@@ -17,7 +17,8 @@
         overflow-y: auto;
         padding-block: calc(var(--spacing) * 1);
         min-width: calc(var(--spacing) * 52);
-        max-width: calc(var(--spacing) * 72) !important;
+        /* mORTEX : assez large pour « Désactiver l'application automatique » sans coupure */
+        max-width: calc(var(--spacing) * 88) !important;
     }
 
     .nxm-popover-panel-group {

@@ -78,6 +78,7 @@ import { setAutoDeployment } from "../settings_interface/actions/automation";
 import { setDeploymentNecessary, setDeploymentPurged } from "./actions/deployment";
 import { cacheModReference, removeMod, setModAttribute } from "./actions/mods";
 import { setDeploymentProblem } from "./actions/session";
+import { setBetaModsTable } from "./actions/settings";
 import { setTransferMods } from "./actions/transactions";
 import { CollectionUpdateWarning } from "./components/collection_update_warning/CollectionUpdateWarning";
 import {
@@ -2416,6 +2417,11 @@ function init(context: IExtensionContext): boolean {
 
   context.once(() => {
     once(context.api);
+
+    // mORTEX : la liste classique n'a plus de bascule ; qui y était resté retrouve la nouvelle
+    if (context.api.getState().settings.mods?.betaTable !== true) {
+      context.api.store?.dispatch(setBetaModsTable(true));
+    }
 
     Object.assign(context.api.ext, extendApi(context.api, installManager));
 

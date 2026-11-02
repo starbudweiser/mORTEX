@@ -25,7 +25,6 @@ import { getIcon } from "@/views/components/icon_map/iconMap";
 
 import NXMUrl from "../../nexus_integration/NXMUrl";
 import { setAutoDeployment } from "../../settings_interface/actions/automation";
-import { setBetaModsTable } from "../actions/settings";
 import { selectModsToUpdate } from "../util/collection_update_warning/collectionUpdateWarning";
 import { NoDeployment } from "../util/exceptions";
 import metaLookupMatch from "../util/metaLookupMatch";
@@ -53,8 +52,8 @@ interface IPositionedAction {
  * Categories, Manage Rules, Purge — comes from these and from the positions passed to
  * `registerAction` elsewhere, so a change here moves the action in the overflow menu
  * too. Purge keeps the position it had as a component, which puts it at the end of the
- * row. There's no Deploy: the menu's Apply button does that. Auto-apply and the view
- * switch come after everything else, each in a section of its own.
+ * row. There's no Deploy: the menu's Apply button does that. Auto-apply comes after
+ * everything else, in a section of its own.
  */
 const POSITION = {
   installFromFile: 25,
@@ -63,7 +62,6 @@ const POSITION = {
   purge: 110,
   import: 120,
   autoApply: 990,
-  betaTable: 1000,
 };
 
 /**
@@ -113,8 +111,7 @@ const EMPTY_MODS: { [modId: string]: IModWithState } = {};
 
 /**
  * Turns auto-apply on or off: whether enabling or disabling a mod applies the change at
- * once. Not pinned, and lit while on. Next to last, in a section of its own above the view
- * switch. Replaces the switch the modern layout's settings had.
+ * once. Not pinned, and lit while on. Last, in a section of its own. Replaces the switch the modern layout's settings had.
  */
 const useAutoApplyAction = (t: TFunction): IPositionedAction => {
   const dispatch = useDispatch();
@@ -144,42 +141,6 @@ const useAutoApplyAction = (t: TFunction): IPositionedAction => {
       },
     }),
     [autoApply, dispatch, t],
-  );
-};
-
-/**
- * Switches the Mods page between the classic table and the new one, in beta. After every
- * other action, in a section of its own in the overflow menu, and lit while the beta is on.
- */
-const useBetaTableAction = (t: TFunction): IPositionedAction => {
-  const dispatch = useDispatch();
-  const betaTable = useSelector((state: IState) => state.settings.mods.betaTable === true);
-
-  return useMemo(
-    () => ({
-      position: POSITION.betaTable,
-      action: {
-        id: "beta-table",
-        ...(betaTable
-          ? {
-              label: t("Switch to classic view"),
-              description: t("Return to the original mod list."),
-            }
-          : {
-              label: t("Switch to beta view"),
-              description: t("Try the new mod list. Some features aren't supported yet."),
-            }),
-        icon: "experiment",
-        active: betaTable,
-        pinned: true,
-        section: "view",
-        testId: "beta-mods-table",
-        // The view it switches to.
-        trackingProperties: { view: betaTable ? "classic" : "beta" },
-        onClick: () => dispatch(setBetaModsTable(!betaTable)),
-      },
-    }),
-    [betaTable, dispatch, t],
   );
 };
 
@@ -671,7 +632,6 @@ export const useModToolbarActions = (
   const checkVersions = useCheckVersionsAction(t);
   const purge = usePurgeAction(t);
   const autoApply = useAutoApplyAction(t);
-  const betaTable = useBetaTableAction(t);
   const registered = useRegisteredActions("mod-icons", t);
 
   const byIcon = useMemo(() => _.groupBy(registered, (entry) => entry.icon), [registered]);
@@ -690,10 +650,10 @@ export const useModToolbarActions = (
 
   return useMemo(
     () =>
-      [installFromFile, checkVersions, autoApply, purge, open, importFrom, betaTable, ...ownRow]
+      [installFromFile, checkVersions, autoApply, purge, open, importFrom, ...ownRow]
         .filter((entry): entry is IPositionedAction => entry !== undefined)
         .sort((lhs, rhs) => lhs.position - rhs.position)
         .map((entry) => entry.action),
-    [autoApply, betaTable, checkVersions, importFrom, installFromFile, open, ownRow, purge],
+    [autoApply, checkVersions, importFrom, installFromFile, open, ownRow, purge],
   );
 };

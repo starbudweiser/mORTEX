@@ -66,7 +66,6 @@ vi.mock("react-redux", async () => {
 });
 
 import { setAutoDeployment } from "../../settings_interface/actions/automation";
-import { setBetaModsTable } from "../actions/settings";
 import { useModToolbarActions } from "./useModToolbarActions.hook";
 
 const t = ((key: string) => key) as never;
@@ -248,12 +247,11 @@ describe("useModToolbarActions auto-apply", () => {
 
   const autoApply = () => actionsFor([]).find((action) => action.id === "auto-apply");
 
-  it("comes just before the view switch, unpinned, in a section of its own", () => {
+  it("comes last, unpinned, in a section of its own", () => {
     const actions = actionsFor([plain("Manage Rules")]);
 
-    expect(actions.at(-2)).toMatchObject({ id: "auto-apply", section: "automation" });
-    expect(actions.at(-1)?.section).not.toBe("automation");
-    expect(actions.at(-3)?.section).not.toBe("automation");
+    expect(actions.at(-1)).toMatchObject({ id: "auto-apply", section: "automation" });
+    expect(actions.at(-2)?.section).not.toBe("automation");
     expect(autoApply()?.pinned).toBeFalsy();
   });
 
@@ -290,49 +288,9 @@ describe("useModToolbarActions auto-apply", () => {
   });
 });
 
-describe("useModToolbarActions beta table", () => {
-  afterEach(() => {
-    state.settings.mods.betaTable = false;
-    dispatch.mockClear();
-  });
-
-  const betaTable = () => actionsFor([]).find((action) => action.id === "beta-table");
-
-  it("comes last, pinned, in a section of its own", () => {
-    const actions = actionsFor([plain("Manage Rules")]);
-
-    expect(actions.at(-1)).toMatchObject({ id: "beta-table", pinned: true, section: "view" });
-  });
-
-  it("shows the experiment flask", () => {
-    expect(betaTable()?.icon).toBe("experiment");
-  });
-
-  it("offers the beta view while the classic one shows", () => {
-    expect(betaTable()).toMatchObject({
-      label: "Switch to beta view",
-      description: "Try the new mod list. Some features aren't supported yet.",
-      active: false,
-      trackingProperties: { view: "beta" },
-    });
-
-    betaTable()?.onClick?.();
-
-    expect(dispatch).toHaveBeenCalledWith(setBetaModsTable(true));
-  });
-
-  it("offers the classic view, lit, while the beta one shows", () => {
-    state.settings.mods.betaTable = true;
-
-    expect(betaTable()).toMatchObject({
-      label: "Switch to classic view",
-      description: "Return to the original mod list.",
-      active: true,
-      trackingProperties: { view: "classic" },
-    });
-
-    betaTable()?.onClick?.();
-
-    expect(dispatch).toHaveBeenCalledWith(setBetaModsTable(false));
+// mORTEX : plus de bascule vers la liste classique, qui n'a aucun ajout de mORTEX
+describe("useModToolbarActions view switch", () => {
+  it("offers no switch to the classic view", () => {
+    expect(actionsFor([]).find((action) => action.id === "beta-table")).toBeUndefined();
   });
 });
