@@ -7568,6 +7568,10 @@ class InstallManager {
     gameId: string,
   ): Promise<void> {
     const now = Date.now();
+    // mORTEX : un FOMOD peut ne rien installer (aucune option cochée) ; le mod garde quand même son
+    // dossier, sinon la liste de plugins et le déploiement le disent « introuvable sur le disque »
+    await fs.ensureDirAsync(destinationPath);
+
     // Strategy:
     //  - dedupe and pre-create parent directories once
     //  - link files in parallel with a bounded concurrency
