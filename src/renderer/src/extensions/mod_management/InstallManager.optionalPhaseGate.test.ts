@@ -445,6 +445,37 @@ describe("stall recovery", () => {
     }
   });
 
+  imTest("a download that advances is not a stall", async ({ makeInstallManager }) => {
+    vi.useFakeTimers();
+    try {
+      const { h } = makeParkedInstall(makeInstallManager, { noDownloadRecord: true });
+      h.setState((draft) => {
+        draft.persistent.downloads.files["dl-big"] = makeDownload({
+          id: "dl-big",
+          state: "started",
+          received: 1,
+        });
+      });
+      const mgr = internals(h.manager);
+      mgr.mDependencyInstalls[COLLECTION] = () => undefined;
+
+      const polling = mgr.pollAllPhasesComplete(h.api, COLLECTION);
+      for (let received = 2; received < 8; ++received) {
+        h.setState((draft) => {
+          draft.persistent.downloads.files["dl-big"].received = received;
+        });
+        await vi.advanceTimersByTimeAsync(50_000);
+      }
+      expect(h.getState().session.collections.activeSession?.stalled).not.toBe(true);
+
+      delete mgr.mDependencyInstalls[COLLECTION];
+      await vi.advanceTimersByTimeAsync(600);
+      await polling;
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   // the curator's exact archive was replaced by an update, and the rule asks for the latest version
   imTest("a latest-version rule installs the newer archive", async ({ makeInstallManager }) => {
     const { h, phaseState } = makeParkedInstall(makeInstallManager, { optionalTagged: false });

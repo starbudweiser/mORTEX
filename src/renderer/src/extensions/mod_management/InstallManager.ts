@@ -2845,6 +2845,7 @@ class InstallManager {
       let lastProgressTime = Date.now();
       let lastTerminalCount = this.getTerminalModCount(api, sourceModId);
       let rescueAttempted = false;
+      let lastDownloadedBytes = 0;
 
       const poll = () => {
         const phaseState = this.mPhaseTracker.get(sourceModId);
@@ -2869,14 +2870,21 @@ class InstallManager {
           rescueAttempted = false;
         }
 
-        // mORTEX : un téléchargement facultatif en cours ou une fenêtre laissée ouverte n'est pas un
-        // blocage : sans cela, le secours annulait l'installation d'un FOMOD resté 5 min à l'écran
-        if (this.mOptionalDownloadsInFlight.size > 0 || this.isWaitingForUser(api)) {
+        // mORTEX : un téléchargement qui avance ou une fenêtre laissée ouverte n'est pas un blocage :
+        // sans cela, le secours annulait l'installation d'un FOMOD resté 5 min à l'écran
+        const running = this.runningDownloads(api);
+        if (
+          this.mOptionalDownloadsInFlight.size > 0 ||
+          this.isWaitingForUser(api) ||
+          running.bytes !== lastDownloadedBytes
+        ) {
+          lastDownloadedBytes = running.bytes;
           lastProgressTime = Date.now();
         }
 
         const isIdle =
           this.mActiveInstalls.size === 0 &&
+          running.count === 0 &&
           !phaseState.isDeploying &&
           (phaseState.deploymentPromises?.size ?? 0) === 0;
         const stallDuration = Date.now() - lastProgressTime;
@@ -3291,6 +3299,16 @@ class InstallManager {
 
     return Object.values(session.mods).filter((mod: any) => isTerminalMemberStatus(mod.status))
       .length;
+  }
+
+  private runningDownloads(api: IExtensionApi): { count: number; bytes: number } {
+    const running = Object.values(api.getState().persistent.downloads.files).filter((download) =>
+      ["init", "started"].includes(download.state),
+    );
+    return {
+      count: running.length,
+      bytes: running.reduce((sum, download) => sum + (download.received ?? 0), 0),
+    };
   }
 
   private isWaitingForUser(api: IExtensionApi): boolean {
