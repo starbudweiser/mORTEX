@@ -445,6 +445,26 @@ describe("stall recovery", () => {
     }
   });
 
+  // the curator's exact archive was replaced by an update, and the rule asks for the latest version
+  imTest("a latest-version rule installs the newer archive", async ({ makeInstallManager }) => {
+    const { h, phaseState } = makeParkedInstall(makeInstallManager, { optionalTagged: false });
+    h.setState((draft) => {
+      const reference = draft.persistent.mods[GAME][COLLECTION].rules[1].reference;
+      reference.versionMatch = "*";
+      reference.logicalFileName = "opt-a";
+      const dl = draft.persistent.downloads.files["dl-opt"];
+      dl.fileMD5 = "md5-newer";
+      dl.localPath = "opt-a";
+      dl.modInfo = {};
+    });
+    const session = h.getState().session.collections.activeSession;
+    const mgr = internals(h.manager);
+
+    mgr.reQueueDownloadedMods(h.api, COLLECTION, Object.values(session.mods), OPTIONAL_PHASE);
+
+    expect(phaseState.downloadLookupCache?.byMd5.get("md5-newer")).toBe("dl-opt");
+  });
+
   // an archive from an old download folder carries neither tag nor source: its hash is all it has
   imTest("a bare archive is matched to its rule by hash", async ({ makeInstallManager }) => {
     const { h, phaseState } = makeParkedInstall(makeInstallManager, { optionalTagged: false });

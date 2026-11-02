@@ -704,6 +704,7 @@ class InstallManager {
     api: IExtensionApi,
     downloadId: string,
     sourceModId?: string,
+    knownRule?: IModRule,
   ): boolean {
     const state = api.getState();
     const stored = state.persistent.downloads.files[downloadId];
@@ -722,7 +723,16 @@ class InstallManager {
     }
 
     // Check if this download is part of a collection installation
-    const collectionInfo = findCollectionByDownload(state, download, sourceModId);
+    // mORTEX : quand l'appelant sait déjà à quelle règle ce téléchargement répond, ne pas la rechercher
+    const gameIdForRule = activeProfile(state)?.gameId;
+    const knownCollectionMod =
+      knownRule !== undefined && sourceModId != null
+        ? state.persistent.mods[gameIdForRule]?.[sourceModId]
+        : undefined;
+    const collectionInfo =
+      knownCollectionMod !== undefined
+        ? { collectionMod: knownCollectionMod, matchingRule: knownRule, gameId: gameIdForRule }
+        : findCollectionByDownload(state, download, sourceModId);
     if (!collectionInfo) {
       return false;
     }
@@ -3375,7 +3385,7 @@ class InstallManager {
         });
         if (!hasPendingOrActive && !existingMod) {
           log("info", "Requeuing download for installation", { downloadId });
-          const success = this.handleDownloadFinished(api, downloadId, sourceModId);
+          const success = this.handleDownloadFinished(api, downloadId, sourceModId, mod.rule);
           if (success) {
             anyQueued = true;
           } else {
@@ -7726,7 +7736,12 @@ class InstallManager {
         return null;
       }
       const download = downloads[id];
-      if (download !== undefined && !isOtherFile(reference, download)) {
+      // mORTEX : une règle « dernière version » accepte justement un autre fichier que celui du
+      // curateur ; le refuser laissait le membre sans suite dès que l'archive exacte avait été remplacée
+      if (
+        download !== undefined &&
+        (isFuzzyVersion(reference.versionMatch) || !isOtherFile(reference, download))
+      ) {
         return id;
       }
       const { [id]: _wrong, ...rest } = pool;
