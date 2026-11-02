@@ -166,6 +166,7 @@ export class IPCDownloadAdapter {
   #speedAccumBytes = 0;
   #lastSpeedDispatch: number | null = null;
   #nextCollationId = 0;
+  readonly #launchTag = Date.now().toString(36);
   #currentMaxParallelDownloads: number | undefined;
   #currentMaxBandwidth: number | undefined;
 
@@ -596,7 +597,9 @@ export class IPCDownloadAdapter {
       // #completeDownload renames to the final name derived from Content-Disposition.
       // The real filename is passed as a hint; the server name takes priority.
       const collationStr = collationId.toString().padStart(8, "0");
-      const tempName = `${TEMP_DOWNLOAD_PREFIX}${collationStr}`;
+      // mORTEX : le compteur repart de zéro à chaque lancement ; sans la marque du lancement, un
+      // nouveau téléchargement écrasait le fichier partiel d'un téléchargement resté en pause
+      const tempName = `${TEMP_DOWNLOAD_PREFIX}${this.#launchTag}_${collationStr}`;
       const dest = path.join(dlPath, tempName);
 
       log("debug", "starting download", {
