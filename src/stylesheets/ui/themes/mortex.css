@@ -3291,3 +3291,13 @@ body.mortex-menu-moving * {
 #install-finished-dialog .modal-body {
     padding: 8px 24px 20px;
 }
+
+/* Bouton « Actualiser » de la liste des collections : 24 px de haut, centré dans la rangée d'onglets
+   (34 px de haut, bouton posé à 6 px du haut de sa colonne) ; la règle de collections.scss ne vise
+   que la page d'une collection */
+.collections-refresh-meta {
+    height: 24px !important;
+    padding-block: 0 !important;
+    line-height: 1 !important;
+    align-items: center !important;
+}
