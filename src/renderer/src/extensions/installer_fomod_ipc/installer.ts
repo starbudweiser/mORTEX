@@ -13,6 +13,7 @@ import {
   getStopPatterns,
   uniPatterns,
 } from "../installer_fomod_shared/utils/gameSupport";
+import { adaptChoicesToInstaller } from "../installer_fomod_shared/utils/reconcileChoices";
 import type { IInstallationDetails } from "../mod_management/types/InstallFunc";
 import { CSharpDelegates } from "./delegates/CSharpDelegates";
 import { createConnectionStrategies } from "./utils/connectionStrategy";
@@ -119,7 +120,7 @@ export const install = async (
       stopPatterns,
       pluginPath,
       destinationPath,
-      fomodChoices,
+      await adaptChoicesToInstaller(files, destinationPath, fomodChoices),
       validate,
     );
 

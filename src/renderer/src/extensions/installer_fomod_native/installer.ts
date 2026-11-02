@@ -10,6 +10,7 @@ import {
   uniPatterns,
 } from "../installer_fomod_shared/utils/gameSupport";
 import { getChoicesFromState } from "../installer_fomod_shared/utils/helpers";
+import { adaptChoicesToInstaller } from "../installer_fomod_shared/utils/reconcileChoices";
 import type { IInstallationDetails } from "../mod_management/types/InstallFunc";
 import { VortexModInstaller } from "./utils/VortexModInstaller";
 
@@ -31,6 +32,8 @@ export const install = async (
     Array.isArray((value as { options?: unknown }).options);
 
   const fomodChoices: IChoices = isFomodChoicesIn(choicesIn) ? choicesIn.options : undefined;
+  // what the engine gets: the recorded choices under the names this version of the installer uses
+  const presetChoices = await adaptChoicesToInstaller(files, scriptPath, fomodChoices);
 
   const invokeInstall = async (validate: boolean) => {
     // When override instructions file is present, use only the universal stop patterns and null pluginPath
@@ -59,7 +62,7 @@ export const install = async (
       stopPatterns,
       pluginPath,
       scriptPath,
-      fomodChoices,
+      presetChoices,
       preselect,
       validate,
     );
