@@ -52,7 +52,9 @@ const retryableStatusCodes = new Set([
  * Creates a retry strategy with exponential backoff and jitter.
  */
 export function defaultRetryStrategy(
-  maxRetries: number = 3,
+  // mORTEX : 6 essais ; sur une grosse archive, une coupure de 30 s pendant une collection
+  // épuisait les 3 essais d'origine et le mod partait en échec
+  maxRetries: number = 6,
   baseDelayMs: number = 1000,
   maxDelayMs: number = 30_000,
 ): RetryStrategy {
