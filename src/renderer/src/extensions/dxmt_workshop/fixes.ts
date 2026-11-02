@@ -46,6 +46,7 @@ import {
   ATTR_SUBSTITUTION_OFF,
   BOTTLED_URL,
 } from "../collections/util/macRenderSubstitution";
+import { getUnfulfilledNotificationId } from "../collections/util/util";
 import type { IMod } from "../mod_management/types/IMod";
 import { getManifest } from "../mod_management/util/activationStore";
 import { setModsEnabled } from "../profile_management/actions/profiles";
@@ -305,6 +306,8 @@ export function fixFor(check: IDxmtCheck, context: IFixContext): IDxmtFix | unde
                 }),
               );
               api.events.emit("resume-collection", gameId, collection.id);
+              // la reprise est lancée : l'avis « Collection incomplète » n'a plus d'objet
+              api.dismissNotification(getUnfulfilledNotificationId(collection.id));
             }
             return {
               text: "Bottled Shaders will be installed with the collection: follow the installation, launch the game once, then check again",
@@ -390,6 +393,8 @@ export function moreFixesFor(check: IDxmtCheck, context: IFixContext): IDxmtFix[
         }
         for (const collection of substituted) {
           api.events.emit("resume-collection", gameId, collection.id);
+          // la reprise est lancée : l'avis « Collection incomplète » n'a plus d'objet
+          api.dismissNotification(getUnfulfilledNotificationId(collection.id));
         }
         return {
           text: "Back to the Community Shaders of the collection: follow its installation, then check again",

@@ -192,6 +192,12 @@ function makeOnUnfulfilledRules(api: IExtensionApi) {
       return Bluebird.resolve(false);
     }
 
+    // mORTEX : son installation est en cours (par exemple relancée par l'Atelier DXMT après le
+    // remplacement de Community Shaders par Bottled Shaders) : inutile de proposer de la reprendre
+    if (driver?.collection?.id === modId) {
+      return Bluebird.resolve(false);
+    }
+
     const collection: IMod = getSafe(state.persistent.mods, [gameId, modId], undefined);
 
     if (
