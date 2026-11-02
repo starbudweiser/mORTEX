@@ -3089,7 +3089,7 @@ body.mortex-menu-moving * {
 }
 
 /* Profils : cartes centrées, photo en tête, bouton d'ajout sous la liste */
-.profile-list {
+.profile-list.profile-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -3098,7 +3098,7 @@ body.mortex-menu-moving * {
     padding: 28px 28px 8px;
 }
 
-.profile-list .profile-item {
+.profile-list.profile-list .profile-item {
     width: 320px;
     margin: 0;
     overflow: hidden;
@@ -3107,34 +3107,34 @@ body.mortex-menu-moving * {
     background-color: var(--color-surface-mid);
 }
 
-.profile-list .profile-item.active {
+.profile-list.profile-list .profile-item.active {
     border-color: var(--color-primary-strong);
     outline: 0;
     background-color: var(--color-surface-mid);
 }
 
-.profile-list .profile-image {
+.profile-list.profile-list .profile-image {
     height: 120px;
 }
 
-.profile-list .profile-name {
+.profile-list.profile-list .profile-name {
     margin: 16px 20px 0;
     color: var(--color-neutral-strong);
     font-size: 18px;
     font-weight: 600;
 }
 
-.profile-list .profile-game {
+.profile-list.profile-list .profile-game {
     margin: 2px 20px 8px;
     color: var(--color-neutral-subdued);
     font-size: 12px;
 }
 
-.profile-list .profile-details {
+.profile-list.profile-list .profile-details {
     padding: 0 20px 8px;
 }
 
-.profile-list .profile-actions {
+.profile-list.profile-list .profile-actions {
     padding: 8px 20px 16px;
 }
 

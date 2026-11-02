@@ -83,7 +83,7 @@ class DownloadGraph extends ComponentEx<IProps, IComponentState> {
         <ErrorBoundary>
           <AreaChart width={this.state.width} height={120} data={data}>
             <YAxis
-              width={70}
+              width={84}
               tickFormatter={this.valueFormatter}
               ticks={ticks}
               domain={[0, maxRounded]}
