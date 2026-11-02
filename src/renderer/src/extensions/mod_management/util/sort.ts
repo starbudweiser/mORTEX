@@ -21,6 +21,44 @@ let sortModsCache: {
   sorted: Promise.resolve([]),
 };
 
+/** mORTEX : le refus de trier porte aussi un ordre utilisable, pour ne pas bloquer le déploiement */
+export class SortCycleError extends CycleError {
+  public readonly fallback: IMod[];
+
+  constructor(cycles: string[][], fallback: IMod[]) {
+    super(cycles);
+    this.fallback = fallback;
+  }
+}
+
+/** Ordre des mods sans les règles qui ferment une boucle : elles se contredisent, autant les ignorer. */
+function orderIgnoringCycles(dependencies: Graph): string[] {
+  const acyclic = new Graph();
+  const visiting = new Set<string>();
+  const visited = new Set<string>();
+  const visit = (node: string) => {
+    visiting.add(node);
+    for (const next of dependencies.successors(node) || []) {
+      if (visiting.has(next)) {
+        continue;
+      }
+      acyclic.setEdge(node, next);
+      if (!visited.has(next)) {
+        visit(next);
+      }
+    }
+    visiting.delete(node);
+    visited.add(node);
+  };
+  for (const node of dependencies.nodes()) {
+    acyclic.setNode(node);
+    if (!visited.has(node)) {
+      visit(node);
+    }
+  }
+  return alg.topsort(acyclic);
+}
+
 function sortMods(gameId: string, mods: IMod[], api: IExtensionApi): Promise<IMod[]> {
   if (mods.length === 0) {
     // don't flush the cache if the input is empty
@@ -110,7 +148,10 @@ function sortMods(gameId: string, mods: IMod[], api: IExtensionApi): Promise<IMo
       } catch (err) {
         // exception type not included in typings
         if (err instanceof (alg.topsort as any).CycleException) {
-          const res = new CycleError(alg.findCycles(dependencies));
+          const res = new SortCycleError(
+            alg.findCycles(dependencies),
+            orderIgnoringCycles(dependencies).map((id) => modsById[id]),
+          );
           res.stack = stackErr.stack;
           return Promise.reject(res);
         } else {

@@ -2119,6 +2119,7 @@
   "Missing file identifiers": "Faltan identificadores de archivo",
   "Missing source directory": "Falta la carpeta de origen",
   "Mod rules contain cycles": "Las reglas de mods contienen ciclos",
+  "Some mods have contradictory rules: they were deployed in a default order": "Algunos mods tienen reglas contradictorias: se han implementado en un orden predeterminado",
   "Mods are staged on drive": "Los mods se preparan en la unidad",
   "No SMAPI main file found": "No se encontró el archivo principal de SMAPI",
   "No change was necessary.": "No fue necesario ningún cambio.",

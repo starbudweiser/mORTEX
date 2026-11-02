@@ -151,7 +151,7 @@ import { findModByRef } from "./util/findModByRef";
 import ModHistory from "./util/ModHistory";
 import renderModName from "./util/modName";
 import { getModSources, registerModSource } from "./util/modSource";
-import sortMods from "./util/sort";
+import sortMods, { SortCycleError } from "./util/sort";
 import { setResolvedCB } from "./util/testModReference";
 import ActivationButton from "./views/ActivationButton";
 import DeactivationButton from "./views/DeactivationButton";
@@ -498,6 +498,22 @@ function doSortMods(
 
   return sortMods(profile.gameId, unsorted, api).catch((unknownErr) => {
     const err = unknownToError(unknownErr);
+    // mORTEX : des règles contradictoires (souvent celles d'une collection) ne doivent pas priver le
+    // joueur de ses mods : on déploie dans un ordre par défaut et on le dit
+    if (unknownErr instanceof SortCycleError) {
+      api.sendNotification({
+        id: "mod-cycle-warning",
+        type: "warning",
+        message: "Some mods have contradictory rules: they were deployed in a default order",
+        actions: [
+          {
+            title: "Show",
+            action: () => showCycles(api, unknownErr.cycles, profile.gameId),
+          },
+        ],
+      });
+      return unknownErr.fallback;
+    }
     if (unknownErr instanceof CycleError) {
       throw new ProcessCanceled(
         "Deployment is not possible when you have cyclical mod rules. " + err.message,
