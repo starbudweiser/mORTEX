@@ -1930,10 +1930,105 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     overflow-y: auto;
     overscroll-behavior: contain;
 }
-/* tableaux des dialogues : le nom reste en haut de sa ligne, face au début de sa liste */
+/* dialogues : une feuille macOS (coins arrondis, titre posé, respiration), plus un formulaire */
+.nxm-modal .nxm-modal-panel {
+    padding: 24px;
+    border-radius: 14px;
+}
+
+.nxm-modal .nxm-modal-title {
+    margin-bottom: 14px;
+    font-size: 18px;
+    line-height: 1.3;
+}
+
+.nxm-modal .nxm-prose > p:first-child {
+    margin-top: 0;
+    color: var(--color-neutral-moderate);
+}
+
+/* tableaux des dialogues (conflits, plugins manquants…) : une liste de lignes, sans grille */
+.nxm-modal .nxm-prose table {
+    width: 100%;
+    margin: 12px 0 4px;
+    overflow: hidden;
+    border: 1px solid var(--color-stroke-weak);
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+}
+
+.nxm-modal .nxm-prose th,
 .nxm-modal .nxm-prose td {
+    padding: 10px 14px;
+    border: 0;
     vertical-align: top;
-    padding-right: 0.75em;
+    overflow-wrap: anywhere;
+}
+
+.nxm-modal .nxm-prose tr + tr > td,
+.nxm-modal .nxm-prose tr + tr > th {
+    border-top: 1px solid var(--color-stroke-weak);
+}
+
+.nxm-modal .nxm-prose th {
+    background: var(--color-surface-mid);
+    color: var(--color-neutral-subdued);
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+}
+
+.nxm-modal .nxm-prose td:first-child {
+    color: var(--color-neutral-strong);
+    font-weight: 500;
+}
+
+.nxm-modal .nxm-prose td:not(:first-child) {
+    color: var(--color-neutral-moderate);
+}
+
+.nxm-modal .nxm-prose tbody tr:hover > td {
+    background: var(--color-surface-mid);
+}
+
+/* la colonne d'une seule icône (l'éclair d'un conflit, une flèche) : étroite et centrée */
+.nxm-modal .nxm-prose td:has(svg):not(:has(li, a, p)) {
+    width: 44px;
+    padding-inline: 0;
+    text-align: center;
+}
+
+.nxm-modal .nxm-prose td svg {
+    color: var(--color-danger-strong);
+}
+
+.nxm-modal .nxm-prose a {
+    color: var(--color-primary-strong);
+    text-decoration: none;
+}
+
+.nxm-modal .nxm-prose a:hover {
+    text-decoration: underline;
+}
+
+.nxm-modal .nxm-prose td ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+/* le bouton principal d'un dialogue, orange comme celui de la fenêtre de collection */
+.nxm-modal .nxm-button-primary:not(.nxm-button-neutral):not(.nxm-button-danger) {
+    border-color: transparent;
+    background: #f59e0b;
+    color: #1a1208;
+    font-weight: 600;
+}
+
+.nxm-modal
+    .nxm-button-primary:not(.nxm-button-neutral):not(.nxm-button-danger):hover:not(:disabled) {
+    background: #fbb024;
 }
 
 /* Plugins : bouton de règle (à glisser sur un autre plugin), plus petit que la ligne pour que deux
