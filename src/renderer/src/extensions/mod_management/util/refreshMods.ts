@@ -59,8 +59,16 @@ function refreshMods(
           (name) => !IGNORABLE_PREFIXES.some((prefix) => name.toLowerCase().startsWith(prefix)),
         )
         .map((name) => name.replace(/.installing$/, ""));
-      const addedMods = filtered.filter((name: string) => knownModNames.indexOf(name) === -1);
-      const removedMods = knownModNames.filter((name: string) => filtered.indexOf(name) === -1);
+      // mORTEX : l'instantané de l'appelant date du début de la lecture ; un mod installé entre-temps
+      // n'est pas un mod apparu sur le disque, et « Appliquer » écraserait sa fiche (une collection
+      // perdait ainsi son nom, son curateur et ses règles)
+      const current = api.store.getState().persistent.mods[gameId] ?? {};
+      const addedMods = filtered.filter(
+        (name: string) => knownModNames.indexOf(name) === -1 && current[name] === undefined,
+      );
+      const removedMods = knownModNames.filter(
+        (name: string) => filtered.indexOf(name) === -1 && current[name] !== undefined,
+      );
 
       if (addedMods.length === 0 && removedMods.length === 0) {
         return Promise.resolve();
@@ -123,52 +131,58 @@ function refreshMods(
         .then((res) => {
           if (res.action === "Apply Changes") {
             return Promise.all(
-              addedMods.map((modName: string) => {
-                const fullPath: string = path.join(installPath, modName);
-                return fs
-                  .statAsync(fullPath)
-                  .then((stat: fs.Stats) => {
-                    if (stat.isDirectory()) {
-                      onAddMod({
-                        id: modName,
-                        type: "",
-                        installationPath: modName,
-                        state: "installed",
-                        attributes: {
-                          name: modName,
-                          installTime: new Date(stat.ctime).toString(),
-                        },
-                      });
-                    }
-                  })
-                  .catch((err: unknown) => {
-                    if (getErrorCode(err) !== "ENOENT") {
-                      throw err;
-                    }
-                    return fs.statAsync(fullPath + ".installing").then(() =>
-                      // since we're removing the '.installing' extension above we might be discovering
-                      // a mod here that was not installed successfully but doesn't have an entry in the
-                      // mods database so it wouldn't get cleaned up eiather
-                      api
-                        .showDialog(
-                          "error",
-                          modName,
-                          {
-                            text:
-                              "This mod was not installed completely, most likely the installation " +
-                              "got interrupted before. You should delete it now and then install " +
-                              "it again.",
+              // même précaution : la boîte a pu rester ouverte pendant une installation
+              addedMods
+                .filter(
+                  (modName) =>
+                    api.store.getState().persistent.mods[gameId]?.[modName] === undefined,
+                )
+                .map((modName: string) => {
+                  const fullPath: string = path.join(installPath, modName);
+                  return fs
+                    .statAsync(fullPath)
+                    .then((stat: fs.Stats) => {
+                      if (stat.isDirectory()) {
+                        onAddMod({
+                          id: modName,
+                          type: "",
+                          installationPath: modName,
+                          state: "installed",
+                          attributes: {
+                            name: modName,
+                            installTime: new Date(stat.ctime).toString(),
                           },
-                          [{ label: "Ignore" }, { label: "Delete" }],
-                        )
-                        .then((deleteRes) => {
-                          if (deleteRes.action === "Delete") {
-                            return fs.removeAsync(fullPath + ".installing");
-                          }
-                        }),
-                    );
-                  });
-              }),
+                        });
+                      }
+                    })
+                    .catch((err: unknown) => {
+                      if (getErrorCode(err) !== "ENOENT") {
+                        throw err;
+                      }
+                      return fs.statAsync(fullPath + ".installing").then(() =>
+                        // since we're removing the '.installing' extension above we might be discovering
+                        // a mod here that was not installed successfully but doesn't have an entry in the
+                        // mods database so it wouldn't get cleaned up eiather
+                        api
+                          .showDialog(
+                            "error",
+                            modName,
+                            {
+                              text:
+                                "This mod was not installed completely, most likely the installation " +
+                                "got interrupted before. You should delete it now and then install " +
+                                "it again.",
+                            },
+                            [{ label: "Ignore" }, { label: "Delete" }],
+                          )
+                          .then((deleteRes) => {
+                            if (deleteRes.action === "Delete") {
+                              return fs.removeAsync(fullPath + ".installing");
+                            }
+                          }),
+                      );
+                    });
+                }),
             ).then(() => onRemoveMods(removedMods));
           } else {
             getApplication().quit();

@@ -90,6 +90,28 @@ describe("refreshMods", () => {
     quit.mockClear();
   });
 
+  it("keeps the record of a mod installed while the folder was being read", async () => {
+    const collection = makeMod({
+      id: "collection_1",
+      installationPath: "collection_1",
+      attributes: { name: "My collection" },
+    });
+    stagingEntries.set(STAGING, ["collection_1"]);
+    const harness = makeApiHarness({
+      mods: { [GAME]: { collection_1: collection } },
+      downloads: {},
+    });
+    const onAdd = vi.fn();
+
+    // l'appelant a lu les mods avant que l'installation ne se termine
+    await refreshMods(harness.api, GAME, STAGING, {}, onAdd, () => undefined);
+
+    expect(onAdd).not.toHaveBeenCalled();
+    expect(harness.getState().persistent.mods[GAME].collection_1.attributes?.name).toBe(
+      "My collection",
+    );
+  });
+
   it("rebinds a mod whose archive reference went stale", async () => {
     const mods = {
       "Good Mod-1-0-0": makeMod({
