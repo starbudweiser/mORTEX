@@ -671,7 +671,6 @@
   "Bottled Shaders replaces Community Shaders on Mac": "Bottled Shaders replaces Community Shaders on Mac",
   "This collection installs Community Shaders {{version}}, which doesn't work on a Mac. mORTEX installs Bottled Shaders {{bottled}} instead: the version of Community Shaders made for CrossOver.": "This collection installs Community Shaders {{version}}, which doesn't work on a Mac. mORTEX installs Bottled Shaders {{bottled}} instead: the version of Community Shaders made for CrossOver.",
   "Not installed:": "Not installed:",
-  "makes the game crash with Bottled Shaders": "makes the game crash with Bottled Shaders",
   "already included in Bottled Shaders": "already included in Bottled Shaders",
   "With a free Nexus Mods account, you click Download on the page of Bottled Shaders.": "With a free Nexus Mods account, you click Download on the page of Bottled Shaders.",
   "Community Shaders settings of this collection": "Community Shaders settings of this collection",
@@ -704,5 +703,6 @@
   "Back to the Community Shaders of the collection: follow its installation, then check again": "Back to the Community Shaders of the collection: follow its installation, then check again",
   "The Community Shaders settings of the collection were made for the original Community Shaders. Nothing guarantees that they work with Bottled Shaders. Choose:": "The Community Shaders settings of the collection were made for the original Community Shaders. Nothing guarantees that they work with Bottled Shaders. Choose:",
   "mORTEX disables, in the profile {{profile}}, the mods that install {{dlls}}: Bottled Shaders already includes them or refuses them. The mods stay installed and can be enabled again.": "mORTEX disables, in the profile {{profile}}, the mods that install {{dlls}}: Bottled Shaders already includes them or refuses them. The mods stay installed and can be enabled again.",
-  "Disabled: Bottled Shaders already includes or refuses them": "Disabled: Bottled Shaders already includes or refuses them"
+  "Disabled: Bottled Shaders already includes or refuses them": "Disabled: Bottled Shaders already includes or refuses them",
+  "incompatible with Bottled Shaders": "incompatible with Bottled Shaders"
 }

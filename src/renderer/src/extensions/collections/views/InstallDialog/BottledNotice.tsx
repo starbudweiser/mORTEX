@@ -76,7 +76,7 @@ function BottledNotice(props: IBottledNoticeProps) {
 
                 <span>
                   {mod.reason === "incompatible"
-                    ? t("makes the game crash with Bottled Shaders")
+                    ? t("incompatible with Bottled Shaders")
                     : t("already included in Bottled Shaders")}
                 </span>
               </li>
