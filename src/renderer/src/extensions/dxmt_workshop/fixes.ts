@@ -208,7 +208,7 @@ export function fixFor(check: IDxmtCheck, context: IFixContext): IDxmtFix | unde
         label: "Disable the duplicates",
         icon: "block",
         confirm: {
-          text: "mORTEX disables, in the profile {{profile}}, the mods that install {{dlls}} on their own: Bottled Shaders already includes them. The mods stay installed and can be enabled again.",
+          text: "mORTEX disables, in the profile {{profile}}, the mods that install {{dlls}}: Bottled Shaders already includes them or refuses them. The mods stay installed and can be enabled again.",
           replace: { profile: profile.name, dlls: check.found ?? "" },
         },
         run: async () => {

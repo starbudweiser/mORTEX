@@ -141,7 +141,7 @@ export function BottledNetSummary({ t, result, onUndo }: IBottledNetProps) {
       <h4>
         {result.undone === true
           ? t("Mods enabled again")
-          : t("Disabled: Bottled Shaders already includes them")}
+          : t("Disabled: Bottled Shaders already includes or refuses them")}
       </h4>
 
       <ul className="collection-start-bottled-list">

@@ -97,11 +97,16 @@ describe("substituteCollection", () => {
 
   it("recognises a feature mod by its name when its id is not in the list", () => {
     const input = collection();
-    input.mods.push(nexusMod("Terrain Blending", 555555), nexusMod("Terrain Shadows - Extra", 6));
+    input.mods.push(
+      nexusMod("Terrain Blending", 555555),
+      nexusMod("Terrain Shadows - Extra", 6),
+      nexusMod("EVLaS - Enhanced Volumetric Lighting and Shadows", 63725),
+    );
     const names = substituteCollection(input, BOTTLED)?.mortexSubstitution?.removed.map(
       (mod) => mod.name,
     );
     expect(names).toContain("Terrain Blending");
+    expect(names).toContain("EVLaS - Enhanced Volumetric Lighting and Shadows");
     expect(names).not.toContain("Some Weather");
   });
 

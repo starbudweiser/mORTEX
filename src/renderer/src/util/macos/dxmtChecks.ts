@@ -15,7 +15,8 @@
  *    est obligatoire (seul flip_discard crée la swap chain, sinon 0x80070057 et écran noir), les
  *    autres sont des optimisations
  *  - bottledDuplicates : Terrain Helper et Inverse Square Lighting autonomes, déjà intégrés à
- *    Bottled Shaders, qui font planter le jeu (« na » sans Bottled Shaders)
+ *    Bottled Shaders, qui font planter le jeu, et EVLaS, pour lequel Bottled coupe tous ses effets
+ *    (« Incompatible DLL … EVLaS.dll ») ; « na » sans Bottled Shaders
  *  - csBuild : quel Community Shaders est déployé : Bottled Shaders (préparé pour CrossOver) ou la
  *    version d'origine, qu'une collection peut apporter avec des modules plus récents qu'elle ne sait
  *    pas lire (« requires a newer version of community shaders ») : des centaines de shaders échouent
@@ -124,7 +125,7 @@ export async function bottledDuplicates(gamePath: string): Promise<string[] | un
   if (dll === undefined) return undefined;
   const content = await readFile(path.join(plugins, dll)).catch(() => undefined);
   if (content === undefined || !isBottledDll(content)) return undefined;
-  return files.filter((file) => /^(terrain.?helper|inverse.?square.*)\.dll$/i.test(file));
+  return files.filter((file) => /^(terrain.?helper|inverse.?square.*|evlas)\.dll$/i.test(file));
 }
 
 /** « 1.2.1.0 » → « 1.2.1 » : la version inscrite dans les ressources d'une DLL Windows */

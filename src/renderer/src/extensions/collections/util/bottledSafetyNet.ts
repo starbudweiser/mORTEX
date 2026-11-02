@@ -32,12 +32,14 @@ export const ATTR_SAFETY_NET = "mortexSafetyNet";
 
 export interface ISafetyNetResult {
   profileId: string;
-  disabled: Array<{ id: string; name: string; why: "duplicate" | "stock" }>;
+  disabled: Array<{ id: string; name: string; why: "duplicate" | "stock" | "incompatible" }>;
   /** le joueur a annulé : les mods ont été réactivés et le filet ne repasse plus */
   undone?: boolean;
 }
 
 const FEATURE_INI = /^shaders\/features\/[^/]+\.ini$/;
+/** DLL que Bottled Shaders refuse : il coupe alors tous ses effets au lancement du jeu */
+const INCOMPATIBLE_DLL = /^skse\/plugins\/evlas\.dll$/;
 
 const normalize = (relPath: string) => relPath.replace(/\\/g, "/").toLowerCase();
 
@@ -101,7 +103,7 @@ export async function runSafetyNet(
   if (bottled === undefined) return undefined;
 
   const disabled: ISafetyNetResult["disabled"] = [];
-  const disable = (mod: IMod, why: "duplicate" | "stock") => {
+  const disable = (mod: IMod, why: ISafetyNetResult["disabled"][number]["why"]) => {
     if (!disabled.some((iter) => iter.id === mod.id)) {
       disabled.push({ id: mod.id, name: renderModName(mod), why });
     }
@@ -112,10 +114,20 @@ export async function runSafetyNet(
     .filter((mod) => mod.state === "installed" && isStockPack(mod) && enabled(mod))
     .forEach((mod) => disable(mod, "stock"));
 
-  // les autres : comparaison des fichiers
+  // les autres : DLL incompatibles, puis comparaison des fichiers
   try {
     const stagingPath = installPathForGame(state, gameId);
     const manifest = await getManifest(api, "", gameId);
+    const incompatible = new Set(
+      manifest.files
+        .filter((file) => INCOMPATIBLE_DLL.test(normalize(file.relPath)))
+        .map((file) => file.source),
+    );
+    Object.values(mods)
+      .filter(
+        (mod) => enabled(mod) && mod.id !== bottled.id && incompatible.has(mod.installationPath),
+      )
+      .forEach((mod) => disable(mod, "incompatible"));
     const sources = new Set(
       manifest.files
         .filter((file) => FEATURE_INI.test(normalize(file.relPath)))

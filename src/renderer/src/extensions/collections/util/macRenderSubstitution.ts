@@ -67,8 +67,10 @@ export const CS_FEATURE_MODS: Readonly<Record<number, string>> = {
 const CS_FEATURE_NAMES =
   /^(?:community shaders\W+)?(?:grass lighting|grass collision|light limit fix|screen space gi|screen space shadows|skylighting|cloud shadows|subsurface scattering|terrain shadows|terrain blending|extended materials|volumetric lighting|lod blending|dynamic cubemaps|terrain helper|inverse square lighting)\b/i;
 
-/** incompatible avec Bottled Shaders : fait s'arrêter le jeu */
-const INCOMPATIBLE_NAMES = /dynamic terrain deformation/i;
+/** incompatibles avec Bottled Shaders : Dynamic Terrain Deformation fait s'arrêter le jeu ; avec
+    EVLaS (Enhanced Volumetric Lighting and Shadows), Bottled coupe tous ses effets au lancement */
+const INCOMPATIBLE_NAMES =
+  /dynamic terrain deformation|enhanced volumetric lighting and shadows|\bevlas\b/i;
 
 export type RemovedReason = "feature" | "incompatible";
 

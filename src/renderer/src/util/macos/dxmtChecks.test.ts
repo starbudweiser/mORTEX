@@ -57,6 +57,7 @@ describe("DXMT checks", () => {
     fs.writeFileSync(path.join(game, "d3d11.dll"), "some other d3d11");
     fs.writeFileSync(path.join(plugins, "CommunityShaders.dll"), "MZ...Bottled...");
     fs.writeFileSync(path.join(plugins, "TerrainHelper.dll"), "");
+    fs.writeFileSync(path.join(plugins, "EVLaS.dll"), "");
     fs.writeFileSync(
       path.join(plugins, "SSEDisplayTweaks.ini"),
       "[Render]\nSwapEffect = auto ; comment\n",
@@ -67,7 +68,7 @@ describe("DXMT checks", () => {
     expect(checks.bridge.status).toBe("na");
     expect(checks.displayTweaks.status).toBe("error");
     expect(checks.displayTweaks.found).toContain("SwapEffect = auto");
-    expect(checks.bottledDuplicates.found).toBe("TerrainHelper.dll");
+    expect(checks.bottledDuplicates.found).toBe("EVLaS.dll, TerrainHelper.dll");
   });
 
   describe("shaders", () => {
