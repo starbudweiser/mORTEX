@@ -38,6 +38,15 @@ export const BACKUP_TAG = ".mortex_backup";
 // mORTEX : extension des copies faites avant le renommage, encore restaurées à la purge
 export const LEGACY_BACKUP_TAG = ".vortex_backup";
 
+/**
+ * mORTEX : une sauvegarde faite par le gestionnaire, jamais un fichier de jeu. Certains auteurs en
+ * livrent par mégarde dans leur archive ; déployées puis « restaurées » au retrait, elles laissaient
+ * des fichiers orphelins dans le dossier du jeu.
+ */
+export function isBackupName(filePath: string): boolean {
+  return [BACKUP_TAG, LEGACY_BACKUP_TAG].includes(path.extname(filePath));
+}
+
 async function isAbsent(filePath: string): Promise<boolean> {
   try {
     await lstat(filePath);
@@ -393,7 +402,7 @@ abstract class LinkingActivator implements IDeploymentMethod {
                 return;
               }
               entries
-                .filter((x) => !x.isDirectory)
+                .filter((x) => !x.isDirectory && !isBackupName(x.filePath))
                 .forEach((entry) => {
                   const relPath: string = path.relative(sourcePath, entry.filePath);
                   const relPathWithSource = path.join(sourceName, relPath);
@@ -929,9 +938,7 @@ abstract class LinkingActivator implements IDeploymentMethod {
               try {
                 await Promise.all(
                   files
-                    .filter((entry) =>
-                      [BACKUP_TAG, LEGACY_BACKUP_TAG].includes(path.extname(entry.filePath)),
-                    )
+                    .filter((entry) => isBackupName(entry.filePath))
                     .map((entry) => this.restoreBackup(entry.filePath)),
                 );
               } catch (err) {

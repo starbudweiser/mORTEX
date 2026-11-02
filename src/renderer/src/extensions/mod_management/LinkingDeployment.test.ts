@@ -1,11 +1,11 @@
 import * as nodeFs from "node:fs";
 
-import { expect } from "vitest";
+import { expect, it } from "vitest";
 
 import { makeDeployedFile } from "../../test-utils/builders";
 import { test } from "../../test-utils/deploymentTest";
 import { writeInto } from "../../test-utils/tempDir";
-import { BACKUP_TAG, type IDeployment } from "./LinkingDeployment";
+import { BACKUP_TAG, type IDeployment, isBackupName } from "./LinkingDeployment";
 import type { IDeployedFile, IDeploymentMethod } from "./types/IDeploymentMethod";
 import { deployedFilePath } from "./util/deployedFilePath";
 
@@ -123,4 +123,10 @@ test("removes the folders a deployment emptied before the deployment completes",
   await h.method.finalize("skyrimse", h.gameDir, h.stagingDir);
 
   expect(nodeFs.existsSync(h.inGame("SKSE"))).toBe(false);
+});
+
+it("treats both backup tags as manager backups, never as game files", () => {
+  expect(isBackupName("Sound/Voice/a.wav.vortex_backup")).toBe(true);
+  expect(isBackupName(`Sound/Voice/a.wav${BACKUP_TAG}`)).toBe(true);
+  expect(isBackupName("Sound/Voice/a.wav")).toBe(false);
 });
