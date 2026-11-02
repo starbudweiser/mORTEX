@@ -30,9 +30,9 @@ export type IPageHeaderProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> 
  *
  * Pass `title` for the common heading, or `customTitle` when the title needs
  * more than a string (e.g. a badge alongside it); `subtitle` renders below
- * either. `title` goes subdued once compact — `customTitle` takes a
- * render-prop so it can match. Expanded, the title drops a little to centre the
- * title and subtitle on the pictogram.
+ * either. `customTitle` takes a render-prop to follow the compact state.
+ * Expanded, the title drops a little to centre the title and subtitle on the
+ * pictogram.
  */
 export const PageHeader = ({
   children,
@@ -73,7 +73,7 @@ export const PageHeader = ({
             >
               {(typeof customTitle === "function" ? customTitle(compact) : customTitle) ?? (
                 <Typography
-                  appearance={compact ? "subdued" : "moderate"}
+                  appearance="moderate"
                   as="h2"
                   className="font-medium transition-colors"
                   typographyType="body-xl"

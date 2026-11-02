@@ -208,6 +208,10 @@ class ProfileItem extends ComponentEx<IProps, IComponentState> {
   private renderFeature = (feature: IProfileFeature): JSX.Element => {
     const { profile } = this.props;
     const value = getSafe(profile, ["features", feature.id], undefined);
+    // mORTEX : une valeur vide (description non remplie) ne mérite pas une ligne
+    if (feature.type !== "boolean" && (value ?? "") === "") {
+      return null;
+    }
     return this.renderFeatureWithValue(feature, value);
   };
 
