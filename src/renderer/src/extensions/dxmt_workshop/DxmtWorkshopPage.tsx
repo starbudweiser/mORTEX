@@ -99,16 +99,16 @@ function RenderStage({
   status?: IDxmtCheck["status"];
   t: Translate;
 }) {
-  // absente de la bouteille : en pointillés
+  // absente de la bouteille : en pointillés ; un cadre (et non un anneau, effacé par l'animation)
   const missing = status === "na";
   const frame =
     status === "error"
-      ? "ring-1 ring-danger-moderate"
+      ? "border border-danger-moderate"
       : missing
         ? "border border-dashed border-stroke-moderate"
         : status === "ok"
-          ? "ring-1 ring-success-moderate"
-          : "";
+          ? "border border-success-moderate"
+          : "border border-transparent";
   const iconColor =
     status === "error"
       ? "text-danger-strong"
@@ -225,13 +225,14 @@ export default function DxmtWorkshopPage({ api }: IProps) {
     }
   };
 
-  /** bouton du correctif d'un contrôle, s'il y en a un */
-  const fixButton = (check?: IDxmtCheck) => {
+  /** bouton du correctif d'un contrôle, s'il y en a un : centré en bas de sa carte, sur deux
+      lignes plutôt que de déborder */
+  const fixButton = (check?: IDxmtCheck, className = "mt-2") => {
     const fix = fixOf(check);
     if (check === undefined || fix === undefined) return null;
     return (
       <Button
-        className="mt-2 self-start"
+        className={`${className} max-w-full self-center text-center !whitespace-normal`}
         isLoading={busy === check.id}
         leftIcon={fix.icon}
         size="sm"
@@ -386,7 +387,7 @@ export default function DxmtWorkshopPage({ api }: IProps) {
               const detected = status === "error" || status === "warning";
               return (
                 <div
-                  className={`flex flex-col gap-y-2 rounded-md bg-surface-mid p-4 ${detected ? "ring-1 ring-danger-moderate" : ""}`}
+                  className={`flex flex-col gap-y-2 rounded-md border bg-surface-mid p-4 ${detected ? "border-danger-moderate" : "border-transparent"}`}
                   data-testid={`dxmt-pitfall-${pitfall.id}`}
                   key={pitfall.id}
                 >
@@ -399,11 +400,6 @@ export default function DxmtWorkshopPage({ api }: IProps) {
                     <Typography className="font-semibold !text-[#f59e0b]" typographyType="body-lg">
                       {t(pitfall.title)}
                     </Typography>
-                    {detected && (
-                      <Typography brand="danger" className="ml-auto" typographyType="body-xs">
-                        {t("Detected in your bottle")}
-                      </Typography>
-                    )}
                   </div>
                   {(
                     [
@@ -420,7 +416,14 @@ export default function DxmtWorkshopPage({ api }: IProps) {
                       <Typography typographyType="body-sm">{t(text)}</Typography>
                     </div>
                   ))}
-                  {detected && fixButton(checkOf(pitfall.check))}
+                  {detected && (
+                    <div className="mt-auto flex flex-col items-center gap-y-1.5 pt-1">
+                      <Typography brand="danger" typographyType="body-xs">
+                        {t("Detected in your bottle")}
+                      </Typography>
+                      {fixButton(checkOf(pitfall.check), "")}
+                    </div>
+                  )}
                 </div>
               );
             })}
