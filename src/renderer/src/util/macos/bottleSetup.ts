@@ -9,6 +9,7 @@
  *  - stepDownloads(step): IDownloadFile[]                   fichiers dont l'étape a besoin
  *  - stepCommands(step, context): IBottleLaunch[]           commandes de l'étape, à lancer dans l'ordre
  *  - runBottleSetup(options, onStep, tools?)                exécute le tout
+ *  - installDotnetRuntime(bottlePath)                       .NET 8 Desktop dans une bouteille existante
  *  - steamPath(bottleDir)                                   Steam.exe dans la bouteille
  *  - openSteam(bottleDir?)                                  ouvre Steam dans la bouteille préparée
  *  - checkDestination(dir)                                  le disque peut-il accueillir la bouteille ?
@@ -49,6 +50,8 @@ export interface ISetupContext {
   bottleDir: string;
   /** Dossier des fichiers téléchargés. */
   downloads: string;
+  /** Nom de la bouteille ; par défaut celle que prépare l'assistant. */
+  bottle?: string;
 }
 
 /** `mayFail` : une clé déjà retirée par un essai précédent n'empêche pas de continuer. */
@@ -105,7 +108,7 @@ export function stepCommands(step: SetupStep, context: ISetupContext): ISetupCom
   const env = { CX_BOTTLE_PATH: context.bottleDir };
   const wine = (...args: string[]): ISetupCommand => ({
     executable: path.join(context.bin, "wine"),
-    args: ["--bottle", SETUP_BOTTLE, ...args],
+    args: ["--bottle", context.bottle ?? SETUP_BOTTLE, ...args],
     env,
   });
   const installer = (name: string, ...args: string[]) =>
@@ -259,6 +262,33 @@ export async function runBottleSetup(
       }
       onStep(step, "done");
     }
+  } finally {
+    await rm(downloads, { recursive: true, force: true });
+  }
+}
+
+/**
+ * Installe le .NET 8 Desktop de Microsoft dans une bouteille qui existe déjà (pas forcément celle de
+ * l'assistant) : téléchargé depuis microsoft.com sur le Mac de l'utilisateur, jamais livré.
+ */
+export async function installDotnetRuntime(
+  bottlePath: string,
+  tools: ISetupTools = defaultTools,
+): Promise<void> {
+  const bin = crossoverBinDir();
+  if (bin === undefined) throw new Error("CrossOver is not installed");
+  const downloads = path.join(os.tmpdir(), "mortex-dotnet-setup");
+  await rm(downloads, { recursive: true, force: true });
+  await mkdir(downloads, { recursive: true });
+  const context: ISetupContext = {
+    bin,
+    bottleDir: path.dirname(bottlePath),
+    downloads,
+    bottle: path.basename(bottlePath),
+  };
+  try {
+    for (const file of stepDownloads("dotnet8")) await tools.download(file, downloads);
+    for (const command of stepCommands("dotnet8", context)) await tools.run(command);
   } finally {
     await rm(downloads, { recursive: true, force: true });
   }

@@ -8,8 +8,10 @@
  *  - displayTweaks absent      → activer le mod s'il est installé, sinon sa page Nexus
  *  - bottledDuplicates         → désactiver les mods qui déploient Terrain Helper / Inverse Square
  *                                Lighting autonomes (d'après le manifeste de déploiement)
- *  - shaders en erreur         → activer Bottled Shaders s'il est installé mais désactivé ; sinon
- *                                rien : mORTEX ne le télécharge pas, la fiche du piège l'explique
+ *  - shaders en erreur         → activer Bottled Shaders s'il est installé mais désactivé ; sinon,
+ *                                si la bouteille compile avec le compilateur de Wine, poser celui de
+ *                                Microsoft (celui du .NET 8 Desktop, installé d'abord au besoin),
+ *                                en gardant la copie de Wine
  *  - bridge                    → facultatif, rien à corriger
  */
 import { readFile, writeFile } from "node:fs/promises";
@@ -17,7 +19,9 @@ import * as path from "node:path";
 
 import type { IExtensionApi } from "../../types/IExtensionContext";
 import type { SymbolName } from "../../ui/components/icon/Icon";
+import { installDotnetRuntime } from "../../util/macos/bottleSetup";
 import { type IDxmtCheck, fixDisplayTweaks, useDxmt } from "../../util/macos/dxmtChecks";
+import { installNativeCompiler, nativeCompilerSource } from "../../util/macos/hlslCompiler";
 import type { IMod } from "../mod_management/types/IMod";
 import { getManifest } from "../mod_management/util/activationStore";
 import { setModsEnabled } from "../profile_management/actions/profiles";
@@ -199,28 +203,55 @@ export function fixFor(check: IDxmtCheck, context: IFixContext): IDxmtFix | unde
     }
 
     case "shaders": {
-      if (check.status !== "error" || profile === undefined) return undefined;
-      const bottled = Object.values(api.getState().persistent.mods[gameId] ?? {}).find(
-        (mod) =>
-          mod.state === "installed" &&
-          /bottled/i.test(modName(mod)) &&
-          profile.modState?.[mod.id]?.enabled !== true,
-      );
-      if (bottled === undefined) return undefined;
+      if (check.status !== "error") return undefined;
+      const bottled =
+        profile === undefined
+          ? undefined
+          : Object.values(api.getState().persistent.mods[gameId] ?? {}).find(
+              (mod) =>
+                mod.state === "installed" &&
+                /bottled/i.test(modName(mod)) &&
+                profile.modState?.[mod.id]?.enabled !== true,
+            );
+      if (bottled !== undefined && profile !== undefined) {
+        return {
+          label: "Enable Bottled Shaders",
+          icon: "toggle_on",
+          confirm: {
+            text: "mORTEX enables the mod {{mod}} in the profile {{profile}}; it is deployed with your other mods. Launch the game once, then check the installation again.",
+            replace: { mod: modName(bottled), profile: profile.name },
+          },
+          run: async () => {
+            await setModsEnabled(api, profile.id, [bottled.id], true);
+            return {
+              text: "Bottled Shaders enabled: it is deployed with your mods",
+              undo: async () => {
+                await setModsEnabled(api, profile.id, [bottled.id], false);
+              },
+            };
+          },
+        };
+      }
+      if (check.shaders?.compiler !== "wine") return undefined;
       return {
-        label: "Enable Bottled Shaders",
-        icon: "toggle_on",
+        label: "Install Microsoft's shader compiler",
+        icon: "build",
         confirm: {
-          text: "mORTEX enables the mod {{mod}} in the profile {{profile}}; it is deployed with your other mods. Launch the game once, then check the installation again.",
-          replace: { mod: modName(bottled), profile: profile.name },
+          text: "Wine's own shader compiler can't compile Community Shaders. mORTEX puts Microsoft's compiler (D3DCompiler_47, signed by Microsoft) in this bottle and keeps Wine's copy, so you can undo. If .NET 8 isn't in the bottle yet, mORTEX first downloads Microsoft's .NET 8 Desktop Runtime (about 60 MB) from microsoft.com and installs it there; that part stays. Nothing else changes.",
         },
         run: async () => {
-          await setModsEnabled(api, profile.id, [bottled.id], true);
+          let source = await nativeCompilerSource(bottlePath);
+          if (source === undefined) {
+            await installDotnetRuntime(bottlePath);
+            source = await nativeCompilerSource(bottlePath);
+          }
+          if (source === undefined) {
+            throw new Error("Microsoft's compiler was not found after installing .NET");
+          }
+          const undo = await installNativeCompiler(bottlePath, source);
           return {
-            text: "Bottled Shaders enabled: it is deployed with your mods",
-            undo: async () => {
-              await setModsEnabled(api, profile.id, [bottled.id], false);
-            },
+            text: "Microsoft's shader compiler is installed. Launch the game once, then check the installation again.",
+            undo,
           };
         },
       };

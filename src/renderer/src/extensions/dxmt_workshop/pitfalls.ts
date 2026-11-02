@@ -45,7 +45,7 @@ export const PITFALLS: IDxmtPitfall[] = [
       "Community Shaders logs « Shader compilation failed » (unexpected KW_NAMESPACE), and the lighting and shadows it adds don't appear.",
     cause:
       "Under CrossOver, the HLSL compiler is the one built into Wine, which doesn't accept the namespace keyword used by the stock Community Shaders sources.",
-    fix: "Use Bottled Shaders, the Community Shaders build prepared for CrossOver, instead of the stock one. Check again after launching the game once.",
+    fix: "Install Microsoft's shader compiler in the bottle (the button above), or use Bottled Shaders, the Community Shaders build prepared for CrossOver. Check again after launching the game once.",
     check: "shaders",
   },
   {
