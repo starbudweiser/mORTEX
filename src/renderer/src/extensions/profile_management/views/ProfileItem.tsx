@@ -145,7 +145,8 @@ class ProfileItem extends ComponentEx<IProps, IComponentState> {
             }}
             onClick={this.changeImage}
           />
-          <h3 className="profile-name">{`${gameName} - ${profile.name}`}</h3>
+          <h3 className="profile-name">{profile.name}</h3>
+          <p className="profile-game">{gameName}</p>
           <div className="profile-details">
             {this.renderFeatureWithValue(
               {
@@ -158,18 +159,6 @@ class ProfileItem extends ComponentEx<IProps, IComponentState> {
               },
               enabledMods,
             )}
-            {this.renderFeatureWithValue(
-              {
-                id: profile.id + "id",
-                label: "ID",
-                icon: "",
-                type: "string",
-                supported: () => true,
-                description: "Internal ID of this profile",
-              },
-              profile.id,
-            )}
-
             {features.map(this.renderFeature)}
           </div>
         </div>

@@ -92,7 +92,7 @@ function OptionsFilterComponent(props: IProps & IBoundProps) {
       value={filter}
       onChange={multi ? changeFilterMulti : changeFilter}
       autosize={false}
-      placeholder={t("Select...")}
+      placeholder={t("Select...", { ns: "common" })}
       onOpen={updateOptions}
     />
   );

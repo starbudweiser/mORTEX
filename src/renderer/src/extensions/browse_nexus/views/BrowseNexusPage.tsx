@@ -300,7 +300,7 @@ function BrowseNexusPage(props: IBrowseNexusPageProps) {
                 >
                   <TextField
                     errorMessage={searchValidationError || undefined}
-                    fieldClassName="max-w-60"
+                    fieldClassName="min-w-80 max-w-96"
                     hideLabel={true}
                     label={t("collection:browse.searchPlaceholder")}
                     placeholder={t("collection:browse.searchPlaceholder")}

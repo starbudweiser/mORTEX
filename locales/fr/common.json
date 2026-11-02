@@ -3982,5 +3982,10 @@
   "Install Microsoft's shader compiler": "Installer le compilateur de shaders de Microsoft",
   "Wine's own shader compiler can't compile Community Shaders. mORTEX puts Microsoft's compiler (D3DCompiler_47, signed by Microsoft) in this bottle and keeps Wine's copy, so you can undo. If .NET 8 isn't in the bottle yet, mORTEX first downloads Microsoft's .NET 8 Desktop Runtime (about 60 MB) from microsoft.com and installs it there; that part stays. Nothing else changes.": "Le compilateur de shaders de Wine ne sait pas compiler Community Shaders. mORTEX place le compilateur de Microsoft (D3DCompiler_47, signé par Microsoft) dans cette bouteille et garde la copie de Wine, pour pouvoir annuler. Si .NET 8 n'est pas encore dans la bouteille, mORTEX télécharge d'abord le .NET 8 Desktop Runtime de Microsoft (environ 60 Mo) sur microsoft.com et l'y installe ; cette partie reste. Rien d'autre ne change.",
   "Microsoft's shader compiler is installed. Launch the game once, then check the installation again.": "Le compilateur de shaders de Microsoft est installé. Lancez le jeu une fois, puis vérifiez de nouveau l'installation.",
-  "Install Microsoft's shader compiler in the bottle (the button above), or use Bottled Shaders, the Community Shaders build prepared for CrossOver. Check again after launching the game once.": "Installez le compilateur de shaders de Microsoft dans la bouteille (le bouton ci-dessus), ou utilisez Bottled Shaders, la version de Community Shaders préparée pour CrossOver. Revérifiez après avoir lancé le jeu une fois."
+  "Install Microsoft's shader compiler in the bottle (the button above), or use Bottled Shaders, the Community Shaders build prepared for CrossOver. Check again after launching the game once.": "Installez le compilateur de shaders de Microsoft dans la bouteille (le bouton ci-dessus), ou utilisez Bottled Shaders, la version de Community Shaders préparée pour CrossOver. Revérifiez après avoir lancé le jeu une fois.",
+  "Archives": "Archives",
+  "Jump to page": "Aller à la page",
+  "Enter a page between 1 and {{total}}": "Saisissez une page entre 1 et {{total}}",
+  "Page": "Page",
+  "Dashlets": "Cartes du tableau de bord"
 }

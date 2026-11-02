@@ -251,6 +251,7 @@ export function spawnSelf(args: string[]) {
 
 const BYTE_LABELS = ["B", "KB", "MB", "GB", "TB"];
 
+/** mORTEX : en français, Ko, Mo, Go et la virgule ; l'interface ne mélange plus les deux. */
 export function bytesToString(bytes: number): string {
   let labelIdx = 0;
   while (bytes >= 1024) {
@@ -258,7 +259,10 @@ export function bytesToString(bytes: number): string {
     bytes /= 1024;
   }
   try {
-    return bytes.toFixed(Math.max(0, labelIdx - 1)) + " " + BYTE_LABELS[labelIdx];
+    const value = bytes.toFixed(Math.max(0, labelIdx - 1));
+    const french = globalThis.document?.documentElement?.lang?.startsWith("fr") === true;
+    const label: string = BYTE_LABELS[labelIdx];
+    return french ? `${value.replace(".", ",")} ${label.replace("B", "o")}` : `${value} ${label}`;
   } catch (err) {
     return "???";
   }

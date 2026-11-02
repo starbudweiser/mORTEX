@@ -138,13 +138,18 @@ export const ModsTableSwitch = ({
   const memberships = useCollectionMemberships(mods);
   const { changing, setEnabled, isEnabled } = useModsEnabled(onSetModsEnabled);
 
-  // mORTEX : les filtres segmentés de la barre d'outils (Tous, Activés, Conflits, Mises à jour)
+  // mORTEX : les filtres segmentés de la barre d'outils. « Tous » ne montre que les mods installés :
+  // les archives jamais installées noyaient la liste (des milliers de lignes « Non installé ») et
+  // ont leur propre onglet.
   const shownMods = useMemo(() => {
-    if (quickFilter === "all") {
-      return mods;
-    }
-
     const keep = (mod: IModWithState) => {
+      if (quickFilter === "all") {
+        // la vue État a son groupe « Désinstallés »
+        return view?.id === "status" || mod.state !== "downloaded";
+      }
+      if (quickFilter === "archives") {
+        return mod.state === "downloaded";
+      }
       if (quickFilter === "enabled") {
         return isEnabled(mod);
       }
@@ -155,7 +160,7 @@ export const ModsTableSwitch = ({
     };
 
     return Object.fromEntries(Object.entries(mods).filter(([, mod]) => keep(mod)));
-  }, [mods, quickFilter, conflicts, isEnabled]);
+  }, [mods, quickFilter, conflicts, isEnabled, view?.id]);
   const rows = useMemo(() => allModRows(shownMods), [shownMods]);
 
   const enableInstalled = useCallback((ids: string[]) => setEnabled(ids, true), [setEnabled]);

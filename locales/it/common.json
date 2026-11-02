@@ -3983,5 +3983,10 @@
   "Install Microsoft's shader compiler": "Installa il compilatore di shader di Microsoft",
   "Wine's own shader compiler can't compile Community Shaders. mORTEX puts Microsoft's compiler (D3DCompiler_47, signed by Microsoft) in this bottle and keeps Wine's copy, so you can undo. If .NET 8 isn't in the bottle yet, mORTEX first downloads Microsoft's .NET 8 Desktop Runtime (about 60 MB) from microsoft.com and installs it there; that part stays. Nothing else changes.": "Il compilatore di shader di Wine non sa compilare Community Shaders. mORTEX mette il compilatore di Microsoft (D3DCompiler_47, firmato da Microsoft) in questa bottiglia e conserva la copia di Wine, per poter annullare. Se .NET 8 non è ancora nella bottiglia, mORTEX scarica prima il .NET 8 Desktop Runtime di Microsoft (circa 60 MB) da microsoft.com e lo installa lì; questa parte resta. Nient'altro cambia.",
   "Microsoft's shader compiler is installed. Launch the game once, then check the installation again.": "Il compilatore di shader di Microsoft è installato. Avvia il gioco una volta, poi verifica di nuovo l'installazione.",
-  "Install Microsoft's shader compiler in the bottle (the button above), or use Bottled Shaders, the Community Shaders build prepared for CrossOver. Check again after launching the game once.": "Installa il compilatore di shader di Microsoft nella bottiglia (il pulsante qui sopra), oppure usa Bottled Shaders, la versione di Community Shaders preparata per CrossOver. Ricontrolla dopo aver avviato il gioco una volta."
+  "Install Microsoft's shader compiler in the bottle (the button above), or use Bottled Shaders, the Community Shaders build prepared for CrossOver. Check again after launching the game once.": "Installa il compilatore di shader di Microsoft nella bottiglia (il pulsante qui sopra), oppure usa Bottled Shaders, la versione di Community Shaders preparata per CrossOver. Ricontrolla dopo aver avviato il gioco una volta.",
+  "Archives": "Archivi",
+  "Jump to page": "Vai alla pagina",
+  "Enter a page between 1 and {{total}}": "Inserisci una pagina tra 1 e {{total}}",
+  "Page": "Pagina",
+  "Dashlets": "Schede della dashboard"
 }

@@ -1,4 +1,5 @@
 import React, { useState, type FormEvent } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/ui/components/button/Button";
 import { TextField } from "@/ui/components/form/text_field/TextField";
@@ -13,6 +14,7 @@ export const JumpToPage = ({
 }: Pick<IPaginationProps, "currentPage" | "onPaginationUpdate" | "recordsPerPage"> & {
   totalPages: number;
 }) => {
+  const { t } = useTranslation();
   const [page, setPage] = useState(currentPage);
   const [prevCurrentPage, setPrevCurrentPage] = useState(currentPage);
 
@@ -33,14 +35,16 @@ export const JumpToPage = ({
 
   return (
     <form className="nxm-pagination-page" onSubmit={handleSubmit}>
-      <div className="nxm-pagination-page-label">Page</div>
+      <div className="nxm-pagination-page-label">{t("Page")}</div>
 
       <TextField
         className="nxm-pagination-page-input"
-        errorMessage={!isValid ? `Enter a page between 1 and ${totalPages}` : undefined}
+        errorMessage={
+          !isValid ? t("Enter a page between 1 and {{total}}", { total: totalPages }) : undefined
+        }
         hideErrors={true}
         hideLabel={true}
-        label="Jump to page"
+        label={t("Jump to page")}
         max={totalPages}
         min={1}
         pattern="[0-9]*"

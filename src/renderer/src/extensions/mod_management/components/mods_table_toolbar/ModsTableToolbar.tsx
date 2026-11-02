@@ -19,13 +19,14 @@ export const MODS_TABLE_FEEDBACK_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSeQgFzQQjWgVGwsFOC22JL2KZpKcKltN6_narrxyxUYydChxQ/viewform";
 
 /** mORTEX : les filtres segmentés des maquettes, appliqués avant la recherche */
-export type ModsQuickFilter = "all" | "enabled" | "conflicts" | "updates";
+export type ModsQuickFilter = "all" | "enabled" | "conflicts" | "updates" | "archives";
 
 const QUICK_FILTERS: { id: ModsQuickFilter; label: string }[] = [
   { id: "all", label: "All" },
   { id: "enabled", label: "Enabled" },
   { id: "conflicts", label: "Conflicts" },
   { id: "updates", label: "Updates" },
+  { id: "archives", label: "Archives" },
 ];
 
 interface IModsTableToolbarProps {

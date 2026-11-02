@@ -651,5 +651,10 @@
   "Install Microsoft's shader compiler": "Install Microsoft's shader compiler",
   "Wine's own shader compiler can't compile Community Shaders. mORTEX puts Microsoft's compiler (D3DCompiler_47, signed by Microsoft) in this bottle and keeps Wine's copy, so you can undo. If .NET 8 isn't in the bottle yet, mORTEX first downloads Microsoft's .NET 8 Desktop Runtime (about 60 MB) from microsoft.com and installs it there; that part stays. Nothing else changes.": "Wine's own shader compiler can't compile Community Shaders. mORTEX puts Microsoft's compiler (D3DCompiler_47, signed by Microsoft) in this bottle and keeps Wine's copy, so you can undo. If .NET 8 isn't in the bottle yet, mORTEX first downloads Microsoft's .NET 8 Desktop Runtime (about 60 MB) from microsoft.com and installs it there; that part stays. Nothing else changes.",
   "Microsoft's shader compiler is installed. Launch the game once, then check the installation again.": "Microsoft's shader compiler is installed. Launch the game once, then check the installation again.",
-  "Install Microsoft's shader compiler in the bottle (the button above), or use Bottled Shaders, the Community Shaders build prepared for CrossOver. Check again after launching the game once.": "Install Microsoft's shader compiler in the bottle (the button above), or use Bottled Shaders, the Community Shaders build prepared for CrossOver. Check again after launching the game once."
+  "Install Microsoft's shader compiler in the bottle (the button above), or use Bottled Shaders, the Community Shaders build prepared for CrossOver. Check again after launching the game once.": "Install Microsoft's shader compiler in the bottle (the button above), or use Bottled Shaders, the Community Shaders build prepared for CrossOver. Check again after launching the game once.",
+  "Archives": "Archives",
+  "Jump to page": "Jump to page",
+  "Enter a page between 1 and {{total}}": "Enter a page between 1 and {{total}}",
+  "Page": "Page",
+  "Dashlets": "Dashboard cards"
 }

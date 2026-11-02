@@ -543,6 +543,7 @@ describe("ModsTableSwitch", () => {
 
     it("installs a mod only downloaded from the button in its switch's place", async () => {
       renderSwitch({ a: mod("a", "Alpha", false, { state: "downloaded" }) });
+      fireEvent.click(screen.getByRole("button", { name: "Archives" }));
 
       const [row] = bodyRows(screen.getByRole("grid"));
       expect(within(row).queryByRole("checkbox", { name: "{{name}} enabled" })).toBeNull();
@@ -555,6 +556,7 @@ describe("ModsTableSwitch", () => {
 
     it("says what installing does, under its title", async () => {
       renderSwitch({ a: mod("a", "Alpha", false, { state: "downloaded" }) });
+      fireEvent.click(screen.getByRole("button", { name: "Archives" }));
 
       const [row] = bodyRows(screen.getByRole("grid"));
       await hoverRow(row);
@@ -609,6 +611,7 @@ describe("ModsTableSwitch", () => {
       renderSwitch({ a: mod("a", "Alpha", false, { state: "downloaded" }) }, [], {
         activity: { "mods-installing": ["a"] },
       });
+      fireEvent.click(screen.getByRole("button", { name: "Archives" }));
 
       const [row] = bodyRows(screen.getByRole("grid"));
       expect(installButton(row)).toBeDisabled();
@@ -618,6 +621,7 @@ describe("ModsTableSwitch", () => {
       renderSwitch({ a: mod("a", "Alpha", false, { state: "downloaded" }) }, [], {
         mods: { m: { id: "m", archiveId: "a" } },
       });
+      fireEvent.click(screen.getByRole("button", { name: "Archives" }));
 
       const [row] = bodyRows(screen.getByRole("grid"));
       expect(installButton(row)).toBeDisabled();

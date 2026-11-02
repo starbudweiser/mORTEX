@@ -273,6 +273,7 @@ export async function init(
   }
 
   currentLanguage = language;
+  if (globalThis.document !== undefined) document.documentElement.lang = language;
 
   const i18nObj = I18next;
   if (process.env.HIGHLIGHT_I18N === "true") {
@@ -378,6 +379,7 @@ export function getCurrentLanguage() {
 
 export function changeLanguage(lng: string, cb?: (err: Error) => void): Promise<TFunction> {
   currentLanguage = lng;
+  if (globalThis.document !== undefined) document.documentElement.lang = lng;
   return I18next.changeLanguage(lng, cb);
 }
 

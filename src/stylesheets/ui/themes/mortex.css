@@ -3087,3 +3087,83 @@ body.mortex-menu-moving * {
         transition: none;
     }
 }
+
+/* Profils : cartes centrées, photo en tête, bouton d'ajout sous la liste */
+.profile-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    margin: 0;
+    padding: 28px 28px 8px;
+}
+
+.profile-list .profile-item {
+    width: 320px;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--color-stroke-weak);
+    border-radius: 12px;
+    background-color: var(--color-surface-mid);
+}
+
+.profile-list .profile-item.active {
+    border-color: var(--color-primary-strong);
+    outline: 0;
+    background-color: var(--color-surface-mid);
+}
+
+.profile-list .profile-image {
+    height: 120px;
+}
+
+.profile-list .profile-name {
+    margin: 16px 20px 0;
+    color: var(--color-neutral-strong);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.profile-list .profile-game {
+    margin: 2px 20px 8px;
+    color: var(--color-neutral-subdued);
+    font-size: 12px;
+}
+
+.profile-list .profile-details {
+    padding: 0 20px 8px;
+}
+
+.profile-list .profile-actions {
+    padding: 8px 20px 16px;
+}
+
+.profile-add {
+    margin-top: 16px;
+}
+
+/* anciennes fenêtres (react-bootstrap) : même feuille que les dialogues récents */
+.modal .modal-content {
+    overflow: hidden;
+    border-radius: 14px;
+}
+
+.modal .modal-header {
+    padding: 20px 24px 12px;
+    border-bottom: 0;
+}
+
+.modal .modal-title {
+    color: var(--color-neutral-strong);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.modal .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--color-stroke-weak);
+}
+
+#install-finished-dialog .modal-body {
+    padding: 8px 24px 20px;
+}
