@@ -167,6 +167,17 @@ describe("InstallDriver session lifecycle", () => {
     expect(typeof (marker?.payload as { time: unknown }).time).toBe("number");
   });
 
+  test("stops when its collection is removed mid-install, so another can start", async ({
+    startCollection,
+  }) => {
+    const h = await startCollection(defaultFixture);
+
+    h.emit("did-remove-mods", GAME_ID, ["col-1"]);
+
+    expect(h.driver.collection).toBeUndefined();
+    expect(h.driver.step).toBe("prepare");
+  });
+
   test("refuses to start a second collection while one is still installing", async ({
     startCollection,
   }) => {

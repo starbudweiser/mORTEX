@@ -183,6 +183,19 @@ class InstallDriver {
 
     this.mInfoCache = new InfoCache(api);
 
+    // mORTEX : la collection retirée pendant son installation (page Mods, par exemple) laissait le
+    // pilote occupé, et toute nouvelle collection était refusée jusqu'au redémarrage
+    api.onAsync("did-remove-mods", (gameId: string, modIds: string[]) => {
+      if (this.mCollection !== undefined && modIds.includes(this.mCollection.id)) {
+        log("info", "collection removed while it was active, stopping the install", {
+          gameId,
+          collectionId: this.mCollection.id,
+        });
+        this.cancel();
+      }
+      return Bluebird.resolve();
+    });
+
     api.onAsync("will-install-mod", (_gameId: string, archiveId: string, _modId: string) => {
       const state: IState = api.store.getState();
       const download = state.persistent.downloads.files[archiveId];
