@@ -1,6 +1,7 @@
 /**
  * mORTEX (macOS) : l'Atelier DXMT. Bilan de la bouteille du jeu (moteur, pont ENB, SSE Display
- * Tweaks, doublons de Bottled Shaders) et cartes des pièges rencontrés avec leurs solutions.
+ * Tweaks, doublons de Bottled Shaders, compilation des shaders), à lancer à tout moment par
+ * « Vérifier l'installation », et cartes des pièges rencontrés avec leurs solutions.
  */
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -30,6 +31,7 @@ const CHECK_LABELS: Record<DxmtCheckId, string> = {
   bridge: "mDLSS ENB bridge",
   displayTweaks: "SSE Display Tweaks",
   bottledDuplicates: "Bottled Shaders duplicates",
+  shaders: "Shader compilation",
 };
 
 const STATUS_LOOK = {
@@ -57,6 +59,18 @@ function statusText(check: IDxmtCheck, t: IProps["api"]["translate"]): string {
         : check.status === "ok"
           ? t("None")
           : (check.found ?? "");
+    case "shaders": {
+      const report = check.shaders;
+      if (report === undefined) return t("Community Shaders not installed");
+      if (!report.logged) return t("Not checked yet: launch the game once");
+      return check.status === "ok"
+        ? t("Community Shaders {{version}}: shaders compile", {
+            replace: { version: report.version ?? "" },
+          })
+        : t("Shader compilation fails ({{count}}): {{reason}}", {
+            replace: { count: report.failures, reason: report.reason ?? "?" },
+          });
+    }
   }
 }
 
@@ -144,12 +158,15 @@ export default function DxmtWorkshopPage({ api }: IProps) {
   const bottle = gamePath !== undefined ? bottleForPath(gamePath) : undefined;
   const [checks, setChecks] = useState<IDxmtCheck[]>([]);
   const [busy, setBusy] = useState<DxmtCheckId | undefined>(undefined);
+  const [checking, setChecking] = useState(false);
 
   const refresh = useCallback(() => {
     if (bottle === undefined || gamePath === undefined) return;
+    setChecking(true);
     runDxmtChecks(bottle.path, gamePath)
       .then(setChecks)
-      .catch((err) => log("warn", "DXMT checks failed", { error: (err as Error).message }));
+      .catch((err) => log("warn", "DXMT checks failed", { error: (err as Error).message }))
+      .finally(() => setChecking(false));
   }, [bottle?.path, gamePath]);
 
   useEffect(refresh, [refresh]);
@@ -226,7 +243,15 @@ export default function DxmtWorkshopPage({ api }: IProps) {
   };
 
   const checkOf = (id?: DxmtCheckId) => checks.find((check) => check.id === id);
-  const statusOf = (id?: DxmtCheckId) => checkOf(id)?.status;
+  const statusOf = (id?: DxmtCheckId) => {
+    // l'étape des shaders est rouge pour un échec de compilation comme pour un doublon de Bottled
+    if (id === "shaders") {
+      const own = checkOf("shaders")?.status;
+      const duplicates = checkOf("bottledDuplicates")?.status;
+      return own === "error" || duplicates === "error" ? "error" : own === "na" ? duplicates : own;
+    }
+    return checkOf(id)?.status;
+  };
 
   return (
     <MainPage id="dxmt-workshop-page">
@@ -252,10 +277,13 @@ export default function DxmtWorkshopPage({ api }: IProps) {
             <Button
               appearance="moderate"
               brand="neutral"
-              leftIcon="refresh"
-              title={t("Refresh")}
+              isLoading={checking}
+              leftIcon="fact_check"
+              title={t("Check the bottle again: moves nothing, changes nothing")}
               onClick={refresh}
-            />
+            >
+              {t("Check the installation")}
+            </Button>
           </div>
 
           <Typography appearance="moderate" typographyType="body-md">

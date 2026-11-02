@@ -8,6 +8,8 @@
  *  - displayTweaks absent      → activer le mod s'il est installé, sinon sa page Nexus
  *  - bottledDuplicates         → désactiver les mods qui déploient Terrain Helper / Inverse Square
  *                                Lighting autonomes (d'après le manifeste de déploiement)
+ *  - shaders en erreur         → activer Bottled Shaders s'il est installé mais désactivé ; sinon
+ *                                rien : mORTEX ne le télécharge pas, la fiche du piège l'explique
  *  - bridge                    → facultatif, rien à corriger
  */
 import { readFile, writeFile } from "node:fs/promises";
@@ -190,6 +192,34 @@ export function fixFor(check: IDxmtCheck, context: IFixContext): IDxmtFix | unde
             replace: { mods: culprits.map(modName).join(", ") },
             undo: async () => {
               await setModsEnabled(api, profile.id, ids, true);
+            },
+          };
+        },
+      };
+    }
+
+    case "shaders": {
+      if (check.status !== "error" || profile === undefined) return undefined;
+      const bottled = Object.values(api.getState().persistent.mods[gameId] ?? {}).find(
+        (mod) =>
+          mod.state === "installed" &&
+          /bottled/i.test(modName(mod)) &&
+          profile.modState?.[mod.id]?.enabled !== true,
+      );
+      if (bottled === undefined) return undefined;
+      return {
+        label: "Enable Bottled Shaders",
+        icon: "toggle_on",
+        confirm: {
+          text: "mORTEX enables the mod {{mod}} in the profile {{profile}}; it is deployed with your other mods. Launch the game once, then check the installation again.",
+          replace: { mod: modName(bottled), profile: profile.name },
+        },
+        run: async () => {
+          await setModsEnabled(api, profile.id, [bottled.id], true);
+          return {
+            text: "Bottled Shaders enabled: it is deployed with your mods",
+            undo: async () => {
+              await setModsEnabled(api, profile.id, [bottled.id], false);
             },
           };
         },

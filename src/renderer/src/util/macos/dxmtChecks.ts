@@ -3,7 +3,7 @@
  * (Community Shaders « Bottled », presets ENB par le pont mDLSS). Voir l'Atelier DXMT.
  *
  * Interface :
- *  - runDxmtChecks(bottlePath, gamePath): Promise<IDxmtCheck[]>   les quatre contrôles
+ *  - runDxmtChecks(bottlePath, gamePath): Promise<IDxmtCheck[]>   les cinq contrôles
  *  - fixDisplayTweaks(gamePath): Promise<void>                     SSE Display Tweaks optimisé pour DXMT
  *  - useDxmt(bottlePath): Promise<void>                             moteur graphique de la bouteille sur DXMT
  *
@@ -16,15 +16,18 @@
  *    autres sont des optimisations
  *  - bottledDuplicates : Terrain Helper et Inverse Square Lighting autonomes, déjà intégrés à
  *    Bottled Shaders, qui font planter le jeu (« na » sans Bottled Shaders)
+ *  - shaders : Community Shaders compile-t-il ses shaders ? Lit son journal (le dernier lancement du
+ *    jeu) et regarde quel compilateur HLSL la bouteille utilise : celui de Wine refuse le mot-clé
+ *    `namespace` des sources d'origine (« unexpected KW_NAMESPACE »)
  */
-import { readdir, readFile, writeFile } from "node:fs/promises";
+import { readdir, readFile, stat, writeFile } from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 
 import { setBottleEnv } from "./bottleHealth";
 import { applyChanges, loadIniFile, planChanges } from "./iniEdit";
 
-export type DxmtCheckId = "engine" | "bridge" | "displayTweaks" | "bottledDuplicates";
+export type DxmtCheckId = "engine" | "bridge" | "displayTweaks" | "bottledDuplicates" | "shaders";
 export type DxmtCheckStatus = "ok" | "warning" | "error" | "na";
 
 export interface IDxmtCheck {
@@ -32,6 +35,21 @@ export interface IDxmtCheck {
   status: DxmtCheckStatus;
   /** ce qui a été trouvé : moteur, valeur de SwapEffect, DLL en double */
   found?: string;
+  /** contrôle « shaders » : ce que le journal et la bouteille ont montré */
+  shaders?: IShadersReport;
+}
+
+export interface IShadersReport {
+  /** version de CommunityShaders.dll, « 1.2.1 » */
+  version?: string;
+  /** le jeu a déjà été lancé et le journal de Community Shaders existe */
+  logged: boolean;
+  /** shaders dont la compilation a échoué au dernier lancement */
+  failures: number;
+  /** première raison donnée par le compilateur, « syntax error, unexpected KW_NAMESPACE » */
+  reason?: string;
+  /** « wine » : d3dcompiler_47 intégré à Wine (180 Ko) ; « native » : celui de Microsoft */
+  compiler?: "wine" | "native";
 }
 
 /** signature écrite par le pont ENB de mDLSS (son fichier journal) */
@@ -86,12 +104,80 @@ export async function bottledDuplicates(gamePath: string): Promise<string[] | un
   return files.filter((file) => /^(terrain.?helper|inverse.?square.*)\.dll$/i.test(file));
 }
 
+/** « 1.2.1.0 » → « 1.2.1 » : la version inscrite dans les ressources d'une DLL Windows */
+export function dllFileVersion(dll: Buffer): string | undefined {
+  const at = dll.indexOf(Buffer.from("FileVersion", "utf16le"));
+  if (at < 0) return undefined;
+  const text = dll.subarray(at, at + 120).toString("utf16le");
+  const version = text.match(/\d+(?:\.\d+){1,3}/)?.[0];
+  return version?.replace(/(\.0)+$/, "");
+}
+
+/** les shaders refusés par le compilateur au dernier lancement, d'après CommunityShaders.log */
+export function parseShadersLog(text: string): { failures: number; reason?: string } {
+  const failures = text.match(/Shader compilation failed/g)?.length ?? 0;
+  const reason = text.match(/\.hlsl[^\s:]*:\d+:\d+:\s*(?:[EW]\d+:\s*)?(.+)/)?.[1]?.trim();
+  return { failures, reason };
+}
+
+/** le journal est dans les Documents de la bouteille, selon la boutique du jeu */
+async function shadersLog(bottlePath: string): Promise<string | undefined> {
+  const users = path.join(bottlePath, "drive_c", "users");
+  const names = await readdir(users).catch(() => [] as string[]);
+  for (const user of names) {
+    for (const game of ["Skyrim Special Edition", "Skyrim Special Edition GOG"]) {
+      const text = await readText(
+        path.join(users, user, "Documents", "My Games", game, "SKSE", "CommunityShaders.log"),
+      );
+      if (text !== undefined) return text;
+    }
+  }
+  return undefined;
+}
+
+/** Wine range son d3dcompiler_47 de 180 Ko dans system32 ; celui de Microsoft en fait plus de 4 Mo */
+async function hlslCompiler(bottlePath: string): Promise<"wine" | "native" | undefined> {
+  const file = path.join(bottlePath, "drive_c", "windows", "system32", "d3dcompiler_47.dll");
+  const info = await stat(file).catch(() => undefined);
+  if (info === undefined) return undefined;
+  return info.size < 1_000_000 ? "wine" : "native";
+}
+
+/** undefined sans Community Shaders */
+export async function shadersReport(
+  bottlePath: string,
+  gamePath: string,
+): Promise<IShadersReport | undefined> {
+  const dll = await readFile(path.join(gamePath, ...PLUGINS_DIR, "CommunityShaders.dll")).catch(
+    () => undefined,
+  );
+  if (dll === undefined) return undefined;
+  const [log, compiler] = await Promise.all([shadersLog(bottlePath), hlslCompiler(bottlePath)]);
+  return {
+    version: dllFileVersion(dll),
+    logged: log !== undefined,
+    ...parseShadersLog(log ?? ""),
+    compiler,
+  };
+}
+
+function shadersCheck(report: IShadersReport | undefined): IDxmtCheck {
+  if (report === undefined) return { id: "shaders", status: "na" };
+  return {
+    id: "shaders",
+    // sans journal on ne sait rien : jamais « ok » pour un jeu qui n'a pas encore tourné
+    status: !report.logged ? "na" : report.failures > 0 ? "error" : "ok",
+    shaders: report,
+  };
+}
+
 export async function runDxmtChecks(bottlePath: string, gamePath: string): Promise<IDxmtCheck[]> {
-  const [engine, bridge, tweaks, duplicates] = await Promise.all([
+  const [engine, bridge, tweaks, duplicates, shaders] = await Promise.all([
     graphicsBackend(bottlePath),
     hasEnbBridge(gamePath),
     displayTweaksSettings(gamePath),
     bottledDuplicates(gamePath),
+    shadersReport(bottlePath, gamePath),
   ]);
   return [
     { id: "engine", status: engine === "dxmt" ? "ok" : "error", found: engine ?? "" },
@@ -102,6 +188,7 @@ export async function runDxmtChecks(bottlePath: string, gamePath: string): Promi
       status: duplicates === undefined ? "na" : duplicates.length > 0 ? "error" : "ok",
       found: duplicates?.join(", ") ?? "",
     },
+    shadersCheck(shaders),
   ];
 }
 

@@ -7,8 +7,10 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   applyMacDisplayTweaks,
   displayTweaksTargets,
+  dllFileVersion,
   hasDisplayTweaks,
   fixDisplayTweaks,
+  parseShadersLog,
   graphicsBackend,
   runDxmtChecks,
   useDxmt,
@@ -66,6 +68,80 @@ describe("DXMT checks", () => {
     expect(checks.displayTweaks.status).toBe("error");
     expect(checks.displayTweaks.found).toContain("SwapEffect = auto");
     expect(checks.bottledDuplicates.found).toBe("TerrainHelper.dll");
+  });
+
+  describe("shaders", () => {
+    const logDir = () =>
+      path.join(
+        bottle,
+        "drive_c",
+        "users",
+        "crossover",
+        "Documents",
+        "My Games",
+        "Skyrim Special Edition",
+        "SKSE",
+      );
+    const writeLog = (text: string) => {
+      fs.mkdirSync(logDir(), { recursive: true });
+      fs.writeFileSync(path.join(logDir(), "CommunityShaders.log"), text);
+    };
+    const writeCompiler = (bytes: number) => {
+      const dir = path.join(bottle, "drive_c", "windows", "system32");
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, "d3dcompiler_47.dll"), Buffer.alloc(bytes));
+    };
+    const withVersion = Buffer.concat([
+      Buffer.from("MZ"),
+      Buffer.from("FileVersion", "utf16le"),
+      Buffer.from("\0\0 1.2.1.0", "utf16le"),
+    ]);
+
+    it("is not applicable without Community Shaders", async () => {
+      expect((await byId()).shaders.status).toBe("na");
+      expect((await byId()).shaders.shaders).toBeUndefined();
+    });
+
+    it("does not claim success before the game has run", async () => {
+      fs.writeFileSync(path.join(plugins, "CommunityShaders.dll"), withVersion);
+      const { shaders } = await byId();
+      expect(shaders.status).toBe("na");
+      expect(shaders.shaders).toMatchObject({ logged: false, version: "1.2.1" });
+    });
+
+    it("flags shaders the compiler refused, with the compiler of the bottle", async () => {
+      fs.writeFileSync(path.join(plugins, "CommunityShaders.dll"), withVersion);
+      writeCompiler(179_776);
+      writeLog(
+        "[01:00:45] [I] loaded\n[01:01:26] [W] Shader compilation failed:\n" +
+          "Data\\Shaders\\DeferredCompositeCS.hlsl:10:1: E5000: syntax error, unexpected KW_NAMESPACE\n" +
+          "[01:01:27] [W] Shader compilation failed:\nData\\Shaders\\X.hlsl:9:1: E5000: other\n",
+      );
+      const { shaders } = await byId();
+      expect(shaders.status).toBe("error");
+      expect(shaders.shaders).toEqual({
+        version: "1.2.1",
+        logged: true,
+        failures: 2,
+        reason: "syntax error, unexpected KW_NAMESPACE",
+        compiler: "wine",
+      });
+    });
+
+    it("accepts a log without failures, and tells Microsoft's compiler from Wine's", async () => {
+      fs.writeFileSync(path.join(plugins, "CommunityShaders.dll"), withVersion);
+      writeCompiler(4_741_488);
+      writeLog("[01:00:45] [I] GrassLighting.ini 2-0-0 successfully loaded\n");
+      const { shaders } = await byId();
+      expect(shaders.status).toBe("ok");
+      expect(shaders.shaders?.compiler).toBe("native");
+    });
+
+    it("reads the version and the failures out of raw data", () => {
+      expect(dllFileVersion(withVersion)).toBe("1.2.1");
+      expect(dllFileVersion(Buffer.from("MZ"))).toBeUndefined();
+      expect(parseShadersLog("nothing")).toEqual({ failures: 0, reason: undefined });
+    });
   });
 
   it("sizes the video memory from the Mac's memory, up to 16 GB", () => {

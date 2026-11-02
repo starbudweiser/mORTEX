@@ -3966,5 +3966,19 @@
   "Several options possible": "Più opzioni possibili",
   "Hover an option to see its description.": "Passa il cursore su un'opzione per vederne la descrizione.",
   "1 option chosen": "1 opzione scelta",
-  "{{chosen}} options chosen": "{{chosen}} opzioni scelte"
+  "{{chosen}} options chosen": "{{chosen}} opzioni scelte",
+  "Shader compilation": "Compilazione degli shader",
+  "Community Shaders not installed": "Community Shaders non installato",
+  "Not checked yet: launch the game once": "Non ancora verificato: avvia il gioco una volta",
+  "Community Shaders {{version}}: shaders compile": "Community Shaders {{version}}: gli shader si compilano",
+  "Shader compilation fails ({{count}}): {{reason}}": "La compilazione degli shader non riesce ({{count}}): {{reason}}",
+  "Check the installation": "Verifica l'installazione",
+  "Check the bottle again: moves nothing, changes nothing": "Ricontrolla la bottiglia: non sposta né cambia nulla",
+  "Shaders fail to compile": "Gli shader non si compilano",
+  "Community Shaders logs « Shader compilation failed » (unexpected KW_NAMESPACE), and the lighting and shadows it adds don't appear.": "Community Shaders registra « Shader compilation failed » (unexpected KW_NAMESPACE) e l'illuminazione e le ombre che aggiunge non compaiono.",
+  "Under CrossOver, the HLSL compiler is the one built into Wine, which doesn't accept the namespace keyword used by the stock Community Shaders sources.": "Con CrossOver il compilatore HLSL è quello integrato in Wine, che non accetta la parola chiave namespace dei sorgenti originali di Community Shaders.",
+  "Use Bottled Shaders, the Community Shaders build prepared for CrossOver, instead of the stock one. Check again after launching the game once.": "Usa Bottled Shaders, la versione di Community Shaders preparata per CrossOver, al posto di quella originale. Ricontrolla dopo aver avviato il gioco una volta.",
+  "Enable Bottled Shaders": "Attiva Bottled Shaders",
+  "mORTEX enables the mod {{mod}} in the profile {{profile}}; it is deployed with your other mods. Launch the game once, then check the installation again.": "mORTEX attiva la mod {{mod}} nel profilo {{profile}}; viene distribuita con le altre mod. Avvia il gioco una volta, poi verifica di nuovo l'installazione.",
+  "Bottled Shaders enabled: it is deployed with your mods": "Bottled Shaders attivato: viene distribuito con le tue mod"
 }

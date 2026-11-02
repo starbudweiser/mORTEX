@@ -38,6 +38,17 @@ export const PITFALLS: IDxmtPitfall[] = [
     check: "displayTweaks",
   },
   {
+    id: "shader-compilation",
+    icon: "auto_awesome",
+    title: "Shaders fail to compile",
+    symptom:
+      "Community Shaders logs « Shader compilation failed » (unexpected KW_NAMESPACE), and the lighting and shadows it adds don't appear.",
+    cause:
+      "Under CrossOver, the HLSL compiler is the one built into Wine, which doesn't accept the namespace keyword used by the stock Community Shaders sources.",
+    fix: "Use Bottled Shaders, the Community Shaders build prepared for CrossOver, instead of the stock one. Check again after launching the game once.",
+    check: "shaders",
+  },
+  {
     id: "bottled-duplicates",
     icon: "content_copy",
     title: "Terrain Helper and Inverse Square Lighting twice",

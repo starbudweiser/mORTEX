@@ -28,7 +28,7 @@ export const RENDER_PATH: IRenderStage[] = [
     icon: "auto_awesome",
     name: "Community Shaders",
     role: "Bottled Shaders adds lighting, shadows and upscaling through SKSE",
-    check: "bottledDuplicates",
+    check: "shaders",
   },
   {
     id: "bridge",
