@@ -21,6 +21,8 @@ import { log } from "../../../util/log";
 import opn from "../../../util/opn";
 import MainPage from "../../../views/MainPage";
 
+const DISCORD_URL = "https://discord.gg/xdDVDPQsYs";
+
 interface IBomModule {
   key: string;
   name: string;
@@ -187,6 +189,12 @@ class AboutPage extends ComponentEx<IProps, IComponentState> {
             </p>
             <p>
               <strong>Chrome</strong> {(process.versions as any).chrome}
+            </p>
+            <p>
+              {t("Support and community on Discord")}:{" "}
+              <a href={DISCORD_URL} data-url={DISCORD_URL} onClick={this.openLicense}>
+                discord.gg/xdDVDPQsYs
+              </a>
             </p>
             {licenseBox}
           </PanelX.Body>

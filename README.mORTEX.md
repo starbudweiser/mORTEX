@@ -2,6 +2,8 @@
 
 **Français** · [English](#english)
 
+💬 **Support & community:** [Discord](https://discord.gg/xdDVDPQsYs) · _Aide et communauté : [Discord](https://discord.gg/xdDVDPQsYs)_
+
 mORTEX est un portage macOS (Apple Silicon) non officiel de [Vortex](https://github.com/Nexus-Mods/Vortex), le gestionnaire de mods de Nexus Mods. Il gère Skyrim Special Edition lancé dans une bouteille Wine (CrossOver). Il n'est ni affilié à Nexus Mods ni approuvé par elle.
 
 ## Ce qui fonctionne

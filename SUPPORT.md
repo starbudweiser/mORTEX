@@ -8,6 +8,9 @@ If you're having trouble with Vortex, these are the best places to start:
   for support questions, where the community and the team can help.
 - **[Discord](https://discord.gg/nexusmods)** for quicker back-and-forth with
   other users and the team.
+- **[mORTEX & Skyrim Mac Tools on Discord](https://discord.gg/xdDVDPQsYs)** for
+  help with mORTEX and the other Skyrim on Mac tools (English, with a French
+  channel).
 
 Please use those rather than opening a GitHub issue for help with using Vortex,
 mod installation problems, or questions about a specific game. Issues here are
