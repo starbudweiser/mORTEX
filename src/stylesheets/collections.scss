@@ -972,6 +972,11 @@ ul.collection-mods-page-attrib-tooltip {
         // mORTEX : bord droit aligné sur celui du bouton JOUER (16 px du bord de la fenêtre ;
         // la page va jusqu'à 1 px du bord)
         right: 15px;
+        // centré dans la rangée d'onglets (34 px de haut, bouton de 24 px à 6 px du haut)
+        height: 24px;
+        padding-block: 0;
+        line-height: 1;
+        align-items: center;
     }
 }
 

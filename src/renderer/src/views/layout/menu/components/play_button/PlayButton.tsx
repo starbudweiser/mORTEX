@@ -1,6 +1,6 @@
 import { pathToFileURL } from "url";
 
-import React, { type FC, useMemo } from "react";
+import React, { type FC, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/ui/components/button/Button";
@@ -36,6 +36,26 @@ export const PlayButton: FC<React.PropsWithChildren<PlayButtonProps>> = ({
 }) => {
   const { t } = useTranslation();
 
+  // The button sits over the title bar, and its width follows its label ("Jouer", "En cours…",
+  // "In esecuzione..."). Publish that width so the title bar leaves exactly that much room
+  // instead of letting a longer label run over the account button next to it.
+  const wrapRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const wrap = wrapRef.current;
+    if (wrap === null || typeof ResizeObserver === "undefined") {
+      return undefined;
+    }
+    const root = document.documentElement;
+    const publish = () => root.style.setProperty("--mortex-play-width", `${wrap.offsetWidth}px`);
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(wrap);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty("--mortex-play-width");
+    };
+  }, []);
+
   const launcherIconSrc = useMemo(() => {
     if (!primaryStarter) {
       return undefined;
@@ -66,6 +86,7 @@ export const PlayButton: FC<React.PropsWithChildren<PlayButtonProps>> = ({
 
   return (
     <div
+      ref={wrapRef}
       data-tour="launch"
       className={joinClasses([
         "mortex-play-wrap relative",
