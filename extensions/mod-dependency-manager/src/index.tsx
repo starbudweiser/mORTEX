@@ -846,10 +846,12 @@ function generateLoadOrder(api: types.IExtensionApi): Bluebird<void> {
       if (!(err instanceof util.CycleError)) return;
 
       updateCycles(api, err.cycles);
+      // mORTEX : même message et même ordre par défaut que le déploiement, au lieu de l'écraser
+      const fallback: types.IMod[] | undefined = (err as { fallback?: types.IMod[] }).fallback;
       api.sendNotification({
         id: "mod-cycle-warning",
         type: "warning",
-        message: "Mod rules contain cycles",
+        message: "Some mods have contradictory rules: they were deployed in a default order",
         noDismiss: true,
         actions: [
           {
@@ -860,8 +862,7 @@ function generateLoadOrder(api: types.IExtensionApi): Bluebird<void> {
           },
         ],
       });
-      // return unsorted
-      return Promise.resolve(mods);
+      return Promise.resolve(fallback ?? mods);
     })
     .then((sortedMods: types.IMod[]) => {
       loadOrder = sortedMods

@@ -236,6 +236,10 @@ function bakeSettings(api: types.IExtensionApi, profile: types.IProfile): Promis
   return PromiseBB.resolve(
     util
       .sortMods(profile.gameId, mods, api)
+      // mORTEX : des règles contradictoires ne doivent pas empêcher d'appliquer les réglages du jeu
+      .catch((err: { fallback?: types.IMod[] }) =>
+        err?.fallback !== undefined ? err.fallback : Promise.reject(err),
+      )
       .then((sortedMods) =>
         PromiseBB.resolve(
           api
