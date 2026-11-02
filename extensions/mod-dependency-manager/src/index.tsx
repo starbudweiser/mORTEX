@@ -387,7 +387,7 @@ async function updateConflictInfo(
 
   if (Object.keys(unsolved).length === 0) {
     store.dispatch(actions.dismissNotification(CONFLICT_NOTIFICATION_ID));
-    store.dispatch(setUnsolvedConflictsCount(0));
+    store.dispatch(setUnsolvedConflictsCount(0, []));
   } else {
     const message: string[] = [
       t(
@@ -438,9 +438,16 @@ async function updateConflictInfo(
       );
     };
 
+    // both sides of each pair: `unsolved` only keys a pair under the first mod encountered
+    const unsolvedMods = new Set<string>();
+    Object.entries(unsolved).forEach(([modId, modConflicts]) => {
+      unsolvedMods.add(modId);
+      modConflicts.forEach((conflict) => unsolvedMods.add(conflict.otherMod.id));
+    });
     store.dispatch(
       setUnsolvedConflictsCount(
         Object.values(unsolved).reduce((count, conflicts) => count + conflicts.length, 0),
+        Array.from(unsolvedMods),
       ),
     );
     store.dispatch(

@@ -68,6 +68,7 @@ export const sessionReducer: types.IReducerSpec = {
       ...state,
       unsolvedConflictsCount: payload.count,
       hasUnsolvedConflicts: payload.count > 0,
+      unsolvedConflictMods: payload.modIds ?? [],
     }),
   },
   defaults: {
@@ -80,5 +81,6 @@ export const sessionReducer: types.IReducerSpec = {
     editCycle: undefined,
     unsolvedConflictsCount: 0,
     hasUnsolvedConflicts: false,
+    unsolvedConflictMods: [],
   },
 };

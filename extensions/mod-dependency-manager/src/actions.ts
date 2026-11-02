@@ -54,8 +54,11 @@ export const setModTypeConflictsSetting = createAction(
   (enabled: boolean) => ({ enabled }),
 );
 
-/** How many conflicts between two mods have neither a rule nor a resolution. */
+/**
+ * How many conflicts between two mods have neither a rule nor a resolution, and the mods on
+ * either side of them (the Mods page's "Conflicts" filter).
+ */
 export const setUnsolvedConflictsCount = createAction(
   "SET_UNSOLVED_CONFLICTS_COUNT",
-  (count: number) => ({ count }),
+  (count: number, modIds: string[]) => ({ count, modIds }),
 );

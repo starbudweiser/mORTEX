@@ -97,6 +97,13 @@ const NO_ROW_ACTIONS: ITableRowAction[] = [];
 const NO_ALTERNATIVES: { [modId: string]: IModWithState[] } = {};
 const nop = () => undefined;
 
+const EMPTY_FILTER_TEXT: Record<Exclude<ModsQuickFilter, "all">, string> = {
+  enabled: "No enabled mods",
+  conflicts: "No unresolved file conflicts",
+  updates: "All mods are up to date",
+  archives: "No archive waiting to be installed",
+};
+
 /**
  * The Mods page's table: the classic one, or the new one while the user has the beta view on.
  *
@@ -130,11 +137,14 @@ export const ModsTableSwitch = ({
     removeView,
   } = useModsTableView(mods);
   const [quickFilter, setQuickFilter] = useState<ModsQuickFilter>("all");
-  const conflicts = useSelector(
+  // mORTEX : « Conflits » ne montre que les conflits sans règle ni résolution. Tous les mods qui
+  // partagent des fichiers en ont un, et l'onglet redonnait alors la liste « Activé ».
+  const unsolvedConflictMods = useSelector(
     (state: IState) =>
-      (state.session as { dependencies?: { conflicts?: Record<string, unknown[]> } }).dependencies
-        ?.conflicts,
+      (state.session as { dependencies?: { unsolvedConflictMods?: string[] } }).dependencies
+        ?.unsolvedConflictMods,
   );
+  const conflicted = useMemo(() => new Set(unsolvedConflictMods ?? []), [unsolvedConflictMods]);
   const memberships = useCollectionMemberships(mods);
   const { changing, setEnabled, isEnabled } = useModsEnabled(onSetModsEnabled);
 
@@ -154,13 +164,13 @@ export const ModsTableSwitch = ({
         return isEnabled(mod);
       }
       if (quickFilter === "conflicts") {
-        return (conflicts?.[mod.id]?.length ?? 0) > 0;
+        return conflicted.has(mod.id);
       }
       return modHasUpdate(mod);
     };
 
     return Object.fromEntries(Object.entries(mods).filter(([, mod]) => keep(mod)));
-  }, [mods, quickFilter, conflicts, isEnabled, view?.id]);
+  }, [mods, quickFilter, conflicted, isEnabled, view?.id]);
   const rows = useMemo(() => allModRows(shownMods), [shownMods]);
 
   const enableInstalled = useCallback((ids: string[]) => setEnabled(ids, true), [setEnabled]);
@@ -532,8 +542,15 @@ export const ModsTableSwitch = ({
   return (
     <>
       {/* Toujours enveloppé : ouvrir la fiche ne remonte pas le tableau (groupes, défilement) */}
-      <div className="mortex-mods-body">
+      <div className="mortex-mods-body relative">
         <Table {...tableProps} {...data} />
+
+        {/* mORTEX : un filtre sans résultat le dit, plutôt qu'une liste vide qui a l'air en panne */}
+        {rows.length === 0 && quickFilter !== "all" && (
+          <p className="pointer-events-none absolute inset-x-0 top-20 text-center text-body-md text-neutral-subdued">
+            {t(EMPTY_FILTER_TEXT[quickFilter])}
+          </p>
+        )}
 
         {inspected !== undefined && (
           <ModInspector

@@ -22,7 +22,7 @@ export const MODS_TABLE_FEEDBACK_URL =
 export type ModsQuickFilter = "all" | "enabled" | "conflicts" | "updates" | "archives";
 
 const QUICK_FILTERS: { id: ModsQuickFilter; label: string }[] = [
-  { id: "all", label: "All" },
+  { id: "all", label: "Installed mods" },
   { id: "enabled", label: "Enabled" },
   { id: "conflicts", label: "Conflicts" },
   { id: "updates", label: "Updates" },
