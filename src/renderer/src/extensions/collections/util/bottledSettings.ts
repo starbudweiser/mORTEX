@@ -5,8 +5,9 @@
  * gardée pour « Annuler ».
  *
  *  - keep    : garder les réglages de la collection (le fichier n'est pas touché)
- *  - mortex  : les réglages mORTEX pour DXMT, ceux de la recette de l'Atelier (TAA pour la mise à
- *              l'échelle, génération d'images désactivée) ; le reste prend les valeurs de Bottled
+ *  - mortex  : les réglages mORTEX pour DXMT, ceux de la recette de l'Atelier (DLSS pour la mise à
+ *              l'échelle, TAA quand DLSS manque, jamais FSR ; post-traitement chargé au démarrage ;
+ *              génération d'images désactivée) ; le reste prend les valeurs de Bottled
  *  - default : les réglages par défaut de Bottled (le fichier de la collection est retiré)
  *
  * Interface :
@@ -54,13 +55,19 @@ export function isBottledSettingsChoice(value: unknown): value is BottledSetting
 }
 
 /**
- * Réglages de la recette de l'Atelier DXMT : TAA pour la mise à l'échelle (ni DLSS ni FSR, que le
- * Mac n'a pas), génération d'images désactivée (écran noir sous CrossOver).
+ * Réglages de la recette de l'Atelier DXMT :
+ *  - DLSS pour la mise à l'échelle (3) : Streamline le charge sous DXMT (« DLSS is available » dans
+ *    le journal), validé dans les essais du 15/10 ; TAA (1) quand DLSS manque, jamais FSR (2), qui
+ *    se comporte mal sous DXMT ;
+ *  - post-traitement chargé au démarrage (Bottled le désactive par défaut) : sans lui, les
+ *    transparences et les reflets métalliques disparaissent ;
+ *  - génération d'images désactivée (écran noir sous CrossOver).
  */
 export function mortexSettings() {
   return {
+    "Disable at Boot": { PostProcessing: false },
     Upscaling: {
-      upscaleMethod: 1,
+      upscaleMethod: 3,
       upscaleMethodNoDLSS: 1,
       upscaleMethodNoFSR: 1,
       frameGenerationMode: 0,

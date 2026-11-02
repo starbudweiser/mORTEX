@@ -37,7 +37,8 @@ describe("applyBottledSettings", () => {
     const undo = await applyBottledSettings(game, "mortex");
     expect(JSON.parse(fs.readFileSync(file(), "utf8"))).toEqual(mortexSettings());
     expect(mortexSettings().Upscaling).toMatchObject({
-      upscaleMethod: 1,
+      upscaleMethod: 3,
+      upscaleMethodNoDLSS: 1,
       frameGenerationMode: 0,
       frameGenerationForceEnable: 0,
     });

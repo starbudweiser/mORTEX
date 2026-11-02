@@ -83,7 +83,9 @@ export const RECIPES: IRecipe[] = [
         text: "Install SSE Display Tweaks and let mORTEX optimize it for DXMT.",
         check: "displayTweaks",
       },
-      { text: "In Bottled Shaders, choose TAA as the upscaler and leave frame generation off." },
+      {
+        text: "In Bottled Shaders, choose DLSS as the upscaler (TAA if it is missing, never FSR), load Post Processing at boot and leave frame generation off.",
+      },
       { text: "Lock Plugins.txt before launching the game." },
     ],
   },

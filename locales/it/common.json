@@ -4041,5 +4041,7 @@
   "The Community Shaders settings of the collection were made for the original Community Shaders. Nothing guarantees that they work with Bottled Shaders. Choose:": "Le impostazioni di Community Shaders della collezione sono state fatte per il Community Shaders originale. Nulla garantisce che funzionino con Bottled Shaders. Scegli:",
   "mORTEX disables, in the profile {{profile}}, the mods that install {{dlls}}: Bottled Shaders already includes them or refuses them. The mods stay installed and can be enabled again.": "mORTEX disattiva, nel profilo {{profile}}, i mod che installano {{dlls}}: Bottled Shaders li include già o li rifiuta. I mod restano installati e possono essere riattivati.",
   "Disabled: Bottled Shaders already includes or refuses them": "Disattivati: Bottled Shaders li include già o li rifiuta",
-  "incompatible with Bottled Shaders": "incompatibile con Bottled Shaders"
+  "incompatible with Bottled Shaders": "incompatibile con Bottled Shaders",
+  "DLSS for upscaling (TAA without it), post-processing on, frame generation off: the ones that work on a Mac.": "DLSS per il ridimensionamento (TAA senza di esso), post-elaborazione attiva, generazione di fotogrammi disattivata: quelle che funzionano su Mac.",
+  "In Bottled Shaders, choose DLSS as the upscaler (TAA if it is missing, never FSR), load Post Processing at boot and leave frame generation off.": "In Bottled Shaders, scegli DLSS per il ridimensionamento (TAA se manca, mai FSR), carica Post Processing all'avvio e lascia disattivata la generazione di fotogrammi."
 }
