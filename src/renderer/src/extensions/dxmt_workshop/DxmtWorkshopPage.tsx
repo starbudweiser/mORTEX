@@ -31,6 +31,7 @@ const CHECK_LABELS: Record<DxmtCheckId, string> = {
   bridge: "mDLSS ENB bridge",
   displayTweaks: "SSE Display Tweaks",
   bottledDuplicates: "Bottled Shaders duplicates",
+  csBuild: "Community Shaders build",
   shaders: "Shader compilation",
 };
 
@@ -59,14 +60,28 @@ function statusText(check: IDxmtCheck, t: IProps["api"]["translate"]): string {
         : check.status === "ok"
           ? t("None")
           : (check.found ?? "");
+    case "csBuild": {
+      const version = check.shaders?.version ?? "";
+      if (check.status === "na") return t("Community Shaders not installed");
+      if (check.status === "ok") return t("Bottled Shaders {{version}}", { replace: { version } });
+      return check.status === "error"
+        ? t("Community Shaders {{version}} is too old for {{features}}", {
+            replace: { version, features: check.found ?? "" },
+          })
+        : t("Stock Community Shaders {{version}}: use Bottled Shaders", { replace: { version } });
+    }
     case "shaders": {
       const report = check.shaders;
       if (report === undefined) return t("Community Shaders not installed");
       if (!report.logged) return t("Not checked yet: launch the game once");
-      return check.status === "ok"
-        ? t("Community Shaders {{version}}: shaders compile", {
-            replace: { version: report.version ?? "" },
-          })
+      if (check.status === "ok") {
+        return t("Community Shaders {{version}}: shaders compile", {
+          replace: { version: report.version ?? "" },
+        });
+      }
+      // échecs non écrits dans le journal : ceux des modules trop récents pour cette version
+      return report.failures === 0
+        ? t("Shaders fail to compile: modules too recent for this version")
         : t("Shader compilation fails ({{count}}): {{reason}}", {
             replace: { count: report.failures, reason: report.reason ?? "?" },
           });
@@ -119,7 +134,7 @@ function RenderStage({
           : "text-warning-strong";
   return (
     <div
-      className={`dxmt-stage flex min-w-0 flex-1 basis-36 flex-col items-center gap-y-1 rounded-md bg-surface-mid px-3 py-3 text-center ${frame} ${missing ? "dxmt-stage-missing opacity-70" : ""}`}
+      className={`dxmt-stage flex min-w-0 flex-1 basis-36 flex-col items-center justify-center gap-y-1 rounded-md bg-surface-mid px-3 py-3 text-center ${frame} ${missing ? "dxmt-stage-missing opacity-70" : status === "ok" ? "dxmt-stage-ok" : status === "error" ? "dxmt-stage-error" : ""}`}
       data-testid={`dxmt-stage-${stage.id}`}
       style={{ "--i": index } as React.CSSProperties}
     >
@@ -245,11 +260,15 @@ export default function DxmtWorkshopPage({ api }: IProps) {
 
   const checkOf = (id?: DxmtCheckId) => checks.find((check) => check.id === id);
   const statusOf = (id?: DxmtCheckId) => {
-    // l'étape des shaders est rouge pour un échec de compilation comme pour un doublon de Bottled
+    // l'étape des shaders prend le pire de la compilation, de la version et des doublons de Bottled
     if (id === "shaders") {
-      const own = checkOf("shaders")?.status;
-      const duplicates = checkOf("bottledDuplicates")?.status;
-      return own === "error" || duplicates === "error" ? "error" : own === "na" ? duplicates : own;
+      const related = (["shaders", "csBuild", "bottledDuplicates"] as const).map(
+        (related) => checkOf(related)?.status,
+      );
+      for (const status of ["error", "warning", "ok", "na"] as const) {
+        if (related.includes(status)) return status;
+      }
+      return undefined;
     }
     return checkOf(id)?.status;
   };
@@ -383,8 +402,12 @@ export default function DxmtWorkshopPage({ api }: IProps) {
           <SectionTitle icon="build">{t("Pitfalls we solved")}</SectionTitle>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(24rem,1fr))] gap-4">
             {PITFALLS.map((pitfall) => {
-              const status = statusOf(pitfall.check);
-              const detected = status === "error" || status === "warning";
+              // le piège de son propre contrôle ; celui du compilateur seulement quand le journal
+              // montre des refus (les modules trop récents ont leur propre piège)
+              const own = checkOf(pitfall.check);
+              const detected =
+                (own?.status === "error" || own?.status === "warning") &&
+                (own.id !== "shaders" || (own.shaders?.failures ?? 0) > 0);
               return (
                 <div
                   className={`flex flex-col gap-y-2 rounded-md border bg-surface-mid p-4 ${detected ? "border-danger-moderate" : "border-transparent"}`}

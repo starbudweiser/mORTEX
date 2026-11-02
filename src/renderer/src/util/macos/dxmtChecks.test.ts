@@ -38,7 +38,7 @@ describe("DXMT checks", () => {
   it("accepts a DXMT bottle with Bottled, the bridge and flip_discard", async () => {
     fs.writeFileSync(path.join(bottle, "cxbottle.conf"), '"CX_GRAPHICS_BACKEND" = "dxmt"\n');
     fs.writeFileSync(path.join(game, "d3d11.dll"), "MZ...mDLSS_enb_bridge.log...");
-    fs.writeFileSync(path.join(plugins, "CommunityShaders.dll"), "");
+    fs.writeFileSync(path.join(plugins, "CommunityShaders.dll"), "MZ...Bottled...");
     const video = displayTweaksTargets().VideoMemorySizeMb;
     fs.writeFileSync(
       path.join(plugins, "SSEDisplayTweaks.ini"),
@@ -55,7 +55,7 @@ describe("DXMT checks", () => {
   it("flags DXVK, a wrong swap effect and duplicates of Bottled's own plugins", async () => {
     fs.writeFileSync(path.join(bottle, "cxbottle.conf"), '"CX_GRAPHICS_BACKEND" = "dxvk"\n');
     fs.writeFileSync(path.join(game, "d3d11.dll"), "some other d3d11");
-    fs.writeFileSync(path.join(plugins, "CommunityShaders.dll"), "");
+    fs.writeFileSync(path.join(plugins, "CommunityShaders.dll"), "MZ...Bottled...");
     fs.writeFileSync(path.join(plugins, "TerrainHelper.dll"), "");
     fs.writeFileSync(
       path.join(plugins, "SSEDisplayTweaks.ini"),
@@ -121,6 +121,8 @@ describe("DXMT checks", () => {
       expect(shaders.status).toBe("error");
       expect(shaders.shaders).toEqual({
         version: "1.2.1",
+        bottled: false,
+        outdatedFeatures: [],
         logged: true,
         failures: 2,
         reason: "syntax error, unexpected KW_NAMESPACE",
@@ -140,7 +142,39 @@ describe("DXMT checks", () => {
     it("reads the version and the failures out of raw data", () => {
       expect(dllFileVersion(withVersion)).toBe("1.2.1");
       expect(dllFileVersion(Buffer.from("MZ"))).toBeUndefined();
-      expect(parseShadersLog("nothing")).toEqual({ failures: 0, reason: undefined });
+      expect(parseShadersLog("nothing")).toEqual({
+        failures: 0,
+        reason: undefined,
+        outdatedFeatures: [],
+      });
+    });
+
+    it("flags the stock build, and features too recent for it even when the log shows no failure", async () => {
+      fs.writeFileSync(path.join(plugins, "CommunityShaders.dll"), withVersion);
+      writeCompiler(4_741_488);
+      writeLog(
+        "[13:12:27.146] [ 256 ] [W] GrassCollision 3-0-2 requires a newer version of community shaders, the feature version should be 2-0-1\n" +
+          "[13:12:27.150] [ 256 ] [W] ScreenSpaceGI 4-2-0 requires a newer version of community shaders, the feature version should be 3-0-5\n",
+      );
+      const checks = await byId();
+      expect(checks.csBuild).toMatchObject({
+        status: "error",
+        found: "GrassCollision, ScreenSpaceGI",
+      });
+      expect(checks.shaders.status).toBe("error");
+      // Terrain Helper ne fait double emploi qu'avec Bottled
+      expect(checks.bottledDuplicates.status).toBe("na");
+    });
+
+    it("only warns about the stock build when its features load", async () => {
+      fs.writeFileSync(path.join(plugins, "CommunityShaders.dll"), withVersion);
+      writeLog("[01:00:45] [I] GrassLighting.ini 2-0-0 successfully loaded\n");
+      expect((await byId()).csBuild.status).toBe("warning");
+      fs.writeFileSync(
+        path.join(plugins, "CommunityShaders.dll"),
+        Buffer.concat([withVersion, Buffer.from("Bottled")]),
+      );
+      expect((await byId()).csBuild.status).toBe("ok");
     });
   });
 

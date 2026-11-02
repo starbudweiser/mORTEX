@@ -8,7 +8,7 @@
  *  - displayTweaks absent      → activer le mod s'il est installé, sinon sa page Nexus
  *  - bottledDuplicates         → désactiver les mods qui déploient Terrain Helper / Inverse Square
  *                                Lighting autonomes (d'après le manifeste de déploiement)
- *  - shaders en erreur         → activer Bottled Shaders s'il est installé mais désactivé ; sinon,
+ *  - csBuild / shaders         → activer Bottled Shaders s'il est installé mais désactivé ; sinon,
  *                                si la bouteille compile avec le compilateur de Wine, poser celui de
  *                                Microsoft (celui du .NET 8 Desktop, installé d'abord au besoin),
  *                                en gardant la copie de Wine
@@ -202,8 +202,9 @@ export function fixFor(check: IDxmtCheck, context: IFixContext): IDxmtFix | unde
       };
     }
 
+    case "csBuild":
     case "shaders": {
-      if (check.status !== "error") return undefined;
+      if (check.status !== "error" && check.status !== "warning") return undefined;
       const bottled =
         profile === undefined
           ? undefined
@@ -232,7 +233,7 @@ export function fixFor(check: IDxmtCheck, context: IFixContext): IDxmtFix | unde
           },
         };
       }
-      if (check.shaders?.compiler !== "wine") return undefined;
+      if (check.id !== "shaders" || check.shaders?.compiler !== "wine") return undefined;
       return {
         label: "Install Microsoft's shader compiler",
         icon: "build",

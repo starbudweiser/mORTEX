@@ -16,6 +16,10 @@
  *    autres sont des optimisations
  *  - bottledDuplicates : Terrain Helper et Inverse Square Lighting autonomes, déjà intégrés à
  *    Bottled Shaders, qui font planter le jeu (« na » sans Bottled Shaders)
+ *  - csBuild : quel Community Shaders est déployé : Bottled Shaders (préparé pour CrossOver) ou la
+ *    version d'origine, qu'une collection peut apporter avec des modules plus récents qu'elle ne sait
+ *    pas lire (« requires a newer version of community shaders ») : des centaines de shaders échouent
+ *    alors, sans que le journal le dise au niveau de détail par défaut
  *  - shaders : Community Shaders compile-t-il ses shaders ? Lit son journal (le dernier lancement du
  *    jeu) et regarde quel compilateur HLSL la bouteille utilise : celui de Wine refuse le mot-clé
  *    `namespace` des sources d'origine (« unexpected KW_NAMESPACE »)
@@ -27,7 +31,13 @@ import * as path from "node:path";
 import { setBottleEnv } from "./bottleHealth";
 import { applyChanges, loadIniFile, planChanges } from "./iniEdit";
 
-export type DxmtCheckId = "engine" | "bridge" | "displayTweaks" | "bottledDuplicates" | "shaders";
+export type DxmtCheckId =
+  | "engine"
+  | "bridge"
+  | "displayTweaks"
+  | "bottledDuplicates"
+  | "csBuild"
+  | "shaders";
 export type DxmtCheckStatus = "ok" | "warning" | "error" | "na";
 
 export interface IDxmtCheck {
@@ -42,6 +52,10 @@ export interface IDxmtCheck {
 export interface IShadersReport {
   /** version de CommunityShaders.dll, « 1.2.1 » */
   version?: string;
+  /** la DLL est celle de Bottled Shaders (elle porte son nom), pas la version d'origine */
+  bottled: boolean;
+  /** modules que cette version est trop ancienne pour charger, d'après le journal */
+  outdatedFeatures: string[];
   /** le jeu a déjà été lancé et le journal de Community Shaders existe */
   logged: boolean;
   /** shaders dont la compilation a échoué au dernier lancement */
@@ -97,10 +111,19 @@ export async function displayTweaksSettings(
   );
 }
 
+/** Bottled Shaders inscrit son nom dans sa DLL, la version d'origine non */
+export function isBottledDll(dll: Buffer): boolean {
+  return dll.includes("Bottled");
+}
+
 /** DLL autonomes en double avec Bottled Shaders, undefined si Bottled n'est pas installé */
 export async function bottledDuplicates(gamePath: string): Promise<string[] | undefined> {
-  const files = await readdir(path.join(gamePath, ...PLUGINS_DIR)).catch(() => [] as string[]);
-  if (!files.some((file) => /^communityshaders\.dll$/i.test(file))) return undefined;
+  const plugins = path.join(gamePath, ...PLUGINS_DIR);
+  const files = await readdir(plugins).catch(() => [] as string[]);
+  const dll = files.find((file) => /^communityshaders\.dll$/i.test(file));
+  if (dll === undefined) return undefined;
+  const content = await readFile(path.join(plugins, dll)).catch(() => undefined);
+  if (content === undefined || !isBottledDll(content)) return undefined;
   return files.filter((file) => /^(terrain.?helper|inverse.?square.*)\.dll$/i.test(file));
 }
 
@@ -114,10 +137,17 @@ export function dllFileVersion(dll: Buffer): string | undefined {
 }
 
 /** les shaders refusés par le compilateur au dernier lancement, d'après CommunityShaders.log */
-export function parseShadersLog(text: string): { failures: number; reason?: string } {
+export function parseShadersLog(text: string): {
+  failures: number;
+  reason?: string;
+  outdatedFeatures: string[];
+} {
   const failures = text.match(/Shader compilation failed/g)?.length ?? 0;
   const reason = text.match(/\.hlsl[^\s:]*:\d+:\d+:\s*(?:[EW]\d+:\s*)?(.+)/)?.[1]?.trim();
-  return { failures, reason };
+  const outdatedFeatures = [
+    ...text.matchAll(/\] (\S+) [\d-]+ requires a newer version of community shaders/gi),
+  ].map((match) => match[1]);
+  return { failures, reason, outdatedFeatures };
 }
 
 /** le journal est dans les Documents de la bouteille, selon la boutique du jeu */
@@ -155,6 +185,7 @@ export async function shadersReport(
   const [log, compiler] = await Promise.all([shadersLog(bottlePath), hlslCompiler(bottlePath)]);
   return {
     version: dllFileVersion(dll),
+    bottled: isBottledDll(dll),
     logged: log !== undefined,
     ...parseShadersLog(log ?? ""),
     compiler,
@@ -165,8 +196,25 @@ function shadersCheck(report: IShadersReport | undefined): IDxmtCheck {
   if (report === undefined) return { id: "shaders", status: "na" };
   return {
     id: "shaders",
-    // sans journal on ne sait rien : jamais « ok » pour un jeu qui n'a pas encore tourné
-    status: !report.logged ? "na" : report.failures > 0 ? "error" : "ok",
+    // sans journal on ne sait rien : jamais « ok » pour un jeu qui n'a pas encore tourné ; des
+    // modules trop récents font échouer la compilation sans que le journal l'écrive
+    status: !report.logged
+      ? "na"
+      : report.failures > 0 || report.outdatedFeatures.length > 0
+        ? "error"
+        : "ok",
+    shaders: report,
+  };
+}
+
+/** Bottled Shaders attendu sous CrossOver ; la version d'origine est trop ancienne pour des modules
+    plus récents, ce qui est une erreur, et sinon déconseillée */
+function csBuildCheck(report: IShadersReport | undefined): IDxmtCheck {
+  if (report === undefined) return { id: "csBuild", status: "na" };
+  return {
+    id: "csBuild",
+    status: report.outdatedFeatures.length > 0 ? "error" : report.bottled ? "ok" : "warning",
+    found: report.outdatedFeatures.join(", "),
     shaders: report,
   };
 }
@@ -188,6 +236,7 @@ export async function runDxmtChecks(bottlePath: string, gamePath: string): Promi
       status: duplicates === undefined ? "na" : duplicates.length > 0 ? "error" : "ok",
       found: duplicates?.join(", ") ?? "",
     },
+    csBuildCheck(shaders),
     shadersCheck(shaders),
   ];
 }

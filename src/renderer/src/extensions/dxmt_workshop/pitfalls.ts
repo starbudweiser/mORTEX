@@ -49,6 +49,17 @@ export const PITFALLS: IDxmtPitfall[] = [
     check: "shaders",
   },
   {
+    id: "stock-community-shaders",
+    icon: "layers_clear",
+    title: "A collection brings the stock Community Shaders",
+    symptom:
+      "Hundreds of shaders fail to compile (« ERROR: 1798 shaders failed to compile ») and the screen turns red, without any error in CommunityShaders.log.",
+    cause:
+      "The collection installs the stock Community Shaders (1.2.1 for example) instead of Bottled Shaders, together with newer feature mods (Grass Collision, Screen Space GI, Skylighting…) that this old version can't load.",
+    fix: "Replace Community Shaders with Bottled Shaders, which already includes these features, and disable the feature mods listed as too recent. Check again after launching the game once.",
+    check: "csBuild",
+  },
+  {
     id: "bottled-duplicates",
     icon: "content_copy",
     title: "Terrain Helper and Inverse Square Lighting twice",

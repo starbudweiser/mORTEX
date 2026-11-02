@@ -2154,6 +2154,13 @@ body.mortex-menu-moving * {
 .dxmt-stage-missing {
     --dxmt-halo: 59 130 246; /* bleu : étape absente ou facultative */
 }
+/* le halo prend la couleur du cadre de l'étape */
+.dxmt-stage-ok {
+    --dxmt-halo: 34 197 94; /* vert : étape vérifiée */
+}
+.dxmt-stage-error {
+    --dxmt-halo: 220 38 38; /* rouge : étape en erreur */
+}
 .dxmt-arrow {
     position: relative;
     display: inline-flex;
