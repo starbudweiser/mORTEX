@@ -16,6 +16,7 @@ import type { IExtensionApi } from "../../../types/IExtensionContext";
 import * as selectors from "../../../util/selectors";
 import { batchDispatch } from "../../../util/util";
 import type { IMod, IModRule } from "../../mod_management/types/IMod";
+import testModReference from "../../mod_management/util/testModReference";
 import { MOD_TYPE } from "../constants";
 import type { ICollection, ICollectionMod } from "../types/ICollection";
 import { REFERENCE_TAG_SCHEME } from "./deterministicReferenceTag";
@@ -168,4 +169,48 @@ export async function collectionsWithCommunityShaders(
     }
   }
   return found;
+}
+
+/**
+ * Les collections installées ne réclament plus ces mods (désactivés parce que Bottled Shaders les
+ * intègre ou les refuse) : sans cela, chaque collection qui les contient repasse « incomplète » et
+ * propose de les réinstaller. Rend de quoi remettre les règles retirées.
+ */
+export function releaseFromCollections(
+  api: IExtensionApi,
+  gameId: string,
+  modIds: string[],
+): (() => void) & { removed: IReleasedRule[] } {
+  const mods: Record<string, IMod> = api.getState().persistent.mods[gameId] ?? {};
+  const targets = modIds.map((id) => mods[id]).filter((mod) => mod !== undefined);
+  const removed: IReleasedRule[] = [];
+  for (const collection of Object.values(mods)) {
+    if (collection.type !== MOD_TYPE) continue;
+    for (const rule of collection.rules ?? []) {
+      if (
+        ["requires", "recommends"].includes(rule.type) &&
+        targets.some((mod) => testModReference(mod, rule.reference))
+      ) {
+        removed.push({ collectionId: collection.id, rule });
+      }
+    }
+  }
+  batchDispatch(
+    api.store,
+    removed.map(({ collectionId, rule }) => actions.removeModRule(gameId, collectionId, rule)),
+  );
+  return Object.assign(() => restoreCollectionRules(api, gameId, removed), { removed });
+}
+
+export interface IReleasedRule {
+  collectionId: string;
+  rule: IModRule;
+}
+
+/** remet les règles que releaseFromCollections a retirées */
+export function restoreCollectionRules(api: IExtensionApi, gameId: string, rules: IReleasedRule[]) {
+  batchDispatch(
+    api.store,
+    rules.map(({ collectionId, rule }) => actions.addModRule(gameId, collectionId, rule)),
+  );
 }

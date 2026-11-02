@@ -38,6 +38,7 @@ import {
 } from "../collections/util/bottledSettings";
 import {
   collectionsWithCommunityShaders,
+  releaseFromCollections,
   useBottledShaders,
   useStockCommunityShaders,
 } from "../collections/util/bottledSwap";
@@ -218,10 +219,13 @@ export function fixFor(check: IDxmtCheck, context: IFixContext): IDxmtFix | unde
           }
           const ids = culprits.map((mod) => mod.id);
           await setModsEnabled(api, profile.id, ids, false);
+          // une collection qui les réclamait ne doit pas repasser « incomplète »
+          const restoreRules = releaseFromCollections(api, gameId, ids);
           return {
             text: "Disabled: {{mods}}",
             replace: { mods: culprits.map(modName).join(", ") },
             undo: async () => {
+              restoreRules();
               await setModsEnabled(api, profile.id, ids, true);
             },
           };

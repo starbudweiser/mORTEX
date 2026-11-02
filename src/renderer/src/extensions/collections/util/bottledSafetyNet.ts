@@ -25,6 +25,7 @@ import { getManifest } from "../../mod_management/util/activationStore";
 import renderModName from "../../mod_management/util/modName";
 import { setModsEnabled } from "../../profile_management/actions/profiles";
 import { activeProfile } from "../../profile_management/selectors";
+import { type IReleasedRule, releaseFromCollections, restoreCollectionRules } from "./bottledSwap";
 import { BOTTLED_MOD_ID, CS_FEATURE_MODS, CS_MOD_ID } from "./macRenderSubstitution";
 
 /** attribut du mod de collection : ce que le filet a désactivé, montré dans le bilan */
@@ -33,6 +34,8 @@ export const ATTR_SAFETY_NET = "mortexSafetyNet";
 export interface ISafetyNetResult {
   profileId: string;
   disabled: Array<{ id: string; name: string; why: "duplicate" | "stock" | "incompatible" }>;
+  /** règles des collections retirées en même temps, remises par « Annuler » */
+  released?: IReleasedRule[];
   /** le joueur a annulé : les mods ont été réactivés et le filet ne repasse plus */
   undone?: boolean;
 }
@@ -164,7 +167,13 @@ export async function runSafetyNet(
     disabled.map((iter) => iter.id),
     false,
   );
-  const result: ISafetyNetResult = { profileId: profile.id, disabled };
+  // les collections qui les réclamaient ne repassent pas « incomplètes »
+  const released = releaseFromCollections(
+    api,
+    gameId,
+    disabled.map((iter) => iter.id),
+  ).removed;
+  const result: ISafetyNetResult = { profileId: profile.id, disabled, released };
   api.store.dispatch(setModAttribute(gameId, collectionMod.id, ATTR_SAFETY_NET, result));
   return result;
 }
@@ -178,6 +187,7 @@ export async function undoSafetyNet(
   const mod: IMod | undefined = api.getState().persistent.mods[gameId]?.[collectionModId];
   const result = mod?.attributes?.[ATTR_SAFETY_NET] as ISafetyNetResult | undefined;
   if (result === undefined || result.undone === true) return;
+  restoreCollectionRules(api, gameId, result.released ?? []);
   await setModsEnabled(
     api,
     result.profileId,
