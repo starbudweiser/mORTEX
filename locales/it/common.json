@@ -3989,5 +3989,9 @@
   "Jump to page": "Vai alla pagina",
   "Enter a page between 1 and {{total}}": "Inserisci una pagina tra 1 e {{total}}",
   "Page": "Pagina",
-  "Dashlets": "Schede della dashboard"
+  "Dashlets": "Schede della dashboard",
+  "Each profile keeps its own enabled mods, plugins and game settings.": "Ogni profilo conserva le proprie mod attive, i plugin e le impostazioni del gioco.",
+  "The plugins the game loads, in their load order.": "I plugin caricati dal gioco, nel loro ordine di caricamento.",
+  "The archives downloaded for this game, ready to install.": "Gli archivi scaricati per questo gioco, pronti da installare.",
+  "Your saved games, character by character.": "I tuoi salvataggi, personaggio per personaggio."
 }

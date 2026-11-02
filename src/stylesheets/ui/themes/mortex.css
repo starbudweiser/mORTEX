@@ -633,7 +633,8 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     margin: 0;
 }
 
-.modern-layout [id^="page-"] h2.text-body-xl {
+/* titres de page (PageHeader) : même taille partout, pages classiques comme redessinées (Outils…) */
+.modern-layout h2.text-body-xl.font-medium {
     color: var(--color-neutral-strong);
     font-size: 15px;
     font-weight: 600;

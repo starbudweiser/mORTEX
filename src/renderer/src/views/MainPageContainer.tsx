@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { Alert, Button, Jumbotron } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 
 import { useMainContext } from "../contexts";
 import {
@@ -23,6 +24,9 @@ import { getApplication } from "../util/application";
 import { didIgnoreError, isOutdated, reportRenderError } from "../util/errorHandling";
 import { genHash } from "../util/genHash";
 import { log } from "../util/log";
+import { selectAlwaysCompactHeaders } from "./components/Page/Page";
+import { type IPageContext, PageContext } from "./components/Page/Page.context";
+import { PageHeader } from "./components/Page/PageHeader";
 
 // Backward compatibility export
 export { type IPageHeaderContext, PageHeaderContext };
@@ -135,6 +139,32 @@ ComponentStack:
   );
 };
 
+/**
+ * mORTEX : les pages classiques qui n'affichent aucun titre reçoivent le même en-tête que les pages
+ * redessinées (titre et sous-titre), pour que toutes se présentent de la même façon.
+ */
+const LEGACY_PAGE_SUBTITLES: { [pageId: string]: string } = {
+  Profiles: "Each profile keeps its own enabled mods, plugins and game settings.",
+  "game-profiles": "Each profile keeps its own enabled mods, plugins and game settings.",
+  "gamebryo-plugins": "The plugins the game loads, in their load order.",
+  Downloads: "The archives downloaded for this game, ready to install.",
+  "gamebryo-savegames": "Your saved games, character by character.",
+};
+
+/** Follows the always-compact-headers setting, like the header of a redesigned page. */
+const LegacyPageHeader: React.FC<{ title: string; subtitle: string }> = ({ title, subtitle }) => {
+  const alwaysCompact = useSelector(selectAlwaysCompactHeaders);
+  const context = useMemo<IPageContext>(
+    () => ({ scrolled: false, compact: alwaysCompact, setScrolled: () => undefined }),
+    [alwaysCompact],
+  );
+  return (
+    <PageContext.Provider value={context}>
+      <PageHeader subtitle={subtitle} title={title} />
+    </PageContext.Provider>
+  );
+};
+
 export const MainPageContainer: React.FC<React.PropsWithChildren<IBaseProps>> = ({
   page,
   active,
@@ -183,6 +213,12 @@ export const MainPageContainer: React.FC<React.PropsWithChildren<IBaseProps>> = 
       content = (
         <PageHeaderProvider value={headerContextValue}>
           <div className={classes.join(" ")} id={`page-${page.id}`}>
+            {LEGACY_PAGE_SUBTITLES[page.id] !== undefined ? (
+              <LegacyPageHeader
+                subtitle={t(LEGACY_PAGE_SUBTITLES[page.id])}
+                title={t(page.title, { ns: page.namespace })}
+              />
+            ) : null}
             <div className="mainpage-header-container" ref={handleHeaderRef} />
 
             <div className="mainpage-body-container">

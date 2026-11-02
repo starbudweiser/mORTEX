@@ -7,7 +7,7 @@ import { joinClasses } from "@/ui/utils/joinClasses";
 import { type IPageContext, PageContext } from "./Page.context";
 import { PageContent } from "./PageContent";
 
-const selectAlwaysCompactHeaders = (state: IState) =>
+export const selectAlwaysCompactHeaders = (state: IState) =>
   state.settings.interface.alwaysCompactHeaders === true;
 
 export interface IPageProps extends HTMLAttributes<HTMLDivElement> {
