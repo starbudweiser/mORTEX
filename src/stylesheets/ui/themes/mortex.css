@@ -1678,6 +1678,16 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     text-align: center;
 }
 
+/* contenu riche (bouton Jouer…) : ses textes neutres sont prévus pour un fond sombre ; sur le
+   bleu, ils reprennent le texte foncé de la bulle, les lignes secondaires un peu atténuées */
+.nxm-tooltip:not(.nxm-hover-card-tooltip) :is(.text-neutral-strong, .text-neutral-moderate) {
+    color: inherit;
+}
+
+.nxm-tooltip:not(.nxm-hover-card-tooltip) :is(.text-neutral-subdued, .text-neutral-weak) {
+    color: rgb(26 26 26 / 75%);
+}
+
 .nxm-tooltip:not(.nxm-hover-card-tooltip) .nxm-overlay-arrow {
     fill: #0ea5e9;
 
