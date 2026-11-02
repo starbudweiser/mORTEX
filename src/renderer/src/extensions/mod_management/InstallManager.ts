@@ -2876,7 +2876,7 @@ class InstallManager {
         }
 
         const isIdle =
-          !this.hasActiveOrPendingInstallation(sourceModId) &&
+          this.mActiveInstalls.size === 0 &&
           !phaseState.isDeploying &&
           (phaseState.deploymentPromises?.size ?? 0) === 0;
         const stallDuration = Date.now() - lastProgressTime;
