@@ -4,7 +4,7 @@ import { describe, expect, vi } from "vitest";
 import { makeMod, makeReference, makeRule } from "../../../test-utils/builders";
 import { test } from "../../../test-utils/harnessTest";
 import type { IExtensionApi } from "../../../types/IExtensionContext";
-import sortMods, { SortCycleError } from "./sort";
+import sortMods, { type SortCycleError } from "./sort";
 
 vi.mock("../../../util/log", () => {
   const log = vi.fn();
