@@ -817,7 +817,20 @@ export class IPCDownloadAdapter {
       }
 
       log("debug", "resuming download", { downloadId });
+      // mORTEX : après un redémarrage le suivi est vide ; sans cette entrée, la fin du téléchargement
+      // n'était jamais vue : il restait en pause pour toujours et sa collection ne finissait pas
+      if (!this.#activeDownloads.has(downloadId)) {
+        this.#activeDownloads.set(downloadId, {
+          allowInstall: normalizeAllowInstall(options?.allowInstall),
+          lastBytesReceived: state.persistent.downloads.files?.[downloadId]?.received ?? 0,
+          lastProgressDispatch: 0,
+          startedEventEmitted: true,
+        });
+      }
       await window.api.downloader.resume(checkpoint);
+      // mORTEX : il repart vraiment : l'afficher, et ne pas le relancer une seconde fois quand deux
+      // membres d'une collection partagent la même archive
+      this.#api.store.dispatch(pauseDownload(downloadId, false));
       callback?.(null, downloadId);
     } catch (err) {
       callback?.(unknownToError(err));

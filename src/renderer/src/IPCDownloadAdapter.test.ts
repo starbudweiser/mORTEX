@@ -165,6 +165,31 @@ describe("runtime restore", () => {
     expect(h.start).not.toHaveBeenCalled();
   });
 
+  test("sees the end of a download resumed after a restart", async ({ makeDownloadAdapter }) => {
+    vi.useFakeTimers();
+    try {
+      const h = makeDownloadAdapter({
+        download: { state: "paused" },
+        checkpoint: {
+          downloadId: "",
+          resource: "https://cdn.example/file.bin",
+          dest: "d",
+          completedRanges: [{ start: 0, end: 1023 }],
+          etag: "etag-1",
+        },
+      });
+
+      h.events.emit("resume-download", h.downloadId, () => undefined);
+      await vi.advanceTimersByTimeAsync(0);
+      h.getStates.mockResolvedValue({ [h.downloadId]: wireState("completed", 100) });
+      await vi.advanceTimersByTimeAsync(250);
+
+      expect(h.getStates).toHaveBeenCalledWith([h.downloadId]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   test("reconstructs the nxm source url when the stored urls were wiped", async ({
     makeDownloadAdapter,
   }) => {
