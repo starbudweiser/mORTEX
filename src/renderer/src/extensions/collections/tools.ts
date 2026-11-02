@@ -6,6 +6,7 @@ import { generate as shortid } from "shortid";
 
 import * as actions from "../../actions";
 import type { IDiscoveryResult } from "../../extensions/gamemode_management/types/IDiscoveryResult";
+import { getGame } from "../../extensions/gamemode_management/util/getGame";
 import type { IMod } from "../../extensions/mod_management/types/IMod";
 import { log } from "../../logging";
 import type { IDiscoveredTool } from "../../types/IDiscoveredTool";
@@ -98,6 +99,27 @@ function isSameTool(discovery: IDiscoveryResult, lhs: IDiscoveredTool, rhs: ICol
 }
 
 /**
+ * mORTEX : l'outil d'une collection qui lance un programme que le jeu connaît déjà (SKSE…) ferait
+ * doublon dans la page Outils, avec une icône de remplacement, avant même que le jeu l'ait trouvé.
+ */
+export function isBuiltInTool(
+  supportedTools: Array<{ executable?: (path?: string) => string }>,
+  tool: ICollectionTool,
+): boolean {
+  if ((tool.args ?? []).length > 0) {
+    return false;
+  }
+  const exeName = path.basename(tool.exe.replace(/\\/g, "/")).toLowerCase();
+  return supportedTools.some((supported) => {
+    try {
+      return path.basename(supported.executable?.() ?? "").toLowerCase() === exeName;
+    } catch {
+      return false;
+    }
+  });
+}
+
+/**
  * mORTEX : chemin local d'un outil de collection. Un auteur sous Windows peut l'avoir enregistré
  * avec ses barres obliques inverses, voire en absolu sur son propre disque
  * (« E:\Game\Skyrim Anniversary Edition\Data\Nemesis_Engine\… ») : on le replace dans le jeu
@@ -163,12 +185,14 @@ async function setUpTools(
 
   const discovery = selectors.discoveryByGame(api.getState(), gameId);
 
+  const supportedTools = getGame(gameId)?.supportedTools ?? [];
   const addTools: ICollectionToolEx[] = (tools ?? [])
     .map((tool) => updatePaths(tool, discovery.path))
     .filter(
       (tool) =>
+        !isBuiltInTool(supportedTools, tool) &&
         Object.values(knownTools ?? {}).find((iter) => isSameTool(discovery, iter, tool)) ===
-        undefined,
+          undefined,
     );
 
   const addActions = addTools.map((tool) => {
