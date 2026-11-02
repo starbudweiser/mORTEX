@@ -2691,6 +2691,114 @@ body.mortex-menu-moving * {
     width: 220px;
 }
 
+/* mORTEX (macOS) : Bottled Shaders à la place de Community Shaders, annoncé au départ */
+.collection-start-bottled {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 24px;
+    border: 1px solid var(--color-stroke-weak);
+    border-radius: 10px;
+    color: var(--color-neutral-strong);
+
+    h4,
+    h5 {
+        margin: 0;
+        color: var(--color-neutral-strong);
+        font-weight: 600;
+    }
+
+    h4 {
+        font-size: 13px;
+    }
+
+    h5 {
+        font-size: 12px;
+    }
+
+    p {
+        margin: 0;
+    }
+
+    .collection-start-hint {
+        margin: 0;
+    }
+}
+
+.collection-start-bottled-label {
+    color: var(--color-neutral-moderate);
+}
+
+.collection-start-bottled-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 8px;
+    }
+
+    span {
+        color: var(--color-neutral-subdued);
+    }
+}
+
+.collection-start-bottled-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid var(--color-stroke-weak);
+}
+
+.collection-start-bottled-warning {
+    padding: 8px 12px;
+    border-left: 3px solid var(--color-warning-strong);
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--color-warning-strong) 12%, transparent);
+}
+
+.collection-start-bottled-choice {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 10px;
+    margin: 0;
+    font-weight: normal;
+    cursor: pointer;
+
+    input {
+        margin: 3px 0 0;
+    }
+
+    span {
+        display: flex;
+        flex-direction: column;
+    }
+
+    small {
+        color: var(--color-neutral-subdued);
+        font-size: 12px;
+    }
+}
+
+.collection-start-bottled-actions {
+    display: flex;
+    justify-content: center;
+    padding-top: 4px;
+
+    .btn {
+        max-width: 100%;
+        white-space: normal;
+        text-align: center;
+    }
+}
+
 .collection-start-confirm {
     padding: 16px;
     border-radius: 10px;

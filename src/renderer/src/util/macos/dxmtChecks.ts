@@ -150,19 +150,30 @@ export function parseShadersLog(text: string): {
   return { failures, reason, outdatedFeatures };
 }
 
-/** le journal est dans les Documents de la bouteille, selon la boutique du jeu */
+/** Bottled Shaders (versions récentes) écrit BottledShaders.log, la version d'origine CommunityShaders.log */
+export const SHADERS_LOG_NAMES = ["BottledShaders.log", "CommunityShaders.log"];
+
+/**
+ * Le journal est dans les Documents de la bouteille, selon la boutique du jeu. Les deux noms de
+ * journal peuvent coexister (ancienne version puis Bottled) : le plus récemment écrit est celui du
+ * dernier lancement du jeu.
+ */
 async function shadersLog(bottlePath: string): Promise<string | undefined> {
   const users = path.join(bottlePath, "drive_c", "users");
   const names = await readdir(users).catch(() => [] as string[]);
+  let latest: { time: number; file: string } | undefined;
   for (const user of names) {
     for (const game of ["Skyrim Special Edition", "Skyrim Special Edition GOG"]) {
-      const text = await readText(
-        path.join(users, user, "Documents", "My Games", game, "SKSE", "CommunityShaders.log"),
-      );
-      if (text !== undefined) return text;
+      for (const name of SHADERS_LOG_NAMES) {
+        const file = path.join(users, user, "Documents", "My Games", game, "SKSE", name);
+        const info = await stat(file).catch(() => undefined);
+        if (info !== undefined && (latest === undefined || info.mtimeMs > latest.time)) {
+          latest = { time: info.mtimeMs, file };
+        }
+      }
     }
   }
-  return undefined;
+  return latest === undefined ? undefined : readText(latest.file);
 }
 
 /** Wine range son d3dcompiler_47 de 180 Ko dans system32 ; celui de Microsoft en fait plus de 4 Mo */

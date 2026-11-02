@@ -30,10 +30,23 @@ import { batchDispatch, bytesToString } from "../../../../util/util";
 import { downloadPathForGame } from "../../../download_management/selectors";
 import type { IDownload } from "../../../download_management/types/IDownload";
 import { installPathForGame } from "../../../mod_management/selectors";
+import { setBottledSettingsChoice } from "../../actions/settings";
 import { DEFAULT_INSTRUCTIONS, NAMESPACE } from "../../constants";
+import {
+  ATTR_SETTINGS_CHOICE,
+  type BottledSettingsChoice,
+  isBottledSettingsChoice,
+} from "../../util/bottledSettings";
+import { useBottledShaders, useStockCommunityShaders } from "../../util/bottledSwap";
 import { estimateSpace, type ISpaceEstimate, volumeOf } from "../../util/diskSpace";
 import { isGamebryoGame } from "../../util/gameSupport";
 import type InstallDriver from "../../util/InstallDriver";
+import {
+  ATTR_SUBSTITUTION,
+  ATTR_SUBSTITUTION_OFF,
+  type ISubstitution,
+} from "../../util/macRenderSubstitution";
+import BottledNotice from "./BottledNotice";
 import YouCuratedTag from "./YouCuratedThisTag";
 
 interface IInstallDialogProps {
@@ -59,6 +72,7 @@ interface IConnectedProps {
 interface IActionProps {
   onAddProfile: (profile: IProfile) => void;
   onSetCollectionConcurrency: (enabled: boolean) => void;
+  onSetBottledChoice: (choice: BottledSettingsChoice) => void;
   onSetModAttribute: (gameId: string, modId: string, key: string, value: any) => void;
   onSetModAttributes: (gameId: string, modId: string, attributes: { [key: string]: any }) => void;
   onAddRule: (gameId: string, modId: string, rule: IModRule) => void;
@@ -280,6 +294,8 @@ class InstallDialog extends ComponentEx<IProps, IInstallDialogState> {
 
           {this.renderSpace()}
 
+          {this.renderBottled()}
+
           {hasInstructions ? (
             <section className="collection-start-instructions">
               <h4>{t("Collection instructions")}</h4>
@@ -382,6 +398,54 @@ class InstallDialog extends ComponentEx<IProps, IInstallDialogState> {
       </Modal>
     );
   }
+
+  /** mORTEX (macOS) : Bottled Shaders à la place de Community Shaders, annoncé avant l'installation */
+  private renderBottled(): React.ReactNode {
+    const { t, driver, isPremium } = this.props;
+    const attributes = driver.collection?.attributes;
+    const substitution: ISubstitution | undefined = attributes?.[ATTR_SUBSTITUTION];
+    if (substitution === undefined) {
+      return null;
+    }
+    const stored = attributes?.[ATTR_SETTINGS_CHOICE];
+    return (
+      <BottledNotice
+        choice={isBottledSettingsChoice(stored) ? stored : "mortex"}
+        freeAccount={!isPremium}
+        off={attributes?.[ATTR_SUBSTITUTION_OFF] === true}
+        substitution={substitution}
+        t={t}
+        onChoice={this.chooseBottledSettings}
+        onKeepStock={this.toggleStockShaders}
+      />
+    );
+  }
+
+  private chooseBottledSettings = (choice: BottledSettingsChoice) => {
+    const { driver, onSetModAttribute, onSetBottledChoice } = this.props;
+    if (driver?.collection !== undefined) {
+      onSetModAttribute(driver.profile.gameId, driver.collection.id, ATTR_SETTINGS_CHOICE, choice);
+      // le prochain choix par défaut
+      onSetBottledChoice(choice);
+    }
+  };
+
+  private toggleStockShaders = () => {
+    const { driver } = this.props;
+    const collection = driver?.collection;
+    if (collection === undefined) {
+      return;
+    }
+    const off = collection.attributes?.[ATTR_SUBSTITUTION_OFF] === true;
+    const { api } = this.context;
+    const gameId = driver.profile.gameId;
+    const swapped: Promise<unknown> = off
+      ? useBottledShaders(api, gameId, collection.id)
+      : useStockCommunityShaders(api, gameId, collection.id);
+    swapped
+      .catch((err) => api.showErrorNotification("Failed to change the shaders", err))
+      .finally(() => this.forceUpdate());
+  };
 
   private changeProfile = (value: { value: string; label: string }) => {
     if (value) {
@@ -557,6 +621,8 @@ function mapDispatchToProps(dispatch: Redux.Dispatch): IActionProps {
       ]),
     onSetCollectionConcurrency: (enabled: boolean) =>
       dispatch(actions.setCollectionConcurrency(enabled)),
+    onSetBottledChoice: (choice: BottledSettingsChoice) =>
+      dispatch(setBottledSettingsChoice(choice)),
   };
 }
 

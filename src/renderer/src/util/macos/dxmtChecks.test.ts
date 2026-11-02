@@ -109,6 +109,24 @@ describe("DXMT checks", () => {
       expect(shaders.shaders).toMatchObject({ logged: false, version: "1.2.1" });
     });
 
+    it("reads BottledShaders.log, and the most recent of the two logs when both exist", async () => {
+      fs.writeFileSync(path.join(plugins, "CommunityShaders.dll"), withVersion);
+      fs.mkdirSync(logDir(), { recursive: true });
+      const bottledLog = path.join(logDir(), "BottledShaders.log");
+      const stockLog = path.join(logDir(), "CommunityShaders.log");
+      fs.writeFileSync(bottledLog, "[W] Shader compilation failed:\n");
+      expect((await byId()).shaders.shaders).toMatchObject({ logged: true, failures: 1 });
+
+      // l'ancien journal de la version d'origine ne doit pas masquer celui de Bottled
+      fs.writeFileSync(stockLog, "[W] Shader compilation failed:\n".repeat(5));
+      fs.utimesSync(stockLog, new Date(2025, 0, 1), new Date(2025, 0, 1));
+      expect((await byId()).shaders.shaders).toMatchObject({ failures: 1 });
+
+      // et inversement quand c'est lui le plus récent
+      fs.utimesSync(bottledLog, new Date(2024, 0, 1), new Date(2024, 0, 1));
+      expect((await byId()).shaders.shaders).toMatchObject({ failures: 5 });
+    });
+
     it("flags shaders the compiler refused, with the compiler of the bottle", async () => {
       fs.writeFileSync(path.join(plugins, "CommunityShaders.dll"), withVersion);
       writeCompiler(179_776);

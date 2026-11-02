@@ -18,7 +18,12 @@ import { type DxmtCheckId, type IDxmtCheck, runDxmtChecks } from "@/util/macos/d
 import { activeGameId } from "@/util/selectors";
 import MainPage from "@/views/MainPage";
 
-import { fixFor, type IDxmtFix } from "./fixes";
+import {
+  BOTTLED_SETTINGS_CHOICES,
+  BOTTLED_SETTINGS_TEXTS,
+  type BottledSettingsChoice,
+} from "../collections/util/bottledSettings";
+import { fixFor, type IDxmtFix, moreFixesFor } from "./fixes";
 import { PITFALLS } from "./pitfalls";
 import { RECIPES, RENDER_PATH, type IRenderStage } from "./renderPath";
 
@@ -187,25 +192,49 @@ export default function DxmtWorkshopPage({ api }: IProps) {
   useEffect(refresh, [refresh]);
 
   const gameId = useSelector((state: IState) => activeGameId(state));
-  const fixOf = (check?: IDxmtCheck) =>
-    check === undefined || bottle === undefined || gamePath === undefined
-      ? undefined
-      : fixFor(check, { api, gameId, bottlePath: bottle.path, gamePath });
+  const fixesOf = (check?: IDxmtCheck): IDxmtFix[] => {
+    if (check === undefined || bottle === undefined || gamePath === undefined) return [];
+    const context = { api, gameId, bottlePath: bottle.path, gamePath };
+    const main = fixFor(check, context);
+    return [...(main === undefined ? [] : [main]), ...moreFixesFor(check, context)];
+  };
 
   // explicite avant d'agir, annulable après
   const runFix = async (check: IDxmtCheck, fix: IDxmtFix) => {
+    let settings: BottledSettingsChoice | undefined;
     if (fix.confirm !== undefined) {
+      const text = t(fix.confirm.text, { replace: fix.confirm.replace });
       const answer = await api.showDialog?.(
         "question",
         fix.label,
-        { text: t(fix.confirm.text, { replace: fix.confirm.replace }) },
+        fix.settingsChoice
+          ? {
+              // les réglages de la collection ne sont pas garantis avec Bottled : trois choix
+              bbcode:
+                text +
+                "[br][/br][br][/br]" +
+                t(
+                  "The Community Shaders settings of the collection were made for the original Community Shaders. Nothing guarantees that they work with Bottled Shaders. Choose:",
+                ),
+              choices: BOTTLED_SETTINGS_CHOICES.map((id) => ({
+                id,
+                value: id === "mortex",
+                text: t(BOTTLED_SETTINGS_TEXTS[id].title),
+                subText: t(BOTTLED_SETTINGS_TEXTS[id].detail),
+              })),
+              options: { wrap: true },
+            }
+          : { text },
         [{ label: "Cancel" }, { label: fix.label, default: true }],
       );
       if (answer?.action !== fix.label) return;
+      if (fix.settingsChoice) {
+        settings = BOTTLED_SETTINGS_CHOICES.find((id) => answer.input?.[id] === true) ?? "mortex";
+      }
     }
     setBusy(check.id);
     try {
-      const done = await fix.run();
+      const done = await fix.run(settings);
       if (done !== undefined) {
         const { undo } = done;
         api.sendNotification?.({
@@ -243,18 +272,23 @@ export default function DxmtWorkshopPage({ api }: IProps) {
   /** bouton du correctif d'un contrôle, s'il y en a un : centré en bas de sa carte, sur deux
       lignes plutôt que de déborder */
   const fixButton = (check?: IDxmtCheck, className = "mt-2") => {
-    const fix = fixOf(check);
-    if (check === undefined || fix === undefined) return null;
+    const fixes = fixesOf(check);
+    if (check === undefined || fixes.length === 0) return null;
     return (
-      <Button
-        className={`${className} max-w-full self-center text-center !whitespace-normal`}
-        isLoading={busy === check.id}
-        leftIcon={fix.icon}
-        size="sm"
-        onClick={() => void runFix(check, fix)}
-      >
-        {t(fix.label)}
-      </Button>
+      <div className={`${className} flex flex-col items-center gap-y-2`}>
+        {fixes.map((fix) => (
+          <Button
+            className="max-w-full self-center text-center !whitespace-normal"
+            isLoading={busy === check.id}
+            key={fix.label}
+            leftIcon={fix.icon}
+            size="sm"
+            onClick={() => void runFix(check, fix)}
+          >
+            {t(fix.label)}
+          </Button>
+        ))}
+      </div>
     );
   };
 

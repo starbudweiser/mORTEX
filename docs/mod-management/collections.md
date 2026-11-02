@@ -70,6 +70,26 @@ When modifying phase logic:
 - **Call `startPendingForPhase()` after deployment completes**, or queued
   installs for the next phase never start.
 
+## mORTEX (macOS): Bottled Shaders instead of Community Shaders
+
+On a Mac, Skyrim SE runs under CrossOver and DXMT, where only Bottled Shaders (Nexus
+`skyrimspecialedition/mods/192816`) works. `readCollection` is the single point every read of a
+`collection.json` goes through (install, update, rules, info cache), so it also does the swap:
+`collections/util/macRenderSubstitution.ts` replaces Community Shaders (Nexus 86492) by Bottled
+Shaders (latest main file, from the Nexus API), drops the feature mods Bottled already includes and
+Dynamic Terrain Deformation, and records the change in `collection.mortexSubstitution`. Without an
+answer from Nexus nothing is swapped and a notification says so.
+
+- `makeInstall` stores the trace as the `mortexSubstitution` attribute of the collection mod; the
+  start dialog (`BottledNotice`) announces it and offers the three choices for the collection's
+  Community Shaders settings (`bottledSettings.ts`, applied to `SettingsUser.json` once, with a copy
+  kept for undo).
+- After deployment (`collection-postprocess-complete`) `bottledSafetyNet.ts` disables the mods whose
+  `Shaders/` files Bottled already provides; the finished dialog lists them with an Undo button.
+- `bottledSwap.ts` swaps the collection mod's rules both ways. The DXMT workshop uses it for
+  "Replace with Bottled Shaders" and "Revert to the Community Shaders of the collection". The
+  setting `settings.collections.macRenderSubstitution` (default on) turns the swap off.
+
 ## Tests
 
 - `InstallManager.optionalPhaseGate.test.ts` - Optional-phase gating

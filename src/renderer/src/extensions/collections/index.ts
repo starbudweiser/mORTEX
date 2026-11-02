@@ -82,6 +82,7 @@ import type { CollectionPauseTrigger } from "./types/CollectionPauseTrigger";
 import type { ICollection } from "./types/ICollection";
 import type { IExtendedInterfaceProps } from "./types/IExtendedInterfaceProps";
 import { applyCollectionRules } from "./util/apply_collection_rules/applyCollectionRules";
+import { finalizeBottled } from "./util/bottledFinalize";
 import { cloneCollection } from "./util/cloneCollection";
 import {
   collectionProfile,
@@ -109,6 +110,7 @@ import {
   InstallFinishDialog,
   InstallStartDialog,
 } from "./views/InstallDialog";
+import SettingsMacRender from "./views/SettingsMacRender";
 
 function isEditableCollection(state: IState, modIds: string[]): boolean {
   const gameMode = selectors.activeGameId(state);
@@ -791,6 +793,9 @@ function register(context: IExtensionContext, collectionsCB: ICallbackMap) {
   context.registerReducer(["session", "collections"], sessionReducer);
   context.registerReducer(["session", "collections"], trackingReducer);
   context.registerReducer(["settings", "collections"], settingsReducer);
+  if (process.platform === "darwin") {
+    context.registerSettings("Mods", SettingsMacRender, undefined, undefined, 80);
+  }
   context.registerReducer(["persistent", "collections"], persistentReducer);
 
   const onSwitchProfile = (profileId: string) => {
@@ -1536,6 +1541,8 @@ function once(api: IExtensionApi, collectionsCB: () => ICallbackMap) {
   api.events.on("collection-postprocess-complete", (gameId: string, modId: string) => {
     const collection = api.getState().persistent.mods[gameId]?.[modId];
     void warnScriptExtenderMismatch(api, gameId, renderModName(collection) ?? modId);
+    // mORTEX (macOS) : le filet et les réglages de Bottled Shaders, après le déploiement
+    void finalizeBottled(api, gameId, modId);
   });
 
   api.events.on("did-finish-download", (dlId: string, outcome: string) => {

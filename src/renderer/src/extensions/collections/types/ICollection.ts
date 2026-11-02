@@ -5,6 +5,7 @@ import type {
   IModReference,
 } from "../../mod_management/types/IMod";
 import type { ICollectionGamebryo } from "../util/gameSupport/gamebryo";
+import type { ISubstitution } from "../util/macRenderSubstitution";
 import type { ICollectionConfig } from "./ICollectionConfig";
 
 export interface ICollectionInfo {
@@ -88,6 +89,8 @@ export interface ICollection extends Partial<ICollectionGamebryo> {
   mods: ICollectionMod[];
   modRules: ICollectionModRule[];
   collectionConfig?: ICollectionConfig;
+  /** posé par mORTEX (macOS) quand Bottled Shaders remplace Community Shaders à la lecture */
+  mortexSubstitution?: ISubstitution;
 }
 
 export interface ICollectionAttributes {

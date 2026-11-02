@@ -7,8 +7,10 @@ import * as selectors from "../../util/selectors";
 import { BUNDLED_PATH, MOD_TYPE } from "./constants";
 import type { ICollection } from "./types/ICollection";
 import type { ICollectionConfig } from "./types/ICollectionConfig";
+import { ATTR_SETTINGS_CHOICE } from "./util/bottledSettings";
 import { parseConfig } from "./util/collectionConfig";
 import { REFERENCE_TAG_SCHEME } from "./util/deterministicReferenceTag";
+import { ATTR_SUBSTITUTION, collectionsSettings } from "./util/macRenderSubstitution";
 import { readCollection } from "./util/readCollection";
 import { collectionModToRule } from "./util/transformCollection";
 
@@ -46,6 +48,20 @@ export function makeInstall(api: IExtensionApi) {
 
     const knownGames = selectors.knownGames(api.getState());
 
+    // mORTEX (macOS) : la trace de Bottled Shaders à la place de Community Shaders, pour l'annonce,
+    // le bilan et le retour en arrière, avec le choix par défaut des réglages de Community Shaders
+    const substitutionInstructions: IInstruction[] =
+      collection.mortexSubstitution === undefined
+        ? []
+        : [
+            { type: "attribute", key: ATTR_SUBSTITUTION, value: collection.mortexSubstitution },
+            {
+              type: "attribute",
+              key: ATTR_SETTINGS_CHOICE,
+              value: collectionsSettings(api).bottledSettingsChoice ?? "mortex",
+            },
+          ];
+
     // Attempt to get the download for this collection to resolve the collection's name
     //  which may have been modified on the website and is therefore different than the value
     //  in the json file.
@@ -77,6 +93,7 @@ export function makeInstall(api: IExtensionApi) {
           value: collection.info.installInstructions,
         },
         ...configInstructions,
+        ...substitutionInstructions,
         {
           type: "setmodtype" as any,
           value: MOD_TYPE,

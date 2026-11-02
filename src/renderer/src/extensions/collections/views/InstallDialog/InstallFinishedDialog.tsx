@@ -21,9 +21,11 @@ import {
   isActiveSessionStalled,
 } from "../../../../util/collectionInstallSessionSelectors";
 import { NAMESPACE } from "../../constants";
+import { ATTR_SAFETY_NET, type ISafetyNetResult, undoSafetyNet } from "../../util/bottledSafetyNet";
 import type InstallDriver from "../../util/InstallDriver";
 import { makeCollectionModsResolver } from "../../util/resolveCollectionMods/resolveCollectionMods";
 import CollectionThumbnail from "../CollectionTile";
+import { BottledNetSummary } from "./BottledNotice";
 import YouCuratedTag from "./YouCuratedThisTag";
 
 export interface IInstallFinishedDialogProps {
@@ -131,6 +133,17 @@ function InstallFinishedDialog(props: IInstallFinishedDialogProps) {
   const ownCollection: boolean = driver.collectionInfo?.user?.memberId === userInfo?.userId;
 
   const finalizing = driver.postprocessing;
+
+  // mORTEX (macOS) : les mods que Bottled Shaders rend inutiles, désactivés après le déploiement
+  const net: ISafetyNetResult | undefined =
+    collection !== undefined ? mods?.[collection.id]?.attributes?.[ATTR_SAFETY_NET] : undefined;
+  const undoNet = React.useCallback(() => {
+    if (driver.profile !== undefined && collection !== undefined) {
+      undoSafetyNet(api, driver.profile.gameId, collection.id).catch((err) =>
+        api.showErrorNotification("Failed to undo", err),
+      );
+    }
+  }, [api, driver, collection]);
 
   // Required members that settled as failed (e.g. a download that failed after a network drop). When
   // any required member failed the collection isn't fully installed, so the dialog switches to an
@@ -260,6 +273,10 @@ function InstallFinishedDialog(props: IInstallFinishedDialogProps) {
               })}
             </div>
           </div>
+        ) : null}
+
+        {net !== undefined && net.disabled.length > 0 ? (
+          <BottledNetSummary result={net} t={t} onUndo={undoNet} />
         ) : null}
 
         {finalizing ? (

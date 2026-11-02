@@ -8,6 +8,12 @@
  *  - displayTweaks absent      → activer le mod s'il est installé, sinon sa page Nexus
  *  - bottledDuplicates         → désactiver les mods qui déploient Terrain Helper / Inverse Square
  *                                Lighting autonomes (d'après le manifeste de déploiement)
+ *  - csBuild (Community Shaders d'origine) → « Remplacer par Bottled Shaders » : activer Bottled s'il
+ *                                est installé (en désactivant le Community Shaders d'origine et ses
+ *                                modules), sinon l'installer avec la collection qui l'apporte (règles
+ *                                échangées, installation relancée) ou ouvrir sa page Nexus ; au
+ *                                choix, les réglages de Community Shaders de la collection ;
+ *                                « Revenir au Community Shaders de la collection » dans l'autre sens
  *  - csBuild / shaders         → activer Bottled Shaders s'il est installé mais désactivé ; sinon,
  *                                si la bouteille compile avec le compilateur de Wine, poser celui de
  *                                Microsoft (celui du .NET 8 Desktop, installé d'abord au besoin),
@@ -17,11 +23,29 @@
 import { readFile, writeFile } from "node:fs/promises";
 import * as path from "node:path";
 
+import * as actions from "../../actions";
 import type { IExtensionApi } from "../../types/IExtensionContext";
 import type { SymbolName } from "../../ui/components/icon/Icon";
 import { installDotnetRuntime } from "../../util/macos/bottleSetup";
 import { type IDxmtCheck, fixDisplayTweaks, useDxmt } from "../../util/macos/dxmtChecks";
 import { installNativeCompiler, nativeCompilerSource } from "../../util/macos/hlslCompiler";
+import { ATTR_SAFETY_NET, isBottled, isStockPack } from "../collections/util/bottledSafetyNet";
+import {
+  applyBottledSettings,
+  ATTR_SETTINGS_APPLIED,
+  ATTR_SETTINGS_CHOICE,
+  type BottledSettingsChoice,
+} from "../collections/util/bottledSettings";
+import {
+  collectionsWithCommunityShaders,
+  useBottledShaders,
+  useStockCommunityShaders,
+} from "../collections/util/bottledSwap";
+import {
+  ATTR_SUBSTITUTION,
+  ATTR_SUBSTITUTION_OFF,
+  BOTTLED_URL,
+} from "../collections/util/macRenderSubstitution";
 import type { IMod } from "../mod_management/types/IMod";
 import { getManifest } from "../mod_management/util/activationStore";
 import { setModsEnabled } from "../profile_management/actions/profiles";
@@ -49,7 +73,9 @@ export interface IDxmtFix {
   icon: SymbolName;
   /** ce qui va changer, montré avant d'agir ; absent pour une simple ouverture de page */
   confirm?: IFixText;
-  run: () => Promise<IFixResult | undefined>;
+  /** la confirmation propose aussi les trois choix pour les réglages de Community Shaders */
+  settingsChoice?: boolean;
+  run: (settings?: BottledSettingsChoice) => Promise<IFixResult | undefined>;
 }
 
 export interface IFixContext {
@@ -205,29 +231,87 @@ export function fixFor(check: IDxmtCheck, context: IFixContext): IDxmtFix | unde
     case "csBuild":
     case "shaders": {
       if (check.status !== "error" && check.status !== "warning") return undefined;
-      const bottled =
-        profile === undefined
-          ? undefined
-          : Object.values(api.getState().persistent.mods[gameId] ?? {}).find(
-              (mod) =>
-                mod.state === "installed" &&
-                /bottled/i.test(modName(mod)) &&
-                profile.modState?.[mod.id]?.enabled !== true,
-            );
-      if (bottled !== undefined && profile !== undefined) {
+      const allMods: Record<string, IMod> = api.getState().persistent.mods[gameId] ?? {};
+      const installed = Object.values(allMods).filter((mod) => mod.state === "installed");
+      const enabled = (mod: IMod) => profile?.modState?.[mod.id]?.enabled === true;
+      const bottledMod = installed.find(
+        (mod) => isBottled(mod) || (/bottled/i.test(modName(mod)) && !isStockPack(mod)),
+      );
+      const stockEnabled = () => installed.filter((mod) => isStockPack(mod) && enabled(mod));
+      if (bottledMod !== undefined && profile !== undefined && !enabled(bottledMod)) {
         return {
           label: "Enable Bottled Shaders",
           icon: "toggle_on",
+          settingsChoice: true,
           confirm: {
-            text: "mORTEX enables the mod {{mod}} in the profile {{profile}}; it is deployed with your other mods. Launch the game once, then check the installation again.",
-            replace: { mod: modName(bottled), profile: profile.name },
+            text: "mORTEX enables the mod {{mod}} in the profile {{profile}}; it is deployed with your other mods. The original Community Shaders and its feature mods, which Bottled Shaders replaces, are disabled. Launch the game once, then check the installation again.",
+            replace: { mod: modName(bottledMod), profile: profile.name },
           },
-          run: async () => {
-            await setModsEnabled(api, profile.id, [bottled.id], true);
+          run: async (choice) => {
+            const stock = stockEnabled();
+            await setModsEnabled(api, profile.id, [bottledMod.id], true);
+            if (stock.length > 0) {
+              await setModsEnabled(
+                api,
+                profile.id,
+                stock.map((mod) => mod.id),
+                false,
+              );
+            }
+            const undoSettings =
+              choice === undefined ? undefined : await applyBottledSettings(gamePath, choice);
             return {
               text: "Bottled Shaders enabled: it is deployed with your mods",
               undo: async () => {
-                await setModsEnabled(api, profile.id, [bottled.id], false);
+                await setModsEnabled(api, profile.id, [bottledMod.id], false);
+                if (stock.length > 0) {
+                  await setModsEnabled(
+                    api,
+                    profile.id,
+                    stock.map((mod) => mod.id),
+                    true,
+                  );
+                }
+                await undoSettings?.();
+              },
+            };
+          },
+        };
+      }
+      if (check.id === "csBuild" && bottledMod === undefined && profile !== undefined) {
+        return {
+          label: "Replace with Bottled Shaders",
+          icon: "swap_horiz",
+          settingsChoice: true,
+          confirm: {
+            text: "Bottled Shaders is the version of Community Shaders made for CrossOver; it already includes the feature mods (Grass Collision, Screen Space GI, Skylighting…). If a collection brought the original Community Shaders, mORTEX swaps it for Bottled Shaders in that collection and starts its installation again: only Bottled Shaders is downloaded from Nexus Mods (with a free account you click Download on its page). The original Community Shaders and its feature mods are disabled once Bottled Shaders is installed, never deleted. Otherwise mORTEX opens the page of Bottled Shaders.",
+          },
+          run: async (choice) => {
+            const collections = await collectionsWithCommunityShaders(api, gameId);
+            if (collections.length === 0) {
+              window.api.shell.openUrl(BOTTLED_URL);
+              return {
+                text: "The page of Bottled Shaders is open: download and install it, then check the installation again",
+              };
+            }
+            for (const collection of collections) {
+              await useBottledShaders(api, gameId, collection.id);
+              api.store.dispatch(
+                actions.setModAttributes(gameId, collection.id, {
+                  // le filet repasse, et les réglages choisis s'appliquent une fois Bottled installé
+                  [ATTR_SAFETY_NET]: undefined,
+                  [ATTR_SETTINGS_CHOICE]: choice ?? "keep",
+                  [ATTR_SETTINGS_APPLIED]: false,
+                }),
+              );
+              api.events.emit("resume-collection", gameId, collection.id);
+            }
+            return {
+              text: "Bottled Shaders will be installed with the collection: follow the installation, launch the game once, then check again",
+              undo: async () => {
+                for (const collection of collections) {
+                  await useStockCommunityShaders(api, gameId, collection.id);
+                }
               },
             };
           },
@@ -261,4 +345,69 @@ export function fixFor(check: IDxmtCheck, context: IFixContext): IDxmtFix | unde
     default:
       return undefined;
   }
+}
+
+/**
+ * Correctifs supplémentaires d'un contrôle. « Revenir au Community Shaders de la collection » est
+ * proposé quand mORTEX a remplacé Community Shaders par Bottled Shaders dans une collection.
+ */
+export function moreFixesFor(check: IDxmtCheck, context: IFixContext): IDxmtFix[] {
+  if (check.id !== "csBuild" || check.status === "na") return [];
+  const { api, gameId } = context;
+  const profile = activeProfile(api.getState());
+  const mods: Record<string, IMod> = api.getState().persistent.mods[gameId] ?? {};
+  const substituted = Object.values(mods).filter(
+    (mod) =>
+      mod.attributes?.[ATTR_SUBSTITUTION] !== undefined &&
+      mod.attributes?.[ATTR_SUBSTITUTION_OFF] !== true,
+  );
+  if (substituted.length === 0 || profile === undefined) return [];
+  return [
+    {
+      label: "Revert to the Community Shaders of the collection",
+      icon: "undo",
+      confirm: {
+        text: "mORTEX goes back to the Community Shaders chosen by the author of {{collections}}, and installs it again from Nexus Mods. Bottled Shaders is disabled, never deleted. The original Community Shaders doesn't work on a Mac: expect a red screen and shaders that fail to compile.",
+        replace: { collections: substituted.map(modName).join(", ") },
+      },
+      run: async () => {
+        for (const collection of substituted) {
+          await useStockCommunityShaders(api, gameId, collection.id);
+        }
+        const bottled = Object.values(mods).filter(
+          (mod) => mod.state === "installed" && isBottled(mod),
+        );
+        const enabledBottled = bottled.filter(
+          (mod) => profile.modState?.[mod.id]?.enabled === true,
+        );
+        if (enabledBottled.length > 0) {
+          await setModsEnabled(
+            api,
+            profile.id,
+            enabledBottled.map((mod) => mod.id),
+            false,
+          );
+        }
+        for (const collection of substituted) {
+          api.events.emit("resume-collection", gameId, collection.id);
+        }
+        return {
+          text: "Back to the Community Shaders of the collection: follow its installation, then check again",
+          undo: async () => {
+            for (const collection of substituted) {
+              await useBottledShaders(api, gameId, collection.id);
+            }
+            if (enabledBottled.length > 0) {
+              await setModsEnabled(
+                api,
+                profile.id,
+                enabledBottled.map((mod) => mod.id),
+                true,
+              );
+            }
+          },
+        };
+      },
+    },
+  ];
 }

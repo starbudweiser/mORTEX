@@ -12,10 +12,20 @@ const settingsReducer: IReducerSpec = {
       const { sorting } = payload;
       return setSafe(state, ["sortWorkshop"], sorting);
     },
+    [actions.setMacRenderSubstitution as any]: (state, payload) => {
+      return setSafe(state, ["macRenderSubstitution"], payload.enabled);
+    },
+    [actions.setBottledSettingsChoice as any]: (state, payload) => {
+      return setSafe(state, ["bottledSettingsChoice"], payload.choice);
+    },
   },
   defaults: {
     sortAdded: "datedownloaded",
     sortWorkshop: "recentlyupdated",
+    // mORTEX (macOS) : Bottled Shaders remplace Community Shaders dans les collections
+    macRenderSubstitution: true,
+    // « mortex » : réglages pour DXMT ; « keep » : ceux de la collection ; « default » : ceux de Bottled
+    bottledSettingsChoice: "mortex",
   },
 };
 
