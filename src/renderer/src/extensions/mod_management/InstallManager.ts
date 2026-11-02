@@ -3643,8 +3643,10 @@ class InstallManager {
           // Queue the install explicitly: a bundled import does not emit did-finish-download, and
           // for a nexus download this is idempotent with the event (queueInstallation dedups by
           // sourceModId:downloadId, and a not-yet-finished download is a no-op here).
+          // mORTEX : la règle est connue : une archive déjà sur le disque, sans aucune métadonnée, ne
+          // permettrait pas de la retrouver et le membre resterait « en téléchargement »
           if (typeof downloadId === "string" && downloadId.length > 0) {
-            this.handleDownloadFinished(api, downloadId, sourceModId);
+            this.handleDownloadFinished(api, downloadId, sourceModId, rule);
           }
         })
         .catch((err: unknown) => {
