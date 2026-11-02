@@ -123,6 +123,7 @@ import {
 } from "../../util/errorHandling";
 import * as fs from "../../util/fs";
 import type { TFunction } from "../../util/i18n";
+import { fixBackslashNames } from "../../util/macos/backslashNames";
 import { extractWithUnar, needsUnarFallback } from "../../util/macos/unarFallback";
 import { prettifyNodeErrorMessage } from "../../util/message";
 import {
@@ -1112,7 +1113,8 @@ class InstallManager {
     let fileList: string[] = [];
 
     return extractProm
-      .then(({ code, errors }: { code: number; errors: string[] }) => {
+      .then(async ({ code, errors }: { code: number; errors: string[] }) => {
+        await this.fixWindowsPaths(archivePath, tempPath);
         log("debug", "extraction completed");
         if (errors.length > 0) {
           const message =
@@ -4038,6 +4040,7 @@ class InstallManager {
           code = 0;
           errors = [];
         }
+        await this.fixWindowsPaths(archivePath, tempPath);
         log("debug", "extraction completed", {
           archivePath: path.basename(archivePath),
           extractionTimeMs: Date.now() - (extractProm as any).startTime,
@@ -7525,6 +7528,28 @@ class InstallManager {
         requirement,
       );
     });
+  }
+
+  /**
+   * mORTEX (macOS) : un ZIP fait sous Windows peut écrire ses chemins avec des antislashs ; 7-Zip
+   * en fait alors des fichiers « Data\\SKSE\\x.dll » plats et le mod s'installe vide. On les
+   * remet en dossiers avant de lire l'extraction.
+   */
+  private async fixWindowsPaths(archivePath: string, tempPath: string): Promise<void> {
+    if (process.platform !== "darwin" || path.extname(archivePath).toLowerCase() !== ".zip") {
+      return;
+    }
+    try {
+      const moved = await fixBackslashNames(tempPath);
+      if (moved > 0) {
+        log("info", "archive uses backslashes as path separators, converted to folders", {
+          archivePath: path.basename(archivePath),
+          files: moved,
+        });
+      }
+    } catch (err) {
+      log("warn", "could not convert backslash paths", { error: getErrorMessageOrDefault(err) });
+    }
   }
 
   /**
