@@ -208,16 +208,19 @@ async function hlslCompiler(bottlePath: string): Promise<"wine" | "native" | und
   return info.size < 1_000_000 ? "wine" : "native";
 }
 
-/** undefined sans Community Shaders */
+/** undefined sans Community Shaders ; sans bouteille, ni journal ni compilateur */
 export async function shadersReport(
-  bottlePath: string,
+  bottlePath: string | undefined,
   gamePath: string,
 ): Promise<IShadersReport | undefined> {
   const dll = await readFile(path.join(gamePath, ...PLUGINS_DIR, "CommunityShaders.dll")).catch(
     () => undefined,
   );
   if (dll === undefined) return undefined;
-  const [log, compiler] = await Promise.all([shadersLog(bottlePath), hlslCompiler(bottlePath)]);
+  const [log, compiler] =
+    bottlePath === undefined
+      ? [undefined, undefined]
+      : await Promise.all([shadersLog(bottlePath), hlslCompiler(bottlePath)]);
   return {
     version: dllFileVersion(dll),
     bottled: isBottledDll(dll),
@@ -254,16 +257,22 @@ function csBuildCheck(report: IShadersReport | undefined): IDxmtCheck {
   };
 }
 
-export async function runDxmtChecks(bottlePath: string, gamePath: string): Promise<IDxmtCheck[]> {
+/** `bottlePath` absent (jeu lancé hors d'une bouteille) : le moteur graphique est « na », sans journal de shaders */
+export async function runDxmtChecks(
+  bottlePath: string | undefined,
+  gamePath: string,
+): Promise<IDxmtCheck[]> {
   const [engine, bridge, tweaks, duplicates, shaders] = await Promise.all([
-    graphicsBackend(bottlePath),
+    bottlePath === undefined ? undefined : graphicsBackend(bottlePath),
     hasEnbBridge(gamePath),
     displayTweaksSettings(gamePath),
     bottledDuplicates(gamePath),
     shadersReport(bottlePath, gamePath),
   ]);
   return [
-    { id: "engine", status: engine === "dxmt" ? "ok" : "error", found: engine ?? "" },
+    bottlePath === undefined
+      ? { id: "engine", status: "na" }
+      : { id: "engine", status: engine === "dxmt" ? "ok" : "error", found: engine ?? "" },
     { id: "bridge", status: bridge ? "ok" : duplicates === undefined ? "na" : "warning" },
     displayTweaksCheck(tweaks),
     {

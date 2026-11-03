@@ -8,6 +8,7 @@
  *  - proxyDlls(gamePath): Promise<string[]>                 DLL de substitution présentes (sans .dll)
  *  - planOverrides(present, current, ours): IOverridePlan    overrides à poser et à retirer
  *  - syncDllOverrides(bottle, gamePath, run?): Promise<IOverridePlan>   applique le plan
+ *  - addDllOverrides / removeDllOverrides(bottle, dlls, run?)              pose ou retire ceux-là seulement
  *
  * Écriture : un fichier .reg passé à `regedit /S` dans la bouteille (wineserver tient le registre,
  * user.reg ne s'édite pas à la main). Les overrides posés par mORTEX sont notés dans
@@ -45,7 +46,7 @@ export const PROXY_DLLS = [
   "xaudio2_7",
 ];
 
-const OVERRIDES_KEY = "Software\\Wine\\DllOverrides";
+export const OVERRIDES_KEY = "Software\\Wine\\DllOverrides";
 const NATIVE = "native,builtin";
 const STATE_FILE = "mortex-dll-overrides.json";
 
@@ -101,7 +102,7 @@ const runWine: WineRunner = (command) =>
     ),
   );
 
-async function readOurs(bottle: IBottle): Promise<string[]> {
+export async function readOurs(bottle: IBottle): Promise<string[]> {
   try {
     const state = JSON.parse(await readFile(path.join(bottle.path, STATE_FILE), "utf8"));
     return Array.isArray(state.added) ? state.added : [];
@@ -109,6 +110,24 @@ async function readOurs(bottle: IBottle): Promise<string[]> {
     return [];
   }
 }
+
+/** Passe le plan à regedit dans la bouteille, par un fichier .reg temporaire. */
+async function applyRegPlan(bottle: IBottle, plan: IOverridePlan, run: WineRunner): Promise<void> {
+  const temp = path.join(bottle.path, "drive_c", "windows", "temp");
+  const file = path.join(temp, "mortex-dll-overrides.reg");
+  await mkdir(temp, { recursive: true });
+  await writeFile(file, regFile(plan), "latin1");
+  try {
+    await run(
+      wineCommand(bottle, ["regedit", "/S", "C:\\windows\\temp\\mortex-dll-overrides.reg"]),
+    );
+  } finally {
+    await rm(file, { force: true });
+  }
+}
+
+const writeOurs = (bottle: IBottle, added: string[]) =>
+  writeFile(path.join(bottle.path, STATE_FILE), JSON.stringify({ added }, null, 2));
 
 export async function syncDllOverrides(
   bottle: IBottle,
@@ -123,19 +142,34 @@ export async function syncDllOverrides(
   );
   if (plan.add.length === 0 && plan.remove.length === 0) return plan;
 
-  const temp = path.join(bottle.path, "drive_c", "windows", "temp");
-  const file = path.join(temp, "mortex-dll-overrides.reg");
-  await mkdir(temp, { recursive: true });
-  await writeFile(file, regFile(plan), "latin1");
-  try {
-    await run(
-      wineCommand(bottle, ["regedit", "/S", "C:\\windows\\temp\\mortex-dll-overrides.reg"]),
-    );
-  } finally {
-    await rm(file, { force: true });
-  }
-
-  const added = [...ours.filter((dll) => !plan.remove.includes(dll)), ...plan.add];
-  await writeFile(path.join(bottle.path, STATE_FILE), JSON.stringify({ added }, null, 2));
+  await applyRegPlan(bottle, plan, run);
+  await writeOurs(bottle, [...ours.filter((dll) => !plan.remove.includes(dll)), ...plan.add]);
   return plan;
+}
+
+/** Pose l'override « native,builtin » de ces DLL, et les note comme posés par nous. */
+export async function addDllOverrides(
+  bottle: IBottle,
+  dlls: string[],
+  run: WineRunner = runWine,
+): Promise<void> {
+  if (dlls.length === 0) return;
+  const ours = await readOurs(bottle);
+  await applyRegPlan(bottle, { add: dlls, remove: [] }, run);
+  await writeOurs(bottle, [...ours, ...dlls.filter((dll) => !ours.includes(dll))]);
+}
+
+/** Retire l'override de ces DLL (annulation d'addDllOverrides), et les oublie de notre état. */
+export async function removeDllOverrides(
+  bottle: IBottle,
+  dlls: string[],
+  run: WineRunner = runWine,
+): Promise<void> {
+  if (dlls.length === 0) return;
+  const ours = await readOurs(bottle);
+  await applyRegPlan(bottle, { add: [], remove: dlls }, run);
+  await writeOurs(
+    bottle,
+    ours.filter((dll) => !dlls.includes(dll)),
+  );
 }

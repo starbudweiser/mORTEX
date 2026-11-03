@@ -5,7 +5,14 @@ import * as path from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import type { IBottle, IBottleLaunch } from "./bottlesCore";
-import { planOverrides, proxyDlls, regFile, syncDllOverrides } from "./dllOverrides";
+import {
+  addDllOverrides,
+  planOverrides,
+  proxyDlls,
+  regFile,
+  removeDllOverrides,
+  syncDllOverrides,
+} from "./dllOverrides";
 
 describe("DLL overrides", () => {
   let tmp: string;
@@ -81,5 +88,28 @@ describe("DLL overrides", () => {
     expect(
       JSON.parse(fs.readFileSync(path.join(bottle.path, "mortex-dll-overrides.json"), "utf8")),
     ).toEqual({ added: [] });
+  });
+
+  it("adds and removes only the overrides it is given, and remembers them", async () => {
+    const regs: string[] = [];
+    const run = async () => {
+      const reg = path.join(bottle.path, "drive_c", "windows", "temp", "mortex-dll-overrides.reg");
+      regs.push(fs.readFileSync(reg, "latin1"));
+    };
+    const state = () =>
+      JSON.parse(fs.readFileSync(path.join(bottle.path, "mortex-dll-overrides.json"), "utf8"));
+
+    await addDllOverrides(bottle, ["dxgi", "version"], run);
+    await addDllOverrides(bottle, ["dxgi"], run);
+    expect(regs[0]).toContain('"dxgi"="native,builtin"');
+    expect(state()).toEqual({ added: ["dxgi", "version"] });
+
+    await removeDllOverrides(bottle, ["dxgi"], run);
+    expect(regs[2]).toContain('"dxgi"=-');
+    expect(regs[2]).not.toContain("version");
+    expect(state()).toEqual({ added: ["version"] });
+
+    await removeDllOverrides(bottle, [], run);
+    expect(regs).toHaveLength(3);
   });
 });
