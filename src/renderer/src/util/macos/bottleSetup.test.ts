@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { addBottleRoot } from "./bottles";
+import { addBottleRoot } from "./bottlesCore";
 import type { ISetupCommand, ISetupContext } from "./bottleSetup";
 import { runBottleSetup, setupSteps, stepCommands, stepDownloads } from "./bottleSetup";
 
-vi.mock("./bottles", () => ({
+vi.mock("./bottlesCore", () => ({
   crossoverBinDir: () => "/cx/bin",
   crossoverBottleDir: () => "/tmp/mortex-test-crossover",
   addBottleRoot: vi.fn(),

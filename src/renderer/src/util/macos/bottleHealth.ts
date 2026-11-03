@@ -16,8 +16,8 @@ import { execFile } from "node:child_process";
 import { readFile, stat, statfs, writeFile } from "node:fs/promises";
 import * as path from "node:path";
 
-import type { IBottle } from "./bottles";
-import { readRegString } from "./bottles";
+import type { IBottle } from "./bottlesCore";
+import { readRegString } from "./bottlesCore";
 import { planOverrides, proxyDlls } from "./dllOverrides";
 import { graphicsBackend } from "./dxmtChecks";
 

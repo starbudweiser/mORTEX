@@ -20,8 +20,8 @@ import { mkdir, rm, statfs, symlink } from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 
-import type { IBottleLaunch } from "./bottles";
-import { addBottleRoot, crossoverBinDir, crossoverBottleDir, runInBottle } from "./bottles";
+import type { IBottleLaunch } from "./bottlesCore";
+import { addBottleRoot, crossoverBinDir, crossoverBottleDir, runInBottle } from "./bottlesCore";
 
 export const SETUP_BOTTLE = "Skyrim-mORTEX";
 

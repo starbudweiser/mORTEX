@@ -4,7 +4,7 @@ import * as path from "path";
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import type { IBottle, IBottleLaunch } from "./bottles";
+import type { IBottle, IBottleLaunch } from "./bottlesCore";
 import { planOverrides, proxyDlls, regFile, syncDllOverrides } from "./dllOverrides";
 
 describe("DLL overrides", () => {

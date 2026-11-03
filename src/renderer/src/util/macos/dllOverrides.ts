@@ -17,7 +17,7 @@ import { execFile } from "node:child_process";
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import * as path from "node:path";
 
-import { type IBottle, type IBottleLaunch, readRegString, wineCommand } from "./bottles";
+import { type IBottle, type IBottleLaunch, readRegString, wineCommand } from "./bottlesCore";
 
 /** DLL que Wine fournit lui-même et que des mods remplacent à la racine du jeu */
 export const PROXY_DLLS = [
