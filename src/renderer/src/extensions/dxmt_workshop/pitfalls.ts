@@ -69,12 +69,22 @@ export const PITFALLS: IDxmtPitfall[] = [
     check: "bottledDuplicates",
   },
   {
+    id: "dlss-black-screen",
+    icon: "hub",
+    title: "Black screen with DLSS",
+    symptom:
+      "The game shows a black screen as soon as DLSS is chosen, although the log says DLSS is available.",
+    cause: "Streamline hands its textures to DXMT in a form DXMT refuses.",
+    fix: "Install the mDLSS bridge (d3d11.dll) next to SkyrimSE.exe: it passes the textures on in the form DXMT expects, and DLSS runs through MetalFX.",
+    check: "bridge",
+  },
+  {
     id: "enb-bridge",
     icon: "hub",
     title: "ENB presets without ENBSeries",
     symptom: "ENBSeries doesn't run under CrossOver, so ENB presets don't load.",
     cause: "ENB presets rely on the ENB SDK, which only ENBSeries provides.",
-    fix: "Install the mDLSS ENB bridge (d3d11.dll) next to SkyrimSE.exe: it imitates the ENB SDK for KiLoader, ENB Extender and AELAS, and Bottled Shaders does the rendering.",
+    fix: "Install the mDLSS bridge (d3d11.dll) next to SkyrimSE.exe: it imitates the ENB SDK for KiLoader, ENB Extender and AELAS, and Bottled Shaders does the rendering.",
     check: "bridge",
   },
   {

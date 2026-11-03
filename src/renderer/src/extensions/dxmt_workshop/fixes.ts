@@ -18,7 +18,8 @@
  *                                si la bouteille compile avec le compilateur de Wine, poser celui de
  *                                Microsoft (celui du .NET 8 Desktop, installé d'abord au besoin),
  *                                en gardant la copie de Wine
- *  - bridge                    → facultatif, rien à corriger
+ *  - bridge absent avec Bottled → poser le pont de mDLSS fourni avec mORTEX (un autre d3d11.dll,
+ *                                ENBSeries, est gardé pour l'annulation) et passer Bottled sur DLSS
  */
 import { readFile, writeFile } from "node:fs/promises";
 import * as path from "node:path";
@@ -26,8 +27,14 @@ import * as path from "node:path";
 import * as actions from "../../actions";
 import type { IExtensionApi } from "../../types/IExtensionContext";
 import type { SymbolName } from "../../ui/components/icon/Icon";
+import { getVortexPath } from "../../util/api";
 import { installDotnetRuntime } from "../../util/macos/bottleSetup";
-import { type IDxmtCheck, fixDisplayTweaks, useDxmt } from "../../util/macos/dxmtChecks";
+import {
+  type IDxmtCheck,
+  fixDisplayTweaks,
+  installBridge,
+  useDxmt,
+} from "../../util/macos/dxmtChecks";
 import { installNativeCompiler, nativeCompilerSource } from "../../util/macos/hlslCompiler";
 import { ATTR_SAFETY_NET, isBottled, isStockPack } from "../collections/util/bottledSafetyNet";
 import {
@@ -35,6 +42,7 @@ import {
   ATTR_SETTINGS_APPLIED,
   ATTR_SETTINGS_CHOICE,
   type BottledSettingsChoice,
+  useDlss,
 } from "../collections/util/bottledSettings";
 import {
   collectionsWithCommunityShaders,
@@ -138,6 +146,30 @@ export function fixFor(check: IDxmtCheck, context: IFixContext): IDxmtFix | unde
           const undo = await keepCopy(path.join(bottlePath, "cxbottle.conf"));
           await useDxmt(bottlePath);
           return { text: "The bottle now uses DXMT, from the next launch of the game", undo };
+        },
+      };
+
+    case "bridge":
+      if (check.status !== "warning") return undefined;
+      return {
+        label: "Install the mDLSS bridge",
+        icon: "hub",
+        confirm: {
+          text: "mORTEX puts the mDLSS bridge (d3d11.dll, provided with mORTEX) next to SkyrimSE.exe and sets Bottled Shaders to DLSS. Without it, DLSS shows a black screen under DXMT. Another d3d11.dll there, such as ENBSeries, is kept for Undo.",
+        },
+        run: async () => {
+          const undoBridge = await installBridge(
+            gamePath,
+            path.join(getVortexPath("assets_unpacked"), "mdlss", "d3d11.dll"),
+          );
+          const undoDlss = await useDlss(gamePath);
+          return {
+            text: "mDLSS bridge installed: DLSS works from the next launch of the game",
+            undo: async () => {
+              await undoDlss();
+              await undoBridge();
+            },
+          };
         },
       };
 

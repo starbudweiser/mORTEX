@@ -83,7 +83,7 @@ await copy(join(WORKSPACE, "src/queries"), join(BUILD, "queries"));
 // Static assets
 // tour: recordings are named after their text, so each rewrite would otherwise leave the old one in.
 await rm(join(ASSETS, "tour"), { recursive: true, force: true });
-for (const dir of ["fonts", "icons", "images", "pictograms", "tour"]) {
+for (const dir of ["fonts", "icons", "images", "mdlss", "pictograms", "tour"]) {
   await copy(join(WORKSPACE, "assets", dir), join(ASSETS, dir));
 }
 

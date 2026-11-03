@@ -33,7 +33,7 @@ interface IProps {
 
 const CHECK_LABELS: Record<DxmtCheckId, string> = {
   engine: "Graphics backend",
-  bridge: "mDLSS ENB bridge",
+  bridge: "mDLSS bridge",
   displayTweaks: "SSE Display Tweaks",
   bottledDuplicates: "Bottled Shaders duplicates",
   csBuild: "Community Shaders build",
@@ -52,7 +52,11 @@ function statusText(check: IDxmtCheck, t: IProps["api"]["translate"]): string {
     case "engine":
       return check.found ? check.found.toUpperCase() : t("Unknown");
     case "bridge":
-      return check.status === "ok" ? t("Installed") : t("Not installed (optional)");
+      return check.status === "ok"
+        ? t("Installed")
+        : check.status === "warning"
+          ? t("Not installed: DLSS shows a black screen")
+          : t("Not needed without Bottled Shaders");
     case "displayTweaks":
       return check.status === "na"
         ? t("Not installed")

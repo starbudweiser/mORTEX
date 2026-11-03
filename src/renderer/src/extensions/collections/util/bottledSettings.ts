@@ -6,17 +6,20 @@
  *
  *  - keep    : garder les réglages de la collection (le fichier n'est pas touché)
  *  - mortex  : les réglages mORTEX pour DXMT, ceux de la recette de l'Atelier (DLSS pour la mise à
- *              l'échelle, TAA quand DLSS manque, jamais FSR ; post-traitement chargé au démarrage ;
- *              génération d'images désactivée) ; le reste prend les valeurs de Bottled
+ *              l'échelle si le pont de mDLSS est posé, TAA sinon, jamais FSR ; post-traitement chargé
+ *              au démarrage ; génération d'images désactivée) ; le reste prend les valeurs de Bottled
  *  - default : les réglages par défaut de Bottled (le fichier de la collection est retiré)
  *
  * Interface :
  *  - applyBottledSettings(gamePath, choice): Promise<() => Promise<void>>   rend l'annulation
  *  - restoreBottledSettings(gamePath) / hasBottledSettingsBackup(gamePath)  l'annulation, plus tard
- *  - mortexSettings(): object                                               le contenu « mortex »
+ *  - mortexSettings(dlss): object                                           le contenu « mortex »
+ *  - useDlss(gamePath): Promise<() => Promise<void>>   DLSS dans les réglages existants (pont posé)
  */
 import { access, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import * as path from "node:path";
+
+import { hasEnbBridge } from "../../../util/macos/dxmtChecks";
 
 export type BottledSettingsChoice = "keep" | "mortex" | "default";
 
@@ -38,7 +41,8 @@ export const BOTTLED_SETTINGS_TEXTS: Record<
 > = {
   mortex: {
     title: "mORTEX settings for DXMT (recommended)",
-    detail: "TAA for upscaling, frame generation off: the ones that work on a Mac.",
+    detail:
+      "DLSS for upscaling if the mDLSS bridge is installed, TAA otherwise; post-processing on, frame generation off: the ones that work on a Mac.",
   },
   keep: {
     title: "The collection's settings",
@@ -56,18 +60,18 @@ export function isBottledSettingsChoice(value: unknown): value is BottledSetting
 
 /**
  * Réglages de la recette de l'Atelier DXMT :
- *  - DLSS pour la mise à l'échelle (3) : Streamline le charge sous DXMT (« DLSS is available » dans
- *    le journal), validé dans les essais du 15/10 ; TAA (1) quand DLSS manque, jamais FSR (2), qui
- *    se comporte mal sous DXMT ;
+ *  - DLSS pour la mise à l'échelle (3) quand le pont de mDLSS est posé : sans lui, DLSS se charge
+ *    (« DLSS is available » dans le journal) mais l'image reste noire ; TAA (1) sinon, et quand
+ *    DLSS manque ; jamais FSR (2), qui se comporte mal sous DXMT ;
  *  - post-traitement chargé au démarrage (Bottled le désactive par défaut) : sans lui, les
  *    transparences et les reflets métalliques disparaissent ;
  *  - génération d'images désactivée (écran noir sous CrossOver).
  */
-export function mortexSettings() {
+export function mortexSettings(dlss: boolean) {
   return {
     "Disable at Boot": { PostProcessing: false },
     Upscaling: {
-      upscaleMethod: 3,
+      upscaleMethod: dlss ? 3 : 1,
       upscaleMethodNoDLSS: 1,
       upscaleMethodNoFSR: 1,
       frameGenerationMode: 0,
@@ -133,7 +137,22 @@ export async function applyBottledSettings(
     await rm(file, { force: true });
   } else {
     await mkdir(path.dirname(file), { recursive: true });
-    await writeFile(file, JSON.stringify(mortexSettings(), null, 2) + "\n");
+    const settings = mortexSettings(await hasEnbBridge(gamePath));
+    await writeFile(file, JSON.stringify(settings, null, 2) + "\n");
   }
   return undo;
+}
+
+/**
+ * Une fois le pont posé : DLSS pour la mise à l'échelle dans les réglages actuels de Bottled, le
+ * reste du fichier tel quel. Sans fichier, rien à faire : Bottled prend ses valeurs par défaut.
+ */
+export async function useDlss(gamePath: string): Promise<() => Promise<void>> {
+  const file = settingsUserPath(gamePath);
+  const before = await readFile(file, "utf8").catch(() => undefined);
+  if (before === undefined) return async () => undefined;
+  const settings = JSON.parse(before);
+  settings.Upscaling = { ...settings.Upscaling, upscaleMethod: 3 };
+  await writeFile(file, JSON.stringify(settings, null, 1) + "\n");
+  return () => writeFile(file, before);
 }

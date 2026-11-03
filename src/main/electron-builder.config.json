@@ -74,6 +74,7 @@
     "node_modules/@nexusmods/fomod-installer-ipc/dist/*.exe",
     "assets/dotnetprobe*",
     "assets/loot/**",
+    "assets/mdlss/**",
     "assets/*.exe",
     "assets/css/**",
     "**/*.node",

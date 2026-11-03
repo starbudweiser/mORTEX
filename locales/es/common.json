@@ -4049,5 +4049,21 @@
   "Disabled: Bottled Shaders already includes or refuses them": "Desactivados: Bottled Shaders ya los incluye o los rechaza",
   "incompatible with Bottled Shaders": "incompatible con Bottled Shaders",
   "DLSS for upscaling (TAA without it), post-processing on, frame generation off: the ones that work on a Mac.": "DLSS para el escalado (TAA sin él), posprocesado activado, generación de fotogramas desactivada: los que funcionan en Mac.",
-  "In Bottled Shaders, choose DLSS as the upscaler (TAA if it is missing, never FSR), load Post Processing at boot and leave frame generation off.": "En Bottled Shaders, elige DLSS para el escalado (TAA si falta, nunca FSR), carga Post Processing al inicio y deja desactivada la generación de fotogramas."
+  "In Bottled Shaders, choose DLSS as the upscaler (TAA if it is missing, never FSR), load Post Processing at boot and leave frame generation off.": "En Bottled Shaders, elige DLSS para el escalado (TAA si falta, nunca FSR), carga Post Processing al inicio y deja desactivada la generación de fotogramas.",
+  "DLSS for upscaling if the mDLSS bridge is installed, TAA otherwise; post-processing on, frame generation off: the ones that work on a Mac.": "DLSS para el escalado si el puente mDLSS está instalado, TAA si no; posprocesado activado, generación de fotogramas desactivada: los que funcionan en un Mac.",
+  "Install the mDLSS bridge": "Instalar el puente mDLSS",
+  "mORTEX puts the mDLSS bridge (d3d11.dll, provided with mORTEX) next to SkyrimSE.exe and sets Bottled Shaders to DLSS. Without it, DLSS shows a black screen under DXMT. Another d3d11.dll there, such as ENBSeries, is kept for Undo.": "mORTEX coloca el puente mDLSS (d3d11.dll, incluido con mORTEX) junto a SkyrimSE.exe y pone Bottled Shaders en DLSS. Sin él, DLSS muestra una pantalla negra con DXMT. Otro d3d11.dll ya presente, como el de ENBSeries, se guarda para Deshacer.",
+  "mDLSS bridge installed: DLSS works from the next launch of the game": "Puente mDLSS instalado: DLSS funciona desde el próximo inicio del juego",
+  "mDLSS bridge": "Puente mDLSS",
+  "Lets DLSS run through MetalFX, and loads ENB presets without ENBSeries": "Hace funcionar DLSS a través de MetalFX y carga los presets ENB sin ENBSeries",
+  "Install the mDLSS bridge (d3d11.dll) next to SkyrimSE.exe: without it, DLSS shows a black screen.": "Instala el puente mDLSS (d3d11.dll) junto a SkyrimSE.exe: sin él, DLSS muestra una pantalla negra.",
+  "In Bottled Shaders, choose DLSS as the upscaler (TAA without the bridge, never FSR), load Post Processing at boot and leave frame generation off.": "En Bottled Shaders, elige DLSS para el escalado (TAA sin el puente, nunca FSR), carga Post Processing al inicio y deja desactivada la generación de fotogramas.",
+  "Keep the mDLSS bridge (d3d11.dll) next to SkyrimSE.exe, in place of ENBSeries.": "Mantén el puente mDLSS (d3d11.dll) junto a SkyrimSE.exe, en lugar de ENBSeries.",
+  "Not installed: DLSS shows a black screen": "No instalado: DLSS muestra una pantalla negra",
+  "Not needed without Bottled Shaders": "No es necesario sin Bottled Shaders",
+  "Black screen with DLSS": "Pantalla negra con DLSS",
+  "The game shows a black screen as soon as DLSS is chosen, although the log says DLSS is available.": "El juego muestra una pantalla negra en cuanto se elige DLSS, aunque el registro dice que DLSS está disponible.",
+  "Streamline hands its textures to DXMT in a form DXMT refuses.": "Streamline pasa sus texturas a DXMT en una forma que DXMT rechaza.",
+  "Install the mDLSS bridge (d3d11.dll) next to SkyrimSE.exe: it passes the textures on in the form DXMT expects, and DLSS runs through MetalFX.": "Instala el puente mDLSS (d3d11.dll) junto a SkyrimSE.exe: pasa las texturas en la forma que espera DXMT, y DLSS funciona a través de MetalFX.",
+  "Install the mDLSS bridge (d3d11.dll) next to SkyrimSE.exe: it imitates the ENB SDK for KiLoader, ENB Extender and AELAS, and Bottled Shaders does the rendering.": "Instala el puente mDLSS (d3d11.dll) junto a SkyrimSE.exe: imita el ENB SDK para KiLoader, ENB Extender y AELAS, y Bottled Shaders se encarga del renderizado."
 }

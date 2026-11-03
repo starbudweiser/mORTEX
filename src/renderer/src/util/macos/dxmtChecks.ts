@@ -10,7 +10,10 @@
  * Contrôles :
  *  - engine : moteur graphique de la bouteille (CX_GRAPHICS_BACKEND de cxbottle.conf) ; seul
  *    DXMT offre le niveau Direct3D 11 qu'exige Bottled Shaders
- *  - bridge : pont ENB de mDLSS (d3d11.dll à la racine du jeu), facultatif, pour les presets ENB
+ *  - bridge : pont de mDLSS (d3d11.dll à la racine du jeu). Indispensable à DLSS : Streamline
+ *    transmet ses textures en void*, que le nvngx.dll de DXMT refuse (0xBAD00005, écran noir) ;
+ *    le pont les lui repasse en ID3D11Resource*. Il imite aussi l'ENB SDK pour les presets ENB.
+ *    « warning » quand Bottled Shaders est installé sans lui, « na » sans Bottled
  *  - displayTweaks : réglages de SSE Display Tweaks pour DXMT (voir DISPLAY_TWEAKS) ; SwapEffect
  *    est obligatoire (seul flip_discard crée la swap chain, sinon 0x80070057 et écran noir), les
  *    autres sont des optimisations
@@ -25,7 +28,7 @@
  *    jeu) et regarde quel compilateur HLSL la bouteille utilise : celui de Wine refuse le mot-clé
  *    `namespace` des sources d'origine (« unexpected KW_NAMESPACE »)
  */
-import { readdir, readFile, stat, writeFile } from "node:fs/promises";
+import { readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 
@@ -96,6 +99,26 @@ export async function graphicsBackend(bottlePath: string): Promise<string | unde
 export async function hasEnbBridge(gamePath: string): Promise<boolean> {
   const dll = await readFile(path.join(gamePath, "d3d11.dll")).catch(() => undefined);
   return dll !== undefined && dll.includes(BRIDGE_MARKER);
+}
+
+/**
+ * Pose le pont de mDLSS (`source`) à côté de SkyrimSE.exe. Un autre d3d11.dll (ENBSeries) est
+ * gardé à part et revient avec l'annulation.
+ */
+export async function installBridge(
+  gamePath: string,
+  source: string,
+): Promise<() => Promise<void>> {
+  const target = path.join(gamePath, "d3d11.dll");
+  const before = await readFile(target).catch(() => undefined);
+  await writeFile(target, await readFile(source));
+  return async () => {
+    if (before === undefined) {
+      await rm(target, { force: true });
+    } else {
+      await writeFile(target, before);
+    }
+  };
 }
 
 /** valeurs actuelles des réglages visés ("" si absent), undefined sans SSE Display Tweaks */
@@ -241,7 +264,7 @@ export async function runDxmtChecks(bottlePath: string, gamePath: string): Promi
   ]);
   return [
     { id: "engine", status: engine === "dxmt" ? "ok" : "error", found: engine ?? "" },
-    { id: "bridge", status: bridge ? "ok" : "na" },
+    { id: "bridge", status: bridge ? "ok" : duplicates === undefined ? "na" : "warning" },
     displayTweaksCheck(tweaks),
     {
       id: "bottledDuplicates",

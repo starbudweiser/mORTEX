@@ -33,9 +33,8 @@ export const RENDER_PATH: IRenderStage[] = [
   {
     id: "bridge",
     icon: "hub",
-    name: "mDLSS ENB bridge",
-    role: "Imitates the ENB SDK so ENB presets load without ENBSeries",
-    optional: true,
+    name: "mDLSS bridge",
+    role: "Lets DLSS run through MetalFX, and loads ENB presets without ENBSeries",
     check: "bridge",
   },
   {
@@ -84,7 +83,11 @@ export const RECIPES: IRecipe[] = [
         check: "displayTweaks",
       },
       {
-        text: "In Bottled Shaders, choose DLSS as the upscaler (TAA if it is missing, never FSR), load Post Processing at boot and leave frame generation off.",
+        text: "Install the mDLSS bridge (d3d11.dll) next to SkyrimSE.exe: without it, DLSS shows a black screen.",
+        check: "bridge",
+      },
+      {
+        text: "In Bottled Shaders, choose DLSS as the upscaler (TAA without the bridge, never FSR), load Post Processing at boot and leave frame generation off.",
       },
       { text: "Lock Plugins.txt before launching the game." },
     ],
@@ -97,7 +100,7 @@ export const RECIPES: IRecipe[] = [
     steps: [
       { text: "Follow the Community Shaders recipe first: Bottled Shaders does the rendering." },
       {
-        text: "Install the mDLSS ENB bridge (d3d11.dll) next to SkyrimSE.exe, in place of ENBSeries.",
+        text: "Keep the mDLSS bridge (d3d11.dll) next to SkyrimSE.exe, in place of ENBSeries.",
         check: "bridge",
       },
       {

@@ -10,6 +10,7 @@ import {
   mortexSettings,
   restoreBottledSettings,
   settingsUserPath,
+  useDlss,
 } from "./bottledSettings";
 
 describe("applyBottledSettings", () => {
@@ -32,12 +33,12 @@ describe("applyBottledSettings", () => {
     expect(await hasBottledSettingsBackup(game)).toBe(false);
   });
 
-  it("writes the mORTEX settings for DXMT and undoes them", async () => {
+  it("writes the mORTEX settings for DXMT, TAA without the bridge, and undoes them", async () => {
     writeUser('{"Menu":{}}');
     const undo = await applyBottledSettings(game, "mortex");
-    expect(JSON.parse(fs.readFileSync(file(), "utf8"))).toEqual(mortexSettings());
-    expect(mortexSettings().Upscaling).toMatchObject({
-      upscaleMethod: 3,
+    expect(JSON.parse(fs.readFileSync(file(), "utf8"))).toEqual(mortexSettings(false));
+    expect(mortexSettings(false).Upscaling).toMatchObject({
+      upscaleMethod: 1,
       upscaleMethodNoDLSS: 1,
       frameGenerationMode: 0,
       frameGenerationForceEnable: 0,
@@ -45,6 +46,25 @@ describe("applyBottledSettings", () => {
     await undo();
     expect(fs.readFileSync(file(), "utf8")).toBe('{"Menu":{}}');
     expect(await hasBottledSettingsBackup(game)).toBe(false);
+  });
+
+  it("chooses DLSS when the mDLSS bridge is installed", async () => {
+    fs.writeFileSync(path.join(game, "d3d11.dll"), "MZ...mDLSS_enb_bridge.log...");
+    await applyBottledSettings(game, "mortex");
+    expect(JSON.parse(fs.readFileSync(file(), "utf8")).Upscaling.upscaleMethod).toBe(3);
+  });
+
+  it("switches the current settings to DLSS, keeping the rest, and undoes it", async () => {
+    writeUser('{"Menu":{"x":1},"Upscaling":{"upscaleMethod":2,"other":5}}');
+    const undo = await useDlss(game);
+    expect(JSON.parse(fs.readFileSync(file(), "utf8"))).toEqual({
+      Menu: { x: 1 },
+      Upscaling: { upscaleMethod: 3, other: 5 },
+    });
+    await undo();
+    expect(fs.readFileSync(file(), "utf8")).toBe(
+      '{"Menu":{"x":1},"Upscaling":{"upscaleMethod":2,"other":5}}',
+    );
   });
 
   it("removes the file for Bottled's defaults, and puts it back on undo", async () => {

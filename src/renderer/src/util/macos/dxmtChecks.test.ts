@@ -10,6 +10,7 @@ import {
   dllFileVersion,
   hasDisplayTweaks,
   fixDisplayTweaks,
+  installBridge,
   parseShadersLog,
   graphicsBackend,
   runDxmtChecks,
@@ -65,7 +66,8 @@ describe("DXMT checks", () => {
 
     const checks = await byId();
     expect(checks.engine).toEqual({ id: "engine", status: "error", found: "dxvk" });
-    expect(checks.bridge.status).toBe("na");
+    // Bottled sans le pont : DLSS donnerait un écran noir
+    expect(checks.bridge.status).toBe("warning");
     expect(checks.displayTweaks.status).toBe("error");
     expect(checks.displayTweaks.found).toContain("SwapEffect = auto");
     expect(checks.bottledDuplicates.found).toBe("EVLaS.dll, TerrainHelper.dll");
@@ -195,6 +197,22 @@ describe("DXMT checks", () => {
       );
       expect((await byId()).csBuild.status).toBe("ok");
     });
+  });
+
+  it("installs the mDLSS bridge in place of another d3d11.dll and can undo it", async () => {
+    const source = path.join(tmp, "bridge.dll");
+    fs.writeFileSync(source, "MZ...mDLSS_enb_bridge.log...");
+    fs.writeFileSync(path.join(game, "d3d11.dll"), "ENBSeries");
+    expect((await byId()).bridge.status).toBe("na");
+    const undo = await installBridge(game, source);
+    expect((await byId()).bridge.status).toBe("ok");
+    await undo();
+    expect(fs.readFileSync(path.join(game, "d3d11.dll"), "utf8")).toBe("ENBSeries");
+
+    fs.rmSync(path.join(game, "d3d11.dll"));
+    const undoNew = await installBridge(game, source);
+    await undoNew();
+    expect(fs.existsSync(path.join(game, "d3d11.dll"))).toBe(false);
   });
 
   it("sizes the video memory from the Mac's memory, up to 16 GB", () => {
