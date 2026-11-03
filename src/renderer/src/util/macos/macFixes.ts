@@ -10,6 +10,7 @@
  *  - undo(gamePath, fixId | "all", options?)  restaure depuis le manifeste             (macApply)
  *  - appliedFixes(gamePath)                   ce que le manifeste dit être appliqué    (macApply)
  *  - MAC_TEXT_KEYS                            les clés de traduction que le moteur renvoie (macTexts)
+ *  - MAC_FIX_IDS                              les identifiants de correctifs (macPlan)
  */
 export { appliedFixes, apply, undo } from "./macApply";
 export type {
@@ -23,7 +24,7 @@ export type {
 } from "./macApply";
 export { BACKUP_DIR_NAME, backupDir, manifestPath, readManifest } from "./macManifest";
 export type { IFileEntry, IMacManifest, IRefusal, IRegistryEntry, MacEntry } from "./macManifest";
-export { plan } from "./macPlan";
+export { MAC_FIX_IDS, plan } from "./macPlan";
 export type {
   IDiscardedFile,
   IMacPlan,

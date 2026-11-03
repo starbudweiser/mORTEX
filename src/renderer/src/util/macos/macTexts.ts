@@ -13,6 +13,9 @@
  *  - mackit.bottled.outdated             version, minimum
  *  - mackit.bottled.unknown              minimum
  *  - mackit.apply.changed, mackit.undo.changed / .backupMissing   file
+ *  - mackit.cli.gameMissing              game (dossier de jeu demandé)
+ *  - mackit.cli.bottleNotFound           bottle (nom ou chemin demandé)
+ * Les clés mackit.cli.* viennent de l'outil en ligne de commande `mackit` (erreurs de l'appel, pas du moteur).
  */
 export const MAC_TEXT_KEYS = [
   "mackit.fix.engine.title",
@@ -47,6 +50,11 @@ export const MAC_TEXT_KEYS = [
   "mackit.undo.absent",
   "mackit.undo.changed",
   "mackit.undo.backupMissing",
+  "mackit.cli.usage",
+  "mackit.cli.gameMissing",
+  "mackit.cli.bottleNotFound",
+  "mackit.cli.planInvalid",
+  "mackit.cli.error",
 ] as const;
 
 export type MacTextKey = (typeof MAC_TEXT_KEYS)[number];

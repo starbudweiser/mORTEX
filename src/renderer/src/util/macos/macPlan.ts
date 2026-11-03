@@ -41,13 +41,17 @@ import { type IIniPlan, type IPlannedChange, loadIniFile, planChanges } from "./
 import { fileHash } from "./macManifest";
 import { type IMacText, type MacTextKey, macText } from "./macTexts";
 
-export type MacFixId =
-  | "engine"
-  | "bridge"
-  | "displayTweaks"
-  | "duplicates"
-  | "compiler"
-  | "overrides";
+/** Les correctifs, dans l'ordre où apply les passe. */
+export const MAC_FIX_IDS = [
+  "engine",
+  "bridge",
+  "displayTweaks",
+  "duplicates",
+  "compiler",
+  "overrides",
+] as const;
+
+export type MacFixId = (typeof MAC_FIX_IDS)[number];
 
 /** Une action du plan. Les opérations sur fichier gardent l'empreinte vue à la simulation. */
 export type MacOperation =
