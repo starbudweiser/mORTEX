@@ -50,7 +50,8 @@ export function buildActivity(input: IActivityInput, t: Translate): MacActivity 
     downloadProgress ?? (taskProgress !== undefined ? Math.min(1, taskProgress / 100) : -1);
   const count = started.length + tasks.length;
   return {
-    badge: count > 0 ? String(count) : "",
+    // pastille du Dock : le pourcentage quand il est connu, sinon le nombre de tâches
+    badge: progress >= 0 ? `${percent(progress)} %` : count > 0 ? String(count) : "",
     progress,
     title:
       downloadProgress !== undefined

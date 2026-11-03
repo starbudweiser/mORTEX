@@ -32,7 +32,7 @@ describe("menu bar activity", () => {
       t,
     );
     expect(activity).toEqual({
-      badge: "3",
+      badge: "25 %",
       progress: 0.25,
       title: "↓ 25 %",
       lines: ["Downloads: 2 in progress (25 %)", "Installing SkyUI (40 %)"],
@@ -40,6 +40,18 @@ describe("menu bar activity", () => {
       showLabel: "Show mORTEX",
       quitLabel: "Quit mORTEX",
     });
+  });
+
+  it("counts the tasks when no percentage is known", () => {
+    const activity = buildActivity(
+      {
+        downloads: {},
+        notifications: [{ id: "deploy", type: "activity", message: "Deploying" } as never],
+        canLaunch: false,
+      },
+      t,
+    );
+    expect(activity).toMatchObject({ badge: "1", progress: -1, title: "" });
   });
 
   it("is quiet when nothing runs, and can't launch a running game", () => {
