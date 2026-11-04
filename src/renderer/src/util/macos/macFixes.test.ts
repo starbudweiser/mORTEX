@@ -41,18 +41,17 @@ describe("mackit plan / apply / undo", () => {
   };
   const read = (file: string) => fs.readFileSync(file, "utf8");
 
-  /** empreinte de chaque fichier d'un dossier (hors état des overrides, réécrit par l'annulation) */
+  /** empreinte de chaque fichier d'un dossier */
   const snapshot = (dir: string): Record<string, string> => {
     const result: Record<string, string> = {};
     const walk = (current: string) => {
       for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
         const file = path.join(current, entry.name);
         if (entry.isDirectory()) walk(file);
-        else if (entry.name !== "mortex-dll-overrides.json") {
+        else
           result[path.relative(dir, file)] = createHash("sha256")
             .update(fs.readFileSync(file))
             .digest("hex");
-        }
       }
     };
     walk(dir);

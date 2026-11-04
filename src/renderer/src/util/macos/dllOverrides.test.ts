@@ -111,5 +111,9 @@ describe("DLL overrides", () => {
 
     await removeDllOverrides(bottle, [], run);
     expect(regs).toHaveLength(3);
+
+    // le dernier retiré : le fichier d'état disparaît avec lui
+    await removeDllOverrides(bottle, ["version"], run);
+    expect(fs.existsSync(path.join(bottle.path, "mortex-dll-overrides.json"))).toBe(false);
   });
 });
