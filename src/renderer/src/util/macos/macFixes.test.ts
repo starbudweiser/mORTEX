@@ -181,11 +181,12 @@ describe("mackit plan / apply / undo", () => {
       expect((await makePlan()).fixes).toEqual([]);
     });
 
-    it("skips the bottle fixes when the game runs outside any bottle, and says so", async () => {
+    it("skips the bottle fixes, bridge included, when the game runs outside any bottle, and says so", async () => {
       const result = await plan(game, undefined, { bridgeSource: bridge });
-      expect(ids(result.fixes)).toEqual(["bridge", "displayTweaks", "duplicates"]);
+      expect(ids(result.fixes)).toEqual(["displayTweaks", "duplicates"]);
       expect(result.skipped.map((skipped) => skipped.id)).toEqual([
         "engine",
+        "bridge",
         "compiler",
         "overrides",
       ]);
