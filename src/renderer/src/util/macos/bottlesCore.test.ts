@@ -2,9 +2,9 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { addBottleRoot, configureBottles, listBottles, readState } from "./bottlesCore";
+import { addBottleRoot, configureBottles, listBottles, readState, wineEnv } from "./bottlesCore";
 
 describe("état injecté", () => {
   it("écrit les dossiers de bouteilles dans le fichier d'état choisi et les retrouve", () => {
@@ -31,5 +31,25 @@ describe("état injecté", () => {
 
     expect(() => addBottleRoot("/x")).not.toThrow();
     expect(log).toHaveBeenCalledWith("warn", "could not write bottles.json", expect.anything());
+  });
+});
+
+describe("wineEnv", () => {
+  const saved = process.env.LC_CTYPE;
+  afterEach(() => {
+    if (saved === undefined) delete process.env.LC_CTYPE;
+    else process.env.LC_CTYPE = saved;
+  });
+
+  it("retire le LC_CTYPE de secours que Python pose, pour que wine garde la langue de la bouteille", () => {
+    process.env.LC_CTYPE = "C.UTF-8";
+    expect(wineEnv().LC_CTYPE).toBeUndefined();
+    expect(wineEnv({ CX_BOTTLE_PATH: "/b" }).CX_BOTTLE_PATH).toBe("/b");
+  });
+
+  it("garde une vraie langue choisie par l'utilisateur", () => {
+    process.env.LC_CTYPE = "fr_FR.UTF-8";
+    expect(wineEnv().LC_CTYPE).toBe("fr_FR.UTF-8");
+    expect(wineEnv({ LC_CTYPE: "en_US.UTF-8" }).LC_CTYPE).toBe("en_US.UTF-8");
   });
 });

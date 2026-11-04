@@ -443,6 +443,19 @@ describe("mackit plan / apply / undo", () => {
       expect(regs.at(-1)).toContain('"d3d11"=-');
     });
 
+    it("gives back the modification dates too, for changed and for set-aside files", async () => {
+      const old = new Date("2024-03-05T10:20:30Z");
+      const files = [
+        path.join(plugins, "SSEDisplayTweaks.ini"),
+        path.join(plugins, "TerrainHelper.dll"),
+      ];
+      for (const file of files) fs.utimesSync(file, old, old);
+
+      await apply(await makePlan(), { run });
+      await undo(game, "all", { run });
+      for (const file of files) expect(fs.statSync(file).mtime.getTime()).toBe(old.getTime());
+    });
+
     it("refuses to restore a file that changed since, and says which", async () => {
       await apply(await makePlan(), { run });
       write(iniPath(), "[Render]\nSwapEffect = flip_discard\n; edited by hand\n");
