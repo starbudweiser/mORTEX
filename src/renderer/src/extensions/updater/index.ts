@@ -100,11 +100,12 @@ function init(context: IExtensionContext): boolean {
       const staged = state.type === "staged";
       await context.api.showDialog(
         "info",
-        `What's New in ${version}`,
+        "What's New in {{version}}",
         {
           htmlText: releaseNotes
             ? `<div class="changelog-dialog-release">${releaseNotes}</div>`
-            : "<p>A new version of mORTEX is available.</p>",
+            : `<p>${context.api.translate("A new version of mORTEX is available.")}</p>`,
+          parameters: { version },
         },
         [
           { label: "Close" },
@@ -134,11 +135,12 @@ function init(context: IExtensionContext): boolean {
       const notes = await window.api.updater.getUpdateChangelog(channelNow()).catch(() => null);
       await context.api.showDialog(
         "info",
-        `What's New in ${version}`,
+        "What's New in {{version}}",
         {
           htmlText: notes
             ? `<div class="changelog-dialog-release">${notes}</div>`
-            : "<p>No release notes are available for this update.</p>",
+            : `<p>${context.api.translate("No release notes are available for this update.")}</p>`,
+          parameters: { version },
         },
         [{ label: "Close" }],
         "new-update-changelog-dialog",
@@ -152,7 +154,8 @@ function init(context: IExtensionContext): boolean {
       context.api.sendNotification({
         id: NOTIF_OFFER,
         type: "warning",
-        message: `mORTEX ${version} is a downgrade and older than your current version`,
+        message: "mORTEX {{version}} is a downgrade and older than your current version",
+        replace: { version },
         actions: [
           {
             title: "More",
@@ -161,11 +164,15 @@ function init(context: IExtensionContext): boolean {
                 "question",
                 "Downgrade to stable?",
                 {
-                  text: `Switching to the Stable channel would install Vortex ${version}, which is older than the version you are running (${currentVersion}).
-
-Downgrading can damage your application state. Alternatively, stay on your current version and you will be offered the next stable release once it is newer than ${currentVersion}.
-
-If you downgrade, Vortex will download ${version} and update on restart.`,
+                  // the dialog translates a text line by line, so each paragraph is its own string
+                  text: [
+                    "Switching to the Stable channel would install mORTEX {{version}}, which is older than the version you are running ({{currentVersion}}).",
+                    "",
+                    "Downgrading can damage your application state. Alternatively, stay on your current version and you will be offered the next stable release once it is newer than {{currentVersion}}.",
+                    "",
+                    "If you downgrade, mORTEX will download {{version}} and update on restart.",
+                  ].join("\n"),
+                  parameters: { version, currentVersion },
                 },
                 [
                   {
@@ -179,7 +186,9 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
                     },
                   },
                   {
-                    label: `Downgrade to ${version}`,
+                    label: context.api.translate("Downgrade to {{version}}", {
+                      replace: { version },
+                    }),
                     action: () => {
                       dismiss(NOTIF_OFFER);
                       analytics.downgradeDecided(version, true);
@@ -223,7 +232,8 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
         context.api.sendNotification({
           id: NOTIF_UPDATED,
           type: "success",
-          message: `mORTEX was updated to ${getApplication().version}`,
+          message: "mORTEX was updated to {{version}}",
+          replace: { version: getApplication().version },
           actions: [
             {
               title: "View changes",
@@ -259,7 +269,8 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
             context.api.sendNotification({
               id: NOTIF_TOAST,
               type: "success",
-              message: `mORTEX ${getApplication().version} is up to date`,
+              message: "mORTEX {{version}} is up to date",
+              replace: { version: getApplication().version },
               displayMS: 5000,
             });
           }
@@ -291,7 +302,8 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
           context.api.sendNotification({
             id: NOTIF_UPDATE,
             type: "info",
-            message: `mORTEX ${state.version} is available to download`,
+            message: "mORTEX {{version}} is available to download",
+            replace: { version: state.version },
             actions: [
               {
                 title: "What's New",
@@ -340,14 +352,19 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
           // "activity" + progress makes the notifications panel draw a real
           // bar (and a spinner icon); the percent also lives in the text
           // because the toast and the collapsed tray only show the message
-          const verb = state.kind === "downgrade" ? "Downgrading to" : "Downloading";
+          const downgrading = state.kind === "downgrade";
           context.api.sendNotification({
             id: NOTIF_UPDATE,
             type: "activity",
             message:
               state.percent != null
-                ? `${verb} mORTEX ${state.version} (${state.percent}%)`
-                : `${verb} mORTEX ${state.version}`,
+                ? downgrading
+                  ? "Downgrading to mORTEX {{version}} ({{percent}}%)"
+                  : "Downloading mORTEX {{version}} ({{percent}}%)"
+                : downgrading
+                  ? "Downgrading to mORTEX {{version}}"
+                  : "Downloading mORTEX {{version}}",
+            replace: { version: state.version, percent: state.percent },
             progress: state.percent,
             // no buttons while the download runs; closing the notification is
             // the one control, and it cancels the download
@@ -374,7 +391,8 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
             context.api.sendNotification({
               id: NOTIF_UPDATE,
               type: "info",
-              message: `mORTEX ${state.version} is ready to install`,
+              message: "mORTEX {{version}} is ready to install",
+              replace: { version: state.version },
               actions: [
                 {
                   title: "What's New",
@@ -452,7 +470,8 @@ If you downgrade, Vortex will download ${version} and update on restart.`,
             context.api.sendNotification({
               id: NOTIF_UPDATE,
               type: "info",
-              message: `mORTEX ${retry.version} is available to download`,
+              message: "mORTEX {{version}} is available to download",
+              replace: { version: retry.version },
               actions: [
                 {
                   title: "What's New",
