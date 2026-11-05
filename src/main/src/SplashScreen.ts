@@ -6,8 +6,8 @@ import { BrowserWindow, screen } from "electron";
 import { getVortexPath } from "./getVortexPath";
 import { log } from "./logging";
 
-// Règle Socle « Splash animé » : fenêtre principale à t = 2 s, sortie du splash à t = 4 s (600 ms)
-const MIN_SHOWN_MS = 4000;
+// Règle Socle « Splash animé » : fenêtre principale à t = 2 s, sortie du splash à t = 3 s (600 ms)
+const MIN_SHOWN_MS = 3000;
 const MAIN_WINDOW_AT_MS = 2000;
 const WIDTH = 500;
 const HEIGHT = 190;
@@ -42,7 +42,7 @@ class SplashScreen {
     // don't fade out immediately, otherwise the it looks odd
     // as the main window appears at the same time
 
-    // l'animation reste au moins 4 s à l'écran, même si le démarrage est plus rapide
+    // l'animation reste au moins 3 s à l'écran, même si le démarrage est plus rapide
     await Promise.all([
       delay(Math.max(200, MIN_SHOWN_MS - (Date.now() - this.mShownAt))),
       mainShown,
