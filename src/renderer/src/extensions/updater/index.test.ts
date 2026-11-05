@@ -17,7 +17,7 @@ interface FakeNotification {
   id: string;
   type?: string;
   message?: string;
-  replace?: Record<string, unknown>;
+  replace?: Record<string, string | number | undefined>;
   progress?: number;
   displayMS?: number;
   actions?: Array<{ title: string; action: (dismiss: () => void) => void }>;
@@ -25,7 +25,7 @@ interface FakeNotification {
 }
 
 // what i18next makes of a string: each {{key}} is filled from the replace dictionary
-function interpolate(text: string, replace?: Record<string, unknown>): string {
+function interpolate(text: string, replace?: Record<string, string | number | undefined>): string {
   return text.replace(/{{(\w+)}}/g, (_match, key: string) => String(replace?.[key] ?? ""));
 }
 
@@ -66,8 +66,10 @@ function makeContext() {
     once: (cb: () => void) => onceCallbacks.push(cb),
     api: {
       getState: () => state,
-      translate: (text: string, options?: { replace?: Record<string, unknown> }) =>
-        interpolate(text, options?.replace),
+      translate: (
+        text: string,
+        options?: { replace?: Record<string, string | number | undefined> },
+      ) => interpolate(text, options?.replace),
       sendNotification,
       dismissNotification,
       showDialog,
