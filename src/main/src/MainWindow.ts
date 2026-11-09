@@ -10,6 +10,7 @@ import { isQuitting, terminate, terminateAsync } from "./errorHandling";
 import { reportCrash } from "./errorReporting";
 import { getVortexPath } from "./getVortexPath";
 import { log } from "./logging";
+import { getPresence, hidesOnClose } from "./macos/presence";
 import Debouncer from "./NodeDebouncer";
 import { openUrl } from "./open";
 import { ReloadBudget } from "./reloadBudget";
@@ -406,6 +407,22 @@ class MainWindow {
     return this.mWindow;
   }
 
+  /**
+   * mORTEX (macOS) : ramène devant une fenêtre masquée ou réduite (mode « barre de menus »).
+   * Sans effet avant le premier affichage : le lancement garde la main sur l'écran de démarrage.
+   */
+  public reveal(): void {
+    const win = this.mWindow;
+    if (!this.mShown || win === null || win.isDestroyed()) {
+      return;
+    }
+    if (win.isMinimized()) {
+      win.restore();
+    }
+    win.show();
+    win.focus();
+  }
+
   public getRendererPid(): number | undefined {
     return this.mRendererPid;
   }
@@ -457,8 +474,14 @@ class MainWindow {
       return;
     }
 
-    this.mWindow.on("close", () => {
+    this.mWindow.on("close", (event) => {
       if (this.mWindow === null) {
+        return;
+      }
+      // mORTEX (macOS), mode « barre de menus » : fermer la fenêtre la masque, l'appli reste active
+      if (hidesOnClose(getPresence(), process.platform, isQuitting())) {
+        event.preventDefault();
+        this.mWindow.hide();
         return;
       }
       // Capture the renderer PID so Application.waitForRendererExit can wait

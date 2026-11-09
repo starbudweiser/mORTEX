@@ -234,6 +234,8 @@ export interface ISettingsInterface {
   relativeTimes: boolean;
   alwaysCompactHeaders: boolean;
   reduceMotion?: boolean;
+  /** mORTEX (macOS): "dock", "menubar" (menu bar only) or "both" */
+  presence?: string;
   dashboardLayout: string[];
   foregroundDL: boolean;
   dashletSettings: { [dashletId: string]: IDashletSettings };

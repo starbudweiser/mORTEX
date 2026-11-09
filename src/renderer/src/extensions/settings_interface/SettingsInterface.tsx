@@ -39,6 +39,7 @@ import {
   setForegroundDL,
   setHideTopLevelCategory,
   setLanguage,
+  setPresence,
   setProfilesVisible,
   setReduceMotion,
   setRelativeTimes,
@@ -85,6 +86,8 @@ export function SettingsInterfaceForm(props: IFormProps) {
     (state: IState) => state.settings.interface.alwaysCompactHeaders === true,
   );
   const foregroundDL = useSelector((state: IState) => state.settings.interface.foregroundDL);
+  // mORTEX (macOS) : où vit l'appli (Dock, barre de menus, ou les deux)
+  const presence = useSelector((state: IState) => state.settings.interface.presence ?? "menubar");
   const autoDeployment = useSelector((state: IState) => state.settings.automation.deploy);
   const autoInstall = useSelector((state: IState) => state.settings.automation.install);
   const autoEnable = useSelector((state: IState) => state.settings.automation.enable);
@@ -245,6 +248,31 @@ export function SettingsInterfaceForm(props: IFormProps) {
             </Typography>
           </div>
         </FormGroup>
+
+        {process.platform === "darwin" ? (
+          <FormGroup controlId="presenceSelect">
+            <div className="flex flex-col items-start gap-y-2">
+              <Typography as="span">{t("Show mORTEX in")}</Typography>
+
+              <Picker<string>
+                options={[
+                  { label: t("Menu bar"), value: "menubar" },
+                  { label: t("Dock"), value: "dock" },
+                  { label: t("Dock and menu bar"), value: "both" },
+                ]}
+                placement="left"
+                value={presence}
+                onChange={(mode) => dispatch(setPresence(mode))}
+              />
+
+              <Typography appearance="subdued" typographyType="body-sm">
+                {t(
+                  "In the menu bar, closing the window hides mORTEX and keeps it running. Click the icon to show or hide the window, right-click it for the menu. Quit from the menu or with ⌘Q.",
+                )}
+              </Typography>
+            </div>
+          </FormGroup>
+        ) : null}
 
         <FormGroup controlId="customization">
           <ControlLabel>{t("Customisation")}</ControlLabel>

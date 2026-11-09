@@ -346,6 +346,9 @@ export interface Menu {
   /** mORTEX (macOS): activity shown by the menu bar icon and the Dock */
   setActivity(activity: MacActivity): void;
 
+  /** mORTEX (macOS): where the app lives, "dock", "menubar" or "both" */
+  setPresence(mode: string): void;
+
   /** mORTEX (macOS): an action chosen from the menu bar icon. Returns unsubscribe function. */
   onActivityAction(callback: (action: string) => void): () => void;
 }

@@ -53,3 +53,8 @@ export const setAlwaysCompactHeaders = safeCreateAction(
  * then the setting is absent and the operating system's preference is followed.
  */
 export const setReduceMotion = safeCreateAction("SET_REDUCE_MOTION", (enabled: boolean) => enabled);
+
+/**
+ * mORTEX (macOS) : où vit l'appli, « dock », « menubar » (barre de menus seulement) ou « both »
+ */
+export const setPresence = safeCreateAction("SET_PRESENCE_MODE", (mode: string) => mode);

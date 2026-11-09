@@ -44,6 +44,8 @@ const settingsReducer: IReducerSpec = {
     // Deliberately absent from the defaults below: unset means "follow the OS".
     [actions.setReduceMotion as any]: (state, payload) =>
       update(state, { reduceMotion: { $set: payload } }),
+    [actions.setPresence as any]: (state, payload) =>
+      update(state, { presence: { $set: payload } }),
   },
   defaults: {
     language: systemLanguage(),
@@ -54,6 +56,8 @@ const settingsReducer: IReducerSpec = {
     relativeTimes: true,
     foregroundDL: true,
     alwaysCompactHeaders: false,
+    // mORTEX (macOS) : barre de menus seulement
+    presence: "menubar",
     usage: {},
   },
 };

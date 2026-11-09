@@ -364,6 +364,9 @@ export interface RendererChannels extends RendererCallbackChannels {
 
   // mORTEX (macOS): activity for the menu bar icon and the Dock
   "activity:update": (activity: MacActivity) => void;
+
+  // mORTEX (macOS): where the app lives, "dock", "menubar" or "both" (setting in Interface)
+  "presence:set": (mode: string) => void;
 }
 
 /** Type containing all known channels used by the main process to send messages to a renderer process */

@@ -94,14 +94,34 @@ export function initApplicationMenu(extensions: ExtensionManager) {
     return state?.settings.window.useModernLayout ? zoomFromState(state) : webFrame.getZoomFactor();
   };
 
-  const fileMenu: Electron.MenuItemConstructorOptions[] = [
-    {
-      label: "Close",
-      click() {
-        getApplication().quit();
-      },
-    },
-  ];
+  const fileMenu: Electron.MenuItemConstructorOptions[] =
+    process.platform === "darwin"
+      ? [
+          {
+            // mORTEX (macOS) : ⌘W ferme la fenêtre, qui est masquée quand mORTEX vit dans la
+            // barre de menus ; ⌘Q quitte
+            label: "Close",
+            accelerator: "Cmd+W",
+            click() {
+              void window.api.window.close(getWindowId());
+            },
+          },
+          {
+            label: "Quit",
+            accelerator: "Cmd+Q",
+            click() {
+              getApplication().quit();
+            },
+          },
+        ]
+      : [
+          {
+            label: "Close",
+            click() {
+              getApplication().quit();
+            },
+          },
+        ];
 
   // Track translation recording state outside refresh so it persists
   let recordTranslation = false;

@@ -35,6 +35,8 @@ import { getVortexPath, setVortexPath } from "./getVortexPath";
 import { shutdownHashWorker } from "./hash/host";
 import { betterIpcMain } from "./ipc";
 import { log, setupLogging, changeLogPath } from "./logging";
+import { getPresence, showsDock } from "./macos/presence";
+import { loadPresence } from "./macos/presenceStore";
 import { listenOpenUrl } from "./macos/protocol";
 import MainWindow from "./MainWindow";
 import { ReloadBudget } from "./reloadBudget";
@@ -249,6 +251,8 @@ class Application {
 
     app.on("activate", () => {
       if (this.mMainWindow !== undefined) {
+        // mode « barre de menus » : la fenêtre masquée revient devant (Dock, Spotlight, Finder)
+        this.mMainWindow.reveal();
         this.mMainWindow
           .create()
           .catch((err: unknown) =>
@@ -308,6 +312,11 @@ class Application {
     });
 
     const onReady = () => {
+      // mORTEX (macOS) : présence choisie par l'utilisateur ; le Dock est réglé dès le lancement
+      if (process.platform === "darwin" && !showsDock(loadPresence())) {
+        app.dock?.hide();
+      }
+
       const vortexPath = process.env.NODE_ENV === "development" ? "vortex_devel" : "vortex";
 
       // if userData specified, use it
@@ -590,7 +599,7 @@ class Application {
     await this.awaitMainWindowReady();
 
     log("debug", "setting up tray icon");
-    this.mTray = new TrayIcon();
+    this.mTray = new TrayIcon(getPresence());
     setTrayIcon(this.mTray);
 
     if (splash) {
@@ -600,7 +609,8 @@ class Application {
     }
 
     const windowHandle = this.mMainWindow?.getHandle();
-    if (this.mTray.initialized && windowHandle) {
+    // même sans icône (mode « Dock » seul), l'icône garde la fenêtre pour les actions et le Dock
+    if (windowHandle) {
       this.mTray.setMainWindow(windowHandle);
     }
   }

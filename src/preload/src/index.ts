@@ -213,6 +213,7 @@ try {
       popup: (items, x, y) => betterIpcRenderer.invoke("menu:popup", items, x, y),
       symbol: (name: string) => betterIpcRenderer.invoke("menu:symbol", name),
       setActivity: (activity) => betterIpcRenderer.send("activity:update", activity),
+      setPresence: (mode: string) => betterIpcRenderer.send("presence:set", mode),
       onActivityAction: (callback: (action: string) => void) => {
         const listener = (_event: Electron.IpcRendererEvent, action: string) => callback(action);
         ipcRenderer.on("activity:action", listener);

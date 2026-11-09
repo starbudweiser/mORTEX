@@ -55,3 +55,15 @@ describe("setReduceMotion", () => {
     expect(settingsReducer.defaults).not.toHaveProperty("reduceMotion");
   });
 });
+
+describe("setPresence", () => {
+  it("sets where mORTEX lives (Dock, menu bar, or both)", () => {
+    const input = { presence: "menubar" };
+    const result = settingsReducer.reducers.SET_PRESENCE_MODE(input, "both");
+    expect(result).toEqual({ presence: "both" });
+  });
+
+  it("lives in the menu bar by default", () => {
+    expect(settingsReducer.defaults.presence).toBe("menubar");
+  });
+});

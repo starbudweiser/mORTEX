@@ -51,6 +51,8 @@ import { getVortexPath } from "./getVortexPath";
 import { hashFile } from "./hash/host";
 import { betterIpcMain } from "./ipc";
 import { popupMenu } from "./macos/popupMenu";
+import { normalizePresence } from "./macos/presence";
+import { savePresence } from "./macos/presenceStore";
 import { CrashLog } from "./mortex/crashes/CrashLog";
 import { openUrl, openFile, showItemInFolder } from "./open";
 import { getTrayIcon } from "./TrayIcon";
@@ -222,6 +224,13 @@ export function init(fs: FileSystem) {
   // Shell
   betterIpcMain.on("activity:update", (_event, activity) => {
     getTrayIcon()?.setActivity(activity);
+  });
+
+  // mORTEX (macOS): Dock, menu bar icon, or both
+  betterIpcMain.on("presence:set", (_event, value) => {
+    const mode = normalizePresence(value);
+    savePresence(mode);
+    getTrayIcon()?.setMode(mode);
   });
 
   betterIpcMain.on("shell:openUrl", (_event, url) => {

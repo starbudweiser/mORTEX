@@ -4083,5 +4083,10 @@
   "Switching to the Stable channel would install mORTEX {{version}}, which is older than the version you are running ({{currentVersion}}).": "Cambiar al canal Estable instalaría mORTEX {{version}}, anterior a la versión que estás usando ({{currentVersion}}).",
   "Downgrading can damage your application state. Alternatively, stay on your current version and you will be offered the next stable release once it is newer than {{currentVersion}}.": "Retroceder puede dañar el estado de la aplicación. También puedes quedarte en tu versión actual: se te ofrecerá la próxima versión estable cuando sea más reciente que la {{currentVersion}}.",
   "If you downgrade, mORTEX will download {{version}} and update on restart.": "Si retrocedes, mORTEX descargará la {{version}} y se actualizará al reiniciar.",
-  "Downgrade to {{version}}": "Retroceder a la {{version}}"
+  "Downgrade to {{version}}": "Retroceder a la {{version}}",
+  "Show mORTEX in": "Mostrar mORTEX en",
+  "Menu bar": "Barra de menús",
+  "Dock": "Dock",
+  "Dock and menu bar": "Dock y barra de menús",
+  "In the menu bar, closing the window hides mORTEX and keeps it running. Click the icon to show or hide the window, right-click it for the menu. Quit from the menu or with ⌘Q.": "En la barra de menús, cerrar la ventana oculta mORTEX, que sigue activo. Haz clic en el icono para mostrar u ocultar la ventana y clic derecho para abrir el menú. Para salir, usa el menú o ⌘Q."
 }

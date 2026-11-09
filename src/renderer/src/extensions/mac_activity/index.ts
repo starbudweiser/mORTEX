@@ -81,8 +81,19 @@ function init(context: IExtensionContext): boolean {
 
     window.api.menu.onActivityAction((action) => runShortcut(api, action));
 
+    // présence (Dock, barre de menus, ou les deux) : transmise au processus principal à chaque changement
+    let lastPresence: string | undefined;
+    const publishPresence = () => {
+      const mode = api.getState().settings.interface.presence ?? "menubar";
+      if (mode === lastPresence) return;
+      lastPresence = mode;
+      window.api.menu.setPresence(mode);
+    };
+
     publish();
+    publishPresence();
     api.store.subscribe(() => {
+      publishPresence();
       if (timer === undefined) timer = setTimeout(publish, THROTTLE_MS);
     });
     // la langue peut changer : les libellés suivent
