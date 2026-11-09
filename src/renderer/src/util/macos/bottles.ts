@@ -1,5 +1,5 @@
 /**
- * mORTEX (macOS) : magasin de jeux des bouteilles Wine (CrossOver, Whisky, Wine brut).
+ * mORTEX (macOS) : magasin de jeux des bouteilles Wine (CrossOver, Wine brut).
  * Les bouteilles elles-mêmes (liste, chemins, registre, lancement) sont dans bottlesCore.ts, le
  * moteur commun recopié depuis _tools/shared/mackit ; ce fichier le réexporte, branche son fichier
  * d'état sur <userData>/bottles.json et son journal sur celui de mORTEX, puis ajoute :
@@ -164,7 +164,7 @@ export function scanLooseGames(bottle: IBottle): IGameStoreEntry[] {
 
 class WineBottlesStore implements IGameStore {
   public id = STORE_ID;
-  public name = "Wine bottle (CrossOver / Whisky)";
+  public name = "Wine bottle (CrossOver)";
   public priority = 40;
 
   #snapshot: IGameStoreSnapshot = { entries: [], isInstalled: false };
