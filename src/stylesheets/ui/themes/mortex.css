@@ -358,7 +358,10 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
    cloche gardent leur taille et ne passent jamais sous LANCER / DÉPLOYER */
 [data-testid="window-titlebar"] > div:first-child {
     min-width: 0;
-    overflow: hidden;
+    /* clip et non hidden : le contour de focus clavier du bouton du menu (2 px + décalage de 2 px, soit
+       4 px hors du bouton) n'est plus rogné sur trois côtés ; la marge de 6 px le laisse apparaître */
+    overflow: clip;
+    overflow-clip-margin: 6px;
 }
 
 [data-testid="window-titlebar"] > div:last-child {
