@@ -24,6 +24,7 @@ import type { IExtensionApi, IExtensionContext } from "../../types/IExtensionCon
 import type { IGame } from "../../types/IGame";
 import type { IState } from "../../types/IState";
 import * as fs from "../../util/fs";
+import { isFinderJunk } from "../../util/macos/finderJunk";
 import { installPathForGame } from "../../util/selectors";
 import walk from "../../util/walk";
 import type { IDiscoveryResult } from "../gamemode_management/types/IDiscoveryResult";
@@ -49,7 +50,7 @@ async function cloneFile(sourcePath: string, linkPath: string): Promise<void> {
 /**
  * mORTEX : après une purge, les dossiers vides que les déploiements et les mods retirés ont laissés
  * (des milliers après une grosse collection : DynDOLOD, OStim, SKSE…) sont supprimés, ainsi que le
- * .DS_Store du Finder qui les empêchait de disparaître. Un jeu purgé n'a plus de trace des mods.
+ * .DS_Store du Finder (et les « ._ » des disques exFAT) qui les empêchaient de disparaître. Un jeu purgé n'a plus de trace des mods.
  * Le dossier de données lui-même reste.
  */
 export async function removeEmptyDirs(root: string): Promise<void> {
@@ -62,7 +63,7 @@ export async function removeEmptyDirs(root: string): Promise<void> {
     }
     let empty = true;
     for (const entry of entries) {
-      if (entry.name === ".DS_Store") continue;
+      if (entry.isFile() && isFinderJunk(entry.name)) continue;
       if (entry.isDirectory() && !entry.isSymbolicLink()) {
         if (!(await visit(path.join(dir, entry.name)))) empty = false;
       } else {
@@ -71,7 +72,11 @@ export async function removeEmptyDirs(root: string): Promise<void> {
     }
     if (!empty || dir === root) return empty;
     try {
-      await nodeFs.promises.rm(path.join(dir, ".DS_Store"), { force: true });
+      for (const entry of entries) {
+        if (entry.isFile() && isFinderJunk(entry.name)) {
+          await nodeFs.promises.rm(path.join(dir, entry.name), { force: true });
+        }
+      }
       await nodeFs.promises.rmdir(dir);
       return true;
     } catch {

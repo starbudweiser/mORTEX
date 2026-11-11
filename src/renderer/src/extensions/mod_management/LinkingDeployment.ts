@@ -14,7 +14,7 @@ import type { IState } from "../../types/IState";
 import { getGame, UserCanceled } from "../../util/api";
 import * as fs from "../../util/fs";
 import type { Normalize } from "../../util/getNormalizeFunc";
-import { FINDER_JUNK, isFinderJunk } from "../../util/macos/finderJunk";
+import { isFinderJunk, isMacMetadata } from "../../util/macos/finderJunk";
 import { activeGameId } from "../../util/selectors";
 import { truthy } from "../../util/util";
 import type { IDeploymentFailure } from "./actions/session";
@@ -402,7 +402,13 @@ abstract class LinkingActivator implements IDeploymentMethod {
                 return;
               }
               entries
-                .filter((x) => !x.isDirectory && !isBackupName(x.filePath))
+                // mORTEX : jamais les fichiers de macOS (._nom des disques exFAT, .DS_Store, __MACOSX)
+                .filter(
+                  (x) =>
+                    !x.isDirectory &&
+                    !isBackupName(x.filePath) &&
+                    !isMacMetadata(path.relative(sourcePath, x.filePath)),
+                )
                 .forEach((entry) => {
                   const relPath: string = path.relative(sourcePath, entry.filePath);
                   const relPathWithSource = path.join(sourceName, relPath);
@@ -982,11 +988,18 @@ abstract class LinkingActivator implements IDeploymentMethod {
                 throw err;
               })
               .then(() =>
-                Promise.all(
-                  FINDER_JUNK.map((name) =>
-                    fs.unlinkAsync(path.join(baseDir, name)).catch(() => undefined),
+                fs
+                  .readdirAsync(baseDir)
+                  .catch(() => [] as string[])
+                  .then((names: string[]) =>
+                    Promise.all(
+                      names
+                        .filter((name) => isFinderJunk(name))
+                        .map((name) =>
+                          fs.unlinkAsync(path.join(baseDir, name)).catch(() => undefined),
+                        ),
+                    ),
                   ),
-                ),
               )
               .then(() =>
                 fs.rmdirAsync(baseDir).catch((err) => {
