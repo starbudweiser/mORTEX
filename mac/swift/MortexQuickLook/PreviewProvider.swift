@@ -36,9 +36,15 @@ func escape(_ text: String) -> String {
         .replacingOccurrences(of: ">", with: "&gt;")
 }
 
-/// Page sombre aux couleurs de Socle, « m » de mORTEX en orange
-func page(title: String, badge: String, rows: [(String, String)], body: String) -> String {
+/// Page sombre aux couleurs de Socle, « m » de mORTEX en orange.
+/// `side` : image affichée à droite de la fiche et dimensionnée sur la hauteur de la fenêtre (textures, souvent hautes) ;
+/// vide, `body` est placé sous la fiche.
+func page(title: String, badge: String, rows: [(String, String)], body: String, side: String = "") -> String {
     let table = rows.map { "<tr><th>\(escape($0.0))</th><td>\(escape($0.1))</td></tr>" }.joined()
+    let head = "<h1>\(escape(title))</h1><span class=\"badge\">\(escape(badge))</span><table>\(table)</table>"
+    let content = side.isEmpty
+        ? head + body
+        : "<div class=\"cols\"><div class=\"info\">\(head)</div><div class=\"pic\">\(side)</div></div>"
     return """
     <!doctype html><html><head><meta charset="utf-8"><style>
     :root { color-scheme: dark; }
@@ -57,10 +63,14 @@ func page(title: String, badge: String, rows: [(String, String)], body: String) 
           background: repeating-conic-gradient(#2c2c2c 0 25%, #222 0 50%) 0 0 / 16px 16px; }
     ul { margin: 4px 0 0; padding-left: 18px; } li { margin: 1px 0; }
     .muted { color: #8f8f8f; }
+    .brand.fixed { position: absolute; top: 24px; right: 24px; float: none; margin: 0; }
+    .cols { display: flex; gap: 28px; align-items: flex-start; }
+    .info { flex: 0 0 250px; min-width: 0; }
+    .pic { flex: 1; min-width: 0; padding-top: 40px; display: flex; justify-content: center; }
+    .pic img { max-width: 100%; max-height: calc(100vh - 112px); width: auto; height: auto; }
     </style></head><body>
-    <span class="brand"><b>m</b>ORTEX</span>
-    <h1>\(escape(title))</h1><span class="badge">\(escape(badge))</span>
-    <table>\(table)</table>\(body)</body></html>
+    <span class="brand\(side.isEmpty ? "" : " fixed")"><b>m</b>ORTEX</span>
+    \(content)</body></html>
     """
 }
 
@@ -108,7 +118,7 @@ enum DDSPreview {
             rows: [(L("Dimensions"), "\(width) × \(height)"), (L("Compression"), format),
                    (L("Mipmaps"), "\(mips)"),
                    (L("Size"), ByteCountFormatter.string(fromByteCount: Int64(size), countStyle: .file))],
-            body: image)
+            body: "", side: image)
     }
 
     static func dxgiName(_ code: UInt32) -> String {
