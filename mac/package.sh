@@ -15,6 +15,8 @@ cd dist
 # 7zz et FOMOD natif (étape 3) : absents des paquets amont pour darwin
 "$APP_DIR/mac/install_7zz.sh" "$PWD/node_modules/7z-bin"
 "$APP_DIR/mac/fomod_native.sh" "$PWD/node_modules/@nexusmods/fomod-installer-native"
+# Allègement : source maps, outils de build, télémétrie Mixpanel inerte, langues Chromium inutiles (voir le script)
+node "$APP_DIR/mac/slim_dist.mjs" "$PWD"
 # electron-builder appelé directement : « pnpm exec » relancerait pnpm install dans dist.
 "$APP_DIR/src/main/node_modules/.bin/electron-builder" \
   --config ./electron-builder.config.json --mac dir --arm64 --publish never \
@@ -32,6 +34,11 @@ UNPACKED="$RES/app.asar.unpacked"
 rm -rf "$RES/nsis" "$UNPACKED/node_modules/7z-bin/linux"
 find "$UNPACKED/node_modules" -type d -path '*/prebuilds/*' -prune ! -name darwin-arm64 -exec rm -rf {} +
 find "$UNPACKED/duckdb-extensions" -mindepth 2 -maxdepth 2 -type d ! -name osx_arm64 -exec rm -rf {} +
+# Langues de Chromium (~50 Mo) : mORTEX n'est traduit qu'en fr, en, es, it ; les autres retombent sur l'anglais.
+# (« electronLanguages » d'electron-builder ne touche pas le framework, d'où ce nettoyage.)
+find "$APP_DIR/mORTEX.app/Contents/Frameworks/Electron Framework.framework/Versions/A/Resources" -maxdepth 1 -name '*.lproj' \
+  ! -name 'fr.lproj' ! -name 'fr_*.lproj' ! -name 'en.lproj' ! -name 'en_*.lproj' \
+  ! -name 'es.lproj' ! -name 'es_*.lproj' ! -name 'it.lproj' ! -name 'it_*.lproj' -exec rm -rf {} +
 LIBDUCKDB="$UNPACKED/node_modules/@duckdb/node-bindings-darwin-arm64/libduckdb.dylib"
 if lipo -info "$LIBDUCKDB" | grep -q x86_64; then
   lipo -thin arm64 "$LIBDUCKDB" -output "$LIBDUCKDB.arm64" && mv "$LIBDUCKDB.arm64" "$LIBDUCKDB"
