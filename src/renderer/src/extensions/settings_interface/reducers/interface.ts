@@ -7,15 +7,19 @@ import * as actions from "../actions/interface";
 const MORTEX_LANGUAGES = ["fr", "en", "es", "it"];
 
 /**
- * mORTEX : langue préférée du système si c'est l'une des quatre traduites, sinon l'anglais
+ * mORTEX : première langue préférée du système qui fait partie des quatre traduites
+ * (« de, fr » donne le français), sinon l'anglais
  */
 function systemLanguage(): string {
-  const preferred =
-    typeof navigator !== "undefined"
-      ? navigator.languages?.[0]
-      : Intl.DateTimeFormat().resolvedOptions().locale;
-  const base = (preferred ?? "en").split("-")[0].toLowerCase();
-  return MORTEX_LANGUAGES.includes(base) ? base : "en";
+  const preferred: readonly string[] =
+    typeof navigator !== "undefined" && (navigator.languages?.length ?? 0) > 0
+      ? navigator.languages
+      : [Intl.DateTimeFormat().resolvedOptions().locale];
+  for (const language of preferred) {
+    const base = language.split("-")[0].toLowerCase();
+    if (MORTEX_LANGUAGES.includes(base)) return base;
+  }
+  return "en";
 }
 
 /**
