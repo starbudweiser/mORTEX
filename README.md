@@ -14,6 +14,12 @@ mORTEX is an unofficial macOS (Apple Silicon) port of [Vortex](https://github.co
 
 mORTEX Mods Manager is maintained by Starbudweiser & Claude Code (Anthropic). GPL-3.0 License, like Vortex. Provided as is, without warranty of any kind. See **About mORTEX** in the app menu.
 
+## Demo
+
+Dashboard, mod list, DXMT workshop and Time Machine (42 s).
+
+https://github.com/user-attachments/assets/030bfe92-60c8-4367-975b-e57c9e5bf3c8
+
 ## Features
 
 - Skyrim SE detection in CrossOver bottles; the game and tools launch inside the bottle.
@@ -137,6 +143,12 @@ This project is licensed under the [GPL-3.0](https://github.com/Nexus-Mods/Vorte
 ---
 
 ## Français
+
+### Démo
+
+Tableau de bord, liste des mods, Atelier DXMT et Time Machine (42 s).
+
+https://github.com/user-attachments/assets/030bfe92-60c8-4367-975b-e57c9e5bf3c8
 
 **Portage macOS non officiel du gestionnaire de mods Vortex, pour Skyrim Special Edition sous CrossOver.**
 
