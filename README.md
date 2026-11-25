@@ -34,7 +34,8 @@ Option + right-click an entry to open a small palette and give it a colour; "Ori
 ### Known limits
 
 - C# FOMOD scripts are not supported (XML FOMOD only).
-- Skyrim SE only for now; no auto-update and no telemetry.
+- Skyrim SE only for now; no telemetry.
+- Updates: mORTEX checks the GitHub releases and offers new versions; nothing is installed without your click (signature and SHA-256 verified, previous version kept in the Trash).
 
 ## Install
 
@@ -173,6 +174,7 @@ Prérequis : Homebrew (`node@24`, `dotnet`, `cmake`), Rust (rustup), Xcode.
 ### Limites connues
 
 - Scripts FOMOD en C# non pris en charge (seul le FOMOD XML l'est).
-- Skyrim SE uniquement pour l'instant ; pas de mise à jour automatique ni de télémétrie.
+- Skyrim SE uniquement pour l'instant ; aucune télémétrie.
+- Mises à jour : mORTEX consulte les releases GitHub et propose les nouvelles versions ; rien n'est installé sans votre clic (signature et empreinte SHA-256 vérifiées, ancienne version gardée dans la Corbeille).
 
 Licence GPL-3.0 comme Vortex. Voir [NOTICE-mORTEX.md](NOTICE-mORTEX.md).
