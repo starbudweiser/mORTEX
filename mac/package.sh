@@ -45,6 +45,8 @@ if lipo -info "$LIBDUCKDB" | grep -q x86_64; then
 fi
 # Schéma nxm:// (« Mod Manager Download » de Nexus) : déclaré dans l'Info.plist
 PL="$APP_DIR/mORTEX.app/Contents/Info.plist"
+# Version minimale de macOS : celle qui est testée et annoncée partout (README, Nexus, site)
+/usr/libexec/PlistBuddy -c "Set :LSMinimumSystemVersion 14.0" "$PL" 2>/dev/null || /usr/libexec/PlistBuddy -c "Add :LSMinimumSystemVersion string 14.0" "$PL"
 /usr/libexec/PlistBuddy -c "Delete :CFBundleURLTypes" "$PL" 2>/dev/null || true
 /usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes array" \
   -c "Add :CFBundleURLTypes:0 dict" \
