@@ -22,7 +22,7 @@ import { Bullet } from "@/ui/components/bullet/Bullet";
 import { Button } from "@/ui/components/button/Button";
 import { Icon, type IIconSource } from "@/ui/components/icon/Icon";
 import { getIconProps } from "@/ui/components/icon/utils/icon_props/iconProps.util";
-import { Image } from "@/ui/components/image/Image";
+import { AdultAwareImage } from "@/ui/components/image/AdultAwareImage";
 import { Typography } from "@/ui/components/typography/Typography";
 import { nxmMod } from "@/ui/icon-paths";
 import { joinClasses } from "@/ui/utils/joinClasses";
@@ -123,11 +123,12 @@ export const CollectionTile: ComponentType<React.PropsWithChildren<ICollectionTi
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex items-start gap-x-3.5 p-3">
-        <Image
+        <AdultAwareImage
           alt={collection.name}
           className="w-full max-w-35 rounded-xs"
           fit="cover"
           imageType="collection"
+          isAdult={!!revision.adultContent}
           src={collection.tileImage?.thumbnailUrl}
         >
           {easyInstallBadge && (
@@ -142,7 +143,7 @@ export const CollectionTile: ComponentType<React.PropsWithChildren<ICollectionTi
               <span title={easyInstallBadge.description}>{easyInstallBadge.name}</span>
             </Typography>
           )}
-        </Image>
+        </AdultAwareImage>
 
         <div className="flex min-w-0 grow flex-col gap-y-1.5">
           <div className="flex flex-col gap-y-1">

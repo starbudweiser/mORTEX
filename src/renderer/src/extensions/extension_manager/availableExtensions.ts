@@ -4,10 +4,9 @@ import { log } from "@/logging";
 
 import type { IAvailableExtension } from "../../types/extensions";
 import type { IExtensionApi } from "../../types/IExtensionContext";
-import { createVortexNexusV3Client } from "../nexus_integration/nexusV3Client";
 
 /**
- * Boundary to GET /v3/vortex/extensions: everything past this module works
+ * Mapping from the Vortex extension catalog's wire format: everything past this module works
  * with IAvailableExtension, the wire types stay in here.
  */
 export type VortexAsset = components["schemas"]["VortexAsset"];
@@ -111,9 +110,14 @@ export function dedupeGameExtensions(extensions: IAvailableExtension[]): IAvaila
   return result;
 }
 
-/** Fetch and map the extension list. */
-export async function fetchExtensionList(api: IExtensionApi): Promise<IAvailableExtension[]> {
-  log("info", "downloading extension list");
-  const data = await createVortexNexusV3Client(api).getVortexExtensions();
-  return mapAvailableExtensions(data);
+/**
+ * The list of extensions, themes and translations offered for download.
+ *
+ * Vortex reads it from the `/v3/vortex/extensions` endpoint, an integration internal to Vortex that
+ * third-party applications are not authorised to use, so mORTEX makes no request and the catalog is
+ * empty. Extensions are installed from a file, or from their Nexus Mods page by the user.
+ */
+export function fetchExtensionList(_api: IExtensionApi): Promise<IAvailableExtension[]> {
+  log("debug", "extension catalog not requested: Vortex-internal endpoint, not used by mORTEX");
+  return Promise.resolve([]);
 }

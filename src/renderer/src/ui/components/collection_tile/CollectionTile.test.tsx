@@ -23,6 +23,10 @@ vi.mock("@/util/Debouncer", () => ({
 }));
 vi.mock("@/util/util", () => ({ delayed: () => Promise.resolve() }));
 vi.mock("@/util/selectors", () => ({ isCollectionModPresent: () => false }));
+// the adult-aware image reads the user's preferences; nobody is logged in here, so the
+// preference is unknown and adult images stay blurred
+vi.mock("react-redux", () => ({ useSelector: () => undefined }));
+vi.mock("@/extensions/nexus_integration/selectors", () => ({ userInfo: () => undefined }));
 // the tile only asks for a refresh; the scheduler itself is covered by membership.test.ts
 vi.mock("@/extensions/nexus_integration/membership", () => ({
   scheduleMembershipRefresh: vi.fn(),
@@ -110,6 +114,23 @@ describe("CollectionTile", () => {
     it("does not show the Adult label for non-adult collections", () => {
       renderComponent();
       expect(screen.queryByText("Adult")).not.toBeInTheDocument();
+    });
+
+    it("blurs the tile image of an adult collection while the user's preferences are unknown", () => {
+      const collection = makeCollection({
+        latestPublishedRevision: { adultContent: true, modCount: 1, totalSize: 1 },
+      });
+      renderComponent({ collection });
+      expect(screen.getByRole("img", { name: collection.name })).toHaveClass(
+        "nxm-image-media-blurred",
+      );
+    });
+
+    it("does not blur the tile image of a collection that is not adult", () => {
+      const { collection } = renderComponent();
+      expect(screen.getByRole("img", { name: collection.name })).not.toHaveClass(
+        "nxm-image-media-blurred",
+      );
     });
 
     it("shows the Adult label for adult collections", () => {

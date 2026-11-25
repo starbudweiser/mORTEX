@@ -74,9 +74,20 @@ describe("auth headers", () => {
 
   it("sends the user agent from options", async () => {
     mockData({ id: "upload-1" });
-    await makeClient({ userAgent: "Vortex/1.2.3" }).createUpload(1024, "file.zip");
+    await makeClient({ userAgent: "mORTEX/1.2.3" }).createUpload(1024, "file.zip");
 
-    expect(lastRequest().headers.get("user-agent")).toBe("Vortex/1.2.3");
+    expect(lastRequest().headers.get("user-agent")).toBe("mORTEX/1.2.3");
+  });
+
+  it("identifies the application with Application-Name and Application-Version", async () => {
+    mockData({ id: "upload-1" });
+    await makeClient({ applicationName: "mORTEX", applicationVersion: "1.2.3" }).createUpload(
+      1024,
+      "file.zip",
+    );
+
+    expect(lastRequest().headers.get("application-name")).toBe("mORTEX");
+    expect(lastRequest().headers.get("application-version")).toBe("1.2.3");
   });
 });
 

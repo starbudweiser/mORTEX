@@ -423,6 +423,21 @@ export async function reportCrash(
   consentGiven = false,
   attributes?: Record<string, string | number | boolean>,
 ): Promise<void> {
+  // mORTEX is an unofficial build and never reports to Nexus Mods: the crash stays in this Mac's
+  // log folder, with what a bug report needs, and nothing is sent to the collector.
+  if (process.platform === "darwin") {
+    log("error", "crash kept on this Mac, not sent", {
+      type,
+      sourceProcess: sourceProcess ?? "unknown",
+      message: error.message,
+      code: error.code,
+      title: error.title,
+      stack: error.stack,
+      ...attributes,
+    });
+    return;
+  }
+
   const resource = createVortexResource("report");
 
   const exporter = new SanitizingSpanExporter(

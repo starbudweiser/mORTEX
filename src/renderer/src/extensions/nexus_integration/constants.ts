@@ -1,5 +1,8 @@
 export const NEXUS_DOMAIN = process.env["NEXUS_DOMAIN"] || "nexusmods.com";
 
+/** How mORTEX identifies itself to Nexus Mods, as `Application-Name` and in the User-Agent. */
+export const APPLICATION_NAME = "mORTEX";
+
 export const NEXUS_API_SUBDOMAIN = process.env["API_SUBDOMAIN"] || "api";
 export const NEXUS_FLAMEWORK_SUBDOMAIN = process.env["FLAMEWORK_SUBDOMAIN"] || "www";
 export const NEXUS_NEXT_SUBDOMAIN = process.env["NEXT_SUBDOMAIN"] || "next";

@@ -1,20 +1,22 @@
 import {
   createNexusV3Client,
-  createNexusV3InternalClient,
   type NexusV3Client,
   type NexusV3ClientOptions,
-  type NexusV3InternalClient,
   type NexusV3Middleware,
 } from "@vortex/nexus-api-v3";
 
 import type { IExtensionApi } from "../../types/IExtensionContext";
 import { getApplication } from "../../util/application";
-import { NEXUS_API_URL } from "./constants";
+import { APPLICATION_NAME, NEXUS_API_URL } from "./constants";
 import { hasConfidentialWithNexus } from "./guards";
 import { getOAuthTokenFromState } from "./util";
 import { getAccessToken } from "./util/oauthSession";
+import { RATE_LIMIT_RETRIES, rateLimitWaitMs, sleep } from "./util/rateLimitWait";
 
-export type VortexNexusV3ClientOptions = Omit<NexusV3ClientOptions, "baseUrl" | "userAgent">;
+export type VortexNexusV3ClientOptions = Omit<
+  NexusV3ClientOptions,
+  "baseUrl" | "userAgent" | "applicationName" | "applicationVersion"
+>;
 
 const NEXUS_V3_API_URL = `${NEXUS_API_URL}/v3`;
 
@@ -62,7 +64,39 @@ function oauthMiddleware(api: IExtensionApi): NexusV3Middleware {
   };
 }
 
-/** Resolve Vortex's credentials, base URL and user agent into client options. */
+/**
+ * Honours Nexus Mods' rate limit: a 429 is sent again after the delay `Retry-After` names (a
+ * growing one when it names none), up to `RATE_LIMIT_RETRIES` times, never faster than the site
+ * asks. When it is still 429 after that, the response is returned and the caller reports it.
+ * Registered last so the copy kept for the retry already carries the other middleware's headers.
+ */
+function rateLimitMiddleware(): NexusV3Middleware {
+  const inflight = new Map<string, Request>();
+
+  return {
+    onRequest({ id, request }) {
+      inflight.set(id, request.clone());
+    },
+    async onResponse({ id, response, options }) {
+      const sent = inflight.get(id);
+      inflight.delete(id);
+      if (sent === undefined || response.status !== 429) return undefined;
+
+      let current = response;
+      for (let attempt = 0; attempt < RATE_LIMIT_RETRIES && current.status === 429; attempt++) {
+        await sleep(rateLimitWaitMs(current, attempt), sent.signal);
+        if (sent.signal.aborted) break;
+        current = await options.fetch(sent.clone());
+      }
+      return current === response ? undefined : current;
+    },
+    onError({ id }) {
+      inflight.delete(id);
+    },
+  };
+}
+
+/** Resolve mORTEX's credentials, base URL and identification into client options. */
 function vortexV3Options(
   api: IExtensionApi,
   options: VortexNexusV3ClientOptions,
@@ -76,14 +110,16 @@ function vortexV3Options(
     bearerToken: getOAuthTokenFromState(api),
     apiKey,
     ...options,
-    middleware: [oauthMiddleware(api), ...(options.middleware ?? [])],
+    middleware: [oauthMiddleware(api), rateLimitMiddleware(), ...(options.middleware ?? [])],
     baseUrl: NEXUS_V3_API_URL,
-    userAgent: `Vortex/${getApplication().version}`,
+    userAgent: `${APPLICATION_NAME}/${getApplication().version}`,
+    applicationName: APPLICATION_NAME,
+    applicationVersion: getApplication().version,
   };
 }
 
 /**
- * Creates a Nexus v3 API client pre-configured for Vortex.
+ * Creates a Nexus v3 API client pre-configured for mORTEX.
  * Credentials can still be overridden via `options`.
  */
 export function createVortexNexusV3Client(
@@ -91,19 +127,4 @@ export function createVortexNexusV3Client(
   options: VortexNexusV3ClientOptions = {},
 ): NexusV3Client {
   return createNexusV3Client(vortexV3Options(api, options));
-}
-
-/** As `createVortexNexusV3Client`, for the Internal v3 endpoints (telemetry ingest). */
-export function createVortexNexusV3InternalClient(
-  api: IExtensionApi,
-  options: VortexNexusV3ClientOptions = {},
-): NexusV3InternalClient {
-  return createNexusV3InternalClient({
-    ...vortexV3Options(api, options),
-    clientName: "vortex",
-    clientVersion: getApplication().version,
-    // the anonymous install id the telemetry batch carries; empty before the
-    // instance id is assigned, so it's omitted rather than failing the schema
-    instanceId: api.getState().app.instanceId || undefined,
-  });
 }

@@ -59,7 +59,6 @@ import {
 } from "../../util/selectors";
 import { emitModsDeployed } from "../analytics/mixpanel/deployAnalytics";
 import { emitModStateChanged } from "../analytics/mixpanel/modChangeAnalytics";
-import { emitModListSnapshot } from "../analytics/utils/modListSnapshot";
 import { setDownloadModInfo } from "../download_management/actions/state";
 import { getGame } from "../gamemode_management/util/getGame";
 import { getModType } from "../gamemode_management/util/modTypeExtensions";
@@ -956,7 +955,6 @@ function genUpdateModDeployment(installManager: InstallManager) {
               isCollectionPostprocess: deployOptions?.isCollectionPostprocessCall ?? false,
               durationMs: Date.now() - deployStartedAt,
             });
-            void emitModListSnapshot(api, gameId);
           } catch (unknownErr) {
             const err = unknownToError(unknownErr);
             if (err instanceof UserCanceled) {

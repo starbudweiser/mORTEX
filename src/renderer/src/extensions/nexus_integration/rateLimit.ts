@@ -4,6 +4,7 @@
  * would close a cycle.
  */
 import { RateLimitError } from "@nexusmods/nexus-api";
+import { V3ApiError } from "@vortex/nexus-api-v3";
 import { getErrorStatusCode } from "@vortex/shared";
 
 import type { IExtensionApi } from "../../types/IExtensionContext";
@@ -12,10 +13,15 @@ import type { IExtensionApi } from "../../types/IExtensionContext";
  * Whether the site turned a request away because we're over its rate limit.
  *
  * nexus-api classifies a 429 as a RateLimitError only on the paths that reach its result
- * handler; the rest arrive as a plain HTTPError carrying the status, so check both.
+ * handler; the rest arrive as a plain HTTPError carrying the status, so check both. The v3 client
+ * reports the status as `status` on a V3ApiError, which it raises once its own retries are spent.
  */
 export function isRateLimited(err: unknown): boolean {
-  return err instanceof RateLimitError || getErrorStatusCode(err) === 429;
+  return (
+    err instanceof RateLimitError ||
+    (err instanceof V3ApiError && err.status === 429) ||
+    getErrorStatusCode(err) === 429
+  );
 }
 
 /**

@@ -1,16 +1,20 @@
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { VortexError } from "@vortex/shared/errors";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("electron", () => ({ app: { getPath: vi.fn(), getVersion: vi.fn() } }));
 vi.mock("./logging", () => ({ log: vi.fn() }));
 vi.mock("./minidump", () => ({ summarizeMinidumpFile: vi.fn() }));
+vi.mock("@opentelemetry/exporter-trace-otlp-http", () => ({ OTLPTraceExporter: vi.fn() }));
 
 import {
   crashFingerprint,
   dumpReportProcess,
   errorToReportableError,
   isFromCurrentBuild,
+  reportCrash,
 } from "./errorReporting";
+import { log } from "./logging";
 
 describe("dumpReportProcess", () => {
   it.each([
@@ -116,5 +120,39 @@ describe("isFromCurrentBuild", () => {
     expect(isFromCurrentBuild(undefined, "2.6.3", 50, 100)).toBe(false);
     expect(isFromCurrentBuild(undefined, "2.6.3", 150, 100)).toBe(true);
     expect(isFromCurrentBuild(undefined, "2.6.3", 50, undefined)).toBe(true);
+  });
+});
+
+describe("reportCrash on macOS", () => {
+  const platform = Object.getOwnPropertyDescriptor(process, "platform");
+
+  afterEach(() => {
+    if (platform !== undefined) Object.defineProperty(process, "platform", platform);
+    vi.mocked(log).mockClear();
+    vi.mocked(OTLPTraceExporter).mockClear();
+  });
+
+  it("keeps the crash in the log and never builds an exporter, even with consent", async () => {
+    Object.defineProperty(process, "platform", { value: "darwin" });
+
+    await reportCrash(
+      "Crash",
+      {
+        message: "boom",
+        stack: "Error: boom\n    at f (a.js:1:1)",
+        allowReport: true,
+        details: "",
+      },
+      undefined,
+      "main",
+      true,
+    );
+
+    expect(OTLPTraceExporter).not.toHaveBeenCalled();
+    expect(log).toHaveBeenCalledWith(
+      "error",
+      "crash kept on this Mac, not sent",
+      expect.objectContaining({ type: "Crash", sourceProcess: "main", message: "boom" }),
+    );
   });
 });

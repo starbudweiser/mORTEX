@@ -99,8 +99,10 @@ function BrowseNexusPage(props: IBrowseNexusPageProps) {
     const nexus = state.confidential?.account?.["nexus"];
     return !!(nexus?.APIKey || nexus?.OAuthCredentials);
   });
-  const adultContentFilter = useSelector(
-    (state: IState) => state.persistent["nexus"]?.userInfo?.adult,
+  // Adult content is shown only to a user whose Nexus Mods preferences say so. Logged out, or with
+  // the preferences not loaded yet, it stays hidden.
+  const showAdult = useSelector(
+    (state: IState) => state.persistent["nexus"]?.userInfo?.adult === true,
   );
   const [collections, setCollections] = useState<ICollection[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
@@ -163,7 +165,7 @@ function BrowseNexusPage(props: IBrowseNexusPageProps) {
       new CollectionsDownloadClickedEvent(collection.slug, collection.game.id),
     );
 
-    if (adultContentFilter === false && collection.latestPublishedRevision?.adultContent) {
+    if (!showAdult && collection.latestPublishedRevision?.adultContent) {
       void adultContentDialog(api, collection, false).then((proceed) => {
         if (proceed) {
           window.api.shell.openUrl("https://next.nexusmods.com/settings/content-blocking");
@@ -224,7 +226,7 @@ function BrowseNexusPage(props: IBrowseNexusPageProps) {
         direction: sortBy.direction,
       },
       search: activeSearch || undefined,
-      showAdult: adultContentFilter !== false,
+      showAdult,
       filters,
     })
       .then((result) => {
@@ -254,7 +256,7 @@ function BrowseNexusPage(props: IBrowseNexusPageProps) {
     return () => {
       current = false;
     };
-  }, [gameId, sortBy, activeSearch, currentPage, refreshTrigger, filters, adultContentFilter]);
+  }, [gameId, sortBy, activeSearch, currentPage, refreshTrigger, filters, showAdult]);
 
   if (!gameId) {
     return (

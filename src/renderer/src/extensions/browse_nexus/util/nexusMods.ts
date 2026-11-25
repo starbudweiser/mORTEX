@@ -10,6 +10,13 @@
  *    principaux d'abord, puis du plus récent au plus ancien
  */
 
+import { getApplication } from "../../../util/application";
+import { APPLICATION_NAME } from "../../nexus_integration/constants";
+import {
+  RATE_LIMIT_RETRIES,
+  rateLimitWaitMs,
+  sleep,
+} from "../../nexus_integration/util/rateLimitWait";
 import { categoryClause, EMPTY_FILTERS, type IBrowseFilters, modClauses } from "./browseFilters";
 
 const ENDPOINT = "https://api.nexusmods.com/v2/graphql";
@@ -74,13 +81,30 @@ export async function nexusGraphQuery<T>(
   text: string,
   variables: Record<string, unknown>,
 ): Promise<T> {
-  const response = await fetch(ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: text, variables }),
-  });
+  const send = () =>
+    fetch(ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // tells Nexus Mods which application makes the request
+        "Application-Name": APPLICATION_NAME,
+        "Application-Version": getApplication().version,
+      },
+      body: JSON.stringify({ query: text, variables }),
+    });
+
+  let response = await send();
+  // Nexus Mods asks us to slow down: wait as long as it says, and try again a couple of times
+  for (let attempt = 0; attempt < RATE_LIMIT_RETRIES && response.status === 429; attempt++) {
+    await sleep(rateLimitWaitMs(response, attempt));
+    response = await send();
+  }
   if (!response.ok) {
-    throw new Error(`Nexus Mods answered ${response.status} ${response.statusText}`);
+    // statusCode is what isRateLimited() and the other error handlers read
+    throw Object.assign(
+      new Error(`Nexus Mods answered ${response.status} ${response.statusText}`),
+      { statusCode: response.status },
+    );
   }
   const body = (await response.json()) as { data?: T; errors?: Array<{ message: string }> };
   if (body.errors?.length) {

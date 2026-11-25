@@ -42,13 +42,18 @@ import { sendPendingNativeCrashReport } from "./errorReporting";
 
 describe("native crash startup sweep", () => {
   let root: string;
+  // reportCrash keeps crashes on this Mac when running on macOS; these tests cover the span
+  // building of the other platforms, so run them as one of those
+  const platform = Object.getOwnPropertyDescriptor(process, "platform");
   beforeEach(async () => {
+    Object.defineProperty(process, "platform", { value: "win32" });
     vi.clearAllMocks();
     root = await mkdtemp(path.join(tmpdir(), "vortex-crash-sweep-"));
     telemetry.getPath.mockReturnValue(root);
     telemetry.getVersion.mockReturnValue("43.0.0");
   });
   afterEach(async () => {
+    if (platform !== undefined) Object.defineProperty(process, "platform", platform);
     await rm(root, { recursive: true, force: true });
   });
 

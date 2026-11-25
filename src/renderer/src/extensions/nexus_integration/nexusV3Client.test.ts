@@ -5,6 +5,7 @@ import type { IExtensionApi } from "@/types/IExtensionContext";
 
 import { createVortexNexusV3Client } from "./nexusV3Client";
 import { getAccessToken } from "./util/oauthSession";
+import { retryAfterMs } from "./util/rateLimitWait";
 
 vi.mock("../../util/application", () => ({ getApplication: () => ({ version: "0.0.0-test" }) }));
 vi.mock("./util/oauthSession", () => ({ getAccessToken: vi.fn() }));
@@ -105,5 +106,111 @@ describe("createVortexNexusV3Client oauth", () => {
     await expect(pending).rejects.toMatchObject({ status: 401 });
     expect(getToken).toHaveBeenCalledTimes(1);
     expect(sentRequest(0).headers.has("Authorization")).toBe(false);
+  });
+});
+
+describe("createVortexNexusV3Client identification", () => {
+  test("identifies the application as mORTEX on every request", async () => {
+    getToken.mockResolvedValue(undefined);
+    fetchMock.mockResolvedValueOnce(ok());
+
+    await createVortexNexusV3Client(makeApi(undefined)).getModsBatch(["1"]);
+
+    const headers = sentRequest(0).headers;
+    expect(headers.get("Application-Name")).toBe("mORTEX");
+    expect(headers.get("Application-Version")).toBe("0.0.0-test");
+    expect(headers.get("User-Agent")).toBe("mORTEX/0.0.0-test");
+  });
+});
+
+describe("createVortexNexusV3Client rate limit", () => {
+  const tooManyRequests = (retryAfter?: string) =>
+    new Response(JSON.stringify({ title: "Too Many Requests", status: 429 }), {
+      status: 429,
+      headers: {
+        "Content-Type": "application/json",
+        ...(retryAfter === undefined ? {} : { "Retry-After": retryAfter }),
+      },
+    });
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    getToken.mockResolvedValue("token");
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  test("waits as long as Retry-After says, then sends the request again", async () => {
+    fetchMock.mockResolvedValueOnce(tooManyRequests("3")).mockResolvedValueOnce(ok());
+
+    const pending = createVortexNexusV3Client(makeApi("token")).getModsBatch(["1"]);
+
+    await vi.advanceTimersByTimeAsync(2_999);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    await vi.advanceTimersByTimeAsync(1);
+    await expect(pending).resolves.toEqual([]);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    // the retry carries the credentials and the body of the original request
+    expect(sentRequest(1).headers.get("Authorization")).toBe("Bearer token");
+    await expect(sentRequest(1).text()).resolves.toEqual(await sentRequest(0).text());
+  });
+
+  test("gives up after two retries and lets the 429 through", async () => {
+    fetchMock
+      .mockResolvedValueOnce(tooManyRequests())
+      .mockResolvedValueOnce(tooManyRequests())
+      .mockResolvedValueOnce(tooManyRequests());
+
+    const pending = createVortexNexusV3Client(makeApi("token")).getModsBatch(["1"]);
+    const settled = expect(pending).rejects.toMatchObject({ status: 429 });
+
+    // 2 s, then 4 s, when the response names no delay
+    await vi.advanceTimersByTimeAsync(6_000);
+    await settled;
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  test("never waits longer than thirty seconds", async () => {
+    fetchMock.mockResolvedValueOnce(tooManyRequests("3600")).mockResolvedValueOnce(ok());
+
+    const pending = createVortexNexusV3Client(makeApi("token")).getModsBatch(["1"]);
+
+    await vi.advanceTimersByTimeAsync(30_000);
+    await expect(pending).resolves.toEqual([]);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  test("leaves other statuses alone", async () => {
+    fetchMock.mockResolvedValueOnce(json({ title: "Server Error", status: 500 }, 500));
+
+    const pending = createVortexNexusV3Client(makeApi("token")).getModsBatch(["1"]);
+
+    await expect(pending).rejects.toMatchObject({ status: 500 });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("retryAfterMs", () => {
+  const withHeader = (value?: string) =>
+    new Response(null, {
+      status: 429,
+      headers: value === undefined ? {} : { "Retry-After": value },
+    });
+
+  test("reads seconds", () => {
+    expect(retryAfterMs(withHeader("7"))).toBe(7_000);
+  });
+
+  test("reads an HTTP date relative to now", () => {
+    const now = Date.parse("2026-11-25T12:00:00Z");
+    expect(retryAfterMs(withHeader("Wed, 25 Nov 2026 12:00:10 GMT"), now)).toBe(10_000);
+  });
+
+  test("is undefined when the header is missing or unreadable", () => {
+    expect(retryAfterMs(withHeader())).toBeUndefined();
+    expect(retryAfterMs(withHeader("soon"))).toBeUndefined();
   });
 });

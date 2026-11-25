@@ -313,7 +313,7 @@ async function main(): Promise<void> {
   process.on("unhandledRejection", handleError);
 
   const downloadManager = new DownloadManager({ concurrency: 1 });
-  const uploadManager = new UploadManager({ userAgent: `Vortex/${app.getVersion()}` });
+  const uploadManager = new UploadManager({ userAgent: `mORTEX/${app.getVersion()}` });
 
   // The registry holds exactly one resolver for the universal `native`
   // scheme. Path providers are owned by the app, never by the registry.

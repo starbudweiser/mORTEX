@@ -4,8 +4,13 @@ import { get as getHTTPS, request as requestHTTPS } from "https";
 import type { Readable } from "stream";
 import * as url from "url";
 
+import { APPLICATION_NAME } from "../extensions/nexus_integration/constants";
+import { getApplication } from "./application";
 import { DataInvalid, TemporaryError } from "./CustomErrors";
 import { log } from "./log";
+
+/** How mORTEX identifies itself in the requests it makes, e.g. `mORTEX/2.0.2`. */
+const userAgent = (): string => `${APPLICATION_NAME}/${getApplication().version}`;
 
 export interface IRequestOptions {
   expectedContentType?: RegExp;
@@ -26,7 +31,7 @@ export function rawRequest(apiURL: string, options?: IRequestOptions): Promise<s
         hostname: parsed.hostname,
         port: parsed.port,
         path: parsed.pathname + parsed.search,
-        headers: { "User-Agent": "Vortex" },
+        headers: { "User-Agent": userAgent() },
       } as any,
       (res: IncomingMessage) => {
         const { statusCode } = res;
@@ -103,7 +108,7 @@ export function request(
       port: parsed.port,
       path: parsed.pathname + parsed.search,
       method,
-      headers: { "User-Agent": "Vortex", ...headers },
+      headers: { "User-Agent": userAgent(), ...headers },
     },
     cb,
   );

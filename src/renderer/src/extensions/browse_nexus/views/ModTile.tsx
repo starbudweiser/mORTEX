@@ -10,7 +10,7 @@ import { Bullet } from "@/ui/components/bullet/Bullet";
 import { Button } from "@/ui/components/button/Button";
 import { Icon, type IIconSource } from "@/ui/components/icon/Icon";
 import { getIconProps } from "@/ui/components/icon/utils/icon_props/iconProps.util";
-import { Image } from "@/ui/components/image/Image";
+import { AdultAwareImage } from "@/ui/components/image/AdultAwareImage";
 import { Typography } from "@/ui/components/typography/Typography";
 
 import type { INexusModSummary } from "../util/nexusMods";
@@ -52,11 +52,12 @@ export function ModTile({ mod, t, status, isLoggedIn, onDownload, onViewPage }: 
   return (
     <div className="w-full rounded-md bg-surface-mid" data-testid="mod-tile">
       <div className="flex items-start gap-x-3.5 p-3">
-        <Image
+        <AdultAwareImage
           alt={mod.name}
           className="aspect-video w-full max-w-40 rounded-xs"
           fit="cover"
           imageType="mod"
+          isAdult={mod.adultContent}
           src={mod.thumbnailUrl}
         />
 

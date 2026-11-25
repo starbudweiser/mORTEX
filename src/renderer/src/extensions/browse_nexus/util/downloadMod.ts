@@ -13,6 +13,7 @@ import numeral from "numeral";
 
 import { log } from "../../../logging";
 import type { IExtensionApi } from "../../../types/IExtensionContext";
+import { isRateLimited, notifyRateLimited } from "../../nexus_integration/rateLimit";
 import {
   type INexusModFile,
   type INexusModSummary,
@@ -75,9 +76,13 @@ export async function downloadMod(
   try {
     files = await modFiles(mod.modId, mod.gameNumId);
   } catch (err) {
-    api.showErrorNotification?.("Failed to read the files of this mod", err, {
-      allowReport: false,
-    });
+    if (isRateLimited(err)) {
+      notifyRateLimited(api);
+    } else {
+      api.showErrorNotification?.("Failed to read the files of this mod", err, {
+        allowReport: false,
+      });
+    }
     return;
   }
   if (files.length === 0) {
