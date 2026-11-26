@@ -24,14 +24,17 @@ function CrashesDashlet() {
       <div className="mortex-card mortex-card-crashes">
         <h5>{t("Crashes")}</h5>
 
+        {/* états vides : un encart de résumé, centré */}
         {!available && (
-          <>
+          <div className="mortex-card-summary">
             <div className="mortex-card-big mortex-card-mid">{t("No sKYCRASH export found")}</div>
             <p>{t("Analyse a crash log with sKYCRASH and its result appears here.")}</p>
-          </>
+          </div>
         )}
         {available && last === undefined && (
-          <div className="mortex-card-big mortex-card-mid">{t("No crash analysed")}</div>
+          <div className="mortex-card-summary">
+            <div className="mortex-card-big mortex-card-mid">{t("No crash analysed")}</div>
+          </div>
         )}
 
         {last !== undefined && (
@@ -58,9 +61,9 @@ function CrashesDashlet() {
                     <SuspectRow key={linked.suspect.name} linked={linked} rank={i + 1}>
                       {seen !== undefined && seen.count > 0 && (
                         <p className="mortex-suspect-where">
-                          {t("In {{count}} of the last {{total}} crashes", {
-                            count: seen.count,
-                            total: Math.min(seen.total, RECURRENCE_WINDOW),
+                          {t("In {{n}} of the last {{count}} crashes", {
+                            n: seen.count,
+                            count: Math.min(seen.total, RECURRENCE_WINDOW),
                           })}
                         </p>
                       )}

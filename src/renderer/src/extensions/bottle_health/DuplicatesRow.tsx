@@ -14,6 +14,7 @@ import { Button } from "@/ui/components/button/Button";
 import { Icon } from "@/ui/components/icon/Icon";
 import { Typography } from "@/ui/components/typography/Typography";
 import { cloneDuplicates, findDuplicates, type IDuplicates } from "@/util/macos/dedupe";
+import { formatNumber } from "@/util/macos/macFormat";
 
 import { installPathForGame } from "../mod_management/selectors";
 import { activeGameId } from "../profile_management/selectors";
@@ -22,9 +23,12 @@ const GB = 1024 ** 3;
 const MB = 1024 ** 2;
 
 export function formatSize(bytes: number, t: (key: string, options?: object) => string): string {
+  // séparateur décimal et de milliers de la langue (« 1,5 Go » / « 1.5 GB », « 1 284 »)
   return bytes >= GB
-    ? t("{{size}} GB", { size: (bytes / GB).toFixed(1) })
-    : t("{{size}} MB", { size: Math.max(1, Math.round(bytes / MB)) });
+    ? t("{{size}} GB", {
+        size: formatNumber(bytes / GB, { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+      })
+    : t("{{size}} MB", { size: formatNumber(Math.max(1, Math.round(bytes / MB))) });
 }
 
 type Callback = (err: Error | null) => void;
@@ -54,7 +58,7 @@ export function DuplicatesRow({ api }: { api: IExtensionApi }) {
         "Turn duplicates into clones?",
         {
           text: t(
-            "{{count}} identical files become APFS clones of a single copy: same content, stored once. Your mods are removed from the game during the operation, then deployed again.",
+            "{{count, number}} identical files become APFS clones of a single copy: same content, stored once. Your mods are removed from the game during the operation, then deployed again.",
             { count: found.files },
           ),
         },
@@ -113,13 +117,13 @@ export function DuplicatesRow({ api }: { api: IExtensionApi }) {
         </Button>
       ) : recoverable ? (
         <Button
-          className="justify-self-start"
+          className="max-w-full justify-self-start"
           isLoading={busy}
           leftIcon="compress"
           size="sm"
           onClick={reclaim}
         >
-          {t("{{size}} to reclaim ({{count}} files)", {
+          {t("{{size}} to reclaim ({{count, number}} files)", {
             size: formatSize(found.savings, t),
             count: found.files,
           })}

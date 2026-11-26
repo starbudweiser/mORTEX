@@ -143,7 +143,7 @@ function RenderStage({
           : "text-warning-strong";
   return (
     <div
-      className={`dxmt-stage flex min-w-0 flex-1 basis-36 flex-col items-center justify-center gap-y-1 rounded-md bg-surface-mid px-3 py-3 text-center ${frame} ${missing ? "dxmt-stage-missing opacity-70" : status === "ok" ? "dxmt-stage-ok" : status === "error" ? "dxmt-stage-error" : ""}`}
+      className={`dxmt-stage flex min-w-0 flex-1 basis-36 flex-col items-center justify-center gap-y-1 rounded-md bg-surface-mid px-3 py-3 text-center [overflow-wrap:anywhere] ${frame} ${missing ? "dxmt-stage-missing opacity-70" : status === "ok" ? "dxmt-stage-ok" : status === "error" ? "dxmt-stage-error" : ""}`}
       data-testid={`dxmt-stage-${stage.id}`}
       style={{ "--i": index } as React.CSSProperties}
     >
@@ -315,19 +315,26 @@ export default function DxmtWorkshopPage({ api }: IProps) {
     <MainPage id="dxmt-workshop-page">
       <MainPage.Body className="h-full overflow-y-auto">
         <div className="flex flex-col gap-y-5 p-6">
-          <div className="flex items-center gap-x-3">
-            <Icon className="text-warning-strong" name="memory" size="lg" />
-            <Typography className="font-semibold" typographyType="heading-sm">
+          {/* à la ligne dans une fenêtre étroite ; le nom de la bouteille (chemin CrossOver) se
+              tronque, le bouton garde sa taille */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <Icon className="shrink-0 text-warning-strong" name="memory" size="lg" />
+            <Typography className="min-w-0 font-semibold" typographyType="heading-sm">
               {t("DXMT workshop")}
             </Typography>
             <Typography
               brand="warning"
-              className="rounded-sm bg-warning-weak px-2"
+              className="rounded-sm bg-warning-weak px-2 whitespace-nowrap"
               typographyType="body-xs"
             >
               {t("Mac exclusive")}
             </Typography>
-            <Typography appearance="moderate" className="ml-auto" typographyType="body-sm">
+            <Typography
+              appearance="moderate"
+              className="ml-auto max-w-full min-w-0 truncate"
+              title={bottle?.name}
+              typographyType="body-sm"
+            >
               {bottle !== undefined
                 ? t("Bottle {{name}}", { replace: { name: bottle.name } })
                 : t("No bottle")}
@@ -335,6 +342,7 @@ export default function DxmtWorkshopPage({ api }: IProps) {
             <Button
               appearance="moderate"
               brand="neutral"
+              className="shrink-0"
               isLoading={checking}
               leftIcon="fact_check"
               title={t("Check the bottle again: moves nothing, changes nothing")}
@@ -350,12 +358,19 @@ export default function DxmtWorkshopPage({ api }: IProps) {
             )}
           </Typography>
 
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(13rem,1fr))] gap-3">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(13rem,100%),1fr))] gap-3">
+            {checks.length === 0 && (
+              <Typography appearance="subdued" typographyType="body-md">
+                {bottle === undefined
+                  ? t("No bottle found: select a game installed in a CrossOver or Whisky bottle.")
+                  : t("Checking the bottle…")}
+              </Typography>
+            )}
             {checks.map((check) => {
               const look = STATUS_LOOK[check.status];
               return (
                 <div
-                  className="flex flex-col rounded-md bg-surface-mid px-3 py-2.5"
+                  className="flex min-w-0 flex-col rounded-md bg-surface-mid px-3 py-2.5 [overflow-wrap:anywhere]"
                   data-testid={`dxmt-check-${check.id}`}
                   key={check.id}
                 >
@@ -364,11 +379,11 @@ export default function DxmtWorkshopPage({ api }: IProps) {
                   </Typography>
                   <Typography
                     brand={look.brand}
-                    className="flex items-center gap-x-1 font-semibold"
+                    className="flex items-start gap-x-1 font-semibold"
                     typographyType="body-md"
                   >
-                    <Icon name={look.icon} size="sm" />
-                    {statusText(check, api.translate)}
+                    <Icon className="shrink-0" name={look.icon} size="sm" />
+                    <span className="min-w-0">{statusText(check, api.translate)}</span>
                   </Typography>
                   {fixButton(check)}
                 </div>
@@ -394,20 +409,20 @@ export default function DxmtWorkshopPage({ api }: IProps) {
           </div>
 
           <SectionTitle icon="menu_book">{t("Recipes")}</SectionTitle>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(24rem,1fr))] gap-4">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(24rem,100%),1fr))] gap-4">
             {RECIPES.map((recipe) => (
               <div
-                className="flex flex-col gap-y-3 rounded-md bg-surface-mid p-4"
+                className="flex min-w-0 flex-col gap-y-3 rounded-md bg-surface-mid p-4 [overflow-wrap:anywhere]"
                 data-testid={`dxmt-recipe-${recipe.id}`}
                 key={recipe.id}
               >
                 <div className="flex items-center gap-x-2">
                   <Icon
-                    className="text-warning-strong"
+                    className="shrink-0 text-warning-strong"
                     name={recipe.icon as SymbolName}
                     size="md"
                   />
-                  <div>
+                  <div className="min-w-0">
                     <Typography className="font-semibold" typographyType="body-lg">
                       {t(recipe.title)}
                     </Typography>
@@ -438,7 +453,7 @@ export default function DxmtWorkshopPage({ api }: IProps) {
           </div>
 
           <SectionTitle icon="build">{t("Pitfalls we solved")}</SectionTitle>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(24rem,1fr))] gap-4">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(24rem,100%),1fr))] gap-4">
             {PITFALLS.map((pitfall) => {
               // le piège de son propre contrôle ; celui du compilateur seulement quand le journal
               // montre des refus (les modules trop récents ont leur propre piège)
@@ -448,13 +463,13 @@ export default function DxmtWorkshopPage({ api }: IProps) {
                 (own.id !== "shaders" || (own.shaders?.failures ?? 0) > 0);
               return (
                 <div
-                  className={`flex flex-col gap-y-2 rounded-md border bg-surface-mid p-4 ${detected ? "border-danger-moderate" : "border-transparent"}`}
+                  className={`flex min-w-0 flex-col gap-y-2 rounded-md border bg-surface-mid p-4 [overflow-wrap:anywhere] ${detected ? "border-danger-moderate" : "border-transparent"}`}
                   data-testid={`dxmt-pitfall-${pitfall.id}`}
                   key={pitfall.id}
                 >
                   <div className="flex items-center gap-x-2">
                     <Icon
-                      className={detected ? "text-danger-strong" : "text-neutral-subdued"}
+                      className={`shrink-0 ${detected ? "text-danger-strong" : "text-neutral-subdued"}`}
                       name={pitfall.icon as SymbolName}
                       size="md"
                     />

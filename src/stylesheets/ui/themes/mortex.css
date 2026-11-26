@@ -140,7 +140,7 @@ body[data-watermark="mono"]::after {
     font-weight: 800;
 }
 
-/* ---- Écrans Plugins et Téléchargements (tableaux historiques) : denses, sans zébrure, sélection bleue ---- */
+/* ---- Écrans Plugins et Téléchargements (tableaux historiques) : denses, sans zébrure, sélection par le fond seul ---- */
 .modern-layout #table-gamebryo-plugins,
 .modern-layout #table-downloads {
     .xtable > .xtbody > .xtr > .xtd,
@@ -165,15 +165,20 @@ body[data-watermark="mono"]::after {
         background-color: transparent;
     }
 
+    .xtable > tbody > tr {
+        transition: background-color 140ms ease-out;
+    }
+
     .xtable > tbody > tr:hover {
         background-color: var(--color-surface-mid);
     }
 
+    /* sélection sans cadre ni liseré : seul le fond change (règle Socle « États ») */
     .xtable > tbody > tr.table-selected,
     .xtable > tbody > tr.selected,
     .xtable > tbody > tr.active {
-        background-color: rgb(251 191 36 / 14%);
-        box-shadow: inset 3px 0 0 #fbbf24;
+        background-color: var(--color-surface-high);
+        box-shadow: none;
     }
 }
 
@@ -457,10 +462,13 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 }
 
 .mortex-card {
+    min-width: 0;
     background-color: var(--color-surface-mid);
     border: 1px solid var(--color-stroke-weak);
     border-radius: 8px;
     padding: 24px;
+    /* chemins de bouteille et noms de mods longs, sans espace : on coupe au lieu de déborder */
+    overflow-wrap: anywhere;
 }
 
 .mortex-card h5 {
@@ -475,6 +483,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     font-size: 26px;
     font-weight: 600;
     line-height: 1.2;
+    font-variant-numeric: tabular-nums;
 }
 
 .mortex-card-mid {
@@ -486,6 +495,20 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     color: var(--color-neutral-subdued);
 }
 
+/* Encart de résumé (un état, une ligne, parfois un bouton), seul dans sa carte : contenu centré
+   (règle Socle .sc-summary). Les listes, tableaux et constats restent alignés à gauche. */
+.mortex-card-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+}
+
+.mortex-card-summary p {
+    margin: 0;
+}
+
 /* ---- Plantages sKYCRASH : carte d'Accueil et section de la fiche d'un mod ---- */
 .mortex-crashes .mortex-card-crashes {
     max-width: 760px;
@@ -495,6 +518,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 .mortex-card p.mortex-crash-meta {
     color: var(--color-neutral-subdued);
     font-size: 12px;
+    overflow-wrap: anywhere;
 }
 
 .mortex-crash-verdict {
@@ -524,6 +548,12 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
     color: var(--color-neutral-strong);
 }
 
+/* nom de DLL ou de plugin sans espace : il passe à la ligne au lieu de pousser le badge */
+.mortex-suspect-head > strong {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
 .mortex-suspect-rank {
     min-width: 16px;
     color: var(--color-neutral-subdued);
@@ -536,6 +566,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 }
 
 .mortex-badge {
+    white-space: nowrap;
     padding: 1px 6px;
     border-radius: 4px;
     background-color: var(--color-surface-high);
@@ -546,6 +577,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 .mortex-suspect-where {
     margin: 4px 0 0 24px;
     color: var(--color-neutral-subdued);
+    overflow-wrap: anywhere;
 }
 
 .mortex-suspect-mod {
@@ -560,7 +592,15 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
 
 .mortex-suspect-actions {
     display: flex;
+    flex-shrink: 0;
     gap: 4px;
+}
+
+/* nom du mod : il prend la place restante et se coupe, les boutons gardent leur taille */
+.mortex-suspect-mod > :first-child {
+    min-width: 0;
+    flex: 1 1 12rem;
+    overflow-wrap: anywhere;
 }
 
 .mortex-suspect-reasons,
@@ -572,6 +612,7 @@ body[data-platform="darwin"]:has(.mortex-apply-wrap) [data-testid="window-titleb
         position: relative;
         padding-left: 12px;
         background: transparent !important;
+        overflow-wrap: anywhere;
     }
 
     li::before {
@@ -1271,6 +1312,11 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     color: var(--color-neutral-strong);
 }
 
+.mortex-assistant-head > strong {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
 .mortex-assistant-dot {
     flex: none;
     width: 8px;
@@ -1294,6 +1340,8 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     margin: 4px 0 0 16px;
     color: var(--color-neutral-moderate);
     background: transparent !important;
+    /* noms de plugins et chemins longs, sans espace */
+    overflow-wrap: anywhere;
 }
 
 .mortex-assistant-note {
@@ -1303,6 +1351,7 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
 }
 
 .mortex-assistant-quote {
+    overflow-wrap: anywhere;
     margin: 6px 0 0 16px;
     padding: 4px 10px;
     border-left: 2px solid var(--color-stroke-weak);
@@ -1362,10 +1411,28 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     }
 }
 
-/* Mod sélectionné : surbrillance au jaune Socle (--action) */
-.nxm-table .nxm-table-row[aria-selected="true"] {
-    --nxm-table-row-tint: rgb(251 191 36 / 14%);
-    box-shadow: inset 3px 0 0 #fbbf24;
+/* Survol et sélection sans cadre ni liseré : le fond s'éclaircit d'un cran au survol, de deux
+   crans pour la ligne sélectionnée (règle Socle « États ») ; le focus clavier garde son anneau */
+.nxm-table .nxm-table-row {
+    transition: background-color 140ms ease-out;
+}
+
+.nxm-table .nxm-table-row:hover {
+    --nxm-table-row-tint: var(--color-surface-mid);
+}
+
+.nxm-table .nxm-table-row[aria-selected="true"],
+.nxm-table .nxm-table-row[aria-selected="true"]:hover {
+    --nxm-table-row-tint: var(--color-surface-high);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nxm-table .nxm-table-row,
+    .xtbody > .xtr,
+    .modern-layout #table-gamebryo-plugins .xtable > tbody > tr,
+    .modern-layout #table-downloads .xtable > tbody > tr {
+        transition: none;
+    }
 }
 
 /* Notifications de la nouvelle interface : cartes colorées comme dans l'interface classique
@@ -1535,16 +1602,15 @@ body[data-platform="darwin"] #main-toolbar .toolbar-version {
     min-height: 26px;
 }
 
-/* Mods (interface classique) et plugins : ligne sélectionnée au jaune Socle, liseré sur la 1re cellule */
+/* Mods (interface classique) et plugins : ligne sélectionnée par le fond seul, sans liseré */
+.xtbody > .xtr {
+    transition: background-color 140ms ease-out;
+}
+
 .xtbody > .xtr.table-selected,
 .xtbody > .xtr.selected,
 .xtbody > .xtr.table-selected:hover {
-    background-color: rgb(251 191 36 / 14%);
-}
-
-.xtbody > .xtr:is(.table-selected, .selected) > .xtd:first-child {
-    /* les cellules du tableau classique retirent toute ombre en !important */
-    box-shadow: inset 3px 0 0 #fbbf24 !important;
+    background-color: var(--color-surface-high);
 }
 
 /* mORTEX (macOS) : bouton à menu façon AppKit (controls/macos/MacPullDownButton) */
@@ -2133,9 +2199,9 @@ body.mortex-menu-moving * {
     mask-size: contain;
 }
 
-/* Trajet d'une image (atelier DXMT). À l'ouverture : les étapes entrent une à une (fondu, montée,
-   léger grossissement, flou qui se dissipe) et les liaisons se tracent. Ensuite, en boucle (6 s), une
-   comète orange traverse chaque liaison et allume l'étape qu'elle atteint. */
+/* Trajet d'une image (atelier DXMT). Les étapes et leurs liaisons sont là d'emblée, sans entrée en
+   cascade (la page se consulte souvent). Pour expliquer le sens du trajet, une comète orange
+   traverse chaque liaison et allume l'étape qu'elle atteint, 3 passages de 6 s puis repos. */
 .dxmt-path {
     --dxmt-step: 0.8s;
     --dxmt-cycle: 6s;
@@ -2147,8 +2213,6 @@ body.mortex-menu-moving * {
 .dxmt-stage {
     --dxmt-halo: 245 158 11; /* orange : étape en place */
     position: relative;
-    animation: dxmt-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: calc(var(--i) * 0.22s);
 }
 /* Halo : un calque statique dont seule l'opacité varie (composé par le GPU, aucun recalcul de
    mise en page ni de peinture à chaque image) */
@@ -2180,10 +2244,9 @@ body.mortex-menu-moving * {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
     width: 36px;
     overflow: hidden;
-    animation: dxmt-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: calc(var(--i) * 0.22s - 0.11s);
 }
 .dxmt-arrow::before {
     content: "";
@@ -2195,9 +2258,6 @@ body.mortex-menu-moving * {
     margin-top: -1px;
     border-radius: 2px;
     background: rgba(245, 158, 11, 0.25);
-    transform-origin: left center;
-    animation: dxmt-draw 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: calc(var(--i) * 0.22s);
 }
 .dxmt-arrow::after {
     content: "";
@@ -2217,26 +2277,6 @@ body.mortex-menu-moving * {
 .dxmt-arrow > * {
     position: relative;
     z-index: 1;
-}
-@keyframes dxmt-in {
-    from {
-        opacity: 0;
-        transform: translateY(14px) scale(0.94);
-        filter: blur(6px);
-    }
-    to {
-        opacity: 1;
-        transform: none;
-        filter: none;
-    }
-}
-@keyframes dxmt-draw {
-    from {
-        transform: scaleX(0);
-    }
-    to {
-        transform: scaleX(1);
-    }
 }
 @keyframes dxmt-comet {
     0% {
@@ -2267,9 +2307,7 @@ body.mortex-menu-moving * {
     }
 }
 @media (prefers-reduced-motion: reduce) {
-    .dxmt-stage,
-    .dxmt-arrow,
-    .dxmt-arrow::before,
+    .dxmt-stage::before,
     .dxmt-arrow::after {
         animation: none;
     }

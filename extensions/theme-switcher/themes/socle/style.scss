@@ -160,9 +160,13 @@
     }
 }
 
-// ---- Tables : lignes denses, sélection jaune Socle (--action), pas de zébrure ----
+// ---- Tables : lignes denses, sélection par le fond seul (deux crans plus clair), pas de zébrure ----
 .table > .xtbody > .xtr:nth-of-type(odd) {
     background-color: transparent;
+}
+
+.table > .xtbody > .xtr {
+    transition: background-color 140ms ease-out;
 }
 
 .table > .xtbody > .xtr:hover {
@@ -171,7 +175,7 @@
 
 .table > .xtbody > .xtr.table-selected,
 .table > .xtbody > .xtr.selected {
-    background-color: rgb(251 191 36 / 14%);
+    background-color: #333333;
 }
 
 // ---- Défilement fin à la macOS ----

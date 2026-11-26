@@ -43,9 +43,9 @@ export const ModCrashes = ({
             })}
           </p>
           <p className="mortex-suspect-where">
-            {t("In {{count}} of the last {{total}} crashes", {
-              count: seen.count,
-              total: seen.total,
+            {t("In {{n}} of the last {{count}} crashes", {
+              n: seen.count,
+              count: seen.total,
             })}
           </p>
           <ul className="mortex-suspect-reasons">

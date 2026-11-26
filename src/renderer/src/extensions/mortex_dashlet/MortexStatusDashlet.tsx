@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 
 import Dashlet from "../../controls/Dashlet";
 import type { IState } from "../../types/IState";
+import { formatNumber } from "../../util/macos/macFormat";
 import type { IDownload } from "../download_management/types/IDownload";
 import { useDeployMods } from "../mod_management/hooks/useDeployMods.hook";
 import { isLoggedIn, isPremium } from "../nexus_integration/selectors";
@@ -51,7 +52,7 @@ function MortexStatusDashlet() {
         <div className="mortex-card">
           <h5>{t("Mods")}</h5>
           <div className="mortex-card-big">
-            {counts.enabled} / {counts.installed}
+            {formatNumber(counts.enabled)} / {formatNumber(counts.installed)}
           </div>
           <p>{t("enabled / installed")}</p>
         </div>
@@ -61,7 +62,7 @@ function MortexStatusDashlet() {
           <div className="mortex-card-big">
             {t("{{count}} in progress", { count: counts.active })}
           </div>
-          <p>{t("{{count}} archives", { count: counts.downloads })}</p>
+          <p>{t("{{count, number}} archives", { count: counts.downloads })}</p>
         </div>
 
         <div className="mortex-card">

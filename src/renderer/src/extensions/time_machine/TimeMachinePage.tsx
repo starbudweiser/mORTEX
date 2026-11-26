@@ -145,20 +145,21 @@ export default function TimeMachinePage({ api }: IProps) {
     <MainPage id="time-machine-page">
       <MainPage.Body className="h-full overflow-y-auto">
         <div className="flex flex-col gap-y-5 p-6">
-          <div className="flex items-center gap-x-3">
-            <Icon className="text-warning-strong" name="history" size="lg" />
-            <Typography className="font-semibold" typographyType="heading-sm">
+          {/* à la ligne dans une fenêtre étroite ou une langue au libellé long (es, it) */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <Icon className="shrink-0 text-warning-strong" name="history" size="lg" />
+            <Typography className="min-w-0 font-semibold" typographyType="heading-sm">
               {t("Time Machine")}
             </Typography>
             <Typography
               brand="warning"
-              className="rounded-sm bg-warning-weak px-2"
+              className="rounded-sm bg-warning-weak px-2 whitespace-nowrap"
               typographyType="body-xs"
             >
               {t("Mac exclusive")}
             </Typography>
             <Button
-              className="ml-auto"
+              className="ml-auto shrink-0"
               disabled={!available || busy !== undefined}
               isLoading={busy === "take"}
               leftIcon="add_a_photo"
@@ -204,7 +205,7 @@ export default function TimeMachinePage({ api }: IProps) {
                     >
                       <span className="absolute top-1/2 -left-[1.3rem] size-2.5 -translate-y-1/2 rounded-full bg-warning-strong" />
                       <Typography
-                        className="w-20 font-semibold whitespace-nowrap tabular-nums"
+                        className="min-w-20 shrink-0 font-semibold whitespace-nowrap tabular-nums"
                         typographyType="body-lg"
                       >
                         {new Date(snapshot.created).toLocaleTimeString(language, {
@@ -212,7 +213,7 @@ export default function TimeMachinePage({ api }: IProps) {
                           minute: "2-digit",
                         })}
                       </Typography>
-                      <div className="flex min-w-0 flex-1 flex-col">
+                      <div className="flex min-w-0 flex-1 flex-col [overflow-wrap:anywhere]">
                         <Typography typographyType="body-md">
                           {t(REASONS[snapshot.reason])}
                           <span className="text-neutral-subdued">
@@ -220,19 +221,24 @@ export default function TimeMachinePage({ api }: IProps) {
                             {t("Profile {{name}}", { replace: { name: snapshot.profileName } })}
                           </span>
                         </Typography>
-                        <Typography appearance="moderate" typographyType="body-xs">
-                          {t("Mods enabled: {{enabled}} of {{count}}", {
+                        <Typography
+                          appearance="moderate"
+                          className="tabular-nums"
+                          typographyType="body-xs"
+                        >
+                          {t("Mods enabled: {{enabled, number}} of {{count, number}}", {
                             replace: { enabled: snapshot.enabledCount, count: snapshot.modCount },
                           })}
                           {" · "}
                           {changes === 0
                             ? t("Same mods as now")
-                            : t("{{count}} mods changed since", { count: changes })}
+                            : t("{{count, number}} mods changed since", { count: changes })}
                         </Typography>
                       </div>
                       <Button
                         appearance="moderate"
                         brand="neutral"
+                        className="shrink-0"
                         disabled={busy !== undefined}
                         leftIcon="delete"
                         size="sm"
@@ -240,6 +246,7 @@ export default function TimeMachinePage({ api }: IProps) {
                         onClick={() => remove(snapshot)}
                       />
                       <Button
+                        className="shrink-0"
                         disabled={busy !== undefined || otherProfile}
                         isLoading={busy === snapshot.id}
                         leftIcon="history"

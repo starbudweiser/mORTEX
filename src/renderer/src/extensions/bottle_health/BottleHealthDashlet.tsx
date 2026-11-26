@@ -21,6 +21,7 @@ import {
 } from "@/util/macos/bottleHealth";
 import { bottleForPath } from "@/util/macos/bottles";
 import { syncDllOverrides } from "@/util/macos/dllOverrides";
+import { formatNumber } from "@/util/macos/macFormat";
 
 import { discoveryByGame } from "../gamemode_management/selectors";
 import { activeGameId } from "../profile_management/selectors";
@@ -75,7 +76,9 @@ function BottleHealthDashlet({ api }: { api: IExtensionApi }) {
             ? t("{{fs}}: links, no clones", { fs: "HFS+" })
             : t("{{fs}}: no links, deployment will copy files", { fs: check.value || "?" });
       case "space":
-        return t("{{size}} GB", { size: check.value });
+        return t("{{size}} GB", {
+          size: Number.isNaN(Number(check.value)) ? check.value : formatNumber(Number(check.value)),
+        });
       case "overrides":
         return check.status === "ok"
           ? t("Up to date")
@@ -102,22 +105,34 @@ function BottleHealthDashlet({ api }: { api: IExtensionApi }) {
   return (
     <Dashlet className="mortex-status-dashlet" title="">
       <div className="mortex-card">
-        <h5>{t("Bottle {{name}}", { name: bottle.name })}</h5>
-        <div className="grid grid-cols-[auto_9rem_auto_1fr] items-center gap-x-2 gap-y-1.5">
+        {/* nom de bouteille long (chemin CrossOver) : une ligne, le nom entier en infobulle */}
+        <h5 className="truncate" title={bottle.name}>
+          {t("Bottle {{name}}", { name: bottle.name })}
+        </h5>
+        {/* valeur : prend la place qu'il lui faut sans dépasser la carte (minmax(0, …)), le bouton
+            « Corriger » garde sa taille */}
+        <div className="grid grid-cols-[auto_9rem_minmax(0,max-content)_1fr] items-center gap-x-2 gap-y-1.5">
+          {checks.length === 0 && (
+            <Typography appearance="subdued" className="col-span-full" typographyType="body-sm">
+              {t("Checking the bottle…")}
+            </Typography>
+          )}
           {checks.map((check) => {
             const look = LOOK[check.status];
+            const value = text(check);
             return (
               <div className="contents" data-testid={`bottle-health-${check.id}`} key={check.id}>
                 <Icon className={`shrink-0 ${look.color}`} name={look.icon} size="sm" />
                 <Typography appearance="moderate" typographyType="body-sm">
                   {t(LABELS[check.id])}
                 </Typography>
-                <Typography className="min-w-0 truncate" typographyType="body-sm">
-                  {text(check)}
+                <Typography className="min-w-0 truncate" title={value} typographyType="body-sm">
+                  {value}
                 </Typography>
                 {check.fixable !== true && <span />}
                 {check.fixable === true && (
                   <Button
+                    className="shrink-0 justify-self-start"
                     isLoading={fixing === check.id}
                     leftIcon="build"
                     size="sm"

@@ -191,7 +191,7 @@ export function explainMod(mod: IMod, env: IModExplainEnv): IExplanationItem[] {
     const name = modName(env, c);
     const { winner, rules } = ruleWinner(mod, other);
     const details: IExplanationDetail[] = ordered.map((cls) => ({
-      textKey: "{{label}}: {{count}} file(s), for example {{example}}",
+      textKey: "{{label}}: {{count}} file, for example {{example}}",
       params: {
         label: CLASS_LABEL[cls],
         count: classes.get(cls)!.length,
@@ -232,7 +232,8 @@ export function explainMod(mod: IMod, env: IModExplainEnv): IExplanationItem[] {
       severity: "info",
       kind: "mod-conflict-status",
       titleKey: "More conflicts",
-      textKey: "{{count}} more mods share files with this one; the conflict editor lists them all.",
+      textKey:
+        "{{count, number}} more mod shares files with this one; the conflict editor lists them all.",
       params: { count: perMod.length - MAX_CONFLICT_MODS },
       sources: [{ kind: "conflict", label: "File conflict calculation" }],
       actions: [{ id: "open-conflict-editor", labelKey: "Manage file conflicts" }],
@@ -306,7 +307,7 @@ export function explainMod(mod: IMod, env: IModExplainEnv): IExplanationItem[] {
       severity: "warning",
       kind: "mod-plugins",
       titleKey: "Plugins with a LOOT problem",
-      textKey: "{{count}} plugin(s) of this mod have a LOOT warning or need cleaning: {{names}}.",
+      textKey: "{{count}} plugin of this mod has a LOOT warning or needs cleaning: {{names}}.",
       params: { count: flagged.length, names: flagged.map((p) => p.name).join(", ") },
       sources: [{ kind: "loot-meta", label: "LOOT masterlist" }],
       actions: [{ id: "show-plugins", labelKey: "Show plugins" }],

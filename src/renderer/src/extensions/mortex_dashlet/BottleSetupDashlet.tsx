@@ -150,7 +150,8 @@ function BottleSetupDashlet() {
   if (crossoverBinDir() === undefined) {
     return (
       <Dashlet className="mortex-bottle-dashlet" title={t("Prepare Skyrim on your Mac")}>
-        <div className="flex flex-col items-start gap-3">
+        {/* encart de résumé (un état, un bouton), seul dans sa carte : centré */}
+        <div className="flex flex-col items-center gap-3 text-center">
           <p>
             {t(
               "Skyrim runs on Mac through CrossOver, a paid app from CodeWeavers with a free trial. Install it, and this card will prepare a bottle for you.",
@@ -173,10 +174,16 @@ function BottleSetupDashlet() {
               )}
             </p>
             <div className="flex items-center justify-between gap-3 self-stretch">
-              <span className="min-w-0 break-words">
+              <span className="min-w-0 [overflow-wrap:anywhere]">
                 {t("Bottle location: {{path}}", { replace: { path: bottleDir } })}
               </span>
-              <Button appearance="moderate" brand="neutral" size="sm" onClick={chooseFolder}>
+              <Button
+                appearance="moderate"
+                brand="neutral"
+                className="shrink-0"
+                size="sm"
+                onClick={chooseFolder}
+              >
                 {t("Change…")}
               </Button>
             </div>
@@ -197,7 +204,7 @@ function BottleSetupDashlet() {
                 "Everything is downloaded from Valve and Microsoft. By continuing, you accept their licences:",
               )}
             </p>
-            <div className="-ml-2 flex gap-1">
+            <div className="-ml-2 flex flex-wrap gap-1">
               {LICENCES.map((licence) => (
                 <Button
                   appearance="weak"
